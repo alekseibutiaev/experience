@@ -1,0 +1,281 @@
+#if 0
+Generated .IDL/C++ pseudo source equivalent of Win32 type library ..\<Unknown>
+[
+  uuid({37005639-2FB3-45E1-820D-1312A3FADD56}),
+  version(1.0),
+  helpstring("Obzor-102 Network Analyzer Type Library")
+]
+library Obzor102
+{
+    // Forward references and typedefs
+    dispinterface IAutomation;
+    dispinterface IAutomationEvents;
+
+    [
+      uuid({027A559E-2B35-489A-B644-CD57E6E42A1F}),
+      version(1.0),
+      helpstring("Dispatch interface for Automation Object")
+    ]
+    dispinterface IAutomation
+    {
+        properties:
+        methods:
+            [id(0), restricted] void QueryInterface(
+                            [in] GUID* riid, 
+                            [out] void** ppvObj);
+            [id(1), restricted] unsigned long AddRef();
+            [id(2), restricted] unsigned long Release();
+            [id(3), restricted] void GetTypeInfoCount([out] unsigned int* pctinfo);
+            [id(4), restricted] void GetTypeInfo(
+                            [in] unsigned int itinfo, 
+                            [in] unsigned long lcid, 
+                            [out] void** pptinfo);
+            [id(5), restricted] void GetIDsOfNames(
+                            [in] GUID* riid, 
+                            [in] char** rgszNames, 
+                            [in] unsigned int cNames, 
+                            [in] unsigned long lcid, 
+                            [out] long* rgdispid);
+            [id(6), restricted] void Invoke(
+                            [in] long dispidMember, 
+                            [in] GUID* riid, 
+                            [in] unsigned long lcid, 
+                            [in] unsigned short wFlags, 
+                            [in] DISPPARAMS* pdispparams, 
+                            [out] VARIANT* pvarResult, 
+                            [out] EXCEPINFO* pexcepinfo, 
+                            [out] unsigned int* puArgErr);
+            [id(7), propget] long ActiveView();
+            [id(8), propput] void ActiveView([in] long rhs);
+            [id(9), propget] TViewSize ViewSize();
+            [id(10), propput] void ViewSize([in] TViewSize rhs);
+            [id(11), propget] boolean Connected();
+            [id(12)] void TakeCompleteSweep();
+            [id(13), propget] double gStart();
+            [id(14), propput] void gStart([in] double rhs);
+            [id(15), propget] double gStop();
+            [id(16), propput] void gStop([in] double rhs);
+            [id(17), propget] long gPoints();
+            [id(18), propput] void gPoints([in] long rhs);
+            [id(19), propget] double gConvValue();
+            [id(20), propput] void gConvValue([in] double rhs);
+            [id(21), propget] TSweepMode gSweepMode();
+            [id(22), propput] void gSweepMode([in] TSweepMode rhs);
+            [id(23), propget] TSweepRun SweepRun();
+            [id(24), propput] void SweepRun([in] TSweepRun rhs);
+            [id(25)] void gAdjustConvValue();
+            [id(26)] void LoadState([in] BSTR FileName);
+            [id(27)] void SaveState([in] BSTR FileName);
+            [id(28)] void Calibrate(
+                            [in] TCalStandard Port1Std, 
+                            [in] TCalStandard Port2Std);
+            [id(29), propget] long chPort([in] long Channel);
+            [id(30), propput] void chPort(
+                            [in] long Channel, 
+                            [in] long rhs);
+            [id(31), propget] boolean chSmoothing([in] long Channel);
+            [id(32), propput] void chSmoothing(
+                            [in] long Channel, 
+                            [in] boolean rhs);
+            [id(33), propget] boolean chLimitLinePass([in] long Channel);
+            [id(34), propget] double chOffset([in] long Channel);
+            [id(35), propput] void chOffset(
+                            [in] long Channel, 
+                            [in] double rhs);
+            [id(36), propget] double chCutOff([in] long Channel);
+            [id(37), propput] void chCutOff(
+                            [in] long Channel, 
+                            [in] double rhs);
+            [id(38), propget] double chElectricalDelay([in] long Channel);
+            [id(39), propput] void chElectricalDelay(
+                            [in] long Channel, 
+                            [in] double rhs);
+            [id(40), propget] VARIANT gFrequencies();
+            [id(41), propget] VARIANT chValues([in] long Channel);
+            [id(42), propget] BSTR chMeasName([in] long Channel);
+            [id(43), propget] BSTR chMeasUnits([in] long Channel);
+            [id(44), propget] BSTR chLimitLine([in] long Channel);
+            [id(45), propput] void chLimitLine(
+                            [in] long Channel, 
+                            [in] BSTR rhs);
+            [id(46), propget] double chValue(
+                            [in] long Channel, 
+                            [in] double Frequency);
+            [id(47), propget] double chFMaximum([in] long Channel);
+            [id(48), propget] double chFMinimum([in] long Channel);
+            [id(49), propget] double chBWLeft([in] long Channel);
+            [id(50), propget] double chBWRight([in] long Channel);
+            [id(51), propget] double chRipple(
+                            [in] long Channel, 
+                            [in] double Fbeg, 
+                            [in] double Fend);
+            [id(52), propget] double chPwAtten([in] long Channel);
+            [id(53), propput] void chPwAtten(
+                            [in] long Channel, 
+                            [in] double rhs);
+            [id(54), propget] double IFBandWith();
+            [id(55), propput] void IFBandWith([in] double rhs);
+            [id(56), propget] double chAverageValue(
+                            [in] long Channel, 
+                            [in] double Fbeg, 
+                            [in] double Fend);
+            [id(57)] void ResetState();
+            [id(58), propget] double chNoise(
+                            [in] long Channel, 
+                            [in] double Fbeg, 
+                            [in] double Fend);
+            [id(59)] void Minimize();
+            [id(60), propput] void gPLLDelay(
+                            [in] long Index, 
+                            [in] double rhs);
+            [id(61), propget] double gLowestFrequency();
+            [id(62), propput] void gLowestFrequency([in] double rhs);
+            [id(63), propget] double gHighestFrequency();
+            [id(64), propput] void gHighestFrequency([in] double rhs);
+            [id(65), propget] boolean EnableEvents();
+            [id(66), propput] void EnableEvents([in] boolean rhs);
+            [id(67), propget] TTraceFormat chTraceFormat([in] long Channel);
+            [id(68), propput] void chTraceFormat(
+                            [in] long Channel, 
+                            [in] TTraceFormat rhs);
+            [id(69), propget] TReceiverCfg ReceiverConfig();
+            [id(70), propput] void ReceiverConfig([in] TReceiverCfg rhs);
+            [id(71), propget] TConvType gConvType();
+            [id(72), propput] void gConvType([in] TConvType rhs);
+            [id(73), propget] VARIANT gStimulus();
+            [id(74), propget] VARIANT gLocalOscillator();
+            [id(75), propget] double gWBSReference();
+            [id(76), propput] void gWBSReference([in] double rhs);
+            [id(77), propget] double gNBSReference();
+            [id(78), propput] void gNBSReference([in] double rhs);
+            [id(79), propget] double gMinStep();
+            [id(80), propput] void gMinStep([in] double rhs);
+            [id(81), propget] double gRelativeStepAccuracy();
+            [id(82), propput] void gRelativeStepAccuracy([in] double rhs);
+            [id(83), propget] double gIFAccuracy();
+            [id(84), propput] void gIFAccuracy([in] double rhs);
+            [id(85), propput] void CalCurrentCondition([in] boolean rhs);
+            [id(86)] void ConfigureExPort(
+                            [in] unsigned char NumberOfBytes, 
+                            [in] unsigned char SyncDivider);
+            [id(87)] void OutputExPort([in] VARIANT* Data);
+            [id(88), propget] double Temperature();
+            [id(89), propget] BSTR SerialNumber();
+            [id(90), propget] long DeviceVersion();
+            [id(91), propput] void DACConstant([in] short rhs);
+            [id(92), propput] void ASTAttenuator([in] short rhs);
+            [id(93)] void ASTConnect();
+            [id(94)] void Hope900Connect();
+            [id(95)] void Hope900Disconnect();
+            [id(96), propget] double HopeFrequency();
+            [id(97), propput] void HopeFrequency([in] double rhs);
+            [id(98), propget] double HopeLevel();
+            [id(99), propput] void HopeLevel([in] double rhs);
+            [id(100), propget] boolean HopeCalibrated();
+            [id(101), propget] boolean HopeRegulated();
+            [id(102)] void PowerMeterConnect(
+                            [in] int PowerMeterType, 
+                            [in] int GpibAddress, 
+                            [in] int GpibBoard);
+            [id(103)] void PowerMeterDisconnect();
+            [id(104)] void PowerMeterZeroing();
+            [id(105)] double PowerMeterReadWatts([in] double Freq);
+            [id(106)] double PowerMeterReaddBm([in] double Freq);
+    };
+
+    [
+      uuid({AD8AA401-16B8-403D-918E-4AD378604337}),
+      version(1.0),
+      helpstring("Events interface for Automation Object")
+    ]
+    dispinterface IAutomationEvents
+    {
+        properties:
+        methods:
+            [id(0)] HRESULT OnError(
+                            [in] BSTR Message, 
+                            [in] long Code);
+            [id(1)] HRESULT OnScanEnd();
+    };
+
+    typedef [uuid({C0FD12DE-18CE-4D21-A981-9EC985054BEF}), version(1.0)] enum
+    {
+        smLin = 0,
+        smLog = 1,
+        smProg = 2,
+        smCW = 3,
+        smCal = 4
+    } TSweepMode;
+
+    typedef [uuid({4EC57B78-F1F2-4B3B-81F2-6D7194B5F9EA}), version(1.0)] enum
+    {
+        vsQuarter = 0,
+        vsHalf = 1,
+        vsFull = 2
+    } TViewSize;
+
+    typedef [uuid({9DC29DDF-8B13-41FF-AE5E-A998012923E3}), version(1.0)] enum
+    {
+        srHold = 0,
+        srSingle = 1,
+        srContinous = 2
+    } TSweepRun;
+
+    [
+      uuid({664E3E77-F1C9-4B64-B28C-E32D4E4C7077}),
+      version(1.0),
+      helpstring("Automation Object")
+    ]
+    coclass Automation
+    {
+        [default] dispinterface IAutomation;
+        [default, source] dispinterface IAutomationEvents;
+    };
+
+    typedef [uuid({482EA7A7-0E3A-4876-A950-D76227121365}), version(1.0)] enum
+    {
+        csThru = 0,
+        csShort = 1,
+        csOpen = 2,
+        csLoad = 3,
+        csNone = -1
+    } TCalStandard;
+
+    typedef [uuid({64ED10E1-7DF6-4362-80CF-2805B9FF66D3}), version(1.0)] enum
+    {
+        rcAinBtr = 0,
+        rcBinAtr = 1,
+        rcArlBtr = 2,
+        rcBrlAtr = 3,
+        rcAinBrl = 4,
+        rcBinArl = 5,
+        rcAtrBtr = 6,
+        rcFTDtr = 7
+    } TReceiverCfg;
+
+    typedef [uuid({41D3B1B5-EF2E-423C-ABA2-4A4DD4F3245C}), version(1.0)] enum
+    {
+        tfLogMag = 0,
+        tfPhase = 1,
+        tfGroupDelay_ns = 2,
+        tfGroupDelay_us = 3,
+        tfSWR = 4,
+        tfReal = 5,
+        tfImag = 6,
+        tfExtPhase = 7,
+        tfLinMag = 8,
+        tfPower = 9,
+        tfSmith = 10,
+        tfPolar = 11,
+        tfTimeDomain = 12
+    } TTraceFormat;
+
+    typedef [uuid({F087C353-FD12-4B3E-B970-24EE68E8C874}), version(1.0)] enum
+    {
+        ctRFMinusLO = 0,
+        ctRFPlusLO = 1,
+        ctMultiplier = 2
+    } TConvType;
+
+
+#endif

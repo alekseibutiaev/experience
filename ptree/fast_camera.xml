@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<fast_camera>
+	<!-- axis_x_scene_range: angle for axis -->
+	<config>
+		<property
+			axis_x_min="670"
+			axis_x_max="190"
+			axis_x_scene_range="140"
+			axis_x_scene_zero="-60"
+			axis_y_min="350"
+			axis_y_max="680"
+			axis_y_scene_range="100"
+			axis_y_scene_zero="40"
+			axis_z_min="0"
+			axis_z_max="1400"
+			axis_z_scene_range="360"
+			axis_z_scene_zero="180"
+			axis_dist_min="13500"
+			axis_dist_max="0"
+			axis_dist_scene_range="300"
+			axis_dist_scene_zero="0"
+		/>
+	</config>
+</fast_camera>
