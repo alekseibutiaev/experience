@@ -44,14 +44,14 @@ public:
 
 	void Subscribe(Key id, std::shared_ptr<IConsumer<Key, Value>> consumer)
 	{
-		std::lock_guard<std::mutex> _(m_add_consumers.first);
-		m_add_consumers.second.insert(std::make_pair(id, consumer));
+		std::lock_guard<std::mutex> _(m_consumers_mtx);
+		m_add_consumers.insert(std::make_pair(id, consumer));
 	}
 
 	void Unsubscribe(Key id)
 	{
-		std::lock_guard<std::mutex> _(m_delete_consumers.first);
-		m_delete_consumers.second.insert(std::make_pair(id, std::shared_ptr<IConsumer<Key, Value>>));
+		std::lock_guard<std::mutex> _(m_consumers_mtx);
+		m_delete_consumers.insert(std::make_pair(id, std::shared_ptr<IConsumer<Key, Value>>));
 	}
 
 	void Enqueue(Key id, Value& value)
@@ -133,25 +133,21 @@ protected:
 		consumers_type add;
 		consumers_type del;
 		{
-			std::lock_guard<std::mutex> _(m_add_consumers.first);
+			std::lock_guard<std::mutex> _(m_consumers_mtx);
 			add.swap(m_add_consumers.second);
-		}
-		{
-			std::lock_guard<std::mutex> _(m_delete_consumers.first);
 			del.swap(m_delete_consumers.second);
 		}
-		{
-			std::lock_guard<std::mutex> _(m_consumers.first);
-			m_consumers.second.insert(add.begin(), add.end());
-			for (const auto& i : del)
-				m_consumers.second.erase(i.first);
-		}
+		m_consumers.second.insert(add.begin(), add.end());
+		for (const auto& i : del)
+			m_consumers.second.erase(i.first);
 	}
 
 protected:
-	consumers_mutex_type m_add_consumers;
-	consumers_mutex_type m_delete_consumers;
-	consumers_mutex_type m_consumers;
+  std::mutex m_consumers_mtx;
+	consumers_type m_add_consumers;
+	consumers_type m_delete_consumers;
+
+	consumers_type m_consumers;
 
 	std::map<Key, std::list<Value>> m_queues;
 	std::mutex m_mtx;
