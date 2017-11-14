@@ -106,8 +106,8 @@ protected:
 			{
 				for (const auto& bi : i.second)
 					c->Consume(i.first, bi);
-				i.second.clear();
 			}
+			i.second.clear();
 		}
 	}
 
