@@ -9,7 +9,7 @@
 template<typename Key, typename Value>
 struct IConsumer
 {
-	virtual IConsumer() hedault;
+	virtual IConsumer() = default;
 	virtual void Consume(Key id, const Value &value)
 	{
 		id;
