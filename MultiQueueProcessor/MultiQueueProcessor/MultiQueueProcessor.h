@@ -5,11 +5,12 @@
 #include <memory>
 #include <condition_variable>
 #include <mutex>
+#include <boost/circular_buffer.hpp>
 
 template<typename Key, typename Value>
 struct IConsumer
 {
-	virtual IConsumer() = default;
+	virtual ~IConsumer() = default;
 	virtual void Consume(Key id, const Value &value)
 	{
 		id;
@@ -17,11 +18,13 @@ struct IConsumer
 	}
 };
 
-#define MaxCapacity 1000
+const std::size_t MaxCapacity = 1000;
 
 template<typename Key, typename Value>
 class MultiQueueProcessor
 {
+public:
+	using ConsumerPtr = std::shared_ptr<IConsumer<Key, Value>>;
 public:
 	MultiQueueProcessor()
 		: m_running{ true }
@@ -42,7 +45,7 @@ public:
 		}
 	}
 
-	void Subscribe(Key id, std::shared_ptr<IConsumer<Key, Value>> consumer)
+	void Subscribe(const Key& id, ConsumerPtr consumer)
 	{
 		std::lock_guard<std::mutex> _(m_consumers_mtx);
 		m_add_consumers.insert(std::make_pair(id, consumer));
@@ -51,81 +54,61 @@ public:
 	void Unsubscribe(Key id)
 	{
 		std::lock_guard<std::mutex> _(m_consumers_mtx);
-		m_delete_consumers.insert(std::make_pair(id, std::shared_ptr<IConsumer<Key, Value>>()));
+		m_delete_consumers.insert(std::make_pair(id, ConsumerPtr()));
 	}
 
-	void Enqueue(Key id, Value& value)
+	void Enqueue(const Key& id, const Value& value)
 	{
-		std::lock_guard<std::mutex> _(m_mtx );
-		m_queues[id].emplace_back(std::move(value));
-		m_cv.notify_one();
-	}
-
-	Value Dequeue(Key id)
-	{
-		std::lock_guard<std::recursive_mutex> lock{ mtx };
-		auto iter = queues.find(id);
-		if (iter != queues.end())
+		std::lock_guard<std::mutex> _(m_mtx);
+		auto it = m_queues.find(id);
+		if (it == m_queues.end())
+			it = m_queues.emplace(id, boost::circular_buffer<Value>(MaxCapacity)).first;
+		if (!it->second.full())
 		{
-			if (iter->second.size() > 0)
-			{
-				auto front = iter->second.front();
-				iter->second.pop_front();
-				return front;
-			}
+			it->second.push_back(value);
+			m_cv.notify_one();
 		}
-		return Value{};
 	}
 
 protected:
 
+	using queue_buffer_type = boost::circular_buffer<Value>;
 	using consumers_type = std::map<Key, std::weak_ptr<IConsumer<Key, Value>>>;
-	using consumers_mutex_type = std::pair<std::mutex, consumers_type>;
-	using queue_type = std::map<Key, std::list<Value>>
+	using queue_type = std::map<Key, queue_buffer_type>;
 
 protected:
 	void Process()
 	{
-		while (running)
+		queue_type queue;
+		while (m_running)
 		{
-			queue_type queue;
 			{
-				std::unique_lockstd::mutex > _(m_mtx);
-				while (queues.empty())
+				std::unique_lock<std::mutex > _(m_mtx);
+				while (m_queues.empty())
 					m_cv.wait(_);
+				if (!m_running)
+					break;
 				queue.swap(m_queues);
 			}
 			PrepareSubscribers();
-			
-
-			Sleep(10);
-		
-			for (auto iter = queues.begin(); iter != queues.end(); ++iter)
-			{
-				auto consumerIter = consumers.find(iter->first);
-				if (consumerIter != consumers.end())
-				{
-					Value front = Dequeue(iter->first);
-					if (front != Value{})
-						consumerIter->second->Consume(iter->first, front);
-				}
-			}
+			PrepareQueue(queue);
 		}
 	}
 
-	Value Dequeue_int(Key id)
+	void PrepareQueue(queue_type& queue)
 	{
-		auto iter = queues.find(id);
-		if (iter != queues.end())
+		for (auto& i : queue)
 		{
-			if (iter->second.size() > 0)
+			auto consumerIter = m_consumers.find(i.first);
+			if (consumerIter == m_consumers.end())
+				continue;
+			if (ConsumerPtr c = consumerIter->second.lock())
 			{
-				auto front = iter->second.front();
-				iter->second.pop_front();
-				return front;
+				for (const auto& bi : i.second)
+					c->Consume(i.first, bi);
+				i.second.clear();
 			}
 		}
-		return Value{};
 	}
 
 	void PrepareSubscribers()
@@ -134,12 +117,12 @@ protected:
 		consumers_type del;
 		{
 			std::lock_guard<std::mutex> _(m_consumers_mtx);
-			add.swap(m_add_consumers.second);
-			del.swap(m_delete_consumers.second);
+			add.swap(m_add_consumers);
+			del.swap(m_delete_consumers);
 		}
-		m_consumers.second.insert(add.begin(), add.end());
+		m_consumers.insert(add.begin(), add.end());
 		for (const auto& i : del)
-			m_consumers.second.erase(i.first);
+			m_consumers.erase(i.first);
 	}
 
 protected:
@@ -149,9 +132,9 @@ protected:
 
 	consumers_type m_consumers;
 
-	std::map<Key, std::list<Value>> m_queues;
+	queue_type m_queues;
 	std::mutex m_mtx;
-	std::condition_variable m_cv
+	std::condition_variable m_cv;
 
 	bool m_running;
 	std::thread m_th;

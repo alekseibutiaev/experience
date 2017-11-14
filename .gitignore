@@ -2,3 +2,4 @@
 *.db
 *.suo
 Debug
+*.user
