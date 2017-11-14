@@ -54,7 +54,7 @@ public:
 	void Unsubscribe(Key id)
 	{
 		std::lock_guard<std::mutex> _(m_consumers_mtx);
-		m_delete_consumers.insert(std::make_pair(id, ConsumerPtr()));
+		m_delete_consumers[id];
 	}
 
 	void Enqueue(const Key& id, const Value& value)
@@ -126,7 +126,8 @@ protected:
 	}
 
 protected:
-  std::mutex m_consumers_mtx;
+
+	std::mutex m_consumers_mtx;
 	consumers_type m_add_consumers;
 	consumers_type m_delete_consumers;
 
@@ -138,4 +139,5 @@ protected:
 
 	bool m_running;
 	std::thread m_th;
+
 };
