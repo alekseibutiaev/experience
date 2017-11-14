@@ -51,7 +51,7 @@ public:
 	void Unsubscribe(Key id)
 	{
 		std::lock_guard<std::mutex> _(m_consumers_mtx);
-		m_delete_consumers.insert(std::make_pair(id, std::shared_ptr<IConsumer<Key, Value>>));
+		m_delete_consumers.insert(std::make_pair(id, std::shared_ptr<IConsumer<Key, Value>>()));
 	}
 
 	void Enqueue(Key id, Value& value)
