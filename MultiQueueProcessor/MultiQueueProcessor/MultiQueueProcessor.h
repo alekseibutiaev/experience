@@ -64,7 +64,15 @@ public:
 		std::lock_guard<std::mutex> _(m_mtx);
 		auto it = m_queues.find(id);
 		if (it == m_queues.end())
-			it = m_queues.emplace(id, boost::circular_buffer<Value>(MaxCapacity)).first;
+    {
+      if(m_buffers_storage.empty())
+  			it = m_queues.emplace(id, boost::circular_buffer<Value>(MaxCapacity)).first;
+      else
+      {
+        it = m_queues.emplace(id, std::move(m_buffers_storage.front())).first;
+        m_buffers_storage.pop_front();
+      }
+    }
 		if (!it->second.full())
 		{
 			it->second.push_back(value);
@@ -77,8 +85,10 @@ protected:
 	using queue_buffer_type = boost::circular_buffer<Value>;
 	using consumers_type = std::map<Key, std::weak_ptr<IConsumer<Key, Value>>>;
 	using queue_type = std::map<Key, queue_buffer_type>;
+  using buffers_storage_type = std::list<queue_buffer_type>;
 
 protected:
+
 	void Process()
 	{
 		queue_type queue;
@@ -99,6 +109,8 @@ protected:
 
 	void PrepareQueue(queue_type& queue)
 	{
+    std::vector<Key> unavailable_consumers;
+    unavailable_consumers.reserve(queue.size());
 		for (auto& i : queue)
 		{
 			auto consumerIter = m_consumers.find(i.first);
@@ -108,9 +120,20 @@ protected:
 			{
 				for (const auto& bi : i.second)
 					c->Consume(i.first, bi);
+			  i.second.clear();
 			}
-			i.second.clear();
+      else
+      {
+        i.second.clear();
+        unavailable_consumers.push_back(i.first);
+        std::lock_guard<std::mutex> _(m_consumers_mtx);
+        m_buffers_storage.emplace_back(std::move(i.second));
+      }
 		}
+    // delete unavailable consumers from queue 
+    std::for_each(unavailable_consumers.begin(), unavailable_consumers.end()),
+      [queue](const Key& key){ queue.erase(key); }
+    );
 	}
 
 	void PrepareSubscribers()
@@ -132,6 +155,7 @@ protected:
 	std::mutex m_consumers_mtx;
 	consumers_type m_add_consumers;
 	consumers_type m_delete_consumers;
+  buffers_storage_type m_buffers_storage;
 
 	consumers_type m_consumers;
 
