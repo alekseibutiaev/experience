@@ -115,7 +115,13 @@ protected:
 		{
 			auto consumerIter = m_consumers.find(i.first);
 			if (consumerIter == m_consumers.end())
+      {
+        i.second.clear();
+        unavailable_consumers.push_back(i.first);
+        std::lock_guard<std::mutex> _(m_consumers_mtx);
+        m_buffers_storage.emplace_back(std::move(i.second));
 				continue;
+      }
 			if (ConsumerPtr c = consumerIter->second.lock())
 			{
 				for (const auto& bi : i.second)
