@@ -3,3 +3,5 @@
 *.suo
 Debug
 *.user
+x64
+Release

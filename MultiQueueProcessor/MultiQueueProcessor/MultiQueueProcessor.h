@@ -23,26 +23,31 @@ namespace exn
 		}
 	};
 
-	const std::size_t MaxCapacity = 1000;
-
-	template<typename Key, typename Value>
+	template<typename Key, typename Value, std::size_t Max = 1000>
 	class MultiQueueProcessor
 	{
 	public:
 
-		using Consumer = IConsumer<Key, Value>;
-		using ConsumerPtr = std::shared_ptr<IConsumer<Key, Value>>;
+		static const std::size_t MaxCapacity = Max;
+		using this_type = MultiQueueProcessor<Key, Value, Max>;
+		using consumer_type = IConsumer<Key, Value>;
+		using consumer_ptr = std::shared_ptr<consumer_type>;
 
 	public:
 
 		MultiQueueProcessor()
 			: m_running{ true }
-			, m_th(std::bind(&MultiQueueProcessor::Process, this))
-		{}
+		{
+		}
 
 		~MultiQueueProcessor()
 		{
 			StopProcessing();
+		}
+
+		void StartProcessing()
+		{
+			m_th = std::thread(std::bind(&MultiQueueProcessor::Process, this));
 		}
 
 		void StopProcessing()
@@ -54,18 +59,18 @@ namespace exn
 			}
 		}
 
-		void Subscribe(const Key& id, ConsumerPtr consumer)
+		void Subscribe(const Key& id, consumer_ptr consumer)
 		{
 			std::lock_guard<std::mutex> _(m_consumers_mtx);
-			m_add_consumers.insert(std::make_pair(id, consumer));
-			m_delete_consumers.erase(id);
+			m_subscribe_consumers.insert(std::make_pair(id, consumer));
+			m_unsubscribe_consumers.erase(id);
 		}
 
 		void Unsubscribe(Key id)
 		{
 			std::lock_guard<std::mutex> _(m_consumers_mtx);
-			m_delete_consumers[id];
-			m_add_consumers.erase(id);
+			m_unsubscribe_consumers[id];
+			m_subscribe_consumers.erase(id);
 		}
 
 		void Enqueue(const Key& id, const Value& value)
@@ -74,13 +79,7 @@ namespace exn
 			auto it = m_queues.find(id);
 			if (it == m_queues.end())
 			{
-				if (m_buffers_storage.empty())
-					it = m_queues.emplace(id, boost::circular_buffer<Value>(MaxCapacity)).first;
-				else
-				{
-					it = m_queues.emplace(id, std::move(m_buffers_storage.front())).first;
-					m_buffers_storage.pop_front();
-				}
+				it = m_queues.emplace(id, GetCircularBuffer()).first;
 			}
 			if (!it->second.full())
 			{
@@ -95,6 +94,7 @@ namespace exn
 		using consumers_type = std::map<Key, std::weak_ptr<IConsumer<Key, Value>>>;
 		using queue_type = std::map<Key, queue_buffer_type>;
 		using buffers_storage_type = std::list<queue_buffer_type>;
+		using keys_type = std::vector<Key>;
 
 	protected:
 
@@ -112,66 +112,87 @@ namespace exn
 					queue.swap(m_queues);
 				}
 				PrepareSubscribers();
-				PrepareQueue(queue);
+				const keys_type unavailable_consumers = std::move(PrepareQueue(queue));
+				DeleteUnavailableConsumer(queue, unavailable_consumers);
 			}
 		}
 
-		void PrepareQueue(queue_type& queue)
+		keys_type PrepareQueue(queue_type& queue)
 		{
-			std::vector<Key> unavailable_consumers;
+			keys_type unavailable_consumers;
 			unavailable_consumers.reserve(queue.size());
 			for (auto& i : queue)
 			{
 				auto consumerIter = m_consumers.find(i.first);
-				if (consumerIter == m_consumers.end())
+				if (consumerIter != m_consumers.end())
 				{
-					if (ConsumerPtr c = consumerIter->second.lock())
+					if (consumer_ptr c = consumerIter->second.lock())
 					{
-						for (const auto& bi : i.second)
-							c->Consume(i.first, bi);
-						i.second.clear();
+						CallConsumer(i, c);
 						continue;
 					}
 				}
 				unavailable_consumers.push_back(i.first);
-				StoreBuffer(i.second);
 			}
-			DeleteUnavailableConsumer(queue, unavailable_consumers);
+			return unavailable_consumers;
 		}
 
-		void StoreBuffer(queue_buffer_type& bufer)
+		void CallConsumer(typename queue_type::value_type& queue_element, consumer_ptr consumer)
+		{
+			for (const auto& data : queue_element.second)
+				consumer->Consume(queue_element.first, data);
+			queue_element.second.clear();
+		}
+
+		void StoreBuffer(queue_buffer_type&& bufer)
 		{
 			bufer.clear();
 			std::lock_guard<std::mutex> _(m_consumers_mtx);
 			m_buffers_storage.emplace_back(std::move(bufer));
 		}
 
-		void DeleteUnavailableConsumer(queue_type& queue, std::vector<Key>& unavailable_consumers)
+		void DeleteUnavailableConsumer(queue_type& queue, const keys_type& unavailable_consumers)
 		{
+			this_type& tmp = *this;
 			std::for_each(unavailable_consumers.begin(), unavailable_consumers.end(),
-				[&queue](const Key& key) { queue.erase(key); }
+				[&tmp, &queue](const Key& key) {
+					tmp.StoreBuffer(std::move(queue[key]));
+					queue.erase(key);
+				}
 			);
 		}
 
 		void PrepareSubscribers()
 		{
-			consumers_type add;
-			consumers_type del;
+			consumers_type subscribe;
+			consumers_type unsubscribe;
 			{
 				std::lock_guard<std::mutex> _(m_consumers_mtx);
-				add.swap(m_add_consumers);
-				del.swap(m_delete_consumers);
+				subscribe.swap(m_subscribe_consumers);
+				unsubscribe.swap(m_unsubscribe_consumers);
 			}
-			m_consumers.insert(add.begin(), add.end());
-			for (const auto& i : del)
+			m_consumers.insert(subscribe.begin(), subscribe.end());
+			for (const auto& i : unsubscribe)
 				m_consumers.erase(i.first);
+		}
+
+		queue_buffer_type GetCircularBuffer()
+		{
+			if (m_buffers_storage.empty())
+				return queue_buffer_type(MaxCapacity);
+			else
+			{
+				queue_buffer_type tmp = std::move(m_buffers_storage.front());
+				m_buffers_storage.pop_front();
+				return tmp;
+			}
 		}
 
 	protected:
 
 		std::mutex m_consumers_mtx;
-		consumers_type m_add_consumers;
-		consumers_type m_delete_consumers;
+		consumers_type m_subscribe_consumers;
+		consumers_type m_unsubscribe_consumers;
 		buffers_storage_type m_buffers_storage;
 
 		consumers_type m_consumers;
