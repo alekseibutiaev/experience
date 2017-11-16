@@ -2,7 +2,7 @@
 #include <boost/align.hpp>
 #include "MultiQueueProcessor.h"
 
-using MultiQueueProcessor_type = MultiQueueProcessor<int, std::string>;
+using MultiQueueProcessor_type = exn::MultiQueueProcessor<int, std::string>;
 
 //class 
 
