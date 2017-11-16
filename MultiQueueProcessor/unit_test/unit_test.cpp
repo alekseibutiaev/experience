@@ -258,9 +258,9 @@ BOOST_AUTO_TEST_CASE(Process)
 	mqp.Subscribe(10, consumer10);
 	mqp.Enqueue(10, std::string());
 	mqp.StopProcessing();
-
+	BOOST_REQUIRE_MESSAGE(mqp.m_queues.empty(), "the m_queues must by empty");
+	BOOST_REQUIRE_EQUAL(mqp.m_consumers.size(), 2);
 }
-
 
 BOOST_AUTO_TEST_SUITE_END()
 
