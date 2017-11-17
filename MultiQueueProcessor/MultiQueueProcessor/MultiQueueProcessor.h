@@ -55,6 +55,7 @@ namespace exn
 			if (m_th.joinable())
 			{
 				m_running = false;
+        m_cv.notice_one();
 				m_th.join();
 			}
 		}
