@@ -22,7 +22,8 @@ void calculate_crc(imei_t imei) {
   for(i = 0; i < imeilenght; ++i)
     sum += table[i%2][imei[i] - '0'];
 
-  imei[i++] = 10 - (sum % 10) + '0';
+  sum %= 10;
+  imei[i++] = ( 0 == sum ? 0 : 10 - sum) + '0';
   imei[i] = 0;
 }
 
