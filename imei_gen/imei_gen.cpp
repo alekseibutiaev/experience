@@ -11,15 +11,18 @@ const std::size_t imeilenght = 14;
 typedef char(&imei_t)[imeilenght + 2];
 
 void calculate_crc(imei_t imei) {
+
   static const int table [2][10] = {
     {0,1,2,3,4,5,6,7,8,9},
     {0,2,4,6,8,1,3,5,7,9}
   };
+
   int sum = 0;
   int i;
   for(i = 0; i < imeilenght; ++i)
-    sum += table[i%2][imei[i]];
-  imei[i++] = sum % 10 + '0';
+    sum += table[i%2][imei[i] - '0'];
+
+  imei[i++] = 10 - (sum % 10) + '0';
   imei[i] = 0;
 }
 
@@ -41,7 +44,7 @@ int main(int ac, char* av[])
 
   if(ac > 2) {
     try {
-      int imsi = std::stoi(av[2], &start_from, 10);
+      unsigned long long imsi = std::stoll(av[2], &start_from, 10);
       start_from = std::min(imeilenght, start_from);
       if(imsi){
         for(std::size_t index = start_from; index > 0;) {
