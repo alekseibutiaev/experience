@@ -25,20 +25,48 @@ template<uint64_t... Values> struct FactorialArray<uint64_t(-1), Values...>
   {}
 };
 
-template<int... S>
-struct luhn
+template<unsigned int... S>
+struct luhn_data
 {
   static const unsigned int data[2][sizeof...(S)];
   static const unsigned int size = sizeof...(S);
 };
 
-template<int... S>
-const unsigned int luhn<S...>::data[2][sizeof...(S)] = {
+template<unsigned int... S>
+const unsigned int luhn_data<S...>::data[2][sizeof...(S)] = {
   {S...},
-  {S * 2 % luhn<S...>::size + S * 2 / luhn<S...>::size ...}
+  {S * 2 % luhn_data<S...>::size + S * 2 / luhn_data<S...>::size ...}
 };
 
-using luhn10 = luhn<0,1,2,3,4,5,6,7,8,9>;
+using luhn_data10 = luhn_data<0,1,2,3,4,5,6,7,8,9>;
+
+
+template<unsigned int I, unsigned int... S>
+struct luhn : luhn<I - 1, I - 1, S...>
+{};
+
+template<unsigned int... S>
+struct luhn<0, S...> : luhn_data<S...>
+{
+
+	using luhn_data<S...>::data;
+	using luhn_data<S...>::size;
+
+	static int get_cb(unsigned long long value)
+	{
+		int sum = 0;
+		int index = 0;
+  	while(value){
+    	sum += data[++index % 2][value % 16];
+    	value /= size;
+  	}
+		return size - sum % size;		
+	}
+
+};
+
+using luhn10 = luhn<10>;
+
 
 int main(int, char**)
 {
@@ -46,11 +74,17 @@ int main(int, char**)
   for (std::size_t i = 0; i < f.size(); i++)
     std::cout << i << "! = " << f[i] << '\n';
 
-  std::cout << data0<10, 5>::value << std::endl;
-  std::cout << data1<10, 6>::value << std::endl;
+  for(int i = 0; i < luhn_data10::size; ++i)
+    std::cout << luhn_data10::data[0][i] << " " << luhn_data10::data[1][i] << std::endl;
+
+	std::cout << std::endl;
 
   for(int i = 0; i < luhn10::size; ++i)
     std::cout << luhn10::data[0][i] << " " << luhn10::data[1][i] << std::endl;
+
+	std::cout << std::endl;
+
+	std::cout << luhn10::get_cb(35948605448562) << std::endl;
 
   return 0;
 }
