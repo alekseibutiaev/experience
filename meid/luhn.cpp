@@ -40,7 +40,6 @@ const unsigned int luhn_data<S...>::data[2][sizeof...(S)] = {
 
 using luhn_data10 = luhn_data<0,1,2,3,4,5,6,7,8,9>;
 
-
 template<unsigned int I, unsigned int... S>
 struct luhn : luhn<I - 1, I - 1, S...>
 {};
@@ -49,23 +48,24 @@ template<unsigned int... S>
 struct luhn<0, S...> : luhn_data<S...>
 {
 
-	using luhn_data<S...>::data;
-	using luhn_data<S...>::size;
+  using luhn_data<S...>::data;
+  using luhn_data<S...>::size;
 
-	static int get_cb(unsigned long long value)
-	{
-		int sum = 0;
-		int index = 0;
-  	while(value){
-    	sum += data[++index % 2][value % 16];
-    	value /= size;
-  	}
-		return size - sum % size;		
-	}
+  static int get_cb(unsigned long long value)
+  {
+    int sum = 0;
+    int index = 0;
+    while(value){
+      sum += data[++index % 2][value % size];
+      value /= size;
+    }
+    return size - sum % size;
+  }
 
 };
 
 using luhn10 = luhn<10>;
+using luhn16 = luhn<16>;
 
 
 int main(int, char**)
@@ -77,14 +77,16 @@ int main(int, char**)
   for(int i = 0; i < luhn_data10::size; ++i)
     std::cout << luhn_data10::data[0][i] << " " << luhn_data10::data[1][i] << std::endl;
 
-	std::cout << std::endl;
+  std::cout << std::endl;
 
   for(int i = 0; i < luhn10::size; ++i)
     std::cout << luhn10::data[0][i] << " " << luhn10::data[1][i] << std::endl;
 
-	std::cout << std::endl;
+  std::cout << std::endl;
+  std::cout << luhn10::get_cb(35948605448562) << std::endl;
 
-	std::cout << luhn10::get_cb(35948605448562) << std::endl;
+  std::cout << std::endl;
+  std::cout << luhn16::get_cb(0xA000001D4FEC64) << std::endl;
 
   return 0;
 }
