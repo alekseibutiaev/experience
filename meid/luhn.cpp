@@ -60,10 +60,10 @@ int main(int, char**)
   std::cout << std::dec << std::endl;
 
   std::cout << std::endl;
-  std::cout << luhn10::get_cb(35948605448562) << std::endl;
+  std::cout << "IMEI 35948605448562/" << luhn10::get_cb(35948605448562) << std::endl;
 
   std::cout << std::endl;
-  std::cout << luhn16::get_cb(0xA000001D4FEC64) << std::endl;
+  std::cout << "MEID A000001D4FEC64/" << luhn16::get_cb(0xA000001D4FEC64) << std::endl;
 
   return 0;
 }
