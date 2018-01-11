@@ -7,46 +7,45 @@ namespace tools {
 
   public:
 
-	  typedef type_t value_t;
-	  typedef std::list<type_t> queue_t;
+    typedef type_t value_t;
+    typedef std::list<type_t> queue_t;
 
   public:
 
-	  void add( const type_t& value ) {
-		  if( !cache_node.empty() ) {
-			  queue.splice( queue.end(), cache_node, cache_node.begin() );
-			  queue.back() = value;
-		  }
-		  else
-			  queue.emplace_back( value );
-	  }
+    void add( const type_t& value ) {
+      if( !cache_node.empty() ) {
+        queue.splice( queue.end(), cache_node, cache_node.begin() );
+        queue.back() = value;
+      }
+      else
+        queue.emplace_back( value );
+    }
 
-	  type_t& front() {
-		  return queue.front();
-	  }
+    type_t& front() {
+      return queue.front();
+    }
 
-	  void store_front() {
-		  cache_node.splice( cache_node.end(), queue, queue.begin() );
-	  }
+    void store_front() {
+      cache_node.splice( cache_node.end(), queue, queue.begin() );
+    }
 
-	  bool empty() const {
-		  return queue.empty();
-	  }
+    bool empty() const {
+      return queue.empty();
+    }
 
-	  queue_t& data() {
-		  return queue;
-	  }
+    queue_t& data() {
+      return queue;
+    }
 
-	  void store_data( queue_t& value ) {
-		  cache_node.splice( cache_node.end(), value );
-	  }
+    void store_data( queue_t& value ) {
+      cache_node.splice( cache_node.end(), value );
+    }
 
   private:
 
-	  queue_t queue;
-	  queue_t cache_node;
+    queue_t queue;
+    queue_t cache_node;
 
   };
 
 } /* namespace tools */
-
