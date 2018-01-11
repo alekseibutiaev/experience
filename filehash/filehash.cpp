@@ -1,8 +1,15 @@
+#ifdef WIN
+#define _SCL_SECURE_NO_WARNINGS
+#endif
+
+#include <stdio.h>
+
 #include <map>
 #include <mutex>
 #include <string>
 #include <vector>
 #include <fstream>
+#include <iomanip>
 #include <iterator>
 #include <algorithm>
 #include <stdexcept>
@@ -11,6 +18,8 @@
 
 #include "logger.hpp"
 #include "thread_pool.hpp"
+
+#include "sha1/sha1.h"
 
 namespace {
 
@@ -55,20 +64,20 @@ namespace {
         throw std::runtime_error(std::to_string(__LINE__) + " can`t open file: " + filename);
       unsigned int readfrom = block_size * index;
       stream.seekg(readfrom, std::ifstream::beg);
-      m_data_size = stream.readsome(m_buff.data(), block_size);
-      logout("read: ", m_data_size, " from file: ", filename, " from position: ", readfrom, tools::logger::endl);
+      stream.read(m_buff.data(), block_size);
     }
 
     void operator()() const {
-      sha1buff_t result;
-      get_hash(m_buff, m_data_size, result);
+      sha1buff_t result = {0};
+      get_hash(m_buff, m_buff.size(), result);
       m_notifier(m_index, result);
     }
 
   private:
 
-    static void get_hash(const buffer_t& data, const unsigned int size,
-      sha1buff_t& result) {
+    static void get_hash(const buffer_t& data, const std::streamsize size,
+        sha1buff_t& result) {
+      SHA1(result, data.data(), static_cast<int>(size));
     }
 
   private:
@@ -76,7 +85,6 @@ namespace {
     unsigned int m_index;
     notifier_t m_notifier;
     buffer_t m_buff;
-    unsigned int m_data_size;
 
   };
 
@@ -118,7 +126,8 @@ namespace {
   private:
 
     void store_to_file(const sha1buff_t& value) {
-      std::copy(std::begin(value), std::end(value), std::ostream_iterator<unsigned int>(m_out,""));
+      for (const auto& v : value)
+        m_out << std::setw(2) << std::setfill('0') << static_cast<unsigned int>(v);
       m_out << std::endl;
     }
 
@@ -165,7 +174,7 @@ namespace {
     file.seekg(0, std::ifstream::end);
     const std::ifstream::streampos size = file.tellg();
     file.seekg(0, std::ifstream::beg);
-    return size / block_size + (0 != size % block_size);
+    return static_cast<unsigned int>(size / block_size + (0 != size % block_size));
   }
 
   struct waiter {
@@ -194,7 +203,6 @@ int main(int ac, char* av[]) {
     if(!blocks)
       throw std::runtime_error("file: " + input + " is empty.");
 
-
     logout("blocks count: ", blocks, tools::logger::endl);
 
     waiter w;
@@ -219,8 +227,7 @@ int main(int ac, char* av[]) {
     tp.stop();
 
     logout("finished", tools::logger::endl);
-    return -1;
-
+    return 0;
   }
   catch(const std::exception& e) {
     logout( e.what(), tools::logger::endl);
