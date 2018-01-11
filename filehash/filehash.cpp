@@ -2,8 +2,6 @@
 #define _SCL_SECURE_NO_WARNINGS
 #endif
 
-#include <stdio.h>
-
 #include <map>
 #include <mutex>
 #include <string>
@@ -106,11 +104,9 @@ namespace {
     }
 
     void store(unsigned int index, const sha1buff_t& value) {
-      logout("Store: ", index, tools::logger::endl);
       std::lock_guard<std::mutex> _(m_mtx);
       std::copy(std::begin(value), std::end(value), std::begin(m_order[index]));
       while(m_order.end() != m_order.find(m_last_store)) {
-        logout("write pos: ", m_last_store, tools::logger::endl);
         store_to_file(m_order[m_last_store]);
         m_order.erase(m_last_store);
         ++m_last_store;
@@ -167,7 +163,6 @@ namespace {
 
   unsigned int get_block_count(const std::string& filename,
       const unsigned int block_size) {
-    logout(filename, tools::logger::endl);
     std::ifstream file(filename, std::ifstream::binary);
     if(!file)
        throw std::runtime_error(std::to_string(__LINE__) + " can`t open file: " + filename);
@@ -215,7 +210,6 @@ int main(int ac, char* av[]) {
     tp.start();
     for(unsigned int index = 0; index < blocks; ++index)
       tp.execute([&input, block_size, index, &hs](){
-        logout("prepare block: ", index, tools::logger::endl);
         part_hasher ph(input, block_size, index,
           std::bind(&hash_store::store, std::ref(hs), std::placeholders::_1,
             std::placeholders::_2));
