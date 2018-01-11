@@ -21,8 +21,6 @@
 
 namespace {
 
-/* b363e60ba48a594aa46a2081b81ea91f8d062656  ./kpx979.pdf */
-
   const unsigned int default_block_size = 1024 * 1024 * 1;
 
   using sha1buff_t = unsigned char[20];
