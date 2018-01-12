@@ -13,8 +13,8 @@ namespace tools {
   public:
 
     void add( const type_t& value ) {
-      if( !cache_node.empty() ) {
-        queue.splice( queue.end(), cache_node, cache_node.begin() );
+      if(!cache_node.empty()) {
+        queue.splice(queue.end(), cache_node, cache_node.begin());
         queue.back() = value;
       }
       else
@@ -26,7 +26,7 @@ namespace tools {
     }
 
     void store_front() {
-      cache_node.splice( cache_node.end(), queue, queue.begin() );
+      cache_node.splice(cache_node.end(), queue, queue.begin());
     }
 
     bool empty() const {
@@ -37,7 +37,7 @@ namespace tools {
       return queue;
     }
 
-    void store_data( queue_t& value ) {
+    void store_data(queue_t& value) {
       cache_node.splice( cache_node.end(), value );
     }
 

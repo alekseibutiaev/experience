@@ -68,11 +68,6 @@ namespace tools {
 
   private:
 
-    struct string_wrapper {
-      explicit string_wrapper(const std::string& _value) : value(_value){}
-      const std::string& value;
-    };
-
     typedef cache_queue<std::string> storage_t;
 
   private:

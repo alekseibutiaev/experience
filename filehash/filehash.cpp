@@ -41,6 +41,23 @@ namespace {
     }
   };
 
+  using hash_notifier_t = std::function<void(unsigned int, const sha1buff_t&)>;
+  using buffer_t = std::vector<char>;
+
+  void get_hash(const std::string& filename, unsigned int block_size,
+          unsigned int index, hash_notifier_t notifier) {
+    std::ifstream stream(filename, std::ifstream::binary);
+    if(!stream)
+      throw std::runtime_error(std::to_string(__LINE__) + " can`t open file: " + filename);
+    buffer_t buff(block_size, 0);
+    stream.seekg(block_size * index, std::ifstream::beg);
+    stream.read(buff.data(), block_size);
+    sha1buff_t result = {0};
+    SHA1(result, buff.data(), buff.size());
+    notifier(index, result);
+  }
+
+#if 0
   class part_hasher {
 
   public:
@@ -65,15 +82,8 @@ namespace {
 
     void operator()() const {
       sha1buff_t result = {0};
-      get_hash(m_buff, m_buff.size(), result);
+      SHA1(result, m_buff.data(), m_buff.size());
       m_notifier(m_index, result);
-    }
-
-  private:
-
-    static void get_hash(const buffer_t& data, const std::streamsize size,
-        sha1buff_t& result) {
-      SHA1(result, data.data(), static_cast<int>(size));
     }
 
   private:
@@ -83,6 +93,7 @@ namespace {
     buffer_t m_buff;
 
   };
+#endif
 
   class hash_store {
 
@@ -170,7 +181,19 @@ namespace {
     return static_cast<unsigned int>(size / block_size + (0 != size % block_size));
   }
 
-  struct waiter {
+  class waiter {
+  public:
+    void notify() {
+      std::lock_guard<std::mutex> _(m_mtx);
+      m_flag = true;
+      m_cv.notify_one();
+    }
+    void wait() {
+      std::unique_lock<std::mutex> _(m_mtx);
+      while(!m_flag)
+        m_cv.wait(_);
+    }
+  private:
     bool m_flag = false;
     std::mutex m_mtx;
     std::condition_variable m_cv;
@@ -199,23 +222,15 @@ int main(int ac, char* av[]) {
     logout("blocks count: ", blocks, tools::logger::endl);
 
     waiter w;
-    hash_store hs(output, blocks, [&w](){
-      std::lock_guard<std::mutex> _(w.m_mtx);
-      w.m_flag = true;
-      w.m_cv.notify_one();
-    });
+    hash_store hs(output, blocks, [&w](){w.notify();});
     thread_pool tp;
     tp.start();
-    for(unsigned int index = 0; index < blocks; ++index)
-      tp.execute([&input, block_size, index, &hs](){
-        part_hasher ph(input, block_size, index,
-          std::bind(&hash_store::store, std::ref(hs), std::placeholders::_1,
-            std::placeholders::_2));
-        ph();
-      });
-    std::unique_lock<std::mutex> _(w.m_mtx);
-    while(!w.m_flag)
-      w.m_cv.wait(_);
+    for(unsigned int index = 0; index < blocks; ++index) {
+      hash_notifier_t notify = std::bind(&hash_store::store, std::ref(hs),
+        std::placeholders::_1, std::placeholders::_2);
+      tp.execute(std::bind(&get_hash, input, block_size, index, notify));
+    }
+    w.wait();
     tp.stop();
 
     logout("finished", tools::logger::endl);
