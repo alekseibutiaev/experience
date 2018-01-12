@@ -39,13 +39,14 @@ namespace {
     virtual void prepare_exception(const std::string& value) override {
       logout(value);
     }
+
   };
 
   using hash_notifier_t = std::function<void(unsigned int, const sha1buff_t&)>;
   using buffer_t = std::vector<char>;
 
   void get_hash(const std::string& filename, unsigned int block_size,
-          unsigned int index, hash_notifier_t notifier) {
+          unsigned int index, const hash_notifier_t& notifier) {
     std::ifstream stream(filename, std::ifstream::binary);
     if(!stream)
       throw std::runtime_error(std::to_string(__LINE__) + " can`t open file: " + filename);
@@ -56,44 +57,6 @@ namespace {
     SHA1(result, buff.data(), buff.size());
     notifier(index, result);
   }
-
-#if 0
-  class part_hasher {
-
-  public:
-
-    using notifier_t = std::function<void(unsigned int, const sha1buff_t&)>;
-    using buffer_t = std::vector<char>;
-
-  public:
-
-    part_hasher(const std::string& filename, unsigned int block_size,
-          unsigned int index, notifier_t notifier)
-        : m_index(index)
-        , m_buff(block_size, 0)
-        , m_notifier(notifier) {
-      std::ifstream stream(filename, std::ifstream::binary);
-      if(!stream)
-        throw std::runtime_error(std::to_string(__LINE__) + " can`t open file: " + filename);
-      unsigned int readfrom = block_size * index;
-      stream.seekg(readfrom, std::ifstream::beg);
-      stream.read(m_buff.data(), block_size);
-    }
-
-    void operator()() const {
-      sha1buff_t result = {0};
-      SHA1(result, m_buff.data(), m_buff.size());
-      m_notifier(m_index, result);
-    }
-
-  private:
-
-    unsigned int m_index;
-    notifier_t m_notifier;
-    buffer_t m_buff;
-
-  };
-#endif
 
   class hash_store {
 
@@ -150,24 +113,25 @@ namespace {
   void get_param(int ac, char* av[], std::string& input, std::string& output,
       unsigned int& block_size) {
 
-    static const std::runtime_error invalid_param(
+    const std::runtime_error invalid_param(
       std::string("ussage: ") + av[0] + " <input file> <output file> <block size>"
         "\n  block size by default = " + std::to_string(default_block_size)
     );
 
-    if(ac < 3)
-      throw invalid_param;
-    input = av[1];
-    output = av[2];
-    block_size = default_block_size;
-    if(ac >= 4) {
+    if(ac > 2) {
+      input = av[1];
+      output = av[2];
+      block_size = default_block_size;
+      if(ac < 3)
+        return;
       try {
         block_size = std::stol(av[3]);
+        return;
       }
       catch(const std::exception&){
-        throw invalid_param;
       }
     }
+    throw invalid_param;
   }
 
   unsigned int get_block_count(const std::string& filename,
@@ -225,11 +189,10 @@ int main(int ac, char* av[]) {
     hash_store hs(output, blocks, [&w](){w.notify();});
     thread_pool tp;
     tp.start();
-    for(unsigned int index = 0; index < blocks; ++index) {
-      hash_notifier_t notify = std::bind(&hash_store::store, std::ref(hs),
-        std::placeholders::_1, std::placeholders::_2);
-      tp.execute(std::bind(&get_hash, input, block_size, index, notify));
-    }
+    const hash_notifier_t notify = std::bind(&hash_store::store, std::ref(hs),
+      std::placeholders::_1, std::placeholders::_2);
+    for(unsigned int index = 0; index < blocks; ++index)
+      tp.execute(std::bind(&get_hash, input, block_size, index, std::ref(notify)));
     w.wait();
     tp.stop();
 
@@ -240,7 +203,7 @@ int main(int ac, char* av[]) {
     logout( e.what(), tools::logger::endl);
   }
   catch(...) {
-    logout( "unknown error.", tools::logger::endl);
+    logout("unknown error.", tools::logger::endl);
   }
   return -1;
 }
