@@ -14,8 +14,8 @@ namespace tools {
 
   public:
 
-    void add(const type_t& value) {
-      if(!m_cache_node.empty()) {
+    void add(const type_t& value){
+      if(!m_cache_node.empty()){
         m_queue.splice(m_queue.end(), m_cache_node, m_cache_node.begin());
         m_queue.back() = value;
       }
@@ -23,23 +23,23 @@ namespace tools {
         m_queue.push_back(value);
     }
 
-    type_t& front() {
+    type_t& front(){
       return m_queue.front();
     }
 
-    void store_front() {
+    void store_front(){
       m_cache_node.splice(m_cache_node.end(), m_queue, m_queue.begin());
     }
 
-    bool empty() const {
+    bool empty() const{
       return m_queue.empty();
     }
 
-    queue_t& data() {
+    queue_t& data(){
       return m_queue;
     }
 
-    void store_data(queue_t& value) {
+    void store_data(queue_t& value){
       m_cache_node.splice(m_cache_node.end(), value);
     }
 

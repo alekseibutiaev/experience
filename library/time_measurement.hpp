@@ -11,14 +11,15 @@ namespace tools {
 
   public:
 
-    time_measurement() : m_start(std::chrono::high_resolution_clock::now()){
+    time_measurement()
+        : m_start(std::chrono::high_resolution_clock::now()){
     }
 
-    ~time_measurement() {
+    ~time_measurement(){
       const std::chrono::duration<double> time_span =
         std::chrono::duration_cast<std::chrono::duration<double>>(
           std::chrono::high_resolution_clock::now() - m_start);
-      logout("Duration is: ", time_span.count(), tools::logger::endl);
+      logout("Duration is: ", time_span.count(), endline);
     }
 
   private:
