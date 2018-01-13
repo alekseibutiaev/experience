@@ -12,13 +12,13 @@ namespace tools {
 
   public:
 
-    void add( const type_t& value ) {
+    void add(const type_t& value) {
       if(!cache_node.empty()) {
         queue.splice(queue.end(), cache_node, cache_node.begin());
         queue.back() = value;
       }
       else
-        queue.emplace_back( value );
+        queue.push_back(value);
     }
 
     type_t& front() {
@@ -38,7 +38,7 @@ namespace tools {
     }
 
     void store_data(queue_t& value) {
-      cache_node.splice( cache_node.end(), value );
+      cache_node.splice(cache_node.end(), value);
     }
 
   private:

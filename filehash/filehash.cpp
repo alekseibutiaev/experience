@@ -16,6 +16,7 @@
 
 #include "logger.hpp"
 #include "thread_pool.hpp"
+#include "time_measurement.hpp"
 
 #include "sha1/sha1.h"
 
@@ -45,16 +46,66 @@ namespace {
   using hash_notifier_t = std::function<void(unsigned int, const sha1buff_t&)>;
   using buffer_t = std::vector<char>;
 
-  void get_hash(const std::string& filename, unsigned int block_size,
+  template<typename object_t>
+  class object_cash {
+
+  public:
+
+    using object_ptr = std::shared_ptr<object_t>;
+
+  public:
+
+    object_cash(const object_t& value) 
+      : m_patern(value)
+    {
+    }
+    
+    object_ptr pop_object() {
+      if(m_cash.empty())
+        m_cash.add(std::make_shared<object_t>(m_patern));
+      object_ptr obj = m_cash.front();
+      m_cash.store_front();
+      return obj;
+    }
+
+    void push_object(object_ptr& value){
+      m_cash.add(value);
+    }
+
+    const object_t& get_patern() const{
+      return m_patern;
+    }
+
+  private:
+
+    const object_t m_patern;
+    tools::cache_queue<object_ptr> m_cash; 
+
+  };
+
+  using buffer_chash_t = object_cash<buffer_t>; 
+
+  template class object_cash<buffer_t>;
+
+  void get_hash(const std::string& filename, buffer_chash_t chash,
           unsigned int index, const hash_notifier_t& notifier) {
+    static std::mutex mtx;
     std::ifstream stream(filename, std::ifstream::binary);
     if(!stream)
       throw std::runtime_error(std::to_string(__LINE__) + " can`t open file: " + filename);
-    buffer_t buff(block_size, 0);
-    stream.seekg(block_size * index, std::ifstream::beg);
-    stream.read(buff.data(), block_size);
+    buffer_chash_t::object_ptr buff;
+    {
+      std::lock_guard<std::mutex> _(mtx);
+      buff = chash.pop_object();
+    }
+    stream.seekg(buff->size() * index, std::ifstream::beg);
+    stream.read(buff->data(), buff->size());
     sha1buff_t result = {0};
-    SHA1(result, buff.data(), buff.size());
+    SHA1(result, buff->data(), buff->size());
+    {
+      std::lock_guard<std::mutex> _(mtx);
+      chash.push_object(buff);
+    }
     notifier(index, result);
   }
 
@@ -113,16 +164,13 @@ namespace {
   void get_param(int ac, char* av[], std::string& input, std::string& output,
       unsigned int& block_size) {
 
-    const std::runtime_error invalid_param(
-      std::string("ussage: ") + av[0] + " <input file> <output file> <block size>"
-        "\n  block size by default = " + std::to_string(default_block_size)
-    );
 
-    if(ac > 2) {
+    if(ac >= 3) {
+      logout( __LINE__, " ", __FUNCTION__, tools::logger::endl);
       input = av[1];
       output = av[2];
       block_size = default_block_size;
-      if(ac < 3)
+      if(ac < 4)
         return;
       try {
         block_size = std::stol(av[3]);
@@ -131,7 +179,10 @@ namespace {
       catch(const std::exception&){
       }
     }
-    throw invalid_param;
+
+    throw std::runtime_error(std::string("ussage: ") + av[0] + " <input file> <output file> <block size>"
+        "\n  block size by default = " + std::to_string(default_block_size));
+
   }
 
   unsigned int get_block_count(const std::string& filename,
@@ -170,6 +221,8 @@ int main(int ac, char* av[]) {
 
   try {
 
+    tools::time_measurement tm;
+
     std::string input;
     std::string output;
     unsigned int block_size;
@@ -187,17 +240,19 @@ int main(int ac, char* av[]) {
 
     waiter w;
     hash_store hs(output, blocks, [&w](){w.notify();});
+    buffer_chash_t chash(buffer_t(block_size, 0));
     thread_pool tp;
     tp.start();
     const hash_notifier_t notify = std::bind(&hash_store::store, std::ref(hs),
       std::placeholders::_1, std::placeholders::_2);
     for(unsigned int index = 0; index < blocks; ++index)
-      tp.execute(std::bind(&get_hash, input, block_size, index, std::ref(notify)));
+      tp.execute(std::bind(&get_hash, input, chash, index, std::ref(notify)));
     w.wait();
     tp.stop();
 
     logout("finished", tools::logger::endl);
     return 0;
+
   }
   catch(const std::exception& e) {
     logout( e.what(), tools::logger::endl);
@@ -205,6 +260,8 @@ int main(int ac, char* av[]) {
   catch(...) {
     logout("unknown error.", tools::logger::endl);
   }
+
   return -1;
+
 }
 
