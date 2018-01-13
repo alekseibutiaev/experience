@@ -19,7 +19,7 @@ namespace tools {
       const std::chrono::duration<double> time_span =
         std::chrono::duration_cast<std::chrono::duration<double>>(
           std::chrono::high_resolution_clock::now() - m_start);
-      logout("Duration is: ", time_span.count(), endline);
+      logout("Duration is: ", time_span.count(), " second", endline);
     }
 
   private:
