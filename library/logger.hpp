@@ -17,7 +17,7 @@ namespace tools {
 
   public:
 
-   logger() try : _stop(false), th( [&](){ out_tread(); } ) {
+   logger() try : m_stop(false), m_th([&](){out_tread();}) {
    }
    catch(const std::exception& e) {
      std::cerr << "error: " << e.what() << std::endl;
@@ -35,20 +35,20 @@ namespace tools {
    }
 
    void stop() {
-     if(th.joinable()) {
+     if(m_th.joinable()) {
        {
-         std::unique_lock<std::mutex> _(mtx);
-         _stop = true;
-         cv.notify_one();
+         std::unique_lock<std::mutex> _(m_mtx);
+         m_stop = true;
+         m_cv.notify_one();
        }
-       th.join();
+       m_th.join();
      }
    }
 
    static void out(std::stringstream& stream) {
     if(!mylog)
-      mylog.reset( new logger() );
-      mylog->out_int( stream.str() );
+      mylog.reset(new logger());
+      mylog->out_int(stream.str());
     }
 
    template <typename type1_t, typename... types_t >
@@ -75,24 +75,24 @@ namespace tools {
   private:
 
     void out_int( const std::string& value ) {
-      std::unique_lock<std::mutex> _(mtx);
-      queue.add(value);
-      cv.notify_one();
+      std::unique_lock<std::mutex> _(m_mtx);
+      m_queue.add(value);
+      m_cv.notify_one();
     }
 
     void out_tread() {
       try {
         storage_t::queue_t local;
-        while ( !_stop || !queue.empty() ) {
+        while ( !m_stop || !m_queue.empty() ) {
            {
-             std::unique_lock<std::mutex> _(mtx);
-             while (!_stop && queue.empty())
-               cv.wait(_);
-             local.swap(queue.data());
+             std::unique_lock<std::mutex> _(m_mtx);
+             while (!m_stop && m_queue.empty())
+               m_cv.wait(_);
+             local.swap(m_queue.data());
            }
            std::copy(local.begin(), local.end(), std::ostream_iterator<std::string>(std::cout));
-           std::unique_lock<std::mutex> _(mtx);
-           queue.store_data( local );
+           std::unique_lock<std::mutex> _(m_mtx);
+           m_queue.store_data(local);
         }
      }
      catch (const std::exception& e) {
@@ -102,13 +102,13 @@ namespace tools {
 
   private:
 
-    bool _stop;
-    storage_t queue;
-    std::mutex mtx;
-    std::condition_variable cv;
-    std::thread th;
+    bool m_stop;
+    storage_t m_queue;
+    std::mutex m_mtx;
+    std::condition_variable m_cv;
+    std::thread m_th;
 
-  public:
+  private:
 
     static std::unique_ptr<logger> mylog;
 
