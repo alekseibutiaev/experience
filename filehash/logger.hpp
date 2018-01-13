@@ -108,7 +108,7 @@ namespace tools {
     std::condition_variable cv;
     std::thread th;
 
-  public:
+  private:
 
     static std::unique_ptr<logger> mylog;
 

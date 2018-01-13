@@ -2,6 +2,8 @@
 #define _SCL_SECURE_NO_WARNINGS
 #endif
 
+#include <cstring> //memset
+
 #include <map>
 #include <mutex>
 #include <string>
@@ -88,7 +90,7 @@ namespace {
   template class object_cash<buffer_t>;
 
   void get_hash(const std::string& filename, buffer_chash_t& chash,
-          unsigned int index, const hash_notifier_t& notifier) {
+          unsigned int index, const hash_notifier_t& notifier, unsigned long tail) {
     static std::mutex mtx;
     std::ifstream stream(filename, std::ifstream::binary);
     if(!stream)
@@ -98,8 +100,10 @@ namespace {
       std::lock_guard<std::mutex> _(mtx);
       buff = chash.pop_object();
     }
+    if(tail)
+      std::memset(buff->data() + tail, 0, buff->size() - tail);
     stream.seekg(buff->size() * index, std::ifstream::beg);
-    stream.read(buff->data(), buff->size());
+    stream.read(buff->data(), 0 == tail ? buff->size() : tail);
     sha1buff_t result = {0};
     SHA1(result, buff->data(), buff->size());
     {
@@ -164,9 +168,7 @@ namespace {
   void get_param(int ac, char* av[], std::string& input, std::string& output,
       unsigned int& block_size) {
 
-
     if(ac >= 3) {
-      logout( __LINE__, " ", __FUNCTION__, tools::logger::endl);
       input = av[1];
       output = av[2];
       block_size = default_block_size;
@@ -185,15 +187,16 @@ namespace {
 
   }
 
-  unsigned int get_block_count(const std::string& filename,
-      const unsigned int block_size) {
+  unsigned long get_block_count(const std::string& filename,
+      const unsigned int block_size, unsigned long& tail) {
     std::ifstream file(filename, std::ifstream::binary);
     if(!file)
        throw std::runtime_error(std::to_string(__LINE__) + " can`t open file: " + filename);
     file.seekg(0, std::ifstream::end);
     const std::ifstream::streampos size = file.tellg();
     file.seekg(0, std::ifstream::beg);
-    return static_cast<unsigned int>(size / block_size + (0 != size % block_size));
+    tail = size % block_size;
+    return static_cast<unsigned long>(size / block_size);
   }
 
   class waiter {
@@ -232,11 +235,12 @@ int main(int ac, char* av[]) {
     logout("output file: ", output, tools::logger::endl);
     logout("block size: ", block_size, tools::logger::endl);
 
-    unsigned int blocks = get_block_count(input, block_size);
+    unsigned long tail;
+    unsigned int blocks = get_block_count(input, block_size, tail);
     if(!blocks)
       throw std::runtime_error("file: " + input + " is empty.");
 
-    logout("blocks count: ", blocks, tools::logger::endl);
+    logout("blocks count: ", blocks, " tail: ", tail, tools::logger::endl);
 
     waiter w;
     hash_store hs(output, blocks, [&w](){w.notify();});
@@ -246,7 +250,9 @@ int main(int ac, char* av[]) {
     const hash_notifier_t notify = std::bind(&hash_store::store, std::ref(hs),
       std::placeholders::_1, std::placeholders::_2);
     for(unsigned int index = 0; index < blocks; ++index)
-      tp.execute(std::bind(&get_hash, input, std::ref(chash), index, std::ref(notify)));
+      tp.execute(std::bind(&get_hash, input, std::ref(chash), index, std::ref(notify), 0));
+    if(tail)
+      tp.execute(std::bind(&get_hash, input, std::ref(chash), blocks, std::ref(notify), tail));
     w.wait();
     tp.stop();
 
@@ -261,7 +267,6 @@ int main(int ac, char* av[]) {
     logout("unknown error.", tools::logger::endl);
   }
 
-	tools::logger::mylog.reset();
 	return -1;
 
 }

@@ -1,52 +1,36 @@
-#ifndef SHA1_H
-#define SHA1_H
 
 /*
-   SHA-1 in C
-   By Steve Reid <steve@edmweb.com>
-   100% Public Domain
+ * SHA1 routine optimized to do word accesses rather than byte accesses,
+ * and to avoid unnecessary copies into the context array.
+ *
+ * This was initially based on the Mozilla SHA1 implementation, although
+ * none of the original Mozilla code remains.
  */
 
-#include "stdint.h"
+#pragma once
 
-#ifdef __cplusplus
+#if defined(__cplusplus)
 extern "C" {
 #endif
 
-typedef struct
-{
-    uint32_t state[5];
-    uint32_t count[2];
-    unsigned char buffer[64];
-} SHA1_CTX;
+typedef struct {
+	unsigned long long size;
+	unsigned int H[5];
+	unsigned int W[16];
+} blk_SHA_CTX;
 
-void SHA1Transform(
-    uint32_t state[5],
-    const unsigned char buffer[64]
-    );
+void blk_SHA1_Init(blk_SHA_CTX *ctx);
+void blk_SHA1_Update(blk_SHA_CTX *ctx, const void *data, unsigned long len);
+void blk_SHA1_Final(unsigned char hashout[20], blk_SHA_CTX *ctx);
 
-void SHA1Init(
-    SHA1_CTX * context
-    );
+void SHA1(unsigned char hashout[20], const void* data, unsigned long len);
 
-void SHA1Update(
-    SHA1_CTX * context,
-    const unsigned char *data,
-    uint32_t len
-    );
+#define platform_SHA_CTX	blk_SHA_CTX
+#define platform_SHA1_Init	blk_SHA1_Init
+#define platform_SHA1_Update	blk_SHA1_Update
+#define platform_SHA1_Final	blk_SHA1_Final
 
-void SHA1Final(
-    unsigned char digest[20],
-    SHA1_CTX * context
-    );
-
-void SHA1(
-    unsigned char* hash_out,
-    const char *str,
-		unsigned int len);
-
-#ifdef __cplusplus
+#if defined(__cplusplus)
 }
 #endif
 
-#endif /* SHA1_H */
