@@ -1,4 +1,4 @@
-#ifdef WIN
+#if !(defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__)))
 #define _SCL_SECURE_NO_WARNINGS
 #endif
 
@@ -105,7 +105,7 @@ namespace {
     stream.seekg(buff->size() * index, std::ifstream::beg);
     stream.read(buff->data(), 0 == tail ? buff->size() : tail);
     sha1buff_t result = {0};
-    SHA1(result, buff->data(), buff->size());
+    SHA1(result, buff->data(), static_cast<unsigned long>(buff->size()));
     {
       std::lock_guard<std::mutex> _(mtx);
       chash.push_object(buff);
@@ -270,4 +270,3 @@ int main(int ac, char* av[]) {
 	return -1;
 
 }
-

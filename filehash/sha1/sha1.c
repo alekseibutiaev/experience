@@ -8,11 +8,14 @@
 
 /* this is only to get definitions for memcpy(), ntohl() and htonl() */
 #include <string.h>
-#include <arpa/inet.h>
+
+#include <stdint.h>
 
 #include "sha1.h"
 
 #if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
+
+#include <arpa/inet.h>
 
 /*
  * Force usage of rol or ror by selecting the one with the smaller constant.
@@ -26,6 +29,8 @@
 #define SHA_ROR(x,n)	SHA_ASM("ror", x, n)
 
 #else
+
+#include <Winsock2.h>
 
 #define SHA_ROT(X,l,r)	(((X) << (l)) | ((X) >> (r)))
 #define SHA_ROL(X,n)	SHA_ROT(X,n,32-(n))
