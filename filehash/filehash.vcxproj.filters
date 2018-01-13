@@ -26,6 +26,9 @@
     <ClInclude Include="sha1\sha1.h">
       <Filter>sha1</Filter>
     </ClInclude>
+    <ClInclude Include="time_measurement.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="filehash.cpp">

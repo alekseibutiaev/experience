@@ -23,6 +23,7 @@
     <ClInclude Include="logger.hpp" />
     <ClInclude Include="sha1\sha1.h" />
     <ClInclude Include="thread_pool.hpp" />
+    <ClInclude Include="time_measurement.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="filehash.cpp" />

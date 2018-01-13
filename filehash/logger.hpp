@@ -1,3 +1,5 @@
+#pragma once
+
 #include <list>
 #include <mutex>
 #include <thread>
@@ -106,7 +108,7 @@ namespace tools {
     std::condition_variable cv;
     std::thread th;
 
-  private:
+  public:
 
     static std::unique_ptr<logger> mylog;
 

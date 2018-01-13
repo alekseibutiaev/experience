@@ -61,18 +61,18 @@ namespace {
     }
     
     object_ptr pop_object() {
-      if(m_cash.empty())
-        m_cash.add(std::make_shared<object_t>(m_patern));
+			if(m_cash.empty())
+				m_cash.add(std::make_shared<object_t>(m_patern));
       object_ptr obj = m_cash.front();
       m_cash.store_front();
       return obj;
     }
 
-    void push_object(object_ptr& value){
+    void push_object(object_ptr& value) {
       m_cash.add(value);
     }
 
-    const object_t& get_patern() const{
+    const object_t& get_patern() const {
       return m_patern;
     }
 
@@ -87,7 +87,7 @@ namespace {
 
   template class object_cash<buffer_t>;
 
-  void get_hash(const std::string& filename, buffer_chash_t chash,
+  void get_hash(const std::string& filename, buffer_chash_t& chash,
           unsigned int index, const hash_notifier_t& notifier) {
     static std::mutex mtx;
     std::ifstream stream(filename, std::ifstream::binary);
@@ -246,7 +246,7 @@ int main(int ac, char* av[]) {
     const hash_notifier_t notify = std::bind(&hash_store::store, std::ref(hs),
       std::placeholders::_1, std::placeholders::_2);
     for(unsigned int index = 0; index < blocks; ++index)
-      tp.execute(std::bind(&get_hash, input, chash, index, std::ref(notify)));
+      tp.execute(std::bind(&get_hash, input, std::ref(chash), index, std::ref(notify)));
     w.wait();
     tp.stop();
 
@@ -261,7 +261,8 @@ int main(int ac, char* av[]) {
     logout("unknown error.", tools::logger::endl);
   }
 
-  return -1;
+	tools::logger::mylog.reset();
+	return -1;
 
 }
 

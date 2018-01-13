@@ -1,4 +1,4 @@
-#pragna once
+#pragma once
 
 #include <chrono>
 
