@@ -41,9 +41,15 @@ namespace tools {
 
     void start_only_existing_task(){
       try {
-        _stop = true;
-        for (unsigned int i = 0; i < N; ++i)
-          threads[ i ] = std::move(std::thread([&](){thread_routine();}));
+        m_stop = true;
+        for (unsigned int i = 0; i < N; ++i){
+          waiter w;
+          m_threads[i] = std::move(std::thread([&](){
+            w.notify();
+            thread_routine();
+          }));
+          w.wait();
+        }
         join();
         return;
       }
@@ -59,20 +65,20 @@ namespace tools {
 
 
     void stop() {
-      if (!_stop) {
+      if (!m_stop) {
         {
-          std::unique_lock<std::mutex> _(mtx);
-          _stop = true;
-          cv.notify_all();
+          std::unique_lock<std::mutex> _(m_mtx);
+          m_stop = true;
+          m_cv.notify_all();
         }
      }
    }
 
   void execute(function_t value) {
-    std::unique_lock<std::mutex> _(mtx);
-    if (!_stop) {
-      queue.add( value );
-      cv.notify_one();
+    std::unique_lock<std::mutex> _(m_mtx);
+    if (!m_stop) {
+      m_queue.add(value);
+      m_cv.notify_one();
     }
   }
 
@@ -84,20 +90,43 @@ namespace tools {
 
     typedef cache_queue<function_t> storage_t;
 
+    class waiter {
+    public:
+      waiter(const bool flag = true) : m_flag(true) {
+      }
+      void notify(){
+        std::lock_guard<std::mutex> _(m_mtx);
+        m_flag = false;
+        m_cv.notify_one();
+      }
+      void wait(const bool external_conditional = true){
+        std::unique_lock<std::mutex> _(m_mtx);
+        while (m_flag && external_conditional)
+          m_cv.wait(_);
+      }
+      const bool flag() const{
+        return m_flag;
+      }
+    private:
+      bool m_flag;
+      std::mutex m_mtx;
+      std::condition_variable m_cv;
+    };
+
   private:
 
     void thread_routine() {
       try {
         storage_t::value_t f;
-        while(!queue.empty() || !_stop) {
+        while(!m_queue.empty() || !m_stop) {
           {
-            std::unique_lock<std::mutex> _(mtx);
-            while(!_stop && queue.empty())
-              cv.wait(_);
-            if(queue.empty())
+            std::unique_lock<std::mutex> _(m_mtx);
+            while(!m_stop && m_queue.empty())
+              m_cv.wait(_);
+            if(m_queue.empty())
               continue;
-            f.swap(queue.front());
-            queue.store_front();
+            f.swap(m_queue.front());
+            m_queue.store_front();
          }
          if( f )
            execute_internal(f);
@@ -122,8 +151,8 @@ namespace tools {
 
   void join() {
     for(unsigned int i = 0; i < N; ++i)
-      if(threads[i].joinable())
-        threads[i].join();
+      if(m_threads[i].joinable())
+        m_threads[i].join();
   }
 
   static void pool_exception() {
@@ -133,11 +162,11 @@ namespace tools {
 
   private:
 
-   bool _stop = true;
-   storage_t queue;
-   std::mutex mtx;
-   std::condition_variable cv;
-   std::thread threads[ N ];
+   bool m_stop = false;
+   storage_t m_queue;
+   std::mutex m_mtx;
+   std::condition_variable m_cv;
+   std::thread m_threads[ N ];
 
   };
 

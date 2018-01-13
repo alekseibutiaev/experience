@@ -15,38 +15,38 @@ namespace tools {
   public:
 
     void add(const type_t& value) {
-      if(!cache_node.empty()) {
-        queue.splice(queue.end(), cache_node, cache_node.begin());
-        queue.back() = value;
+      if(!m_cache_node.empty()) {
+        m_queue.splice(m_queue.end(), m_cache_node, m_cache_node.begin());
+        m_queue.back() = value;
       }
       else
-        queue.push_back(value);
+        m_queue.push_back(value);
     }
 
     type_t& front() {
-      return queue.front();
+      return m_queue.front();
     }
 
     void store_front() {
-      cache_node.splice(cache_node.end(), queue, queue.begin());
+      m_cache_node.splice(m_cache_node.end(), m_queue, m_queue.begin());
     }
 
     bool empty() const {
-      return queue.empty();
+      return m_queue.empty();
     }
 
     queue_t& data() {
-      return queue;
+      return m_queue;
     }
 
     void store_data(queue_t& value) {
-      cache_node.splice(cache_node.end(), value);
+      m_cache_node.splice(m_cache_node.end(), value);
     }
 
   private:
 
-    queue_t queue;
-    queue_t cache_node;
+    queue_t m_queue;
+    queue_t m_cache_node;
 
   };
 

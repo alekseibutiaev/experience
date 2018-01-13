@@ -28,4 +28,3 @@ namespace tools {
   };
 
 } /* namespace tools */
-
