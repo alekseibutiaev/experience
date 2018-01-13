@@ -34,6 +34,7 @@ namespace {
 
     using parent = tools::thread_pool<16>;
     using parent::start;
+    using parent::start_only_existing_task;
     using parent::stop;
     using parent::execute;
 
@@ -117,14 +118,8 @@ namespace {
 
   public:
 
-    using notifier_t = std::function<void()>;
-
-  public:
-
-    hash_store(const std::string& file_name, unsigned int parts, notifier_t done)
-        : m_parts(parts)
-        , m_done(done)
-        , m_out(file_name) {
+    hash_store(const std::string& file_name)
+        : m_out(file_name) {
       if(!m_out)
         throw std::runtime_error(std::to_string(__LINE__) + " can`t open file: " + file_name);
       m_out << std::hex;
@@ -137,8 +132,6 @@ namespace {
         store_to_file(m_order[m_last_store]);
         m_order.erase(m_last_store);
         ++m_last_store;
-        if(m_parts <= m_last_store)
-          m_done();
       }
     }
 
@@ -156,8 +149,6 @@ namespace {
 
   private:
 
-    const unsigned int m_parts;
-    notifier_t m_done;
     std::ofstream m_out;
     unsigned int m_last_store = 0;
     hash_order_t m_order;
@@ -199,24 +190,6 @@ namespace {
     return static_cast<unsigned long>(size / block_size);
   }
 
-  class waiter {
-  public:
-    void notify() {
-      std::lock_guard<std::mutex> _(m_mtx);
-      m_flag = true;
-      m_cv.notify_one();
-    }
-    void wait() {
-      std::unique_lock<std::mutex> _(m_mtx);
-      while(!m_flag)
-        m_cv.wait(_);
-    }
-  private:
-    bool m_flag = false;
-    std::mutex m_mtx;
-    std::condition_variable m_cv;
-  };
-
 } /* namespace */
 
 
@@ -242,19 +215,16 @@ int main(int ac, char* av[]) {
 
     logout("blocks count: ", blocks, " tail: ", tail, tools::logger::endl);
 
-    waiter w;
-    hash_store hs(output, blocks, [&w](){w.notify();});
+    hash_store hs(output);
     buffer_chash_t chash(buffer_t(block_size, 0));
     thread_pool tp;
-    tp.start();
     const hash_notifier_t notify = std::bind(&hash_store::store, std::ref(hs),
       std::placeholders::_1, std::placeholders::_2);
     for(unsigned int index = 0; index < blocks; ++index)
       tp.execute(std::bind(&get_hash, input, std::ref(chash), index, std::ref(notify), 0));
     if(tail)
       tp.execute(std::bind(&get_hash, input, std::ref(chash), blocks, std::ref(notify), tail));
-    w.wait();
-    tp.stop();
+    tp.start_only_existing_task();
 
     logout("finished", tools::logger::endl);
     return 0;

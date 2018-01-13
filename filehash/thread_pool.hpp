@@ -39,6 +39,25 @@ namespace tools {
       pool_exception();
     }
 
+    void start_only_existing_task(){
+      try {
+        _stop = true;
+        for (unsigned int i = 0; i < N; ++i)
+          threads[ i ] = std::move(std::thread([&](){thread_routine();}));
+        join();
+        return;
+      }
+      catch (const std::exception& e) {
+        prepare_exception(__FUNCTION__ + std::string(" error: ") + e.what());
+      }
+      catch (...) {
+        prepare_exception(__FUNCTION__ + std::string(" unknown error."));
+      }
+      stop();
+      pool_exception();
+    }
+
+
     void stop() {
       if (!_stop) {
         {
@@ -46,9 +65,6 @@ namespace tools {
           _stop = true;
           cv.notify_all();
         }
-        for (unsigned int i = 0; i < N; ++i)
-          if( threads[i].joinable() )
-            threads[i].join();
      }
    }
 
@@ -71,10 +87,9 @@ namespace tools {
   private:
 
     void thread_routine() {
-      int count = 0;
       try {
         storage_t::value_t f;
-        while( !_stop || !queue.empty() ) {
+        while(!queue.empty() || !_stop) {
           {
             std::unique_lock<std::mutex> _(mtx);
             while(!_stop && queue.empty())
@@ -84,7 +99,6 @@ namespace tools {
             f.swap(queue.front());
             queue.store_front();
          }
-         ++count;
          if( f )
            execute_internal(f);
         }
@@ -104,6 +118,12 @@ namespace tools {
     catch (...) {
       prepare_exception(__FUNCTION__ + std::string(" unknown error."));
     }
+  }
+
+  void join() {
+    for(unsigned int i = 0; i < N; ++i)
+      if(threads[i].joinable())
+        threads[i].join();
   }
 
   static void pool_exception() {
