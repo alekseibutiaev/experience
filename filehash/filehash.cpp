@@ -133,7 +133,6 @@ namespace {
 
     static thread_local block_hash_array_t m_thred_hash;
     block_hash_array_t m_hash;
-    unsigned int m_last_store = 0;
     std::mutex m_mtx;
 
   };

@@ -22,9 +22,9 @@ namespace tools {
 
     void start(){
       try {
-        _stop = false;
+        m_stop = false;
         for(unsigned int i = 0; i < N; ++i)
-          threads[ i ] = std::move(std::thread([&](){thread_routine();}));
+          m_threads[ i ] = std::move(std::thread([&](){thread_routine();}));
         return;
       }
       catch(const std::exception& e){
