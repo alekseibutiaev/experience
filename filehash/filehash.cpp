@@ -71,7 +71,7 @@ namespace {
     const thred_finished m_finishad;
   };
 
-  void get_hash(const std::string& filename, unsigned int index, const hash_notifier_t& notifier,
+  void get_hash(const std::string& filename, std::size_t index, const hash_notifier_t& notifier,
           std::size_t size){
       static thread_local buffer_t buffer;
       static thread_local std::ifstream istream;
