@@ -3,6 +3,7 @@
 #endif
 
 #include <map>
+#include <tuple>
 #include <mutex>
 #include <string>
 #include <vector>
@@ -22,11 +23,27 @@
 
 namespace {
 
-  const unsigned int default_block_size = 1024 * 1024 * 1;
+  struct sha1buff {
+    unsigned char data[20];
+    sha1buff& operator=(const sha1buff& value){
+      if (this != &value)
+        std::copy(std::begin(value.data), std::end(value.data), std::begin(data));
+      return *this;
+    }
+  };
 
-  using sha1buff_t = unsigned char[20];
+  using buffer_t = std::vector<char>;
+  using parametrs_t = std::tuple<std::string, std::string, std::size_t>;
+  using parts_t = std::pair<std::size_t, std::size_t>;
+  using block_hash_t = std::pair<std::size_t, sha1buff>;
+  using hash_notifier_t = std::function<void(const block_hash_t&)>;
+  using block_hash_array_t = std::vector<block_hash_t>;
 
   class thread_pool : tools::thread_pool<16> {
+
+  public:
+
+    using thred_finished = std::function<void(const std::thread::id&)>;
 
   public:
 
@@ -35,150 +52,116 @@ namespace {
     using parent::stop;
     using parent::execute;
 
+    thread_pool(const thred_finished& value)
+        : m_finishad(value) {
+    }
+
   private:
 
-    void prepare_exception(const std::string& value) override {
+    void prepare_exception(const std::string& value) override{
       logout(value);
     }
 
-  };
-
-  using hash_notifier_t = std::function<void(unsigned int, const sha1buff_t&)>;
-  using buffer_t = std::vector<char>;
-
-  template<typename object_t>
-  class object_cash {
-
-  public:
-
-    using object_ptr = std::shared_ptr<object_t>;
-
-  public:
-
-    object_cash(const object_t& value)
-        : m_patern(value){
-    }
-
-    object_ptr pop_object(){
-      if(m_cash.empty())
-        m_cash.add(std::make_shared<object_t>(m_patern));
-      object_ptr obj = m_cash.front();
-      m_cash.store_front();
-      return obj;
-    }
-
-    void push_object(object_ptr& value){
-      m_cash.add(value);
-    }
-
-    const object_t& get_patern()const {
-      return m_patern;
+    void thread_finished(const std::thread::id& value){
+      if (m_finishad)
+        m_finishad(value);
     }
 
   private:
-
-    const object_t m_patern;
-    tools::cache_queue<object_ptr> m_cash; 
-
+    const thred_finished m_finishad;
   };
 
-  using buffer_chash_t = object_cash<buffer_t>; 
-
-  template class object_cash<buffer_t>;
-
-  void get_hash(const std::string& filename, buffer_chash_t& chash, unsigned int index,
-        const hash_notifier_t& notifier, unsigned long size){
-      static std::mutex mtx;
-      std::ifstream stream(filename, std::ifstream::binary);
-      if(!stream)
-        throw std::runtime_error(std::to_string(__LINE__)+ " can`t open file: " + filename);
-      buffer_chash_t::object_ptr buff;
-      {
-        std::lock_guard<std::mutex> _(mtx);
-        buff = chash.pop_object();
+  void get_hash(const std::string& filename, unsigned int index, const hash_notifier_t& notifier,
+          std::size_t size){
+      static thread_local buffer_t buffer;
+      static thread_local std::ifstream istream;
+      if(!istream.is_open()){
+        istream.open(filename, std::ifstream::binary);
+        if (!istream)
+          throw std::runtime_error(std::to_string(__LINE__) + " can`t open file: " + filename);
       }
-      stream.seekg(buff->size()* index, std::ifstream::beg);
-      stream.read(buff->data(), size);
-      sha1buff_t result = {0};
-      SHA1(result, buff->data(), size);
-      {
-        std::lock_guard<std::mutex> _(mtx);
-        chash.push_object(buff);
-      }
-      notifier(index, result);
+      block_hash_t result;
+      result.first = index;
+      if (buffer.size() < size)
+        buffer = buffer_t(size, 0);
+      istream.seekg(buffer.size() * index, std::ifstream::beg);
+      istream.read(buffer.data(), size);
+      SHA1(result.second.data, buffer.data(), size);
+      notifier(result);
    }
 
   class hash_store {
 
   public:
 
-    hash_store(const std::string& file_name)
-        : m_out(file_name){
-      if(!m_out)
-        throw std::runtime_error(std::to_string(__LINE__)+ " can`t open file: " + file_name);
-      m_out << std::hex;
+    void store(const block_hash_t& value){
+      m_thred_hash.push_back(value);
     }
 
-    void store(unsigned int index, const sha1buff_t& value){
+    void finished(const std::thread::id&){
       std::lock_guard<std::mutex> _(m_mtx);
-      std::copy(std::begin(value), std::end(value), std::begin(m_order[index]));
-      while(m_order.end()!= m_order.find(m_last_store)){
-        store_to_file(m_order[m_last_store]);
-        m_order.erase(m_last_store);
-        ++m_last_store;
+      if (m_hash.empty()) {
+        m_hash.swap(m_thred_hash);
+        return;
+      }
+      block_hash_array_t tmp(m_thred_hash.size() + m_hash.size());
+      std::merge(m_thred_hash.begin(), m_thred_hash.end(), m_hash.begin(),
+        m_hash.end(), tmp.begin(), [](const block_hash_t& lvalue, const block_hash_t& rvalue){
+          return lvalue.first < rvalue.first;
+      });
+      m_hash.swap(tmp);
+    }
+
+    void store_to_file(const std::string& filename){
+      std::ofstream out(filename);
+      if (!out)
+        throw std::runtime_error(std::to_string(__LINE__) + " can`t open file: " + filename);
+      out << std::hex;
+      union {
+        sha1buff data;
+        unsigned char array[sizeof(sha1buff)];
+      } convert;
+      for(const auto& i : m_hash){
+        convert.data = i.second;
+        for(const auto& v : convert.array)
+          out << std::setw(2) << std::setfill('0') << static_cast<unsigned int>(v);
+        out << std::endl;
       }
     }
 
   private:
 
-    using hash_order_t = std::map<unsigned int, sha1buff_t>;
-
-  private:
-
-    void store_to_file(const sha1buff_t& value){
-      for(const auto& v : value)
-        m_out << std::setw(2)<< std::setfill('0')<< static_cast<unsigned int>(v);
-      m_out << std::endl;
-    }
-
-  private:
-
-    std::ofstream m_out;
+    static thread_local block_hash_array_t m_thred_hash;
+    block_hash_array_t m_hash;
     unsigned int m_last_store = 0;
-    hash_order_t m_order;
     std::mutex m_mtx;
 
   };
 
-  void get_param(int ac, char* av[], std::string& input, std::string& output,
-      unsigned int& block_size){
-    if(ac >= 3){
-      input = av[1];
-      output = av[2];
-      block_size = default_block_size;
-      if(ac < 4)
-        return;
-      try {
-        block_size = std::stol(av[3]);
-        return;
+  thread_local block_hash_array_t hash_store::m_thred_hash;
+
+  parametrs_t get_param(int ac, char* av[]){
+    const unsigned int default_block_size = 1024 * 1024 * 1;
+    const int min_parametrs = 3;
+    if(ac >= min_parametrs)
+      try{
+        return std::make_tuple(std::string(av[1]), std::string(av[2]),
+          (ac > min_parametrs ? static_cast<std::size_t>(std::stoll(av[3])) : default_block_size));
       }
-      catch(const std::exception&){
+      catch (const std::exception&) {
       }
-    }
-    throw std::runtime_error(std::string("ussage: ")+ av[0] + " <input file> <output file> <block size>"
-        "\n  block size by default = " + std::to_string(default_block_size));
+    throw std::runtime_error(std::string("ussage: ") + av[0] + " <input file> <output file> <block size>"
+      "\n  block size by default = " + std::to_string(default_block_size));
   }
 
-  unsigned long get_block_count(const std::string& filename,
-      const unsigned int block_size, unsigned long& tail){
+  parts_t get_parts_tail(const std::string& filename, const std::size_t block_size){
     std::ifstream file(filename, std::ifstream::binary);
     if(!file)
-       throw std::runtime_error(std::to_string(__LINE__)+ " can`t open file: " + filename);
+       throw std::runtime_error(std::to_string(__LINE__) + " can`t open file: " + filename);
     file.seekg(0, std::ifstream::end);
     const std::ifstream::streampos size = file.tellg();
     file.seekg(0, std::ifstream::beg);
-    tail = size % block_size;
-    return static_cast<unsigned long>(size / block_size);
+    return parts_t(static_cast<std::size_t>(size / block_size), static_cast<std::size_t>(size % block_size));
   }
 
 } /* namespace */
@@ -191,30 +174,29 @@ int main(int ac, char* av[]){
 
     std::string input;
     std::string output;
-    unsigned int block_size;
-    get_param(ac, av, input, output, block_size);
+    std::size_t block_size;
+    std::tie(input, output, block_size) = get_param(ac, av);
 
     logout("input file: ", input, endline);
     logout("output file: ", output, endline);
     logout("block size: ", block_size, endline);
 
-    unsigned long tail;
-    unsigned int blocks = get_block_count(input, block_size, tail);
-    if(0 == blocks && 0 == tail)
+    const parts_t parts = get_parts_tail(input, block_size);
+    if(parts == parts_t())
       throw std::runtime_error("file: " + input + " is empty.");
 
-    logout("blocks count: ", blocks, " tail: ", tail, endline);
+    logout("blocks count: ", parts.first, " tail: ", parts.second, endline);
 
-    hash_store hs(output);
-    buffer_chash_t chash(buffer_t(block_size, 0));
-    thread_pool tp;
+    hash_store hs;
+    thread_pool tp(std::bind(&hash_store::finished, std::ref(hs), std::placeholders::_1));
     const hash_notifier_t notify = std::bind(&hash_store::store, std::ref(hs),
-      std::placeholders::_1, std::placeholders::_2);
-    for(unsigned int index = 0; index < blocks; ++index)
-      tp.execute(std::bind(&get_hash, input, std::ref(chash), index, std::ref(notify), block_size));
-    if(tail)
-      tp.execute(std::bind(&get_hash, input, std::ref(chash), blocks, std::ref(notify), tail));
+        std::placeholders::_1);
+    for(unsigned int index = 0; index < parts.first; ++index)
+      tp.execute(std::bind(&get_hash, input, index, std::ref(notify), block_size));
+    if(parts.second)
+      tp.execute(std::bind(&get_hash, input, parts.first, std::ref(notify), parts.second));
     tp.start_only_existing_task();
+    hs.store_to_file(output);
 
     logout("finished", endline);
     return 0;

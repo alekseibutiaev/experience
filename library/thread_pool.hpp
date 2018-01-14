@@ -12,7 +12,7 @@ namespace tools {
 
   public:
 
-    typedef std::function<void()> function_t;
+    using function_t = std::function<void()>;
 
   public:
 
@@ -28,10 +28,10 @@ namespace tools {
         return;
       }
       catch(const std::exception& e){
-        prepare_exception(__FUNCTION__ + std::string(" error: ")+ e.what());
+        prepare_exception(__FUNCTION__ + error + e.what());
       }
       catch(...){
-        prepare_exception(__FUNCTION__ + std::string(" unknown error."));
+        prepare_exception(__FUNCTION__ + unknown_error);
       }
       stop();
       pool_exception();
@@ -52,7 +52,7 @@ namespace tools {
         return;
       }
       catch(const std::exception& e){
-        prepare_exception(__FUNCTION__ + std::string(" error: ")+ e.what());
+        prepare_exception(__FUNCTION__ + error + e.what());
       }
       catch(...){
         prepare_exception(__FUNCTION__ + std::string(" unknown error."));
@@ -74,15 +74,28 @@ namespace tools {
    }
 
     void execute(function_t value){
-    std::unique_lock<std::mutex> _(m_mtx);
+      std::unique_lock<std::mutex> _(m_mtx);
       if(!m_stop){
         m_queue.add(value);
         m_cv.notify_one();
       }
     }
 
-    virtual void prepare_exception(const std::string& value){
+    virtual void prepare_exception(const std::string&){
     }
+
+    virtual void thread_started(const std::thread::id&) {
+    }
+
+    virtual void thread_finished(const std::thread::id&) {
+    }
+
+    virtual void thread_finished(const std::thread::id&, const std::exception&) {
+    }
+
+  public:
+
+    static const unsigned int  thread_count = N;
 
   private:
 
@@ -118,25 +131,32 @@ namespace tools {
 
   private:
 
-    void thread_routine(){
+    void thread_routine() {
       try {
+        thread_started(std::this_thread::get_id());
         storage_t::value_t f;
-        while(!m_queue.empty()|| !m_stop){
+        while (!m_queue.empty() || !m_stop) {
           {
             std::unique_lock<std::mutex> _(m_mtx);
-            while(!m_stop && m_queue.empty())
+            while (!m_stop && m_queue.empty())
               m_cv.wait(_);
-            if(m_queue.empty())
+            if (m_queue.empty())
               continue;
             f.swap(m_queue.front());
             m_queue.store_front();
-         }
-         if(f)
-           execute_internal(f);
+          }
+          if (f)
+            execute_internal(f);
         }
+        thread_finished(std::this_thread::get_id());
       }
-      catch(const std::exception& e){
-        prepare_exception(__FUNCTION__ + std::string(" error: ")+ e.what());
+      catch (const std::exception& e) {
+        prepare_exception(__FUNCTION__ + error + e.what());
+        thread_finished(std::this_thread::get_id(), e);
+      }
+      catch (...) {
+        prepare_exception(__FUNCTION__ + unknown_error);
+        thread_finished(std::this_thread::get_id(), std::runtime_error(unknown_error));
       }
     }
 
@@ -145,10 +165,10 @@ namespace tools {
         value();
       }
       catch(const std::exception& e){
-        prepare_exception(__FUNCTION__ + std::string(" error: ")+ e.what());
+        prepare_exception(__FUNCTION__ + error + e.what());
       }
       catch(...){
-        prepare_exception(__FUNCTION__ + std::string(" unknown error."));
+        prepare_exception(__FUNCTION__ + unknown_error);
       }
     }
 
@@ -171,6 +191,15 @@ namespace tools {
     std::condition_variable m_cv;
     std::thread m_threads[ N ];
 
+  private:
+    static const std::string error;
+    static const std::string unknown_error;
   };
+
+  template< unsigned int N >
+  const std::string thread_pool<N>::error = " error: ";
+
+  template< unsigned int N >
+  const std::string thread_pool<N>::unknown_error = " unknown error.";
 
 }; /* namespace tools */
