@@ -55,7 +55,7 @@ namespace tools {
         prepare_exception(__FUNCTION__ + error + e.what());
       }
       catch(...){
-        prepare_exception(__FUNCTION__ + std::string(" unknown error."));
+        prepare_exception(__FUNCTION__ + unknown_error);
       }
       stop();
       pool_exception();
@@ -192,8 +192,10 @@ namespace tools {
     std::thread m_threads[ N ];
 
   private:
+
     static const std::string error;
     static const std::string unknown_error;
+
   };
 
   template< unsigned int N >
