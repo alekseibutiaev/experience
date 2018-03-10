@@ -8,6 +8,9 @@ using std::unique_ptr;
 #include <openssl/pem.h>
 #include <openssl/bio.h>
 #include <openssl/x509.h>
+//#if defined(_WIN32) || defined(_WIN64)
+#include <openssl/openssl.link>
+//#endif
 
 #include <cassert>
 #define ASSERT assert
