@@ -23,7 +23,7 @@ void blk_SHA1_Init(blk_SHA_CTX *ctx);
 void blk_SHA1_Update(blk_SHA_CTX *ctx, const void *data, unsigned long len);
 void blk_SHA1_Final(unsigned char hashout[20], blk_SHA_CTX *ctx);
 
-void SHA1(unsigned char hashout[20], const void* data, unsigned long len);
+void SHA1(unsigned char hashout[20], const void* data, size_t len);
 
 #define platform_SHA_CTX blk_SHA_CTX
 #define platform_SHA1_Init blk_SHA1_Init
