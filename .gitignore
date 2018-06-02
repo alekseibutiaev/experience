@@ -1,6 +1,7 @@
-Debug
-Release
+Debug*
+Release*
 x64
+*.user
 *.opendb
 *.db
 *.suo
