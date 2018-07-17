@@ -1,4 +1,4 @@
-#if !(defined(__GNUC__)&&(defined(__i386__)|| defined(__x86_64__)))
+#if !( defined(__GNUC__) && ( defined( __i386__ ) || defined (__x86_64__ ) ) )
 #define _SCL_SECURE_NO_WARNINGS
 #endif
 
@@ -48,7 +48,6 @@ namespace {
   public:
 
     using parent = tools::thread_pool<16>;
-    using parent::start_only_existing_task;
     using parent::stop;
     using parent::execute;
 
@@ -56,19 +55,38 @@ namespace {
         : m_finishad(value) {
     }
 
+	void start() override {
+	  m_started = 0;
+	  std::unique_lock<std::mutex> _(m_mtx);
+	  parent::start();
+	  while(m_started < parent::thread_count)
+		  m_cv.wait(_);
+	}
+
   private:
 
-    void prepare_exception(const std::string& value) override{
+    void prepare_exception(const std::string& value) override {
       logout(value);
     }
 
-    void thread_finished(const std::thread::id& value){
+	void thread_started(const std::thread::id&) {
+		std::lock_guard<std::mutex> _(m_mtx);
+		++m_started;
+		m_cv.notify_one();
+	}
+
+	void thread_finished(const std::thread::id& value) override {
       if (m_finishad)
         m_finishad(value);
     }
 
   private:
-    const thred_finished m_finishad;
+
+	const thred_finished m_finishad;
+	unsigned int m_started;
+	std::mutex m_mtx;
+	std::condition_variable m_cv;
+
   };
 
   void get_hash(const std::string& filename, std::size_t index, const hash_notifier_t& notifier,
@@ -194,7 +212,7 @@ int main(int ac, char* av[]){
       tp.execute(std::bind(&get_hash, input, index, std::ref(notify), block_size));
     if(parts.second)
       tp.execute(std::bind(&get_hash, input, parts.first, std::ref(notify), parts.second));
-    tp.start_only_existing_task();
+    tp.start();
     hs.store_to_file(output);
 
     logout("finished", endline);

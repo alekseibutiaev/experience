@@ -16,11 +16,11 @@ namespace tools {
 
   public:
 
-    virtual ~thread_pool(){
+    virtual ~thread_pool() {
       stop();
     }
 
-    void start(){
+    virtual void start() {
       try {
         m_stop = false;
         for(unsigned int i = 0; i < N; ++i)
@@ -36,31 +36,6 @@ namespace tools {
       stop();
       pool_exception();
     }
-
-    void start_only_existing_task(){
-      try {
-        m_stop = true;
-        for(unsigned int i = 0; i < N; ++i){
-          waiter w;
-          m_threads[i] = std::move(std::thread([&](){
-            w.notify();
-            thread_routine();
-          }));
-          w.wait();
-        }
-        join();
-        return;
-      }
-      catch(const std::exception& e){
-        prepare_exception(__FUNCTION__ + error + e.what());
-      }
-      catch(...){
-        prepare_exception(__FUNCTION__ + unknown_error);
-      }
-      stop();
-      pool_exception();
-    }
-
 
     void stop(){
       if(!m_stop){
@@ -100,34 +75,6 @@ namespace tools {
   private:
 
     typedef cache_queue<function_t> storage_t;
-
-    class waiter {
-
-    public:
-
-      void notify(){
-        std::lock_guard<std::mutex> _(m_mtx);
-        m_flag = false;
-        m_cv.notify_one();
-      }
-
-      void wait(){
-        std::unique_lock<std::mutex> _(m_mtx);
-        while(m_flag)
-          m_cv.wait(_);
-      }
-
-      const bool flag()const{
-        return m_flag;
-      }
-
-    private:
-
-      bool m_flag = true;
-      std::mutex m_mtx;
-      std::condition_variable m_cv;
-
-    };
 
   private:
 
