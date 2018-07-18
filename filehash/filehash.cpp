@@ -53,39 +53,42 @@ namespace {
 
     thread_pool(const thred_finished& value)
         : m_finishad(value) {
+      m_thread_started = [&](const std::thread::id& value){ thread_started(value); };
+      m_thread_finished = std::bind(&thread_pool::thread_finished, this, std::placeholders::_1);
+      m_exception_notice = std::bind(&thread_pool::prepare_exception, this, std::placeholders::_1);
     }
 
-	void start() override {
-	  m_started = 0;
-	  std::unique_lock<std::mutex> _(m_mtx);
-	  parent::start();
-	  while(m_started < parent::thread_count)
-		  m_cv.wait(_);
-	}
+    void start() {
+      m_started = 0;
+      std::unique_lock<std::mutex> _(m_mtx);
+      parent::start();
+      while(m_started < parent::thread_count)
+      m_cv.wait(_);
+    }
 
   private:
 
-    void prepare_exception(const std::string& value) override {
+    void prepare_exception(const std::string& value) {
       logout(value);
     }
 
-	void thread_started(const std::thread::id&) {
-		std::lock_guard<std::mutex> _(m_mtx);
-		++m_started;
-		m_cv.notify_one();
-	}
+    void thread_started(const std::thread::id&) {
+      std::lock_guard<std::mutex> _(m_mtx);
+      ++m_started;
+      m_cv.notify_one();
+    }
 
-	void thread_finished(const std::thread::id& value) override {
+    void thread_finished(const std::thread::id& value) {
       if (m_finishad)
         m_finishad(value);
     }
 
   private:
 
-	const thred_finished m_finishad;
-	unsigned int m_started;
-	std::mutex m_mtx;
-	std::condition_variable m_cv;
+    const thred_finished m_finishad;
+    unsigned int m_started;
+    std::mutex m_mtx;
+    std::condition_variable m_cv;
 
   };
 
@@ -112,11 +115,11 @@ namespace {
 
   public:
 
-    void store(const block_hash_t& value){
+    void store(const block_hash_t& value) {
       m_thred_hash.push_back(value);
     }
 
-    void finished(const std::thread::id&){
+    void finished(const std::thread::id&) {
       std::lock_guard<std::mutex> _(m_mtx);
       if (m_hash.empty()) {
         m_hash.swap(m_thred_hash);
@@ -130,18 +133,13 @@ namespace {
       m_hash.swap(tmp);
     }
 
-    void store_to_file(const std::string& filename){
+    void store_to_file(const std::string& filename) {
       std::ofstream out(filename);
       if (!out)
         throw std::runtime_error(std::to_string(__LINE__) + " can`t open file: " + filename);
       out << std::hex;
-      union {
-        sha1buff data;
-        unsigned char array[sizeof(sha1buff)];
-      } convert;
       for(const auto& i : m_hash){
-        convert.data = i.second;
-        for(const auto& v : convert.array)
+        for(const auto& v : i.second.data)
           out << std::setw(2) << std::setfill('0') << static_cast<unsigned int>(v);
         out << std::endl;
       }
