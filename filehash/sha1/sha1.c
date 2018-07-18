@@ -274,6 +274,6 @@ void SHA1(unsigned char hashout[20], const void* data, size_t len)
 {
   blk_SHA_CTX ctx;
   blk_SHA1_Init(&ctx);
-  blk_SHA1_Update(&ctx, data, len);
+  blk_SHA1_Update(&ctx, data, (unsigned long)len);
   blk_SHA1_Final(hashout, &ctx);
 }

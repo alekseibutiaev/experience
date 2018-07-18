@@ -24,12 +24,15 @@
 namespace {
 
   struct sha1buff {
+
     unsigned char data[20];
+
     sha1buff& operator=(const sha1buff& value){
       if (this != &value)
         std::copy(std::begin(value.data), std::end(value.data), std::begin(data));
       return *this;
     }
+
   };
 
   using buffer_t = std::vector<char>;
@@ -51,10 +54,12 @@ namespace {
     using parent::stop;
     using parent::execute;
 
-    thread_pool(const thred_finished& value)
-        : m_finishad(value) {
+    thread_pool(const thred_finished& value) {
       m_thread_started = [&](const std::thread::id& value){ thread_started(value); };
-      m_thread_finished = std::bind(&thread_pool::thread_finished, this, std::placeholders::_1);
+      m_thread_finished = [value](const std::thread::id& id) {
+        if (value)
+          value(id);
+      };
       m_exception_notice = std::bind(&thread_pool::prepare_exception, this, std::placeholders::_1);
     }
 
@@ -62,8 +67,9 @@ namespace {
       m_started = 0;
       std::unique_lock<std::mutex> _(m_mtx);
       parent::start();
-      while(m_started < parent::thread_count)
-      m_cv.wait(_);
+      while (m_started < parent::thread_count)
+        m_cv.wait(_);
+      stop();
     }
 
   private:
@@ -78,14 +84,8 @@ namespace {
       m_cv.notify_one();
     }
 
-    void thread_finished(const std::thread::id& value) {
-      if (m_finishad)
-        m_finishad(value);
-    }
-
   private:
 
-    const thred_finished m_finishad;
     unsigned int m_started;
     std::mutex m_mtx;
     std::condition_variable m_cv;
@@ -165,7 +165,7 @@ namespace {
       }
       catch (const std::exception&) {
       }
-    throw std::runtime_error(std::string("ussage: ") + av[0] + " <input file> <output file> <block size>"
+    throw std::runtime_error(std::string("usage: ") + av[0] + " <input file> <output file> <block size>"
       "\n  block size by default = " + std::to_string(default_block_size));
   }
 
