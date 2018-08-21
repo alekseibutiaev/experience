@@ -148,7 +148,6 @@ namespace tools {
         m_thread_exception_notice(id, exc);
     }
 
-
   private:
 
     bool m_stop = false;
