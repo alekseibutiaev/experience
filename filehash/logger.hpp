@@ -18,15 +18,15 @@ namespace tools {
 
   logger()
       : m_stop(false)
-      , m_th([&](){out_tread();}){
+      , m_th([&]() {out_tread();}) {
   }
 
-  ~logger(){
+  ~logger() {
     stop();
   }
 
-   void stop(){
-    if(m_th.joinable()){
+   void stop() {
+    if(m_th.joinable()) {
       {
         std::unique_lock<std::mutex> _(m_mtx);
         m_stop = true;
@@ -37,7 +37,7 @@ namespace tools {
   }
 
     template <typename type1_t, typename... types_t >
-      static void out(const type1_t& value, const types_t&... values){
+      static void out(const type1_t& value, const types_t&... values) {
       std::stringstream stream;
       stream << value;
       out(stream, values...);
@@ -53,16 +53,16 @@ namespace tools {
 
   private:
 
-    void out_int(const std::string& value){
+    void out_int(const std::string& value) {
       std::unique_lock<std::mutex> _(m_mtx);
       m_queue.add(value);
       m_cv.notify_one();
     }
 
-    void out_tread(){
+    void out_tread() {
       try {
         storage_t::queue_t local;
-        while(!m_stop || !m_queue.empty()){
+        while(!m_stop || !m_queue.empty()) {
           {
             std::unique_lock<std::mutex> _(m_mtx);
             while(!m_stop && m_queue.empty())
@@ -74,19 +74,19 @@ namespace tools {
           m_queue.store_data(local);
         }
       }
-      catch(const std::exception& e){
+      catch(const std::exception& e) {
         std::cerr << e.what()<< std::endl;
       }
   }
 
-  static void out(std::stringstream& stream){
+  static void out(std::stringstream& stream) {
     if(!mylog)
       mylog.reset(new logger());
       mylog->out_int(stream.str());
   }
 
   template <typename type1_t, typename... types_t >
-  static void out(std::stringstream& stream, const type1_t& value, const types_t&... values){
+  static void out(std::stringstream& stream, const type1_t& value, const types_t&... values) {
     stream << value;
     out(stream, values...);
   }
@@ -113,6 +113,6 @@ namespace tools {
 const char endline = tools::logger::endl;
 
 template <typename type1_t, typename... types_t >
-void logout(const type1_t& value, const types_t&... values){
+void logout(const type1_t& value, const types_t&... values) {
   tools::logger::out(value, values...);
 }
