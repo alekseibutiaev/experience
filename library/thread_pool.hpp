@@ -13,57 +13,35 @@ namespace tools {
   public:
 
     using function_t = std::function<void()>;
+    using exception_notice_t = std::function<void(const std::string&)>;
+    using thread_notice_t = std::function<void(const std::thread::id&)>;
+    using thread_exception_notice_t = std::function<void(const std::thread::id&, const std::exception&)>;
 
   public:
 
-    virtual ~thread_pool(){
+    virtual ~thread_pool() {
       stop();
     }
 
-    void start(){
+    void start() {
       try {
         m_stop = false;
         for(unsigned int i = 0; i < N; ++i)
           m_threads[ i ] = std::move(std::thread([&](){thread_routine();}));
         return;
       }
-      catch(const std::exception& e){
+      catch(const std::exception& e) {
         prepare_exception(__FUNCTION__ + error + e.what());
       }
-      catch(...){
+      catch(...) {
         prepare_exception(__FUNCTION__ + unknown_error);
       }
       stop();
       pool_exception();
     }
 
-    void start_only_existing_task(){
-      try {
-        m_stop = true;
-        for(unsigned int i = 0; i < N; ++i){
-          waiter w;
-          m_threads[i] = std::move(std::thread([&](){
-            w.notify();
-            thread_routine();
-          }));
-          w.wait();
-        }
-        join();
-        return;
-      }
-      catch(const std::exception& e){
-        prepare_exception(__FUNCTION__ + error + e.what());
-      }
-      catch(...){
-        prepare_exception(__FUNCTION__ + unknown_error);
-      }
-      stop();
-      pool_exception();
-    }
-
-
-    void stop(){
-      if(!m_stop){
+    void stop() {
+      if(!m_stop) {
         {
           std::unique_lock<std::mutex> _(m_mtx);
           m_stop = true;
@@ -73,7 +51,7 @@ namespace tools {
       }
    }
 
-    void execute(function_t value){
+    void execute(function_t value) {
       std::unique_lock<std::mutex> _(m_mtx);
       if(!m_stop){
         m_queue.add(value);
@@ -81,17 +59,12 @@ namespace tools {
       }
     }
 
-    virtual void prepare_exception(const std::string&){
-    }
+  public:
 
-    virtual void thread_started(const std::thread::id&) {
-    }
-
-    virtual void thread_finished(const std::thread::id&) {
-    }
-
-    virtual void thread_finished(const std::thread::id&, const std::exception&) {
-    }
+    exception_notice_t m_exception_notice;
+    thread_notice_t m_thread_started;
+    thread_notice_t m_thread_finished;
+    thread_exception_notice_t m_thread_exception_notice;
 
   public:
 
@@ -100,34 +73,6 @@ namespace tools {
   private:
 
     typedef cache_queue<function_t> storage_t;
-
-    class waiter {
-
-    public:
-
-      void notify(){
-        std::lock_guard<std::mutex> _(m_mtx);
-        m_flag = false;
-        m_cv.notify_one();
-      }
-
-      void wait(){
-        std::unique_lock<std::mutex> _(m_mtx);
-        while(m_flag)
-          m_cv.wait(_);
-      }
-
-      const bool flag()const{
-        return m_flag;
-      }
-
-    private:
-
-      bool m_flag = true;
-      std::mutex m_mtx;
-      std::condition_variable m_cv;
-
-    };
 
   private:
 
@@ -160,28 +105,49 @@ namespace tools {
       }
     }
 
-    void execute_internal(function_t value){
+    void execute_internal(function_t value) {
       try {
         value();
       }
       catch(const std::exception& e){
-        prepare_exception(__FUNCTION__ + error + e.what());
+        prepare_exception( __FUNCTION__ + error + e.what() );
       }
       catch(...){
-        prepare_exception(__FUNCTION__ + unknown_error);
+        prepare_exception ( __FUNCTION__ + unknown_error );
       }
     }
 
-    void join(){
+    void join() {
       for(unsigned int i = 0; i < N; ++i)
         if(m_threads[i].joinable())
           m_threads[i].join();
     }
 
-    static void pool_exception(){
+    static void pool_exception() {
       static std::runtime_error re("thread_pool exception.");
       throw(re);
     }
+
+    void prepare_exception(const std::string& value) {
+      if( m_exception_notice )
+        m_exception_notice(value);
+    }
+
+    void thread_started(const std::thread::id& value) {
+      if( m_thread_started )
+        m_thread_started(value);
+    }
+
+    void thread_finished(const std::thread::id& value) {
+      if(m_thread_finished)
+        m_thread_finished(value);
+    }
+
+    void thread_finished(const std::thread::id& id, const std::exception& exc) {
+      if(m_thread_exception_notice)
+        m_thread_exception_notice(id, exc);
+    }
+
 
   private:
 

@@ -1,4 +1,4 @@
-#if !(defined(__GNUC__)&&(defined(__i386__)|| defined(__x86_64__)))
+#if !( defined(__GNUC__) && ( defined( __i386__ ) || defined (__x86_64__ ) ) )
 #define _SCL_SECURE_NO_WARNINGS
 #endif
 
@@ -24,12 +24,15 @@
 namespace {
 
   struct sha1buff {
+
     unsigned char data[20];
-    sha1buff& operator=(const sha1buff& value){
+
+    sha1buff& operator=(const sha1buff& value) {
       if (this != &value)
         std::copy(std::begin(value.data), std::end(value.data), std::begin(data));
       return *this;
     }
+
   };
 
   using buffer_t = std::vector<char>;
@@ -48,34 +51,49 @@ namespace {
   public:
 
     using parent = tools::thread_pool<16>;
-    using parent::start_only_existing_task;
     using parent::stop;
     using parent::execute;
 
-    thread_pool(const thred_finished& value)
-        : m_finishad(value) {
+    thread_pool(const thred_finished& value) {
+      m_thread_started = [&](const std::thread::id& value) { thread_started(value); };
+      m_thread_finished = value;
+      m_exception_notice = std::bind(&thread_pool::prepare_exception, this, std::placeholders::_1);
+    }
+
+    void start() {
+      m_started = 0;
+      std::unique_lock<std::mutex> _(m_mtx);
+      parent::start();
+      while (m_started < parent::thread_count)
+        m_cv.wait(_);
+      stop();
     }
 
   private:
 
-    void prepare_exception(const std::string& value) override{
+    void prepare_exception(const std::string& value) {
       logout(value);
     }
 
-    void thread_finished(const std::thread::id& value){
-      if (m_finishad)
-        m_finishad(value);
+    void thread_started(const std::thread::id&) {
+      std::lock_guard<std::mutex> _(m_mtx);
+      ++m_started;
+      m_cv.notify_one();
     }
 
   private:
-    const thred_finished m_finishad;
+
+    unsigned int m_started;
+    std::mutex m_mtx;
+    std::condition_variable m_cv;
+
   };
 
   void get_hash(const std::string& filename, std::size_t index, const hash_notifier_t& notifier,
-          std::size_t size){
+          std::size_t size) {
       static thread_local buffer_t buffer;
       static thread_local std::ifstream istream;
-      if(!istream.is_open()){
+      if(!istream.is_open()) {
         istream.open(filename, std::ifstream::binary);
         if (!istream)
           throw std::runtime_error(std::to_string(__LINE__) + " can`t open file: " + filename);
@@ -94,11 +112,11 @@ namespace {
 
   public:
 
-    void store(const block_hash_t& value){
+    void store(const block_hash_t& value) {
       m_thred_hash.push_back(value);
     }
 
-    void finished(const std::thread::id&){
+    void finished(const std::thread::id&) {
       std::lock_guard<std::mutex> _(m_mtx);
       if (m_hash.empty()) {
         m_hash.swap(m_thred_hash);
@@ -106,24 +124,19 @@ namespace {
       }
       block_hash_array_t tmp(m_thred_hash.size() + m_hash.size());
       std::merge(m_thred_hash.begin(), m_thred_hash.end(), m_hash.begin(),
-        m_hash.end(), tmp.begin(), [](const block_hash_t& lvalue, const block_hash_t& rvalue){
+        m_hash.end(), tmp.begin(), [](const block_hash_t& lvalue, const block_hash_t& rvalue) {
           return lvalue.first < rvalue.first;
       });
       m_hash.swap(tmp);
     }
 
-    void store_to_file(const std::string& filename){
+    void store_to_file(const std::string& filename) {
       std::ofstream out(filename);
       if (!out)
         throw std::runtime_error(std::to_string(__LINE__) + " can`t open file: " + filename);
       out << std::hex;
-      union {
-        sha1buff data;
-        unsigned char array[sizeof(sha1buff)];
-      } convert;
-      for(const auto& i : m_hash){
-        convert.data = i.second;
-        for(const auto& v : convert.array)
+      for(const auto& i : m_hash) {
+        for(const auto& v : i.second.data)
           out << std::setw(2) << std::setfill('0') << static_cast<unsigned int>(v);
         out << std::endl;
       }
@@ -139,7 +152,7 @@ namespace {
 
   thread_local block_hash_array_t hash_store::m_thred_hash;
 
-  parametrs_t get_param(int ac, char* av[]){
+  parametrs_t get_param(int ac, char* av[]) {
     const unsigned int default_block_size = 1024 * 1024 * 1;
     const int min_parametrs = 3;
     if(ac >= min_parametrs)
@@ -149,11 +162,11 @@ namespace {
       }
       catch (const std::exception&) {
       }
-    throw std::runtime_error(std::string("ussage: ") + av[0] + " <input file> <output file> <block size>"
+    throw std::runtime_error(std::string("usage: ") + av[0] + " <input file> <output file> <block size>"
       "\n  block size by default = " + std::to_string(default_block_size));
   }
 
-  parts_t get_parts_tail(const std::string& filename, const std::size_t block_size){
+  parts_t get_parts_tail(const std::string& filename, const std::size_t block_size) {
     std::ifstream file(filename, std::ifstream::binary);
     if(!file)
        throw std::runtime_error(std::to_string(__LINE__) + " can`t open file: " + filename);
@@ -166,7 +179,7 @@ namespace {
 } /* namespace */
 
 
-int main(int ac, char* av[]){
+int main(int ac, char* av[]) {
   try {
 
     tools::time_measurement tm;
@@ -194,16 +207,16 @@ int main(int ac, char* av[]){
       tp.execute(std::bind(&get_hash, input, index, std::ref(notify), block_size));
     if(parts.second)
       tp.execute(std::bind(&get_hash, input, parts.first, std::ref(notify), parts.second));
-    tp.start_only_existing_task();
+    tp.start();
     hs.store_to_file(output);
 
     logout("finished", endline);
     return 0;
   }
-  catch(const std::exception& e){
+  catch(const std::exception& e) {
     logout(e.what(), endline);
   }
-  catch(...){
+  catch(...) {
     logout("unknown error.", endline);
   }
   return -1;
