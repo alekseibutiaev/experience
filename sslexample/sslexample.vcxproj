@@ -199,43 +199,43 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\tmp\openssl/include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\tmp\openssl/library;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\alexsy\project\experience\sslexample\..\openssl-1.1.1\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\alexsy\project\experience\sslexample\..\openssl-1.1.1\library;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug-dll|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\tmp\openssl/include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\tmp\openssl/library;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\alexsy\project\experience\sslexample\..\openssl-1.1.1\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\alexsy\project\experience\sslexample\..\openssl-1.1.1\library;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug-static|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\tmp\openssl/include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\tmp\openssl/library;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\alexsy\project\experience\sslexample\..\openssl-1.1.1\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\alexsy\project\experience\sslexample\..\openssl-1.1.1\library;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\tmp\openssl/include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\tmp\openssl/library;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\alexsy\project\experience\sslexample\..\openssl-1.1.1\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\alexsy\project\experience\sslexample\..\openssl-1.1.1\library;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug-dll|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\tmp\openssl/include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\tmp\openssl/library;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\alexsy\project\experience\sslexample\..\openssl-1.1.1\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\alexsy\project\experience\sslexample\..\openssl-1.1.1\library;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug-static|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\tmp\openssl/include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\tmp\openssl/library;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\alexsy\project\experience\sslexample\..\openssl-1.1.1\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\alexsy\project\experience\sslexample\..\openssl-1.1.1\library;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\tmp\openssl/include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\tmp\openssl/library;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\alexsy\project\experience\sslexample\..\openssl-1.1.1\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\alexsy\project\experience\sslexample\..\openssl-1.1.1\library;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-dll|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\tmp\openssl/include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\tmp\openssl/library;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\alexsy\project\experience\sslexample\..\openssl-1.1.1\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\alexsy\project\experience\sslexample\..\openssl-1.1.1\library;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release static|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -244,18 +244,18 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-static|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\tmp\openssl/include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\tmp\openssl/library;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\alexsy\project\experience\sslexample\..\openssl-1.1.1\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\alexsy\project\experience\sslexample\..\openssl-1.1.1\library;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\tmp\openssl/include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\tmp\openssl/library;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\alexsy\project\experience\sslexample\..\openssl-1.1.1\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\alexsy\project\experience\sslexample\..\openssl-1.1.1\library;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-dll|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\tmp\openssl/include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\tmp\openssl/library;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\alexsy\project\experience\sslexample\..\openssl-1.1.1\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\alexsy\project\experience\sslexample\..\openssl-1.1.1\library;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release static|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -264,8 +264,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-static|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\tmp\openssl/include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\tmp\openssl/library;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\alexsy\project\experience\sslexample\..\openssl-1.1.1\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\alexsy\project\experience\sslexample\..\openssl-1.1.1\library;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
