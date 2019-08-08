@@ -12,7 +12,10 @@ link_directories(
 
 add_library(network_static STATIC ${HEADER_FILES} ${SOURCE_FILES})
 set_target_properties(network_static PROPERTIES OUTPUT_NAME network)
-add_library(network SHARED ${HEADER_FILES} ${SOURCE_FILES})
 
-#add_library(network_pic STATIC ${HEADER_FILES} ${SOURCE_FILES})
-#set_property(TARGET network_pic PROPERTY POSITION_INDEPENDENT_CODE 1)
+add_library(network_obj OBJECT ${HEADER_FILES} ${SOURCE_FILES})
+set_property(TARGET network_obj PROPERTY POSITION_INDEPENDENT_CODE 1)
+
+add_library(network_static_pic STATIC $<TARGET_OBJECTS:network_obj>)
+add_library(network SHARED $<TARGET_OBJECTS:network_obj>)
+
