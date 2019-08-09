@@ -8,12 +8,17 @@ namespace {
   void keep_session(const net::session_ptr) {
   }
 
+  net::buffer_ptr default_allocaror(const net::buffer_t::value_type* data, std::size_t size) {
+    return net::buffer_ptr(new net::buffer_t(data, data + size));
+  }
+
 } /* namespace */
 
 namespace net {
 
   session_t::session_t(details::socket_ptr&& socket)
     : m_socket(std::move(socket))
+    , m_buffer_allocator(std::bind(&default_allocaror, std::placeholders::_1, std::placeholders::_2))
     , m_buf(max_buffer) {
   }
 
@@ -35,6 +40,10 @@ namespace net {
 
   void session_t::close() {
     close(boost::system::errc::make_error_code(boost::system::errc::success));
+  }
+
+  void session_t::buffer_allocator(const buffer_allocator_t& value) {
+    m_buffer_allocator = value;
   }
 
   void session_t::receive_callback(const receive_func_t& value) {
@@ -63,13 +72,12 @@ namespace net {
       close(err);
   }
 
-  void session_t::read_handler(const buffer_t& buf, const receive_func_t func, const error_code_t& err, std::size_t transferred) {
+  void session_t::read_handler(const buffer_t& buf, const receive_func_t func,
+      const error_code_t& err, std::size_t transferred) {
     if(err) 
       close(err);
     else if(func) {
-      buffer_t::const_iterator end = buf.begin();
-      std::advance(end, transferred);
-      func(buffer_ptr(new buffer_t(buf.begin(), end)));
+      func(m_buffer_allocator(buf.data(), transferred));
       read();
     }
   }

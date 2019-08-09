@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include "net_common.h"
+#include "nettypes.h"
 
 namespace net {
 
@@ -12,6 +12,7 @@ namespace net {
     void read();
     void send(const buffer_ptr& value);
     void close();
+    void buffer_allocator(const buffer_allocator_t& value);
     void receive_callback(const receive_func_t& value);
     void disconnect_callback(const disconnect_func_t& value);
   public:
@@ -25,6 +26,7 @@ namespace net {
     void read_handler(const buffer_t& buf, const receive_func_t func, const error_code_t& err, std::size_t transferred);
   private:
     details::socket_ptr m_socket;
+    buffer_allocator_t m_buffer_allocator;
     buffer_t m_buf;
     receive_func_t m_receive;
     disconnect_func_t m_disconnect;

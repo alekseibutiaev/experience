@@ -20,8 +20,6 @@ namespace net {
 */
     };
 
-    using socket_ptr = std::unique_ptr<socket_t>;
-
   } /* namespace details */
 
 } /* namespace net */

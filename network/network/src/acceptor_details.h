@@ -2,8 +2,8 @@
 
 #include "boost/asio.hpp"
 
+#include "nettypes.h"
 #include "socket_details.h"
-#include "net_common.h"
 
 #include "acceptor.h"
 

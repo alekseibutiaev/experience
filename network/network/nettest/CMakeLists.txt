@@ -10,7 +10,7 @@ include_directories(
 add_executable(nettest ${HEADER_FILES} ${SOURCE_FILES})
 
 target_link_libraries(nettest
-  network
+  network_static
   ${Boost_LIBRARIES}
   pthread
 )

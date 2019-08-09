@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "net_common.h"
+#include "nettypes.h"
 
 namespace net {
 

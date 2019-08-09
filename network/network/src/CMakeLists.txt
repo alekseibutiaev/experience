@@ -18,4 +18,3 @@ set_property(TARGET network_obj PROPERTY POSITION_INDEPENDENT_CODE 1)
 
 add_library(network_static_pic STATIC $<TARGET_OBJECTS:network_obj>)
 add_library(network SHARED $<TARGET_OBJECTS:network_obj>)
-

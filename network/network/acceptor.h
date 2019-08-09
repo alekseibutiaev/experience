@@ -1,6 +1,6 @@
 #pragma once
 
-#include "net_common.h"
+#include "nettypes.h"
 
 namespace net {
 
