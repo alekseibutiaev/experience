@@ -18,16 +18,18 @@ namespace net {
   public:
     static session_ptr create(details::socket_ptr&& value);
   private:
+    using recv_buf_t = std::unique_ptr<buffer_t::value_type[]>;
+  private:
     session_t(details::socket_ptr&& value);
     session_t(const session_t&) = delete;
     session_t& operator=(const session_t&) = delete;
     void close(const error_code_t& value);
     void write_handler(const buffer_ptr buf, const error_code_t& err, std::size_t transferred);
-    void read_handler(const buffer_t& buf, const receive_func_t func, const error_code_t& err, std::size_t transferred);
+    void read_handler(const error_code_t& err, std::size_t transferred);
   private:
     details::socket_ptr m_socket;
     buffer_allocator_t m_buffer_allocator;
-    buffer_t m_buf;
+    recv_buf_t m_recv_buf;
     receive_func_t m_receive;
     disconnect_func_t m_disconnect;
   private:

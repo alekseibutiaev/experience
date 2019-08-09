@@ -19,7 +19,7 @@ namespace net {
   session_t::session_t(details::socket_ptr&& socket)
     : m_socket(std::move(socket))
     , m_buffer_allocator(std::bind(&default_allocaror, std::placeholders::_1, std::placeholders::_2))
-    , m_buf(max_buffer) {
+    , m_recv_buf(new recv_buf_t::element_type[max_buffer]) {
   }
 
   session_t::~session_t() {
@@ -28,8 +28,8 @@ namespace net {
 
   void session_t::read() {
     if(m_socket->is_open())
-      m_socket->async_read_some(boost::asio::buffer(m_buf.data(), m_buf.size()),
-        std::bind(&session_t::read_handler, this, std::ref(m_buf), m_receive, std::placeholders::_1, std::placeholders::_2 ));
+      m_socket->async_read_some(boost::asio::buffer(m_recv_buf.get(), max_buffer),
+        std::bind(&session_t::read_handler, this, std::placeholders::_1, std::placeholders::_2 ));
   }
 
   void session_t::send(const buffer_ptr& value) {
@@ -72,12 +72,11 @@ namespace net {
       close(err);
   }
 
-  void session_t::read_handler(const buffer_t& buf, const receive_func_t func,
-      const error_code_t& err, std::size_t transferred) {
+  void session_t::read_handler(const error_code_t& err, std::size_t transferred) {
     if(err) 
       close(err);
-    else if(func) {
-      func(m_buffer_allocator(buf.data(), transferred));
+    else if(m_receive) {
+      m_receive(m_buffer_allocator(m_recv_buf.get(), transferred));
       read();
     }
   }
