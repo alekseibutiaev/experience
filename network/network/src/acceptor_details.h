@@ -19,7 +19,7 @@ namespace net {
     private:
       void accepted_handler(details::socket_ptr& socket, const error_code_t& value);
     private:
-     context_ptr& m_context;
+      context_ptr& m_context;
       boost::asio::ip::tcp::acceptor m_acceptor;
       details::socket_ptr m_socket;
       accepted_func_t m_accepted;

@@ -35,4 +35,8 @@ namespace net {
 
   } /* namespace details */
 
+  acceptor_ptr acceptor_t::create(context_ptr& context, unsigned short port) {
+    return acceptor_ptr(new net::details::acceptor_t(context, port));
+  }
+
 } /* namespace net */
