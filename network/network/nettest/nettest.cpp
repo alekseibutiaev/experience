@@ -36,7 +36,7 @@ namespace  {
         , m_acceptor(net::acceptor_t::create(m_ctx, 55555)) {
       m_acceptor->accepted_callback(std::bind(&echo_server_t::accepted, this,
         std::placeholders::_1));
-      m_acceptor->start();
+      m_acceptor->listen();
     }
   private:
     using echo_map_t = std::map<net::session_ptr, echo_ptr>;

@@ -14,11 +14,18 @@ namespace net {
       , m_acceptor(static_cast<details::context_t&>(*m_context).get_io_context(),
           boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port)) {
     }
+    acceptor_t::~acceptor_t() {
+      m_acceptor.close();
+    }
 
-    void acceptor_t::start() {
+    void acceptor_t::listen() {
       m_socket.reset(new details::socket_t(static_cast<details::context_t&>(*m_context).get_io_context()));
       m_acceptor.async_accept(*m_socket, std::bind(&acceptor_t::accepted_handler, this, std::ref(m_socket),
           std::placeholders::_1));
+    }
+
+    void acceptor_t::close() {
+      m_acceptor.close();
     }
 
     void acceptor_t::accepted_callback(const accepted_func_t& value) {
@@ -29,7 +36,7 @@ namespace net {
       if(!err) {
         if(m_accepted)
           m_accepted(net::session_t::create(std::move(socket)));
-        start();
+        listen();
       }
     }
 

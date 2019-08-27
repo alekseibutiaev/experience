@@ -14,6 +14,7 @@ set(PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 message("network SOURCES_DIR: " ${PROJECT_DIR})
 
+set(Boost_USE_STATIC_LIBS ON)
 find_package(Boost 1.55 REQUIRED COMPONENTS system)
 #unit_test_framework
 
