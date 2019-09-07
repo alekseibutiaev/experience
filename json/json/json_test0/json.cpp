@@ -51,7 +51,7 @@ private:
           if(m_handle)
             m_handle(std::move(parsed));
           else
-            parsed.cbegin();
+            parsed.clear();
           m_finished = true;
         }
         break;
