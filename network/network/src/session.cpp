@@ -8,17 +8,17 @@ namespace {
   void keep_session(const net::session_ptr) {
   }
 
-  net::buffer_ptr default_allocaror(const net::buffer_t::value_type* data, std::size_t size) {
-    return net::buffer_ptr(new net::buffer_t(data, data + size));
-  }
+  const auto defalloc = [](const net::buffer_t::value_type* data, std::size_t size) {
+      return net::buffer_ptr(new net::buffer_t(data, data + size)); };
 
 } /* namespace */
 
 namespace net {
 
   session_t::session_t(details::socket_ptr&& socket)
-    : m_socket(std::move(socket))
-    , m_buffer_allocator(std::bind(&default_allocaror, std::placeholders::_1, std::placeholders::_2))
+    : m_is_open(true)
+    , m_socket(std::move(socket))
+    , m_buffer_allocator(defalloc)
     , m_recv_buf(new recv_buf_t::element_type[max_buffer]) {
   }
 
@@ -27,13 +27,13 @@ namespace net {
   }
 
   void session_t::read() {
-    if(m_socket->is_open())
+    if(m_is_open.load())
       m_socket->async_read_some(boost::asio::buffer(m_recv_buf.get(), max_buffer),
         std::bind(&session_t::read_handler, this, std::placeholders::_1, std::placeholders::_2 ));
   }
 
   void session_t::send(const buffer_ptr& value) {
-    if(m_socket->is_open())
+    if(m_is_open.load())
       m_socket->async_write_some(boost::asio::buffer(value->data(), value->size()),
         std::bind(&session_t::write_handler, this, value, std::placeholders::_1, std::placeholders::_2));
   }
@@ -59,8 +59,13 @@ namespace net {
   }
 
   void session_t::close(const error_code_t& value) {
-    if(m_socket->is_open()) {
+    if(m_is_open.exchange(false)) {
+#if 0
+      if(!m_socket->get_io_service().stopped())
+        m_socket->get_io_service().post(std::bind(&keep_session, shared_from_this()));
+#else
       m_socket->get_io_service().post(std::bind(&keep_session, shared_from_this()));
+#endif
       m_socket->close();
       if(m_disconnect)
         m_disconnect(shared_from_this(), value);

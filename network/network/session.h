@@ -1,5 +1,6 @@
 #pragma once
 
+#include <atomic>
 #include <memory>
 
 #include "nettypes.h"
@@ -27,6 +28,7 @@ namespace net {
     void write_handler(const buffer_ptr buf, const error_code_t& err, std::size_t transferred);
     void read_handler(const error_code_t& err, std::size_t transferred);
   private:
+    std::atomic_bool m_is_open;
     details::socket_ptr m_socket;
     buffer_allocator_t m_buffer_allocator;
     recv_buf_t m_recv_buf;
