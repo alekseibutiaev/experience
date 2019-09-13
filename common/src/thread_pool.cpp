@@ -52,18 +52,18 @@ namespace tools {
     try {
       thread_started(std::this_thread::get_id());
       storage_t::value_t f;
-      while (!m_queue.empty() || !m_stop) {
+      while(!m_queue.empty() || !m_stop) {
         {
           std::unique_lock<std::mutex> _(m_mtx);
-          while (!m_stop && m_queue.empty())
+          while(!m_stop && m_queue.empty())
             m_cv.wait(_);
-          if (m_queue.empty())
+          if(m_queue.empty())
             continue;
-          f.swap(m_queue.front());
+          f = std::move(m_queue.front());
           m_queue.store_front();
         }
-        if (f)
-          execute_internal(f);
+        if(f)
+          execute_internal(std::move(f));
       }
       thread_finished(std::this_thread::get_id());
     }

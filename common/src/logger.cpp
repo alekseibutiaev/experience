@@ -104,6 +104,12 @@ namespace tools {
       std::puts(stream.str().c_str());
   }
 
+  std::ostream& operator<<(std::ostream& os, const function_name_t& v) {
+    if(level_t::show_level == level_t::e_debug)
+      os << v.m_f << ':' << v.m_i << ' ';
+    return os;
+  }
+
 } /* namespace tools */
 
 const char* endline = "\n";

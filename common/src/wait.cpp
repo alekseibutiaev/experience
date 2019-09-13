@@ -3,20 +3,19 @@
 
 namespace tools {
 
-  void wait_t::wait() {
-    _debug("wait notification", endline);
+  void wait_t::wait(const std::string& msg) {
+    _info(msg, endline);
     std::unique_lock<std::mutex> _(m_mtx);
     m_stop = false;
     while(!m_stop)
       m_cv.wait(_);
-    _debug("wait stop", endline);
   }
 
-  void wait_t::notification() {
+  void wait_t::notify(const std::string& msg) {
     std::unique_lock<std::mutex> _(m_mtx);
     m_stop = true;
     m_cv.notify_one();
-    _debug("catch notification", endline);
+    _info(msg, endline);
   }
 
 } /* namespace tools */

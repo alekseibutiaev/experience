@@ -77,7 +77,18 @@ namespace tools {
   private:
   };
 
+  struct function_name_t {
+    function_name_t(const char* f, const int i) : m_f(f), m_i(i){}
+    const char* m_f;
+    int m_i;
+  };
+
+  std::ostream& operator<<(std::ostream& os, const function_name_t& v);
+
 } /* namespace tools */
+
+//#define _FN_ tools::function_name_t(__PRETTY_FUNCTION__, __LINE__)
+#define _FN_ tools::function_name_t(__FUNCTION__, __LINE__)
 
 extern const char* endline;
 

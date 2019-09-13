@@ -8,6 +8,8 @@
 
 #if __cplusplus < 201103L
 
+#include <boost/optional.hpp>
+
 namespace std {
 
   template<template type_t, std::size_t N >
@@ -20,10 +22,16 @@ namespace std {
     return &a[N];
   }
 
+  template<typename type_t>
+  using optional = boost::optional<type_t>;
+
 } /* namespace std */
 #endif
 
 #if __cplusplus < 201703L
+
+#include <boost/optional.hpp>
+
 namespace std {
 
   template <typename type_t, std::size_t N>
@@ -35,6 +43,9 @@ namespace std {
   constexpr auto size(const container_t& c) -> decltype(c.size()) {
     return c.size();
   }
+
+  template<typename type_t>
+  using optional = boost::optional<type_t>;
 
 } /* namespace std */
 

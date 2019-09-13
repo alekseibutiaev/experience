@@ -51,7 +51,7 @@ namespace tools {
     static const std::string unknown_error;
   };
 
-  template< unsigned int N >
+  template<std::size_t N>
   class thread_pool_t : thread_pool_base_t {
   public:
     using function_t = thread_pool_base_t::function_t;
@@ -75,7 +75,7 @@ namespace tools {
     using thread_pool_base_t::m_thread_finished;
     using thread_pool_base_t::m_thread_exception_notice;
   public:
-    static const unsigned int  thread_count = N;
+    static const std::size_t thread_count = N;
   private:
     std::thread m_threads[N];
   };
