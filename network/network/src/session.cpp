@@ -1,5 +1,7 @@
 #include <iterator>
 
+#include <boost/lexical_cast.hpp>
+
 #include "socket_details.h"
 #include "session.h"
 
@@ -40,6 +42,12 @@ namespace net {
 
   void session_t::close() {
     close(boost::system::errc::make_error_code(boost::system::errc::success));
+  }
+
+  const std::string& session_t::address() const {
+    if(m_addres.empty())
+      m_addres = boost::lexical_cast<std::string>(m_socket->remote_endpoint());
+    return m_addres;
   }
 
   void session_t::buffer_allocator(const buffer_allocator_t& value) {

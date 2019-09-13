@@ -7,14 +7,14 @@ include_directories(
 )
 
 link_directories(
-  ${Boost_LIBRARIES0}
+  ${Boost_LIBRARIES}
 )
 
-add_library(network_static STATIC ${HEADER_FILES} ${SOURCE_FILES})
-set_target_properties(network_static PROPERTIES OUTPUT_NAME network)
+add_library(${PROJECT_NAME}_static STATIC ${HEADER_FILES} ${SOURCE_FILES})
+set_target_properties(${PROJECT_NAME}_static PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
 
-add_library(network_obj OBJECT ${HEADER_FILES} ${SOURCE_FILES})
-set_property(TARGET network_obj PROPERTY POSITION_INDEPENDENT_CODE 1)
+add_library(${PROJECT_NAME}_obj OBJECT ${HEADER_FILES} ${SOURCE_FILES})
+set_property(TARGET ${PROJECT_NAME}_obj PROPERTY POSITION_INDEPENDENT_CODE 1)
 
-add_library(network_static_pic STATIC $<TARGET_OBJECTS:network_obj>)
-add_library(network SHARED $<TARGET_OBJECTS:network_obj>)
+add_library(${PROJECT_NAME}_static_pic STATIC $<TARGET_OBJECTS:${PROJECT_NAME}_obj>)
+add_library(${PROJECT_NAME} SHARED $<TARGET_OBJECTS:${PROJECT_NAME}_obj>)

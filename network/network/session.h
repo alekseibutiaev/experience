@@ -1,6 +1,7 @@
 #pragma once
 
 #include <atomic>
+#include <string>
 #include <memory>
 
 #include "nettypes.h"
@@ -13,6 +14,7 @@ namespace net {
     void read();
     void send(const buffer_ptr& value);
     void close();
+    const std::string& address() const;
     void buffer_allocator(const buffer_allocator_t& value);
     void receive_callback(const receive_func_t& value);
     void disconnect_callback(const disconnect_func_t& value);
@@ -34,6 +36,7 @@ namespace net {
     recv_buf_t m_recv_buf;
     receive_func_t m_receive;
     disconnect_func_t m_disconnect;
+    mutable std::string m_addres;
   private:
     const static std::size_t max_buffer = 10240;
   };
