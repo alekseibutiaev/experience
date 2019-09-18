@@ -13,6 +13,7 @@
 #include <condition_variable>
 
 #include "tools.hpp"
+#include "commontypes.hpp"
 #include "cache_queue.hpp"
 
 namespace tools {
@@ -35,23 +36,22 @@ namespace tools {
   class logger_t {
   public:
     using logger_ptr = std::unique_ptr<logger_t>;
-    using ostream_ptr = std::unique_ptr<std::ostream>;
-    using currtime_func_t = std::function<std::string()>;
+    using timeformat_t = std::function<std::string()>;
   public:
     ~logger_t();
-    void out_to(ostream_ptr& value);
-    void use_current_time(currtime_func_t value);
+    void out_to(ostream_ptr value = get_stdout());
+    void use_time_format(timeformat_t value);
     template <typename type1_t, typename... types_t >
     static void out(type1_t&& value, types_t&&... values) {
       std::stringstream stream;
-      if(instance()->m_curtime)
-        stream << instance()->m_curtime();
+      if(instance()->m_timeformat)
+        stream << instance()->m_timeformat() << ' ';
       stream << value;
       out(stream, std::forward<types_t>(values)...);
     }
   public:
-    static logger_ptr& instance(ostream_ptr out = logger_t::ostream_ptr());
-    static std::string default_time();
+    static logger_ptr& instance(ostream_ptr value = get_stdout());
+    static ostream_ptr get_stdout();
   private:
     typedef cache_queue<std::string> storage_t;
   private:
@@ -68,8 +68,7 @@ namespace tools {
   private:
     bool m_stop;
     ostream_ptr m_stream;
-    std::ostream* m_out;
-    currtime_func_t m_curtime;
+    timeformat_t m_timeformat;
     storage_t m_queue;
     std::mutex m_mtx;
     std::condition_variable m_cv;

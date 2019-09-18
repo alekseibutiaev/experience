@@ -8,13 +8,13 @@
 #include <condition_variable>
 
 #include "tools.hpp"
+#include "commontypes.hpp"
 #include "cache_queue.hpp"
 
 namespace tools {
 
   class thread_pool_base_t {
   protected:
-    using function_t = std::function<void()>;
     using exception_notice_t = std::function<void(const std::string&)>;
     using thread_notice_t = std::function<void(const std::thread::id&)>;
     using thread_exception_notice_t = std::function<void(const std::thread::id&, const std::exception&)>;
@@ -54,7 +54,6 @@ namespace tools {
   template<std::size_t N>
   class thread_pool_t : thread_pool_base_t {
   public:
-    using function_t = thread_pool_base_t::function_t;
     using exception_notice_t = thread_pool_base_t::exception_notice_t;
     using thread_notice_t = thread_pool_base_t::thread_notice_t;
     using thread_exception_notice_t = thread_pool_base_t::thread_exception_notice_t;

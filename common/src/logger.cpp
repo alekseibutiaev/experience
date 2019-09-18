@@ -1,7 +1,6 @@
 #include <cstdio>
-#include <chrono>
-#include <iterator>
 
+#include "timeformat.hpp"
 #include "logger.hpp"
 
 namespace tools {
@@ -20,10 +19,10 @@ namespace tools {
     return os;
   }
 
-  logger_t::logger_t(ostream_ptr& out)
+  logger_t::logger_t(ostream_ptr& value)
       : m_stop(false)
-      , m_stream(std::move(out))
-      , m_out(m_stream ? m_stream.get() : &std::cout)
+      , m_stream(std::move(value))
+      , m_timeformat(tools::time_milliseconds)
       , m_th([&]() {out_tread();}) {
   }
 
@@ -31,32 +30,24 @@ namespace tools {
     stop();
   }
 
-  void logger_t::out_to(ostream_ptr& value) {
-    std::unique_lock<std::mutex> _(m_mtx);
+  void logger_t::out_to(ostream_ptr value) {
     m_stream = std::move(value);
-    m_out = m_stream ? m_stream.get() : &std::cout;
   }
 
-  void logger_t::use_current_time(currtime_func_t value) {
+  void logger_t::use_time_format(timeformat_t value) {
     std::unique_lock<std::mutex> _(m_mtx);
-    m_curtime = value;
+    m_timeformat = value;
   }
 
-  logger_t::logger_ptr& logger_t::instance(logger_t::ostream_ptr out) {
+  logger_t::logger_ptr& logger_t::instance(ostream_ptr value) {
     static logger_ptr mylog;
     if(!mylog)
-      mylog.reset(new logger_t(out));
+      mylog.reset(new logger_t(value));
     return mylog;
   }
 
-  std::string logger_t::default_time() {
-    char buf[64];
-    const auto now = std::chrono::duration_cast<std::chrono::milliseconds>(
-      std::chrono::high_resolution_clock::now().time_since_epoch()).count();
-    const auto sec = now / 1000;
-    const std::size_t pos = strftime(buf, std::size(buf), "%F %T", std::localtime(&sec));
-    snprintf(buf + pos, std::size(buf) - pos, ".%03ld ", now % 1000);
-    return std::string(buf);
+  ostream_ptr logger_t::get_stdout() {
+    return ostream_ptr(&std::cout, [](ostream_ptr::element_type*){});
   }
 
   void logger_t::stop() {
@@ -86,8 +77,9 @@ namespace tools {
             m_cv.wait(_);
           local.swap(m_queue.data());
         }
-        std::copy(local.begin(), local.end(), std::ostream_iterator<std::string>(*m_out));
-        m_out->flush();
+        ostream_ptr os = m_stream;
+        std::copy(local.begin(), local.end(), std::ostream_iterator<std::string>(*os));
+        os->flush();
         std::unique_lock<std::mutex> _(m_mtx);
         m_queue.store_data(local);
       }
