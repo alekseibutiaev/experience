@@ -79,16 +79,16 @@ namespace {
 
 
 int main(int ac, char* av[]) {
-  std::size_t r[32] = {0, 1, 8, 6, 2, 5, 3, 1, 6, 4, 7, 2, 5, 1, 9, 7, 4, 3, 5,10, 2, 1, 8, 3, 5, 0, 4, 2, 6, 7, 9, 4};
-  std::sort(&r[0], &r[32]);
-  std::copy(&r[0], &r[32], std::ostream_iterator<int>(std::cout, ", "));
+  std::size_t r[_size] = {0, 1, 8, 6, 2, 5, 3, 1, 6, 4, 7, 2, 5, 1, 9, 7, 4, 3, 5,10, 2, 1, 8, 3, 5, 0, 4, 2, 6, 7, 9, 4};
+  std::sort(&r[0], &r[_size]);
+  std::copy(&r[0], &r[_size], std::ostream_iterator<int>(std::cout, ", "));
   std::cout << std::endl;
 
-  std::fill(&reel[0], &reel[32], -1);
+  std::fill(&reel[0], &reel[_size], -1);
   const reelset_t& rr = rsi;
   const cell_t(&a)[_size] = cells;
   std::cout << a[0].is_valid() << std::endl;
-  std::cout << std::count(&a[0], &a[32], a[0]) << std::endl;
+  std::cout << std::count(&a[0], &a[_size], a[0]) << std::endl;
   next(rr);
 #if 0
   unsigned long long count = 0;
