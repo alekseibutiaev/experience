@@ -8,6 +8,7 @@
 
 unset (PUGIXML_LIBRARY CACHE)
 unset (PUGIXML_INCLUDE_DIR CACHE)
+
 find_path (PUGIXML_INCLUDE_DIR
            NAMES pugixml.hpp
            PATHS ${PUGIXML_HOME}/include
@@ -26,7 +27,6 @@ if (NOT PUGIXML_INCLUDE_DIR AND OPENIMAGEIO_INCLUDE_DIR)
                PATHS ${OPENIMAGEIO_INCLUDE_DIR}/OpenImageIO)
     set (PUGIXML_LIBRARY ${OPENIMAGEIO_LIBRARIES})
 endif ()
-
 
 # Support the REQUIRED and QUIET arguments, and set PUGIXML_FOUND if found.
 include (FindPackageHandleStandardArgs)
