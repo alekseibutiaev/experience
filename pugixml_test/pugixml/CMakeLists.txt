@@ -26,16 +26,16 @@ find_package(Threads REQUIRED)
 
 find_package(PugiXML REQUIRED)
 set(Boost_USE_STATIC_LIBS        ON)
-find_package(Boost 1.55 REQUIRED COMPONENTS system)
+find_package(Boost 1.55 REQUIRED COMPONENTS system unit_test_framework)
 #unit_test_framework
 
-#Boost_FOUND            - True if headers and requested libraries were found
 message("Boost_FOUND " ${Boost_FOUND})
-#Boost_INCLUDE_DIRS     - Boost include directories
 message("Boost_INCLUDE_DIRS " ${Boost_INCLUDE_DIRS})
-#Boost_LIBRARY_DIRS     - Link directories for Boost libraries
 message("Boost_LIBRARY_DIRS " ${Boost_LIBRARY_DIRS})
-#Boost_LIBRARIES        - Boost component libraries to be linked
 message("Boost_LIBRARIES " ${Boost_LIBRARIES})
+
+message("PUGIXML_FOUND: " ${PUGIXML_FOUND})
+message("PUGIXML_INCLUDE_DIR: " ${PUGIXML_INCLUDE_DIR})
+message("PUGIXML_LIBRARIES: " ${PUGIXML_LIBRARIES})
 
 add_subdirectory(test1)
