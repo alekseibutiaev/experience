@@ -3,8 +3,7 @@
     "-DUSE_WERROR=ON"
   ],
   "cmake.buildToolArgs": [
-    "VERBOSE=1",
-    "-j4"
+    "VERBOSE=1"
   ],
   "editor.wordWrapColumn": 80,
   "cmake.saveBeforeBuild": true,
