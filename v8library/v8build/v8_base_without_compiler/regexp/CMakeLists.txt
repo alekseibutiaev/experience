@@ -53,6 +53,9 @@ set(${PROJECT_NAME}_sources
   ${v8source}/src/regexp/regexp.cc
 )
 
+set(${PROJECT_NAME}_gen
+  ${CMAKE_BINARY_DIR}/v8build/gen/src/regexp/special-case.cc
+)
 
 add_definitions(-DV8_USE_EXTERNAL_STARTUP_DATA)
 add_definitions(-DV8_ENABLE_REGEXP_INTERPRETER_THREADED_DISPATCH)
@@ -89,20 +92,24 @@ elseif(${ARCHITECTURE} STREQUAL "i386" OR ${ARCHITECTURE} STREQUAL "i486" OR ${A
   add_definitions(V8_TARGET_ARCH_IA32)
 endif()
 
-add_library(${PROJECT_NAME}_obj OBJECT ${${PROJECT_NAME}_sources} ${${PROJECT_NAME}_headers})
+set_source_files_properties(${${PROJECT_NAME}_gen} PROPERTIES GENERATED TRUE)
 
-add_library(${PROJECT_NAME}_obj_pic OBJECT ${${PROJECT_NAME}_sources} ${${PROJECT_NAME}_headers})
+add_library(${PROJECT_NAME}_obj OBJECT ${${PROJECT_NAME}_sources} ${${PROJECT_NAME}_headers} ${${PROJECT_NAME}_gen})
+
+add_library(${PROJECT_NAME}_obj_pic OBJECT ${${PROJECT_NAME}_sources} ${${PROJECT_NAME}_headers} ${${PROJECT_NAME}_gen})
 set_property(TARGET ${PROJECT_NAME}_obj_pic PROPERTY POSITION_INDEPENDENT_CODE 1)
 
 add_dependencies(${PROJECT_NAME}_obj
   rename_debug
   bytecodes-builtins-list
+  gen-regexp-special-case_files
   tq_files
 )
 
 add_dependencies(${PROJECT_NAME}_obj_pic
   rename_debug
   bytecodes-builtins-list
+  gen-regexp-special-case_files
   tq_files
 )
 

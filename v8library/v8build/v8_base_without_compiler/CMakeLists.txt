@@ -7,6 +7,7 @@ add_subdirectory(ast)
 add_subdirectory(builtins)
 add_subdirectory(codegen)
 add_subdirectory(common)
+add_subdirectory(compiler-dispatcher)
 add_subdirectory(date)
 add_subdirectory(debug)
 add_subdirectory(deoptimizer)
@@ -26,6 +27,7 @@ add_subdirectory(objects)
 add_subdirectory(parsing)
 add_subdirectory(profiler)
 add_subdirectory(regexp)
+add_subdirectory(roots)
 add_subdirectory(runtime)
 add_subdirectory(sanitizer)
 add_subdirectory(snapshot)
@@ -107,6 +109,7 @@ add_library(${PROJECT_NAME}_static STATIC
   $<TARGET_OBJECTS:builtins_obj>
   $<TARGET_OBJECTS:codegen_obj>
   $<TARGET_OBJECTS:common_obj>
+  $<TARGET_OBJECTS:compiler-dispatcher_obj>
   $<TARGET_OBJECTS:date_obj>
   $<TARGET_OBJECTS:debug_obj>
   $<TARGET_OBJECTS:deoptimizer_obj>
@@ -126,6 +129,7 @@ add_library(${PROJECT_NAME}_static STATIC
   $<TARGET_OBJECTS:parsing_obj>
   $<TARGET_OBJECTS:profiler_obj>
   $<TARGET_OBJECTS:regexp_obj>
+  $<TARGET_OBJECTS:roots_obj>
   $<TARGET_OBJECTS:runtime_obj>
   $<TARGET_OBJECTS:sanitizer_obj>
   $<TARGET_OBJECTS:snapshot_obj>
@@ -148,6 +152,7 @@ add_library(${PROJECT_NAME}_static_pic STATIC
   $<TARGET_OBJECTS:builtins_obj_pic>
   $<TARGET_OBJECTS:codegen_obj_pic>
   $<TARGET_OBJECTS:common_obj_pic>
+  $<TARGET_OBJECTS:compiler-dispatcher_obj_pic>
   $<TARGET_OBJECTS:date_obj_pic>
   $<TARGET_OBJECTS:debug_obj_pic>
   $<TARGET_OBJECTS:deoptimizer_obj_pic>
@@ -167,6 +172,7 @@ add_library(${PROJECT_NAME}_static_pic STATIC
   $<TARGET_OBJECTS:parsing_obj_pic>
   $<TARGET_OBJECTS:profiler_obj_pic>
   $<TARGET_OBJECTS:regexp_obj_pic>
+  $<TARGET_OBJECTS:roots_obj_pic>
   $<TARGET_OBJECTS:runtime_obj_pic>
   $<TARGET_OBJECTS:sanitizer_obj_pic>
   $<TARGET_OBJECTS:snapshot_obj_pic>
