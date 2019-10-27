@@ -15,6 +15,9 @@ message("CMAKE_SYSTEM_NAME: " ${CMAKE_SYSTEM_NAME})
 execute_process(COMMAND uname -m COMMAND tr -d '\n' OUTPUT_VARIABLE ARCHITECTURE)
 message(STATUS "Architecture: ${ARCHITECTURE}")
 
+execute_process(COMMAND uname -o COMMAND tr -d '\n' OUTPUT_VARIABLE OS)
+message(STATUS "OS: ${OS}")
+
 if(CMAKE_VERSION VERSION_LESS 3.12.0)
   find_package(PythonInterp 3 REQUIRED)
   set(PYTHON_EXECUTABLE ${Python3_EXECUTABLE})

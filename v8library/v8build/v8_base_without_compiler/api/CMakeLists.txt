@@ -1,6 +1,7 @@
-project(mksnapshot)
+project(api)
 
-set(CXX_FLAGS_COMMON "${CXX_FLAGS_COMMON} -fexceptions -frtti -Wno-comment -Wno-deprecated-declarations")
+set(CXX_FLAGS_COMMON "${CXX_FLAGS_COMMON} -fno-exceptions -fno-rtti -Wno-return-type -Wno-comment
+    -Wno-unused-function -Wno-strict-aliasing -Wno-deprecated-declarations")
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${CXX_FLAGS_COMMON} -O0 -g3")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${CXX_FLAGS_COMMON} -O3 -g0 -DNDEBUG")
@@ -8,18 +9,23 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${CXX_FLAGS_COMMON} -O3 
 include_directories(
   ${v8source}
   ${v8source}/include/
+  ${v8source}/src
+  ${CMAKE_BINARY_DIR}/v8build
   ${CMAKE_BINARY_DIR}/v8build/gen
   ${ICU_INCLUDE_DIRS}
 )
 
+set(${PROJECT_NAME}_headers
+  ${v8source}/src/api/api-arguments-inl.h
+  ${v8source}/src/api/api-arguments.h
+  ${v8source}/src/api/api-natives.h
+  ${v8source}/src/api/api.h
+)
+
 set(${PROJECT_NAME}_sources
-  ${v8source}/src/snapshot/embedded/embedded-file-writer.cc
-  ${v8source}/src/snapshot/embedded/platform-embedded-file-writer-aix.cc
-  ${v8source}/src/snapshot/embedded/platform-embedded-file-writer-base.cc
-  ${v8source}/src/snapshot/embedded/platform-embedded-file-writer-generic.cc
-  ${v8source}/src/snapshot/embedded/platform-embedded-file-writer-mac.cc
-  ${v8source}/src/snapshot/embedded/platform-embedded-file-writer-win.cc
-  ${v8source}/src/snapshot/mksnapshot.cc
+  ${v8source}/src/api/api-arguments.cc
+  ${v8source}/src/api/api-natives.cc
+  ${v8source}/src/api/api.cc
 )
 
 add_definitions(-DV8_USE_EXTERNAL_STARTUP_DATA)
@@ -49,7 +55,6 @@ add_definitions(-DV8_INTL_SUPPORT)
 add_definitions(-DV8_WIN64_UNWINDING_INFO)
 add_definitions(-DV8_HAVE_TARGET_OS)
 add_definitions(-D_GNU_SOURCE)
-add_definitions(-DUSING_V8_PLATFORM_SHARED)
 add_definitions(-DENABLE_DISASSEMBLER)
 
 if(${ARCHITECTURE} STREQUAL "x86_64")
@@ -58,27 +63,19 @@ elseif(${ARCHITECTURE} STREQUAL "i386" OR ${ARCHITECTURE} STREQUAL "i486" OR ${A
   add_definitions(V8_TARGET_ARCH_IA32)
 endif()
 
-add_executable(${PROJECT_NAME} ${${PROJECT_NAME}_sources}
-  $<TARGET_OBJECTS:inspector_obj>
-  $<TARGET_OBJECTS:v8_libbase_obj>
-  $<TARGET_OBJECTS:v8_compiler_obj>
-  $<TARGET_OBJECTS:v8_libsampler_obj>
-  $<TARGET_OBJECTS:v8_libplatform_obj>
-  $<TARGET_OBJECTS:v8_initializers_obj>
-  $<TARGET_OBJECTS:v8_init_obj>
-  $<TARGET_OBJECTS:v8_nosnapshot_obj>
-  $<TARGET_OBJECTS:torque_generated_definitions_obj>
-  $<TARGET_OBJECTS:torque_generated_initializers_obj>
+add_library(${PROJECT_NAME}_obj OBJECT ${${PROJECT_NAME}_sources} ${${PROJECT_NAME}_headers})
+
+add_library(${PROJECT_NAME}_obj_pic OBJECT ${${PROJECT_NAME}_sources} ${${PROJECT_NAME}_headers})
+set_property(TARGET ${PROJECT_NAME}_obj_pic PROPERTY POSITION_INDEPENDENT_CODE 1)
+
+add_dependencies(${PROJECT_NAME}_obj
+  rename_debug
+  bytecodes-builtins-list
+  tq_files
 )
 
-target_link_libraries(${PROJECT_NAME}
-  encoding_static
-  bindings_static
-  ${ICU_LIBRARIES}
-  pthread
-)
-
-add_dependencies(${PROJECT_NAME}
+add_dependencies(${PROJECT_NAME}_obj_pic
+  rename_debug
   bytecodes-builtins-list
   tq_files
 )

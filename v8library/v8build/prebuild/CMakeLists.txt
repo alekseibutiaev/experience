@@ -26,10 +26,10 @@ add_custom_command(
 add_custom_target(use_system_googletest DEPENDS system_googletest)
 
 add_custom_command(
-  OUTPUT debug_Debug
+  OUTPUT rename_debug_cmd
   COMMAND /bin/bash ${solution_dir}/scripts/rename_debug.sh "${v8source}"
-  COMMAND ${CMAKE_COMMAND} -E touch debug_Debug
+  COMMAND ${CMAKE_COMMAND} -E touch rename_debug_cmd
 )
 
-add_custom_target(rename_debug DEPENDS debug_Debug)
+add_custom_target(rename_debug DEPENDS rename_debug_cmd)
 
