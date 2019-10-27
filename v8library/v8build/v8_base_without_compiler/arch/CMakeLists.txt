@@ -23,8 +23,6 @@ if(${ARCHITECTURE} STREQUAL "x86_64")
       ${v8source}/src/codegen/x64/macro-assembler-x64.h
       ${v8source}/src/codegen/x64/register-x64.h
       ${v8source}/src/codegen/x64/sse-instr.h
-      ${v8source}/src/compiler/backend/x64/instruction-codes-x64.h
-      ${v8source}/src/compiler/backend/x64/unwinding-info-writer-x64.h
       ${v8source}/src/execution/x64/frame-constants-x64.h
       ${v8source}/src/regexp/x64/regexp-macro-assembler-x64.h
       ${v8source}/src/wasm/baseline/x64/liftoff-assembler-x64.h
@@ -34,10 +32,6 @@ if(${ARCHITECTURE} STREQUAL "x86_64")
       ${v8source}/src/codegen/x64/cpu-x64.cc
       ${v8source}/src/codegen/x64/interface-descriptors-x64.cc
       ${v8source}/src/codegen/x64/macro-assembler-x64.cc
-      ${v8source}/src/compiler/backend/x64/code-generator-x64.cc
-      ${v8source}/src/compiler/backend/x64/instruction-scheduler-x64.cc
-      ${v8source}/src/compiler/backend/x64/instruction-selector-x64.cc
-      ${v8source}/src/compiler/backend/x64/unwinding-info-writer-x64.cc
       ${v8source}/src/deoptimizer/x64/deoptimizer-x64.cc
       ${v8source}/src/diagnostics/x64/disasm-x64.cc
       ${v8source}/src/diagnostics/x64/eh-frame-x64.cc
@@ -53,7 +47,6 @@ elseif(${ARCHITECTURE} STREQUAL "i386" OR ${ARCHITECTURE} STREQUAL "i486" OR ${A
       ${v8source}/src/codegen/ia32/macro-assembler-ia32.h
       ${v8source}/src/codegen/ia32/register-ia32.h
       ${v8source}/src/codegen/ia32/sse-instr.h
-      ${v8source}/src/compiler/backend/ia32/instruction-codes-ia32.h
       ${v8source}/src/execution/ia32/frame-constants-ia32.h
       ${v8source}/src/regexp/ia32/regexp-macro-assembler-ia32.h
       ${v8source}/src/wasm/baseline/ia32/liftoff-assembler-ia32.h
@@ -63,9 +56,6 @@ elseif(${ARCHITECTURE} STREQUAL "i386" OR ${ARCHITECTURE} STREQUAL "i486" OR ${A
       ${v8source}/src/codegen/ia32/cpu-ia32.cc
       ${v8source}/src/codegen/ia32/interface-descriptors-ia32.cc
       ${v8source}/src/codegen/ia32/macro-assembler-ia32.cc
-      ${v8source}/src/compiler/backend/ia32/code-generator-ia32.cc
-      ${v8source}/src/compiler/backend/ia32/instruction-scheduler-ia32.cc
-      ${v8source}/src/compiler/backend/ia32/instruction-selector-ia32.cc
       ${v8source}/src/deoptimizer/ia32/deoptimizer-ia32.cc
       ${v8source}/src/diagnostics/ia32/disasm-ia32.cc
       ${v8source}/src/execution/ia32/frame-constants-ia32.cc

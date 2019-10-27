@@ -1,4 +1,4 @@
-project(debug)
+project(diagnostics)
 
 set(CXX_FLAGS_COMMON "${CXX_FLAGS_COMMON} -fno-exceptions -fno-rtti -Wno-return-type -Wno-comment\
     -Wno-unused-function -Wno-strict-aliasing")
@@ -7,7 +7,7 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${CXX_FLAGS_COMMON} -O0 -g3"
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${CXX_FLAGS_COMMON} -O3 -g0")
 
 include_directories(
-  ${v8source}
+  ${v8source}/
   ${v8source}/include/
   ${v8source}/src
   ${CMAKE_BINARY_DIR}/v8build
@@ -16,43 +16,27 @@ include_directories(
 )
 
 set(${PROJECT_NAME}_headers
-  ${v8source}/src/Debug/debug-coverage.h
-  ${v8source}/src/Debug/debug-evaluate.h
-  ${v8source}/src/Debug/debug-frames.h
-  ${v8source}/src/Debug/debug-interface.h
-  ${v8source}/src/Debug/debug-property-iterator.h
-  ${v8source}/src/Debug/debug-scope-iterator.h
-  ${v8source}/src/Debug/debug-scopes.h
-  ${v8source}/src/Debug/debug-stack-trace-iterator.h
-  ${v8source}/src/Debug/debug-type-profile.h
-  ${v8source}/src/Debug/debug.h
-  ${v8source}/src/Debug/interface-types.h
-  ${v8source}/src/Debug/liveedit.h
+  ${v8source}/src/diagnostics/basic-block-profiler.h
+  ${v8source}/src/diagnostics/code-tracer.h
+  ${v8source}/src/diagnostics/compilation-statistics.h
+  ${v8source}/src/diagnostics/disasm.h
+  ${v8source}/src/diagnostics/disassembler.h
+  ${v8source}/src/diagnostics/eh-frame.h
+  ${v8source}/src/diagnostics/gdb-jit.h
+  ${v8source}/src/diagnostics/perf-jit.h
 )
 
 set(${PROJECT_NAME}_sources
-  ${v8source}/src/Debug/debug-coverage.cc
-  ${v8source}/src/Debug/debug-evaluate.cc
-  ${v8source}/src/Debug/debug-frames.cc
-  ${v8source}/src/Debug/debug-property-iterator.cc
-  ${v8source}/src/Debug/debug-scope-iterator.cc
-  ${v8source}/src/Debug/debug-scopes.cc
-  ${v8source}/src/Debug/debug-stack-trace-iterator.cc
-  ${v8source}/src/Debug/debug-type-profile.cc
-  ${v8source}/src/Debug/debug.cc
-  ${v8source}/src/Debug/liveedit.cc
+  ${v8source}/src/diagnostics/basic-block-profiler.cc
+  ${v8source}/src/diagnostics/compilation-statistics.cc
+  ${v8source}/src/diagnostics/disassembler.cc
+  ${v8source}/src/diagnostics/eh-frame.cc
+  ${v8source}/src/diagnostics/gdb-jit.cc
+  ${v8source}/src/diagnostics/objects-debug.cc
+  ${v8source}/src/diagnostics/objects-printer.cc
+  ${v8source}/src/diagnostics/perf-jit.cc
+  ${v8source}/src/diagnostics/unwinder.cc
 )
-
-if(${ARCHITECTURE} STREQUAL "x86_64")
-    set(${PROJECT_NAME}_sources ${${PROJECT_NAME}_sources}
-      ${v8source}/src/Debug/x64/debug-x64.cc
-    )
-
-elseif(${ARCHITECTURE} STREQUAL "i386" OR ${ARCHITECTURE} STREQUAL "i486" OR ${ARCHITECTURE} STREQUAL "i586"  OR ${ARCHITECTURE} STREQUAL "i686")
-    set(${PROJECT_NAME}_sources ${${PROJECT_NAME}_sources}
-      ${v8source}/src/Debug/ia32/debug-ia32.cc
-    )
-endif()
 
 add_definitions(-DV8_USE_EXTERNAL_STARTUP_DATA)
 add_definitions(-DV8_ENABLE_REGEXP_INTERPRETER_THREADED_DISPATCH)
@@ -88,9 +72,6 @@ if(${ARCHITECTURE} STREQUAL "x86_64")
 elseif(${ARCHITECTURE} STREQUAL "i386" OR ${ARCHITECTURE} STREQUAL "i486" OR ${ARCHITECTURE} STREQUAL "i586"  OR ${ARCHITECTURE} STREQUAL "i686")
   add_definitions(V8_TARGET_ARCH_IA32)
 endif()
-
-set_source_files_properties(${${PROJECT_NAME}_sources} PROPERTIES GENERATED TRUE)
-set_source_files_properties(${${PROJECT_NAME}_headers} PROPERTIES GENERATED TRUE)
 
 add_library(${PROJECT_NAME}_obj OBJECT ${${PROJECT_NAME}_sources} ${${PROJECT_NAME}_headers})
 

@@ -163,23 +163,23 @@ elseif(${ARCHITECTURE} STREQUAL "i386" OR ${ARCHITECTURE} STREQUAL "i486" OR ${A
 endif()
 
 if(${ARCHITECTURE} STREQUAL "x86_64")
-  set(${PROJECT_NAME}_arch
+  set(${PROJECT_NAME}_sources ${${PROJECT_NAME}_sources}
     ${v8source}/src/compiler/backend/x64/code-generator-x64.cc
     ${v8source}/src/compiler/backend/x64/instruction-scheduler-x64.cc
     ${v8source}/src/compiler/backend/x64/instruction-selector-x64.cc
     ${v8source}/src/compiler/backend/x64/unwinding-info-writer-x64.cc
   )
 elseif(${ARCHITECTURE} STREQUAL "i386" OR ${ARCHITECTURE} STREQUAL "i486" OR ${ARCHITECTURE} STREQUAL "i586"  OR ${ARCHITECTURE} STREQUAL "i686")
-  set(${PROJECT_NAME}_arch
+  set(${PROJECT_NAME}_sources ${${PROJECT_NAME}_sources}
     ${v8source}/src/compiler/backend/ia32/code-generator-ia32.cc
     ${v8source}/src/compiler/backend/ia32/instruction-scheduler-ia32.cc
     ${v8source}/src/compiler/backend/ia32/instruction-selector-ia32.cc
   )
 endif()
 
-add_library(${PROJECT_NAME}_obj OBJECT ${${PROJECT_NAME}_sources} ${${PROJECT_NAME}_arch})
+add_library(${PROJECT_NAME}_obj OBJECT ${${PROJECT_NAME}_sources})
 
-add_library(${PROJECT_NAME}_obj_pic OBJECT ${${PROJECT_NAME}_sources} ${${PROJECT_NAME}_arch})
+add_library(${PROJECT_NAME}_obj_pic OBJECT ${${PROJECT_NAME}_sources})
 set_property(TARGET ${PROJECT_NAME}_obj_pic PROPERTY POSITION_INDEPENDENT_CODE 1)
 
 add_dependencies(${PROJECT_NAME}_obj

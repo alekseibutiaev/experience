@@ -73,22 +73,6 @@ set(${PROJECT_NAME}_sources
   ${v8source}/src/execution/thread-id.cc
   ${v8source}/src/execution/thread-local-top.cc
   ${v8source}/src/execution/v8threads.cc
-  ${v8source}/src/execution/ia32/frame-constants-ia32.cc
-  ${v8source}/src/execution/x64/frame-constants-x64.cc
-  ${v8source}/src/execution/arm/frame-constants-arm.cc
-  ${v8source}/src/execution/arm/simulator-arm.cc
-  ${v8source}/src/execution/arm64/frame-constants-arm64.cc
-  ${v8source}/src/execution/arm64/pointer-auth-arm64.cc
-  ${v8source}/src/execution/arm64/simulator-arm64.cc
-  ${v8source}/src/execution/arm64/simulator-logic-arm64.cc
-  ${v8source}/src/execution/mips/frame-constants-mips.cc
-  ${v8source}/src/execution/mips/simulator-mips.cc
-  ${v8source}/src/execution/mips64/frame-constants-mips64.cc
-  ${v8source}/src/execution/mips64/simulator-mips64.cc
-  ${v8source}/src/execution/ppc/frame-constants-ppc.cc
-  ${v8source}/src/execution/ppc/simulator-ppc.cc
-  ${v8source}/src/execution/s390/frame-constants-s390.cc
-  ${v8source}/src/execution/s390/simulator-s390.cc
 )
 
 add_definitions(-DV8_USE_EXTERNAL_STARTUP_DATA)
