@@ -4,7 +4,7 @@ set(CXX_FLAGS_COMMON "${CXX_FLAGS_COMMON} -fno-exceptions -fno-rtti -Wno-return-
     -Wno-comment -Wno-unused-function -Wno-strict-aliasing")
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${CXX_FLAGS_COMMON} -O0 -g3")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${CXX_FLAGS_COMMON} -O3 -g0 -DNDEBUG")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${CXX_FLAGS_COMMON} -O3 -g0")
 
 include_directories(
   ${v8source}
@@ -26,7 +26,6 @@ set(${PROJECT_NAME}_sources
   ${v8source}/src/api/api-arguments.cc
   ${v8source}/src/api/api-natives.cc
   ${v8source}/src/api/api.cc
-
 )
 
 add_definitions(-DV8_USE_EXTERNAL_STARTUP_DATA)

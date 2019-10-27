@@ -1,3 +1,5 @@
+project(v8_base_without_compiler)
+
 add_subdirectory(api)
 add_subdirectory(arch)
 add_subdirectory(asmjs)
@@ -35,8 +37,6 @@ add_subdirectory(trap-handler)
 add_subdirectory(utils)
 add_subdirectory(wasm)
 add_subdirectory(zone)
-
-project(v8_base_without_compiler)
 
 set(CXX_FLAGS_COMMON "${CXX_FLAGS_COMMON} -fno-exceptions -fno-rtti -Wno-return-type\
     -Wno-comment -Wno-unused-function -Wno-maybe-uninitialized")
@@ -99,8 +99,7 @@ elseif(${ARCHITECTURE} STREQUAL "i386" OR ${ARCHITECTURE} STREQUAL "i486" OR ${A
   add_definitions(V8_TARGET_ARCH_IA32)
 endif()
 
-add_library(${PROJECT_NAME}_static STATIC ${${PROJECT_NAME}_sources} ${${PROJECT_NAME}_headers})
-target_link_libraries(${PROJECT_NAME}_static
+add_library(${PROJECT_NAME}_static STATIC
   $<TARGET_OBJECTS:api_obj>
   $<TARGET_OBJECTS:arch_obj>
   $<TARGET_OBJECTS:asmjs_obj>
@@ -138,10 +137,10 @@ target_link_libraries(${PROJECT_NAME}_static
   $<TARGET_OBJECTS:utils_obj>
   $<TARGET_OBJECTS:wasm_obj>
   $<TARGET_OBJECTS:zone_obj>
+  ${${PROJECT_NAME}_sources} ${${PROJECT_NAME}_headers}
 )
 
-add_library(${PROJECT_NAME}_static_pic STATIC ${${PROJECT_NAME}_sources} ${${PROJECT_NAME}_headers})
-target_link_libraries(${PROJECT_NAME}_static_pic
+add_library(${PROJECT_NAME}_static_pic STATIC
   $<TARGET_OBJECTS:api_obj_pic>
   $<TARGET_OBJECTS:arch_obj_pic>
   $<TARGET_OBJECTS:asmjs_obj_pic>
@@ -179,7 +178,9 @@ target_link_libraries(${PROJECT_NAME}_static_pic
   $<TARGET_OBJECTS:utils_obj_pic>
   $<TARGET_OBJECTS:wasm_obj_pic>
   $<TARGET_OBJECTS:zone_obj_pic>
+  ${${PROJECT_NAME}_sources} ${${PROJECT_NAME}_headers}
 )
+
 set_property(TARGET ${PROJECT_NAME}_static_pic PROPERTY POSITION_INDEPENDENT_CODE 1)
 
 add_dependencies(${PROJECT_NAME}_static
