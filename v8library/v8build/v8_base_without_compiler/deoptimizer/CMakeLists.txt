@@ -16,42 +16,13 @@ include_directories(
 )
 
 set(${PROJECT_NAME}_headers
-  ${v8source}/src/diagnostics/basic-block-profiler.h
-  ${v8source}/src/diagnostics/code-tracer.h
-  ${v8source}/src/diagnostics/compilation-statistics.h
-  ${v8source}/src/diagnostics/disasm.h
-  ${v8source}/src/diagnostics/disassembler.h
-  ${v8source}/src/diagnostics/eh-frame.h
-  ${v8source}/src/diagnostics/gdb-jit.h
-  ${v8source}/src/diagnostics/perf-jit.h
-  ${v8source}/src/diagnostics/unwinding-info-win64.h
-  ${v8source}/src/diagnostics/arm64/disasm-arm64.h
-  ${v8source}/src/diagnostics/unwinding-info-win64.h
+  ${v8source}/src/deoptimizer/deoptimize-reason.h
+  ${v8source}/src/deoptimizer/deoptimizer.h
 )
 
 set(${PROJECT_NAME}_sources
-  ${v8source}/src/diagnostics/basic-block-profiler.cc
-  ${v8source}/src/diagnostics/compilation-statistics.cc
-  ${v8source}/src/diagnostics/disassembler.cc
-  ${v8source}/src/diagnostics/eh-frame.cc
-  ${v8source}/src/diagnostics/gdb-jit.cc
-  ${v8source}/src/diagnostics/objects-debug.cc
-  ${v8source}/src/diagnostics/objects-printer.cc
-  ${v8source}/src/diagnostics/perf-jit.cc
-  ${v8source}/src/diagnostics/unwinder.cc
-  ${v8source}/src/diagnostics/ia32/disasm-ia32.cc
-  ${v8source}/src/diagnostics/x64/disasm-x64.cc
-  ${v8source}/src/diagnostics/x64/eh-frame-x64.cc
-  ${v8source}/src/diagnostics/unwinding-info-win64.cc
-  ${v8source}/src/diagnostics/arm/disasm-arm.cc
-  ${v8source}/src/diagnostics/arm/eh-frame-arm.cc
-  ${v8source}/src/diagnostics/arm64/disasm-arm64.cc
-  ${v8source}/src/diagnostics/arm64/eh-frame-arm64.cc
-  ${v8source}/src/diagnostics/unwinding-info-win64.cc
-  ${v8source}/src/diagnostics/mips/disasm-mips.cc
-  ${v8source}/src/diagnostics/mips64/disasm-mips64.cc
-  ${v8source}/src/diagnostics/ppc/disasm-ppc.cc
-  ${v8source}/src/diagnostics/s390/disasm-s390.cc
+  ${v8source}/src/deoptimizer/deoptimize-reason.cc
+  ${v8source}/src/deoptimizer/deoptimizer.cc
 )
 
 add_definitions(-DV8_USE_EXTERNAL_STARTUP_DATA)

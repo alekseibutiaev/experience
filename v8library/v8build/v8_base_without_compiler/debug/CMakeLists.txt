@@ -3,8 +3,8 @@ project(debug)
 set(CXX_FLAGS_COMMON "${CXX_FLAGS_COMMON} -fno-exceptions -fno-rtti -Wno-return-type -Wno-comment\
     -Wno-unused-function -Wno-strict-aliasing")
 
-set(CMAKE_CXX_FLAGS_Debug "${CMAKE_CXX_FLAGS_Debug} ${CXX_FLAGS_COMMON} -O0 -g3")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${CXX_FLAGS_COMMON} -O3 -g0 -DNDebug")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${CXX_FLAGS_COMMON} -O0 -g3")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${CXX_FLAGS_COMMON} -O3 -g0")
 
 include_directories(
   ${v8source}
@@ -16,30 +16,30 @@ include_directories(
 )
 
 set(${PROJECT_NAME}_headers
-  ${v8source}/src/Debug/Debug-coverage.h
-  ${v8source}/src/Debug/Debug-evaluate.h
-  ${v8source}/src/Debug/Debug-frames.h
-  ${v8source}/src/Debug/Debug-interface.h
-  ${v8source}/src/Debug/Debug-property-iterator.h
-  ${v8source}/src/Debug/Debug-scope-iterator.h
-  ${v8source}/src/Debug/Debug-scopes.h
-  ${v8source}/src/Debug/Debug-stack-trace-iterator.h
-  ${v8source}/src/Debug/Debug-type-profile.h
-  ${v8source}/src/Debug/Debug.h
+  ${v8source}/src/Debug/debug-coverage.h
+  ${v8source}/src/Debug/debug-evaluate.h
+  ${v8source}/src/Debug/debug-frames.h
+  ${v8source}/src/Debug/debug-interface.h
+  ${v8source}/src/Debug/debug-property-iterator.h
+  ${v8source}/src/Debug/debug-scope-iterator.h
+  ${v8source}/src/Debug/debug-scopes.h
+  ${v8source}/src/Debug/debug-stack-trace-iterator.h
+  ${v8source}/src/Debug/debug-type-profile.h
+  ${v8source}/src/Debug/debug.h
   ${v8source}/src/Debug/interface-types.h
   ${v8source}/src/Debug/liveedit.h
 )
 
 set(${PROJECT_NAME}_sources
-  ${v8source}/src/Debug/Debug-coverage.cc
-  ${v8source}/src/Debug/Debug-evaluate.cc
-  ${v8source}/src/Debug/Debug-frames.cc
-  ${v8source}/src/Debug/Debug-property-iterator.cc
-  ${v8source}/src/Debug/Debug-scope-iterator.cc
-  ${v8source}/src/Debug/Debug-scopes.cc
-  ${v8source}/src/Debug/Debug-stack-trace-iterator.cc
-  ${v8source}/src/Debug/Debug-type-profile.cc
-  ${v8source}/src/Debug/Debug.cc
+  ${v8source}/src/Debug/debug-coverage.cc
+  ${v8source}/src/Debug/debug-evaluate.cc
+  ${v8source}/src/Debug/debug-frames.cc
+  ${v8source}/src/Debug/debug-property-iterator.cc
+  ${v8source}/src/Debug/debug-scope-iterator.cc
+  ${v8source}/src/Debug/debug-scopes.cc
+  ${v8source}/src/Debug/debug-stack-trace-iterator.cc
+  ${v8source}/src/Debug/debug-type-profile.cc
+  ${v8source}/src/Debug/debug.cc
   ${v8source}/src/Debug/liveedit.cc
 )
 

@@ -8,6 +8,7 @@ add_subdirectory(common)
 add_subdirectory(date)
 add_subdirectory(debug)
 add_subdirectory(deoptimizer)
+add_subdirectory(diagnostics)
 add_subdirectory(execution)
 add_subdirectory(extensions)
 add_subdirectory(flags)
@@ -21,7 +22,6 @@ add_subdirectory(logging)
 add_subdirectory(numbers)
 add_subdirectory(objects)
 add_subdirectory(parsing)
-add_subdirectory(platform)
 add_subdirectory(profiler)
 add_subdirectory(regexp)
 add_subdirectory(runtime)
@@ -38,10 +38,19 @@ add_subdirectory(zone)
 
 project(v8_base_without_compiler)
 
-set(CXX_FLAGS_COMMON "${CXX_FLAGS_COMMON} -fno-exceptions -fno-rtti -Wno-return-type -Wno-comment -Wno-unused-function -Wno-maybe-uninitialized")
+set(CXX_FLAGS_COMMON "${CXX_FLAGS_COMMON} -fno-exceptions -fno-rtti -Wno-return-type\
+    -Wno-comment -Wno-unused-function -Wno-maybe-uninitialized")
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${CXX_FLAGS_COMMON} -O0 -g3 ")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${CXX_FLAGS_COMMON} -O3 -g0 -DNDEBUG ")
+
+include_directories(
+  ${v8source}
+  ${v8source}/include/
+  ${v8source}/src
+  ${ICU_INCLUDE_DIRS}
+)
+
 
 add_definitions(-DV8_USE_EXTERNAL_STARTUP_DATA)
 add_definitions(-DV8_ENABLE_REGEXP_INTERPRETER_THREADED_DISPATCH)
@@ -71,9 +80,27 @@ add_definitions(-DV8_HAVE_TARGET_OS)
 add_definitions(-D_GNU_SOURCE)
 add_definitions(-DENABLE_DISASSEMBLER)
 
+if(${OS} STREQUAL "GNU/Linux")
 
-add_library(${PROJECT_NAME}_obj INTERFACE)
-target_sources(${PROJECT_NAME}_obj INTERFACE
+  set(${PROJECT_NAME}_headers
+    ${v8source}/src/trap-handler/handler-inside-posix.h
+  )
+
+  set(${PROJECT_NAME}_sources
+    ${v8source}/src/trap-handler/handler-inside-posix.cc
+    ${v8source}/src/trap-handler/handler-outside-posix.cc
+  )
+
+endif()
+
+if(${ARCHITECTURE} STREQUAL "x86_64")
+  add_definitions(-DV8_TARGET_ARCH_X64)
+elseif(${ARCHITECTURE} STREQUAL "i386" OR ${ARCHITECTURE} STREQUAL "i486" OR ${ARCHITECTURE} STREQUAL "i586"  OR ${ARCHITECTURE} STREQUAL "i686")
+  add_definitions(V8_TARGET_ARCH_IA32)
+endif()
+
+add_library(${PROJECT_NAME}_static STATIC ${${PROJECT_NAME}_sources} ${${PROJECT_NAME}_headers})
+target_link_libraries(${PROJECT_NAME}_static
   $<TARGET_OBJECTS:api_obj>
   $<TARGET_OBJECTS:arch_obj>
   $<TARGET_OBJECTS:asmjs_obj>
@@ -84,6 +111,7 @@ target_sources(${PROJECT_NAME}_obj INTERFACE
   $<TARGET_OBJECTS:date_obj>
   $<TARGET_OBJECTS:debug_obj>
   $<TARGET_OBJECTS:deoptimizer_obj>
+  $<TARGET_OBJECTS:diagnostics_obj>
   $<TARGET_OBJECTS:execution_obj>
   $<TARGET_OBJECTS:extensions_obj>
   $<TARGET_OBJECTS:flags_obj>
@@ -98,7 +126,6 @@ target_sources(${PROJECT_NAME}_obj INTERFACE
   $<TARGET_OBJECTS:objects_obj>
   $<TARGET_OBJECTS:parsing_obj>
   $<TARGET_OBJECTS:profiler_obj>
-  $<TARGET_OBJECTS:platform_obj>
   $<TARGET_OBJECTS:regexp_obj>
   $<TARGET_OBJECTS:runtime_obj>
   $<TARGET_OBJECTS:sanitizer_obj>
@@ -113,8 +140,8 @@ target_sources(${PROJECT_NAME}_obj INTERFACE
   $<TARGET_OBJECTS:zone_obj>
 )
 
-add_library(${PROJECT_NAME}_obj_pic INTERFACE)
-target_sources(${PROJECT_NAME}_obj INTERFACE
+add_library(${PROJECT_NAME}_static_pic STATIC ${${PROJECT_NAME}_sources} ${${PROJECT_NAME}_headers})
+target_link_libraries(${PROJECT_NAME}_static_pic
   $<TARGET_OBJECTS:api_obj_pic>
   $<TARGET_OBJECTS:arch_obj_pic>
   $<TARGET_OBJECTS:asmjs_obj_pic>
@@ -125,6 +152,7 @@ target_sources(${PROJECT_NAME}_obj INTERFACE
   $<TARGET_OBJECTS:date_obj_pic>
   $<TARGET_OBJECTS:debug_obj_pic>
   $<TARGET_OBJECTS:deoptimizer_obj_pic>
+  $<TARGET_OBJECTS:diagnostics_obj_pic>
   $<TARGET_OBJECTS:execution_obj_pic>
   $<TARGET_OBJECTS:extensions_obj_pic>
   $<TARGET_OBJECTS:flags_obj_pic>
@@ -139,7 +167,6 @@ target_sources(${PROJECT_NAME}_obj INTERFACE
   $<TARGET_OBJECTS:objects_obj_pic>
   $<TARGET_OBJECTS:parsing_obj_pic>
   $<TARGET_OBJECTS:profiler_obj_pic>
-  $<TARGET_OBJECTS:platform_obj_pic>
   $<TARGET_OBJECTS:regexp_obj_pic>
   $<TARGET_OBJECTS:runtime_obj_pic>
   $<TARGET_OBJECTS:sanitizer_obj_pic>
@@ -152,5 +179,18 @@ target_sources(${PROJECT_NAME}_obj INTERFACE
   $<TARGET_OBJECTS:utils_obj_pic>
   $<TARGET_OBJECTS:wasm_obj_pic>
   $<TARGET_OBJECTS:zone_obj_pic>
+)
+set_property(TARGET ${PROJECT_NAME}_static_pic PROPERTY POSITION_INDEPENDENT_CODE 1)
+
+add_dependencies(${PROJECT_NAME}_static
+  rename_debug
+  bytecodes-builtins-list
+  tq_files
+)
+
+add_dependencies(${PROJECT_NAME}_static_pic
+  rename_debug
+  bytecodes-builtins-list
+  tq_files
 )
 

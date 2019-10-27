@@ -1,7 +1,7 @@
 project(trap-handler)
 
 set(CXX_FLAGS_COMMON "${CXX_FLAGS_COMMON} -fno-exceptions -fno-rtti -Wno-return-type -Wno-comment\
-    -Wno-unused-function -Wno-strict-aliasing -Wno-deprecated-declarations")
+    -Wno-unused-function -Wno-strict-aliasing")
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${CXX_FLAGS_COMMON} -O0 -g3")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${CXX_FLAGS_COMMON} -O3 -g0 -DNDEBUG")
@@ -18,18 +18,12 @@ include_directories(
 set(${PROJECT_NAME}_headers
   ${v8source}/src/trap-handler/trap-handler-internal.h
   ${v8source}/src/trap-handler/trap-handler.h
-  ${v8source}/src/trap-handler/handler-inside-posix.h
-  ${v8source}/src/trap-handler/handler-inside-win.h
-
 )
+
 set(${PROJECT_NAME}_sources
   ${v8source}/src/trap-handler/handler-inside.cc
   ${v8source}/src/trap-handler/handler-outside.cc
   ${v8source}/src/trap-handler/handler-shared.cc
-  ${v8source}/src/trap-handler/handler-inside-posix.cc
-  ${v8source}/src/trap-handler/handler-outside-posix.cc
-  ${v8source}/src/trap-handler/handler-inside-win.cc
-  ${v8source}/src/trap-handler/handler-outside-win.cc
 )
 
 add_definitions(-DV8_USE_EXTERNAL_STARTUP_DATA)

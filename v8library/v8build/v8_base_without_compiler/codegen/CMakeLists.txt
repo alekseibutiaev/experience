@@ -54,9 +54,37 @@ set(${PROJECT_NAME}_headers
   ${v8source}/src/codegen/tick-counter.h
   ${v8source}/src/codegen/tnode.h
   ${v8source}/src/codegen/turbo-assembler.h
-  ${v8source}/src/codegen/unoptimized-compilation-info.h)
+  ${v8source}/src/codegen/unoptimized-compilation-info.h
+)
 
 set(${PROJECT_NAME}_sources
+   ${v8source}/src/codegen/assembler.cc
+   ${v8source}/src/codegen/bailout-reason.cc
+   ${v8source}/src/codegen/code-comments.cc
+   ${v8source}/src/codegen/code-desc.cc
+   ${v8source}/src/codegen/code-factory.cc
+   ${v8source}/src/codegen/code-reference.cc
+   ${v8source}/src/codegen/compilation-cache.cc
+   ${v8source}/src/codegen/compiler.cc
+   ${v8source}/src/codegen/constant-pool.cc
+   ${v8source}/src/codegen/external-reference-table.cc
+   ${v8source}/src/codegen/external-reference.cc
+   ${v8source}/src/codegen/flush-instruction-cache.cc
+   ${v8source}/src/codegen/handler-table.cc
+   ${v8source}/src/codegen/interface-descriptors.cc
+   ${v8source}/src/codegen/machine-type.cc
+   ${v8source}/src/codegen/optimized-compilation-info.cc
+   ${v8source}/src/codegen/pending-optimization-table.cc
+   ${v8source}/src/codegen/register-configuration.cc
+   ${v8source}/src/codegen/register.cc
+   ${v8source}/src/codegen/reloc-info.cc
+   ${v8source}/src/codegen/safepoint-table.cc
+   ${v8source}/src/codegen/source-position-table.cc
+   ${v8source}/src/codegen/source-position.cc
+   ${v8source}/src/codegen/string-constants.cc
+   ${v8source}/src/codegen/tick-counter.cc
+   ${v8source}/src/codegen/turbo-assembler.cc
+   ${v8source}/src/codegen/unoptimized-compilation-info.cc
 )
 
 add_definitions(-DV8_USE_EXTERNAL_STARTUP_DATA)

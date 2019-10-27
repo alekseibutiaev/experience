@@ -1,5 +1,19 @@
 cmake_minimum_required(VERSION 3.5)
 
+if( NOT CMAKE_BUILD_TYPE )
+  set( CMAKE_BUILD_TYPE Release ... FORCE )
+endif()
+
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  message("Compiler is: Clang")
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  message("Compiler is: GCC:")
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+  message("Compiler is: Intel C++")
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+  message("Compiler is: Visual Studio C++")
+endif()
+
 option(oENABLE_GDB_JIT_INTERFACE "enable gdb git interface" OFF)
 
 set(solution_dir ${CMAKE_CURRENT_SOURCE_DIR})
@@ -7,6 +21,16 @@ set(v8source ${solution_dir}/v8)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
 set(CXX_FLAGS_COMMON "-Wall -Werror -std=gnu++14 -Wno-deprecated-declarations")
+
+
+if(CMAKE_BUILD_TYPE MATCHES Debug)
+  message("Debug build.")
+elseif(CMAKE_BUILD_TYPE MATCHES Release)
+  message("Release build.")
+  set(CXX_FLAGS_COMMON ${CXX_FLAGS_COMMON} -DNDEBUG)
+else()
+  message("Some other build type.")
+endif()
 
 message("source dir: " ${CMAKE_SOURCE_DIR})
 message("CMAKE_MODULE_PATH: " ${CMAKE_MODULE_PATH})

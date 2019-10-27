@@ -1,9 +1,9 @@
 project(bytecode_builtins_list_generator)
 
-set(CXX_FLAGS_COMMON "${CXX_FLAGS_COMMON} -fexceptions -frtti -Wno-deprecated-declarations")
+set(CXX_FLAGS_COMMON "${CXX_FLAGS_COMMON} -fexceptions -frtti")
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${CXX_FLAGS_COMMON} -O0 -g3")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${CXX_FLAGS_COMMON} -O3 -g0 -DNDEBUG")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${CXX_FLAGS_COMMON} -O3 -g0")
 
 include_directories(
   ${v8source}

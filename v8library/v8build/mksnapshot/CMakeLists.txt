@@ -72,7 +72,7 @@ add_executable(${PROJECT_NAME} ${${PROJECT_NAME}_sources}
 )
 
 target_link_libraries(${PROJECT_NAME}
-  v8_base_without_compiler_obj_pic
+  v8_base_without_compiler_static
   encoding_static
   bindings_static
   ${ICU_LIBRARIES}
