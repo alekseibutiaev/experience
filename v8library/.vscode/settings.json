@@ -1,0 +1,12 @@
+{
+  "cmake.configureArgs": [
+  ],
+  "cmake.buildToolArgs": [
+    "VERBOSE=1",
+    "-j4"
+  ],
+  "editor.wordWrapColumn": 80,
+  "cmake.saveBeforeBuild": true,
+  "cmake.configureOnOpen": false,
+  "C_Cpp.default.configurationProvider": "go2sh.cmake-integration",
+}
