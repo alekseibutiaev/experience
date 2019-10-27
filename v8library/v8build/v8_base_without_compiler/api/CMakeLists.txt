@@ -1,7 +1,7 @@
 project(api)
 
-set(CXX_FLAGS_COMMON "${CXX_FLAGS_COMMON} -fno-exceptions -fno-rtti -Wno-return-type -Wno-comment
-    -Wno-unused-function -Wno-strict-aliasing -Wno-deprecated-declarations")
+set(CXX_FLAGS_COMMON "${CXX_FLAGS_COMMON} -fno-exceptions -fno-rtti -Wno-return-type\
+    -Wno-comment -Wno-unused-function -Wno-strict-aliasing")
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${CXX_FLAGS_COMMON} -O0 -g3")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${CXX_FLAGS_COMMON} -O3 -g0 -DNDEBUG")
@@ -26,6 +26,7 @@ set(${PROJECT_NAME}_sources
   ${v8source}/src/api/api-arguments.cc
   ${v8source}/src/api/api-natives.cc
   ${v8source}/src/api/api.cc
+
 )
 
 add_definitions(-DV8_USE_EXTERNAL_STARTUP_DATA)
@@ -63,9 +64,9 @@ elseif(${ARCHITECTURE} STREQUAL "i386" OR ${ARCHITECTURE} STREQUAL "i486" OR ${A
   add_definitions(V8_TARGET_ARCH_IA32)
 endif()
 
-add_library(${PROJECT_NAME}_obj OBJECT ${${PROJECT_NAME}_sources} ${${PROJECT_NAME}_headers})
+add_library(${PROJECT_NAME}_obj OBJECT ${${PROJECT_NAME}_sources})
 
-add_library(${PROJECT_NAME}_obj_pic OBJECT ${${PROJECT_NAME}_sources} ${${PROJECT_NAME}_headers})
+add_library(${PROJECT_NAME}_obj_pic OBJECT ${${PROJECT_NAME}_sources})
 set_property(TARGET ${PROJECT_NAME}_obj_pic PROPERTY POSITION_INDEPENDENT_CODE 1)
 
 add_dependencies(${PROJECT_NAME}_obj

@@ -1,7 +1,7 @@
 project(arch)
 
-set(CXX_FLAGS_COMMON "${CXX_FLAGS_COMMON} -fno-exceptions -fno-rtti -Wno-return-type -Wno-comment
-    -Wno-unused-function -Wno-strict-aliasing -Wno-deprecated-declarations")
+set(CXX_FLAGS_COMMON "${CXX_FLAGS_COMMON} -fno-exceptions -fno-rtti -Wno-return-type -Wno-comment\
+    -Wno-unused-function -Wno-strict-aliasing")
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${CXX_FLAGS_COMMON} -O0 -g3")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${CXX_FLAGS_COMMON} -O3 -g0 -DNDEBUG")
@@ -38,13 +38,13 @@ if(${ARCHITECTURE} STREQUAL "x86_64")
       ${v8source}/src/compiler/backend/x64/instruction-scheduler-x64.cc
       ${v8source}/src/compiler/backend/x64/instruction-selector-x64.cc
       ${v8source}/src/compiler/backend/x64/unwinding-info-writer-x64.cc
-      ${v8source}/src/debug/x64/debug-x64.cc
       ${v8source}/src/deoptimizer/x64/deoptimizer-x64.cc
       ${v8source}/src/diagnostics/x64/disasm-x64.cc
       ${v8source}/src/diagnostics/x64/eh-frame-x64.cc
       ${v8source}/src/execution/x64/frame-constants-x64.cc
       ${v8source}/src/regexp/x64/regexp-macro-assembler-x64.cc
     )
+
 elseif(${ARCHITECTURE} STREQUAL "i386" OR ${ARCHITECTURE} STREQUAL "i486" OR ${ARCHITECTURE} STREQUAL "i586"  OR ${ARCHITECTURE} STREQUAL "i686")
     set(${PROJECT_NAME}_headers
       ${v8source}/src/codegen/ia32/assembler-ia32-inl.h
@@ -66,7 +66,6 @@ elseif(${ARCHITECTURE} STREQUAL "i386" OR ${ARCHITECTURE} STREQUAL "i486" OR ${A
       ${v8source}/src/compiler/backend/ia32/code-generator-ia32.cc
       ${v8source}/src/compiler/backend/ia32/instruction-scheduler-ia32.cc
       ${v8source}/src/compiler/backend/ia32/instruction-selector-ia32.cc
-      ${v8source}/src/debug/ia32/debug-ia32.cc
       ${v8source}/src/deoptimizer/ia32/deoptimizer-ia32.cc
       ${v8source}/src/diagnostics/ia32/disasm-ia32.cc
       ${v8source}/src/execution/ia32/frame-constants-ia32.cc

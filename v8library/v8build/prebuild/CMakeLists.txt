@@ -1,13 +1,14 @@
 
 add_custom_command(
-  OUTPUT libraries_extras.bin
+  OUTPUT libraries_extras_h
   COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/v8build/gen
   COMMAND ${PYTHON_EXECUTABLE} ${v8source}/tools/js2c.py
     ${CMAKE_BINARY_DIR}/v8build/gen/extras-libraries.cc EXTRAS
     --startup_blob ${CMAKE_BINARY_DIR}/v8build/gen/libraries_extras.bin
+  COMMAND ${CMAKE_COMMAND} -E touch libraries_extras_h  
 )
 
-add_custom_target(libraries_extras DEPENDS libraries_extras.bin)
+add_custom_target(libraries_extras DEPENDS libraries_extras_h)
 
 add_custom_command(
   OUTPUT natives_blob.bin

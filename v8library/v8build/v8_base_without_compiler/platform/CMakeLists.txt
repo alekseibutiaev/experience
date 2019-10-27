@@ -1,11 +1,10 @@
-project(common)
+project(platform)
 
 set(CXX_FLAGS_COMMON "${CXX_FLAGS_COMMON} -fno-exceptions -fno-rtti -Wno-return-type -Wno-comment\
-    -Wno-unused-function -Wno-strict-aliasing
-")
+    -Wno-unused-function -Wno-strict-aliasing")
 
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${CXX_FLAGS_COMMON} -O0 -g3")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${CXX_FLAGS_COMMON} -O3 -g0 -DNDEBUG")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${CXX_FLAGS_COMMON} -O0 -g3 ")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${CXX_FLAGS_COMMON} -O3 -g0 -DNDEBUG ")
 
 include_directories(
   ${v8source}
@@ -16,17 +15,18 @@ include_directories(
   ${ICU_INCLUDE_DIRS}
 )
 
-set(${PROJECT_NAME}_headers
-  ${v8source}/src/common/assert-scope.h
-  ${v8source}/src/common/checks.h
-  ${v8source}/src/common/message-template.h
-  ${v8source}/src/common/ptr-compr-inl.h
-  ${v8source}/src/common/ptr-compr.h
-)
+if(${OS} STREQUAL "GNU/Linux")
 
-set(${PROJECT_NAME}_sources
-  ${v8source}/src/common/assert-scope.cc
-)
+  set(${PROJECT_NAME}_headers
+    ${v8source}/src/trap-handler/handler-inside-posix.h
+  )
+
+  set(${PROJECT_NAME}_sources
+    ${v8source}/src/trap-handler/handler-inside-posix.cc
+    ${v8source}/src/trap-handler/handler-outside-posix.cc
+  )
+
+endif()
 
 add_definitions(-DV8_USE_EXTERNAL_STARTUP_DATA)
 add_definitions(-DV8_ENABLE_REGEXP_INTERPRETER_THREADED_DISPATCH)

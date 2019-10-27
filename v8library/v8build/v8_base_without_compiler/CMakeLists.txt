@@ -1,5 +1,3 @@
-project(v8_base_without_compiler)
-
 add_subdirectory(api)
 add_subdirectory(arch)
 add_subdirectory(asmjs)
@@ -23,6 +21,7 @@ add_subdirectory(logging)
 add_subdirectory(numbers)
 add_subdirectory(objects)
 add_subdirectory(parsing)
+add_subdirectory(platform)
 add_subdirectory(profiler)
 add_subdirectory(regexp)
 add_subdirectory(runtime)
@@ -37,39 +36,18 @@ add_subdirectory(utils)
 add_subdirectory(wasm)
 add_subdirectory(zone)
 
-set(CXX_FLAGS_COMMON "${CXX_FLAGS_COMMON} -fno-exceptions -fno-rtti -Wno-return-type -Wno-comment -Wno-unused-function -Wno-maybe-uninitialized -Wno-deprecated-declarations")
+project(v8_base_without_compiler)
 
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${CXX_FLAGS_COMMON} -O0 -g3")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${CXX_FLAGS_COMMON} -O3 -g0 -DNDEBUG")
+set(CXX_FLAGS_COMMON "${CXX_FLAGS_COMMON} -fno-exceptions -fno-rtti -Wno-return-type -Wno-comment -Wno-unused-function -Wno-maybe-uninitialized")
 
-include_directories(
-  ${v8source}
-  ${v8source}/include/
-  ${v8source}/src
-  ${CMAKE_BINARY_DIR}/v8build
-  ${CMAKE_BINARY_DIR}/v8build/gen
-  ${ICU_INCLUDE_DIRS}
-)
-
-if(${OS} STREQUAL "GNU/Linux")
-
-  set(${PROJECT_NAME}_headers
-    ${v8source}/src/trap-handler/handler-inside-posix.h
-  )
-
-  set(${PROJECT_NAME}_sources
-    ${v8source}/src/trap-handler/handler-inside-posix.cc
-    ${v8source}/src/trap-handler/handler-outside-posix.cc
-  )
-
-endif()
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${CXX_FLAGS_COMMON} -O0 -g3 ")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${CXX_FLAGS_COMMON} -O3 -g0 -DNDEBUG ")
 
 add_definitions(-DV8_USE_EXTERNAL_STARTUP_DATA)
 add_definitions(-DV8_ENABLE_REGEXP_INTERPRETER_THREADED_DISPATCH)
 add_definitions(-D__STDC_CONSTANT_MACROS)
 add_definitions(-DV8_DEPRECATION_WARNINGS)
 add_definitions(-DV8_EMBEDDED_BUILTINS)
-add_definitions(-DENABLE_GDB_JIT_INTERFACE)
 add_definitions(-DV8_SHARED_RO_HEAP)
 add_definitions(-DUSING_V8_BASE_SHARED)
 add_definitions(-DDISABLE_UNTRUSTED_CODE_MITIGATIONS)
@@ -93,106 +71,86 @@ add_definitions(-DV8_HAVE_TARGET_OS)
 add_definitions(-D_GNU_SOURCE)
 add_definitions(-DENABLE_DISASSEMBLER)
 
-if(${ARCHITECTURE} STREQUAL "x86_64")
-  add_definitions(-DV8_TARGET_ARCH_X64)
-elseif(${ARCHITECTURE} STREQUAL "i386" OR ${ARCHITECTURE} STREQUAL "i486" OR ${ARCHITECTURE} STREQUAL "i586"  OR ${ARCHITECTURE} STREQUAL "i686")
-  add_definitions(V8_TARGET_ARCH_IA32)
-endif()
 
-if(${ARCHITECTURE} STREQUAL "x86_64")
-elseif(${ARCHITECTURE} STREQUAL "i386" OR ${ARCHITECTURE} STREQUAL "i486" OR ${ARCHITECTURE} STREQUAL "i586"  OR ${ARCHITECTURE} STREQUAL "i686")
-endif()
-
-set_source_files_properties(${${PROJECT_NAME}_gen} PROPERTIES GENERATED TRUE)
-
-add_library(${PROJECT_NAME}_obj OBJECT ${${PROJECT_NAME}_sources} ${${PROJECT_NAME}_gen})
-
-add_library(${PROJECT_NAME}_obj_pic OBJECT ${${PROJECT_NAME}_sources} ${${PROJECT_NAME}_gen})
-set_property(TARGET ${PROJECT_NAME}_obj_pic PROPERTY POSITION_INDEPENDENT_CODE 1)
-
-add_dependencies(${PROJECT_NAME}_obj
-  rename_debug
-  bytecodes-builtins-list
-  tq_files
-  gen-regexp-special-case_files
-
-  api_obj
-  asmjs_obj
-  ast_obj
-  builtins_obj
-  codegen_obj
-  common_obj
-  date_obj
-  debug_obj
-  deoptimizer_obj
-  execution_obj
-  extensions_obj
-  flags_obj
-  handles_obj
-  heap_obj
-  ic_obj
-  init_obj
-  interpreter_obj
-  logging_obj
-  numbers_obj
-  objects_obj
-  parsing_obj
-  profiler_obj
-  regexp_obj
-  runtime_obj
-  sanitizer_obj
-  snapshot_obj
-  strings_obj
-  tasks_obj
-  third_party_obj
-  tracing_obj
-  trap-handler_obj
-  utils_obj
-  wasm_obj
-  zone_obj
-  arch_obj
+add_library(${PROJECT_NAME}_obj INTERFACE)
+target_sources(${PROJECT_NAME}_obj INTERFACE
+  $<TARGET_OBJECTS:api_obj>
+  $<TARGET_OBJECTS:arch_obj>
+  $<TARGET_OBJECTS:asmjs_obj>
+  $<TARGET_OBJECTS:ast_obj>
+  $<TARGET_OBJECTS:builtins_obj>
+  $<TARGET_OBJECTS:codegen_obj>
+  $<TARGET_OBJECTS:common_obj>
+  $<TARGET_OBJECTS:date_obj>
+  $<TARGET_OBJECTS:debug_obj>
+  $<TARGET_OBJECTS:deoptimizer_obj>
+  $<TARGET_OBJECTS:execution_obj>
+  $<TARGET_OBJECTS:extensions_obj>
+  $<TARGET_OBJECTS:flags_obj>
+  $<TARGET_OBJECTS:handles_obj>
+  $<TARGET_OBJECTS:heap_obj>
+  $<TARGET_OBJECTS:ic_obj>
+  $<TARGET_OBJECTS:init_obj>
+  $<TARGET_OBJECTS:interpreter_obj>
+  $<TARGET_OBJECTS:json_obj>
+  $<TARGET_OBJECTS:logging_obj>
+  $<TARGET_OBJECTS:numbers_obj>
+  $<TARGET_OBJECTS:objects_obj>
+  $<TARGET_OBJECTS:parsing_obj>
+  $<TARGET_OBJECTS:profiler_obj>
+  $<TARGET_OBJECTS:platform_obj>
+  $<TARGET_OBJECTS:regexp_obj>
+  $<TARGET_OBJECTS:runtime_obj>
+  $<TARGET_OBJECTS:sanitizer_obj>
+  $<TARGET_OBJECTS:snapshot_obj>
+  $<TARGET_OBJECTS:strings_obj>
+  $<TARGET_OBJECTS:tasks_obj>
+  $<TARGET_OBJECTS:third_party_obj>
+  $<TARGET_OBJECTS:tracing_obj>
+  $<TARGET_OBJECTS:trap-handler_obj>
+  $<TARGET_OBJECTS:utils_obj>
+  $<TARGET_OBJECTS:wasm_obj>
+  $<TARGET_OBJECTS:zone_obj>
 )
 
-add_dependencies(${PROJECT_NAME}_obj_pic
-  rename_debug
-  bytecodes-builtins-list
-  tq_files
-  gen-regexp-special-case_files
-
-  api_obj_pic
-  asmjs_obj_pic
-  ast_obj_pic
-  builtins_obj_pic
-  codegen_obj_pic
-  common_obj_pic
-  date_obj_pic
-  debug_obj_pic
-  deoptimizer_obj_pic
-  execution_obj_pic
-  extensions_obj_pic
-  flags_obj_pic
-  handles_obj_pic
-  heap_obj_pic
-  ic_obj_pic
-  init_obj_pic
-  interpreter_obj_pic
-  logging_obj_pic
-  numbers_obj_pic
-  objects_obj_pic
-  parsing_obj_pic
-  profiler_obj_pic
-  regexp_obj_pic
-  runtime_obj_pic
-  sanitizer_obj_pic
-  snapshot_obj_pic
-  strings_obj_pic
-  tasks_obj_pic
-  third_party_obj_pic
-  tracing_obj_pic
-  trap-handler_obj_pic
-  utils_obj_pic
-  wasm_obj_pic
-  zone_obj_pic
-  arch_obj_pic
+add_library(${PROJECT_NAME}_obj_pic INTERFACE)
+target_sources(${PROJECT_NAME}_obj INTERFACE
+  $<TARGET_OBJECTS:api_obj_pic>
+  $<TARGET_OBJECTS:arch_obj_pic>
+  $<TARGET_OBJECTS:asmjs_obj_pic>
+  $<TARGET_OBJECTS:ast_obj_pic>
+  $<TARGET_OBJECTS:builtins_obj_pic>
+  $<TARGET_OBJECTS:codegen_obj_pic>
+  $<TARGET_OBJECTS:common_obj_pic>
+  $<TARGET_OBJECTS:date_obj_pic>
+  $<TARGET_OBJECTS:debug_obj_pic>
+  $<TARGET_OBJECTS:deoptimizer_obj_pic>
+  $<TARGET_OBJECTS:execution_obj_pic>
+  $<TARGET_OBJECTS:extensions_obj_pic>
+  $<TARGET_OBJECTS:flags_obj_pic>
+  $<TARGET_OBJECTS:handles_obj_pic>
+  $<TARGET_OBJECTS:heap_obj_pic>
+  $<TARGET_OBJECTS:ic_obj_pic>
+  $<TARGET_OBJECTS:init_obj_pic>
+  $<TARGET_OBJECTS:interpreter_obj_pic>
+  $<TARGET_OBJECTS:json_obj_pic>
+  $<TARGET_OBJECTS:logging_obj_pic>
+  $<TARGET_OBJECTS:numbers_obj_pic>
+  $<TARGET_OBJECTS:objects_obj_pic>
+  $<TARGET_OBJECTS:parsing_obj_pic>
+  $<TARGET_OBJECTS:profiler_obj_pic>
+  $<TARGET_OBJECTS:platform_obj_pic>
+  $<TARGET_OBJECTS:regexp_obj_pic>
+  $<TARGET_OBJECTS:runtime_obj_pic>
+  $<TARGET_OBJECTS:sanitizer_obj_pic>
+  $<TARGET_OBJECTS:snapshot_obj_pic>
+  $<TARGET_OBJECTS:strings_obj_pic>
+  $<TARGET_OBJECTS:tasks_obj_pic>
+  $<TARGET_OBJECTS:third_party_obj_pic>
+  $<TARGET_OBJECTS:tracing_obj_pic>
+  $<TARGET_OBJECTS:trap-handler_obj_pic>
+  $<TARGET_OBJECTS:utils_obj_pic>
+  $<TARGET_OBJECTS:wasm_obj_pic>
+  $<TARGET_OBJECTS:zone_obj_pic>
 )
 

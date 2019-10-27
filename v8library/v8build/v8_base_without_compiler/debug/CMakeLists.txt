@@ -1,7 +1,7 @@
 project(debug)
 
-set(CXX_FLAGS_COMMON "${CXX_FLAGS_COMMON} -fno-exceptions -fno-rtti -Wno-return-type -Wno-comment
-    -Wno-unused-function -Wno-strict-aliasing -Wno-deprecated-declarations")
+set(CXX_FLAGS_COMMON "${CXX_FLAGS_COMMON} -fno-exceptions -fno-rtti -Wno-return-type -Wno-comment\
+    -Wno-unused-function -Wno-strict-aliasing")
 
 set(CMAKE_CXX_FLAGS_Debug "${CMAKE_CXX_FLAGS_Debug} ${CXX_FLAGS_COMMON} -O0 -g3")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${CXX_FLAGS_COMMON} -O3 -g0 -DNDebug")
@@ -42,6 +42,17 @@ set(${PROJECT_NAME}_sources
   ${v8source}/src/Debug/Debug.cc
   ${v8source}/src/Debug/liveedit.cc
 )
+
+if(${ARCHITECTURE} STREQUAL "x86_64")
+    set(${PROJECT_NAME}_sources "${PROJECT_NAME}_sources"
+      ${v8source}/src/Debug/x64/debug-x64.cc
+    )
+
+elseif(${ARCHITECTURE} STREQUAL "i386" OR ${ARCHITECTURE} STREQUAL "i486" OR ${ARCHITECTURE} STREQUAL "i586"  OR ${ARCHITECTURE} STREQUAL "i686")
+    set(${PROJECT_NAME}_sources "${PROJECT_NAME}_sources"
+      ${v8source}/src/Debug/ia32/debug-ia32.cc
+    )
+endif()
 
 add_definitions(-DV8_USE_EXTERNAL_STARTUP_DATA)
 add_definitions(-DV8_ENABLE_REGEXP_INTERPRETER_THREADED_DISPATCH)
