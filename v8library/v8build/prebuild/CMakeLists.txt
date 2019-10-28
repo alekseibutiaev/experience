@@ -13,7 +13,9 @@ add_custom_target(libraries_extras DEPENDS libraries_extras_h)
 add_custom_command(
   OUTPUT natives_blob.bin
   DEPENDS libraries_extras
-  COMMAND python ${v8source}/tools/concatenate-files.py ${CMAKE_BINARY_DIR}/v8build/gen/extras-libraries.bin ${CMAKE_BINARY_DIR}/v8build/natives_blob.bin
+  COMMAND python ${v8source}/tools/concatenate-files.py
+    ${CMAKE_BINARY_DIR}/v8build/gen/extras-libraries.bin
+    ${CMAKE_BINARY_DIR}/v8build/natives_blob.bin
 )
 
 add_custom_target(natives_blob.bin DEPENDS natives_blob.bin)
@@ -33,4 +35,17 @@ add_custom_command(
 )
 
 add_custom_target(rename_debug DEPENDS rename_debug_cmd)
+
+add_custom_command(
+  OUTPUT embedded_s
+  COMMAND ${PYTHON_EXECUTABLE} ${v8source}/tools/run.py ${CMAKE_BINARY_DIR}/v8build/mksnapshot/mksnapshot
+    --target_os=linux --target_arch=x64 --embedded_src
+    ${CMAKE_BINARY_DIR}/v8build/gen/embedded.S
+    --embedded_variant Default --random-seed 314159265
+    --startup_blob ${CMAKE_BINARY_DIR}/v8build/gen/snapshot_blob.bin
+    --no-native-code-counters
+  COMMAND ${CMAKE_COMMAND} -E touch embedded_s
+)
+
+add_custom_target(run_mksnapshot DEPENDS embedded_s)
 

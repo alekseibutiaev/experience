@@ -17,11 +17,25 @@ set(${PROJECT_NAME}_sources
   ${v8source}/src/init/setup-isolate-deserialize.cc
 )
 
+if(OPTION_V8_EMBEDDED_BUILTINS)
+
+#  add_definitions(-DV8_EMBEDDED_BUILTINS)
+  message("OPTION_V8_EMBEDDED_BUILTINS")
+
+  set(${PROJECT_NAME}_gen
+    ${CMAKE_BINARY_DIR}/v8build/gen/embedded.S
+  )
+
+  set_property(SOURCE ${${PROJECT_NAME}_gen} PROPERTY LANGUAGE C)
+  set_source_files_properties(${${PROJECT_NAME}_gen} PROPERTIES GENERATED TRUE)
+  message("Gen: " ${${PROJECT_NAME}_gen})
+endif()
+
 add_definitions(-DV8_USE_EXTERNAL_STARTUP_DATA)
 add_definitions(-DV8_ENABLE_REGEXP_INTERPRETER_THREADED_DISPATCH)
 add_definitions(-D__STDC_CONSTANT_MACROS)
 add_definitions(-DV8_DEPRECATION_WARNINGS)
-add_definitions(-DV8_EMBEDDED_BUILTINS)
+#add_definitions(-DV8_EMBEDDED_BUILTINS)
 add_definitions(-DENABLE_GDB_JIT_INTERFACE)
 add_definitions(-DV8_SHARED_RO_HEAP)
 add_definitions(-DDISABLE_UNTRUSTED_CODE_MITIGATIONS)
@@ -51,18 +65,32 @@ elseif(${ARCHITECTURE} STREQUAL "i386" OR ${ARCHITECTURE} STREQUAL "i486" OR ${A
   add_definitions(V8_TARGET_ARCH_IA32)
 endif()
 
-add_library(${PROJECT_NAME}_obj OBJECT ${${PROJECT_NAME}_sources})
+add_library(${PROJECT_NAME}_obj OBJECT ${${PROJECT_NAME}_gen} ${${PROJECT_NAME}_sources})
 
-add_library(${PROJECT_NAME}_obj_pic OBJECT ${${PROJECT_NAME}_sources})
+add_library(${PROJECT_NAME}_obj_pic OBJECT ${${PROJECT_NAME}_gen} ${${PROJECT_NAME}_sources})
 set_property(TARGET ${PROJECT_NAME}_obj_pic PROPERTY POSITION_INDEPENDENT_CODE 1)
 
 add_dependencies(${PROJECT_NAME}_obj
   bytecodes-builtins-list
   tq_files
+  run_mksnapshot
 )
 
 add_dependencies(${PROJECT_NAME}_obj_pic
   bytecodes-builtins-list
   tq_files
+  run_mksnapshot
 )
+
+if(ENABLE_V8_EMBEDDED_BUILTINS)
+
+  add_dependencies(${PROJECT_NAME}_obj
+    run_mksnapshot
+  )
+
+  add_dependencies(${PROJECT_NAME}_obj_pic
+    run_mksnapshot
+  )
+
+endif()
 

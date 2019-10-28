@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.5)
 
+option(OPTION_ENABLE_GDB_JIT_INTERFACE "enable gdb git interface" OFF)
+option(OPTION_V8_EMBEDDED_BUILTINS "enable v8 embedded builtins" ON)
+
+
 if( NOT CMAKE_BUILD_TYPE )
   set( CMAKE_BUILD_TYPE Release ... FORCE )
 endif()
@@ -14,14 +18,12 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   message("Compiler is: Visual Studio C++")
 endif()
 
-option(oENABLE_GDB_JIT_INTERFACE "enable gdb git interface" OFF)
 
 set(solution_dir ${CMAKE_CURRENT_SOURCE_DIR})
 set(v8source ${solution_dir}/v8)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
 set(CXX_FLAGS_COMMON "-Wall -Werror -std=gnu++14 -Wno-deprecated-declarations")
-
 
 if(CMAKE_BUILD_TYPE MATCHES Debug)
   message("Debug build.")
@@ -66,9 +68,15 @@ else()
     message (FATAL_ERROR "apt-get install libicu-dev")
 endif()
 
-if(oENABLE_GDB_JIT_INTERFACE)
+if(OPTION_ENABLE_GDB_JIT_INTERFACE)
   add_definitions(-DENABLE_GDB_JIT_INTERFACE)
 endif(oENABLE_GDB_JIT_INTERFACE)
+
+
+if(OPTION_V8_EMBEDDED_BUILTINS)
+  add_definitions(-DV8_EMBEDDED_BUILTINS)
+  message("OPTION_V8_EMBEDDED_BUILTINS")
+endif(OPTION_V8_EMBEDDED_BUILTINS)
 
 if(0)
     set (GTEST_ROOT /usr/src/googletest/googlemock)
