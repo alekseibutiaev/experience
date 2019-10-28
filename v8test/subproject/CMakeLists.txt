@@ -44,3 +44,4 @@ message("CXX_FLAGS_RELEASE: " ${CMAKE_CXX_FLAGS_RELEASE})
 
 
 add_subdirectory(test1)
+add_subdirectory(test2)
