@@ -18,7 +18,6 @@ set(${PROJECT_NAME}_sources
 )
 
 if(OPTION_V8_EMBEDDED_BUILTINS)
-
   set(${PROJECT_NAME}_gen
     ${CMAKE_BINARY_DIR}/v8build/gen/embedded.S
   )
@@ -66,13 +65,13 @@ set_property(TARGET ${PROJECT_NAME}_obj_pic PROPERTY POSITION_INDEPENDENT_CODE 1
 
 add_dependencies(${PROJECT_NAME}_obj
   bytecodes-builtins-list
-  tq_files
+  run_torque
   run_mksnapshot
 )
 
 add_dependencies(${PROJECT_NAME}_obj_pic
   bytecodes-builtins-list
-  tq_files
+  run_torque
   run_mksnapshot
 )
 

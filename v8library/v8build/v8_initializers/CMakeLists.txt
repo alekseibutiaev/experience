@@ -111,9 +111,9 @@ add_library(${PROJECT_NAME}_obj_pic OBJECT ${${PROJECT_NAME}_sources})
 set_property(TARGET ${PROJECT_NAME}_obj_pic PROPERTY POSITION_INDEPENDENT_CODE 1)
 
 add_dependencies(${PROJECT_NAME}_obj
-  tq_files
+  run_torque
 )
 add_dependencies(${PROJECT_NAME}_obj_pic
-  tq_files
+  run_torque
 )
 

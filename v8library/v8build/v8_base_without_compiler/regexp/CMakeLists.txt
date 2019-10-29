@@ -101,13 +101,13 @@ add_dependencies(${PROJECT_NAME}_obj
   rename_debug
   bytecodes-builtins-list
   gen-regexp-special-case_files
-  tq_files
+  run_torque
 )
 
 add_dependencies(${PROJECT_NAME}_obj_pic
   rename_debug
   bytecodes-builtins-list
   gen-regexp-special-case_files
-  tq_files
+  run_torque
 )
 

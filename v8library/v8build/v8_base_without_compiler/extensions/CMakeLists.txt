@@ -76,12 +76,12 @@ set_property(TARGET ${PROJECT_NAME}_obj_pic PROPERTY POSITION_INDEPENDENT_CODE 1
 add_dependencies(${PROJECT_NAME}_obj
   rename_debug
   bytecodes-builtins-list
-  tq_files
+  run_torque
 )
 
 add_dependencies(${PROJECT_NAME}_obj_pic
   rename_debug
   bytecodes-builtins-list
-  tq_files
+  run_torque
 )
 

@@ -191,12 +191,12 @@ set_property(TARGET ${PROJECT_NAME}_static_pic PROPERTY POSITION_INDEPENDENT_COD
 add_dependencies(${PROJECT_NAME}_static
   rename_debug
   bytecodes-builtins-list
-  tq_files
+  run_torque
 )
 
 add_dependencies(${PROJECT_NAME}_static_pic
   rename_debug
   bytecodes-builtins-list
-  tq_files
+  run_torque
 )
 

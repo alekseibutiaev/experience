@@ -80,6 +80,6 @@ target_link_libraries(${PROJECT_NAME}
 
 add_dependencies(${PROJECT_NAME}
   bytecodes-builtins-list
-  tq_files
+  run_torque
 )
 

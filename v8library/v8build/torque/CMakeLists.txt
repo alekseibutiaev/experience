@@ -107,5 +107,5 @@ add_custom_command(
   COMMAND ${CMAKE_COMMAND} -E touch tq_build
 )
 
-add_custom_target(tq_files DEPENDS tq_build)
+add_custom_target(run_torque DEPENDS tq_build)
 

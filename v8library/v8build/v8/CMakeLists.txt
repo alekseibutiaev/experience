@@ -80,12 +80,12 @@ add_library(${PROJECT_NAME}_static_pic STATIC
   $<TARGET_OBJECTS:v8_external_snapshot_obj_pic>
   $<TARGET_OBJECTS:torque_generated_definitions_obj_pic>
   $<TARGET_OBJECTS:inspector_obj_pic>
-  $<TARGET_OBJECTS:encoding_obj_pic>
-  $<TARGET_OBJECTS:bindings_obj_pic>
 )
 
 target_link_libraries(${PROJECT_NAME}_static_pic
   v8_base_without_compiler_static_pic
+  bindings_static
+  encoding_static
 )
 
 add_library(${PROJECT_NAME} SHARED
@@ -96,34 +96,32 @@ add_library(${PROJECT_NAME} SHARED
   $<TARGET_OBJECTS:v8_external_snapshot_obj_pic>
   $<TARGET_OBJECTS:torque_generated_definitions_obj_pic>
   $<TARGET_OBJECTS:inspector_obj_pic>
-  $<TARGET_OBJECTS:encoding_obj_pic>
-  $<TARGET_OBJECTS:bindings_obj_pic>
-  $<TARGET_OBJECTS:encoding_obj_pic>
-  $<TARGET_OBJECTS:bindings_obj_pic>
 )
 
 target_link_libraries(${PROJECT_NAME}
   v8_base_without_compiler_static_pic
+  bindings_static_pic
+  encoding_static_pic
 )
 
 add_dependencies(${PROJECT_NAME}_static
   rename_debug
   bytecodes-builtins-list
-  tq_files
+  run_torque
   run_mksnapshot  
 )
 
 add_dependencies(${PROJECT_NAME}_static_pic
   rename_debug
   bytecodes-builtins-list
-  tq_files
+  run_torque
   run_mksnapshot  
 )
 
 add_dependencies(${PROJECT_NAME}
   rename_debug
   bytecodes-builtins-list
-  tq_files
+  run_torque
   run_mksnapshot 
 )
 

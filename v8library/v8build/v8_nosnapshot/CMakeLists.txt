@@ -17,7 +17,7 @@ set(${PROJECT_NAME}_sources
 )
 
 set(${PROJECT_NAME}_gen
-    ${CMAKE_BINARY_DIR}/v8build/gen/extras-libraries.cc
+  ${CMAKE_BINARY_DIR}/v8build/gen/extras-libraries.cc
 )
 
 add_definitions(-DV8_USE_EXTERNAL_STARTUP_DATA)
@@ -54,19 +54,19 @@ endif()
 
 set_source_files_properties(${${PROJECT_NAME}_gen} PROPERTIES GENERATED TRUE)
 
-add_library(${PROJECT_NAME}_obj OBJECT ${${PROJECT_NAME}_sources} ${${PROJECT_NAME}_gen})
+add_library(${PROJECT_NAME}_obj OBJECT ${${PROJECT_NAME}_gen} ${${PROJECT_NAME}_sources})
 
-add_library(${PROJECT_NAME}_obj_pic OBJECT ${${PROJECT_NAME}_sources} ${${PROJECT_NAME}_gen})
+add_library(${PROJECT_NAME}_obj_pic OBJECT ${${PROJECT_NAME}_gen} ${${PROJECT_NAME}_sources})
 set_property(TARGET ${PROJECT_NAME}_obj_pic PROPERTY POSITION_INDEPENDENT_CODE 1)
 
 add_dependencies(${PROJECT_NAME}_obj
   libraries_extras
   bytecodes-builtins-list
-  tq_files
+  run_torque
 )
 
 add_dependencies(${PROJECT_NAME}_obj_pic
   bytecodes-builtins-list
-  tq_files
+  run_torque
 )
 

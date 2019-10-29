@@ -57,6 +57,6 @@ add_library(${PROJECT_NAME}_obj OBJECT ${${PROJECT_NAME}_sources})
 add_dependencies(${PROJECT_NAME}_obj
   rename_debug
   bytecodes-builtins-list
-  tq_files
+  run_torque
 )
 
