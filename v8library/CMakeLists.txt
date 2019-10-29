@@ -20,7 +20,7 @@ endif()
 
 
 set(solution_dir ${CMAKE_CURRENT_SOURCE_DIR})
-set(v8source ${solution_dir}/v8)
+set(v8source ${solution_dir}/sources)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
 set(CXX_FLAGS_COMMON "-Wall -Werror -std=gnu++14 -Wno-deprecated-declarations")
@@ -70,12 +70,14 @@ endif()
 
 if(OPTION_ENABLE_GDB_JIT_INTERFACE)
   add_definitions(-DENABLE_GDB_JIT_INTERFACE)
-endif(oENABLE_GDB_JIT_INTERFACE)
+endif(OPTION_ENABLE_GDB_JIT_INTERFACE)
 
 
 if(OPTION_V8_EMBEDDED_BUILTINS)
   add_definitions(-DV8_EMBEDDED_BUILTINS)
-  message("OPTION_V8_EMBEDDED_BUILTINS")
+  message("OPTION_V8_EMBEDDED_BUILTINS ON")
+else(OPTION_V8_EMBEDDED_BUILTINS)
+  message("OPTION_V8_EMBEDDED_BUILTINS OFF")
 endif(OPTION_V8_EMBEDDED_BUILTINS)
 
 if(0)

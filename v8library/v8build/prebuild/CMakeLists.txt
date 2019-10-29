@@ -38,7 +38,8 @@ add_custom_target(rename_debug DEPENDS rename_debug_cmd)
 
 add_custom_command(
   OUTPUT embedded_s
-  COMMAND ${PYTHON_EXECUTABLE} ${v8source}/tools/run.py ${CMAKE_BINARY_DIR}/v8build/mksnapshot/mksnapshot
+  COMMAND ${PYTHON_EXECUTABLE} ${v8source}/tools/run.py
+    ${CMAKE_BINARY_DIR}/v8build/mksnapshot/mksnapshot
     --target_os=linux --target_arch=x64 --embedded_src
     ${CMAKE_BINARY_DIR}/v8build/gen/embedded.S
     --embedded_variant Default --random-seed 314159265

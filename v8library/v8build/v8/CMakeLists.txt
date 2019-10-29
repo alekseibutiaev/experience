@@ -20,8 +20,6 @@ add_definitions(-DUSING_V8_SHARED)
 add_definitions(-DV8_ENABLE_REGEXP_INTERPRETER_THREADED_DISPATCH)
 add_definitions(-D__STDC_CONSTANT_MACROS)
 add_definitions(-DV8_DEPRECATION_WARNINGS)
-add_definitions(-DV8_EMBEDDED_BUILTINS)
-add_definitions(-DENABLE_GDB_JIT_INTERFACE)
 add_definitions(-DV8_SHARED_RO_HEAP)
 add_definitions(-DDISABLE_UNTRUSTED_CODE_MITIGATIONS)
 add_definitions(-DV8_USE_SNAPSHOT)
@@ -66,14 +64,14 @@ add_library(${PROJECT_NAME}_static STATIC
   $<TARGET_OBJECTS:bindings_obj>
 )
 
+target_link_libraries(${PROJECT_NAME}_static
+  v8_base_without_compiler_static
+)
+
 set_target_properties(${PROJECT_NAME}_static PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
 
 add_library(${PROJECT_NAME}_obj_pic OBJECT ${${PROJECT_NAME}_sources})
 set_property(TARGET ${PROJECT_NAME}_obj_pic PROPERTY POSITION_INDEPENDENT_CODE 1)
-
-target_link_libraries(${PROJECT_NAME}_static
-  v8_base_without_compiler_static
-)
 
 add_library(${PROJECT_NAME}_static_pic STATIC
   $<TARGET_OBJECTS:${PROJECT_NAME}_obj_pic>
@@ -100,11 +98,35 @@ add_library(${PROJECT_NAME} SHARED
   $<TARGET_OBJECTS:inspector_obj_pic>
   $<TARGET_OBJECTS:encoding_obj_pic>
   $<TARGET_OBJECTS:bindings_obj_pic>
+  $<TARGET_OBJECTS:encoding_obj_pic>
+  $<TARGET_OBJECTS:bindings_obj_pic>
 )
 
 target_link_libraries(${PROJECT_NAME}
   v8_base_without_compiler_static_pic
 )
+
+add_dependencies(${PROJECT_NAME}_static
+  rename_debug
+  bytecodes-builtins-list
+  tq_files
+  run_mksnapshot  
+)
+
+add_dependencies(${PROJECT_NAME}_static_pic
+  rename_debug
+  bytecodes-builtins-list
+  tq_files
+  run_mksnapshot  
+)
+
+add_dependencies(${PROJECT_NAME}
+  rename_debug
+  bytecodes-builtins-list
+  tq_files
+  run_mksnapshot 
+)
+
 
 install(FILES
   ${v8source}/include/v8.h

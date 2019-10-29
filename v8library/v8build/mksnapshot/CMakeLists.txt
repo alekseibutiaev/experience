@@ -26,8 +26,6 @@ add_definitions(-DV8_USE_EXTERNAL_STARTUP_DATA)
 add_definitions(-DV8_ENABLE_REGEXP_INTERPRETER_THREADED_DISPATCH)
 add_definitions(-D__STDC_CONSTANT_MACROS)
 add_definitions(-DV8_DEPRECATION_WARNINGS)
-add_definitions(-DV8_EMBEDDED_BUILTINS)
-add_definitions(-DENABLE_GDB_JIT_INTERFACE)
 add_definitions(-DV8_SHARED_RO_HEAP)
 add_definitions(-DUSING_V8_BASE_SHARED)
 add_definitions(-DDISABLE_UNTRUSTED_CODE_MITIGATIONS)
@@ -58,7 +56,7 @@ elseif(${ARCHITECTURE} STREQUAL "i386" OR ${ARCHITECTURE} STREQUAL "i486" OR ${A
   add_definitions(V8_TARGET_ARCH_IA32)
 endif()
 
-add_executable(${PROJECT_NAME} ${${PROJECT_NAME}_sources}
+add_executable(${PROJECT_NAME}
   $<TARGET_OBJECTS:inspector_obj>
   $<TARGET_OBJECTS:v8_libbase_obj>
   $<TARGET_OBJECTS:v8_compiler_obj>
@@ -69,6 +67,7 @@ add_executable(${PROJECT_NAME} ${${PROJECT_NAME}_sources}
   $<TARGET_OBJECTS:v8_nosnapshot_obj>
   $<TARGET_OBJECTS:torque_generated_definitions_obj>
   $<TARGET_OBJECTS:torque_generated_initializers_obj>
+  ${${PROJECT_NAME}_sources}
 )
 
 target_link_libraries(${PROJECT_NAME}
