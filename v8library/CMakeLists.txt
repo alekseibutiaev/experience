@@ -19,6 +19,8 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   message("Compiler is: Visual Studio C++")
 endif()
 
+set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g3")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -g0 -DNDEBUG")
 
 set(solution_dir ${CMAKE_CURRENT_SOURCE_DIR})
 set(v8source ${solution_dir}/sources)
