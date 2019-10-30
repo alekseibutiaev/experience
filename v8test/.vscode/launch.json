@@ -5,10 +5,29 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "executable",
+      "name": "test1",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/build/template/executable/executable",
+      "program": "${workspaceFolder}/build/subproject/test1/test1",
+      "args": [],
+      "stopAtEntry": true,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ]
+    },
+    {
+      "name": "test2",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/subproject/test2/test2",
       "args": [],
       "stopAtEntry": true,
       "cwd": "${workspaceFolder}",
