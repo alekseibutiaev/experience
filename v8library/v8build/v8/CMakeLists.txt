@@ -3,7 +3,7 @@ project(v8)
 set(CXX_FLAGS_COMMON "${CXX_FLAGS_COMMON} -fno-exceptions -fno-rtti")
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${CXX_FLAGS_COMMON}")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${CXX_FLAGS_COMMON} -O3 -g0")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${CXX_FLAGS_COMMON}")
 
 include_directories(
   ${v8source}
@@ -53,49 +53,50 @@ endif()
 add_library(${PROJECT_NAME}_obj OBJECT ${${PROJECT_NAME}_sources})
 
 add_library(${PROJECT_NAME}_static STATIC
-  $<TARGET_OBJECTS:${PROJECT_NAME}_obj>
   $<TARGET_OBJECTS:v8_libbase_obj>
   $<TARGET_OBJECTS:v8_libsampler_obj>
   $<TARGET_OBJECTS:v8_compiler_obj>
   $<TARGET_OBJECTS:v8_external_snapshot_obj>
   $<TARGET_OBJECTS:torque_generated_definitions_obj>
   $<TARGET_OBJECTS:inspector_obj>
-  $<TARGET_OBJECTS:encoding_obj>
-  $<TARGET_OBJECTS:bindings_obj>
-)
-
-target_link_libraries(${PROJECT_NAME}_static
-  v8_base_without_compiler_static
+  $<TARGET_OBJECTS:${PROJECT_NAME}_obj>
 )
 
 set_target_properties(${PROJECT_NAME}_static PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
+
+target_link_libraries(${PROJECT_NAME}_static
+  v8_base_without_compiler_static
+  encoding_static
+  bindings_static
+)
 
 add_library(${PROJECT_NAME}_obj_pic OBJECT ${${PROJECT_NAME}_sources})
 set_property(TARGET ${PROJECT_NAME}_obj_pic PROPERTY POSITION_INDEPENDENT_CODE 1)
 
 add_library(${PROJECT_NAME}_static_pic STATIC
-  $<TARGET_OBJECTS:${PROJECT_NAME}_obj_pic>
-  $<TARGET_OBJECTS:v8_libsampler_obj_pic>
-  $<TARGET_OBJECTS:v8_compiler_obj_pic>
-  $<TARGET_OBJECTS:v8_external_snapshot_obj_pic>
-  $<TARGET_OBJECTS:torque_generated_definitions_obj_pic>
-  $<TARGET_OBJECTS:inspector_obj_pic>
-)
-
-target_link_libraries(${PROJECT_NAME}_static_pic
-  v8_base_without_compiler_static_pic
-  bindings_static
-  encoding_static
-)
-
-add_library(${PROJECT_NAME} SHARED
-  $<TARGET_OBJECTS:${PROJECT_NAME}_obj_pic>
   $<TARGET_OBJECTS:v8_libbase_obj_pic>
   $<TARGET_OBJECTS:v8_libsampler_obj_pic>
   $<TARGET_OBJECTS:v8_compiler_obj_pic>
   $<TARGET_OBJECTS:v8_external_snapshot_obj_pic>
   $<TARGET_OBJECTS:torque_generated_definitions_obj_pic>
   $<TARGET_OBJECTS:inspector_obj_pic>
+  $<TARGET_OBJECTS:${PROJECT_NAME}_obj_pic>
+)
+
+target_link_libraries(${PROJECT_NAME}_static_pic
+  v8_base_without_compiler_static
+  encoding_static_pic
+  bindings_static_pic
+)
+
+add_library(${PROJECT_NAME} SHARED
+  $<TARGET_OBJECTS:v8_libbase_obj_pic>
+  $<TARGET_OBJECTS:v8_libsampler_obj_pic>
+  $<TARGET_OBJECTS:v8_compiler_obj_pic>
+  $<TARGET_OBJECTS:v8_external_snapshot_obj_pic>
+  $<TARGET_OBJECTS:torque_generated_definitions_obj_pic>
+  $<TARGET_OBJECTS:inspector_obj_pic>
+  $<TARGET_OBJECTS:${PROJECT_NAME}_obj_pic>
 )
 
 target_link_libraries(${PROJECT_NAME}
@@ -104,25 +105,18 @@ target_link_libraries(${PROJECT_NAME}
   encoding_static_pic
 )
 
-add_dependencies(${PROJECT_NAME}_static
+add_dependencies(${PROJECT_NAME}_obj
   rename_debug
   bytecodes-builtins-list
   run_torque
-  run_mksnapshot  
+  run_mksnapshot
 )
 
-add_dependencies(${PROJECT_NAME}_static_pic
+add_dependencies(${PROJECT_NAME}_obj_pic
   rename_debug
   bytecodes-builtins-list
   run_torque
-  run_mksnapshot  
-)
-
-add_dependencies(${PROJECT_NAME}
-  rename_debug
-  bytecodes-builtins-list
-  run_torque
-  run_mksnapshot 
+  run_mksnapshot
 )
 
 install(FILES

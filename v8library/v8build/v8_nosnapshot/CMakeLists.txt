@@ -66,6 +66,7 @@ add_dependencies(${PROJECT_NAME}_obj
 )
 
 add_dependencies(${PROJECT_NAME}_obj_pic
+  libraries_extras
   bytecodes-builtins-list
   run_torque
 )

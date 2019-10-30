@@ -3,12 +3,16 @@ project(v8_libsampler)
 set(CXX_FLAGS_COMMON "${CXX_FLAGS_COMMON} -fno-exceptions -fno-rtti")
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${CXX_FLAGS_COMMON}")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${CXX_FLAGS_COMMON}-NDEBUG")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${CXX_FLAGS_COMMON}")
 
 include_directories(
   ${v8source}
   ${v8source}/include
   ${ICU_INCLUDE_DIRS}
+)
+
+set(${PROJECT_NAME}_headers
+    ${v8source}/src/libsampler/sampler.h
 )
 
 set(${PROJECT_NAME}_sources
@@ -52,4 +56,13 @@ add_library(${PROJECT_NAME}_obj OBJECT ${${PROJECT_NAME}_sources})
 
 add_library(${PROJECT_NAME}_obj_pic OBJECT ${${PROJECT_NAME}_sources})
 set_property(TARGET ${PROJECT_NAME}_obj_pic PROPERTY POSITION_INDEPENDENT_CODE 1)
+
+add_dependencies(${PROJECT_NAME}_obj
+  rename_debug
+)
+
+add_dependencies(${PROJECT_NAME}_obj_pic
+  rename_debug
+)
+
 

@@ -37,16 +37,15 @@ else()
   message("Some other build type.")
 endif()
 
-message("source dir: " ${CMAKE_SOURCE_DIR})
-message("CMAKE_MODULE_PATH: " ${CMAKE_MODULE_PATH})
-message("CMAKE_BINARY_DIR: " ${CMAKE_BINARY_DIR})
-message("v8source: " ${v8source})
-message("CMAKE_SYSTEM_NAME: " ${CMAKE_SYSTEM_NAME})
-
 execute_process(COMMAND uname -m COMMAND tr -d '\n' OUTPUT_VARIABLE ARCHITECTURE)
-message(STATUS "Architecture: ${ARCHITECTURE}")
-
 execute_process(COMMAND uname -o COMMAND tr -d '\n' OUTPUT_VARIABLE OS)
+
+message(STATUS "source dir: " ${CMAKE_SOURCE_DIR})
+message(STATUS "CMAKE_MODULE_PATH: " ${CMAKE_MODULE_PATH})
+message(STATUS "CMAKE_BINARY_DIR: " ${CMAKE_BINARY_DIR})
+message(STATUS "v8source: " ${v8source})
+message(STATUS "CMAKE_SYSTEM_NAME: " ${CMAKE_SYSTEM_NAME})
+message(STATUS "Architecture: ${ARCHITECTURE}")
 message(STATUS "OS: ${OS}")
 
 if(CMAKE_VERSION VERSION_LESS 3.12.0)
@@ -104,6 +103,5 @@ if(0)
     endif()
 endif()
 
-#add_subdirectory(prepare)
 add_subdirectory(v8build)
 

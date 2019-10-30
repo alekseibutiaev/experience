@@ -16,16 +16,16 @@ add_custom_command(
 
 add_custom_target(libraries_extras DEPENDS libraries_extras_bin)
 
-add_custom_command(
-  OUTPUT natives_blob_bin
-  DEPENDS libraries_extras
-  COMMAND ${PYTHON_EXECUTABLE} ${v8source}/tools/concatenate-files.py
-    ${CMAKE_BINARY_DIR}/v8build/gen/extras_libraries.bin
-    ${CMAKE_BINARY_DIR}/v8build/gen/natives_blob.bin
-  COMMAND ${CMAKE_COMMAND} -E touch natives_blob_bin
-)
+#add_custom_command(
+#  OUTPUT natives_blob_bin
+#  DEPENDS libraries_extras
+#  COMMAND ${PYTHON_EXECUTABLE} ${v8source}/tools/concatenate-files.py
+#    ${CMAKE_BINARY_DIR}/v8build/gen/extras_libraries.bin
+#    ${CMAKE_BINARY_DIR}/v8build/gen/natives_blob.bin
+#  COMMAND ${CMAKE_COMMAND} -E touch natives_blob_bin
+#)
 
-add_custom_target(natives_blob DEPENDS natives_blob_bin)
+#add_custom_target(natives_blob DEPENDS natives_blob_bin)
 
 add_custom_command(
   OUTPUT system_googletest
@@ -45,6 +45,7 @@ add_custom_target(rename_debug DEPENDS rename_debug_cmd)
 
 add_custom_command(
   OUTPUT embedded_s
+  DEPENDS mksnapshot
   COMMAND ${PYTHON_EXECUTABLE} ${v8source}/tools/run.py
     ${CMAKE_BINARY_DIR}/v8build/mksnapshot/mksnapshot
     --target_os=linux --target_arch=x64 --embedded_src
