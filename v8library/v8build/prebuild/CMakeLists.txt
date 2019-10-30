@@ -1,24 +1,31 @@
 
+#[1/1310] python ../../tools/js2c.py gen/extras-libraries.cc EXTRAS --startup_blob gen/libraries_extras.bin
+#[2/1310] touch obj/js2c_extras.stamp
+#[3/1310] python ../../tools/concatenate-files.py gen/libraries_extras.bin natives_blob.bin
+#[4/1310] touch obj/natives_blob.stamp
+
+
 add_custom_command(
-  OUTPUT libraries_extras_h
+  OUTPUT libraries_extras_bin
   COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/v8build/gen
   COMMAND ${PYTHON_EXECUTABLE} ${v8source}/tools/js2c.py
     ${CMAKE_BINARY_DIR}/v8build/gen/extras-libraries.cc EXTRAS
     --startup_blob ${CMAKE_BINARY_DIR}/v8build/gen/libraries_extras.bin
-  COMMAND ${CMAKE_COMMAND} -E touch libraries_extras_h  
+  COMMAND ${CMAKE_COMMAND} -E touch libraries_extras_bin
 )
 
-add_custom_target(libraries_extras DEPENDS libraries_extras_h)
+add_custom_target(libraries_extras DEPENDS libraries_extras_bin)
 
 add_custom_command(
-  OUTPUT natives_blob.bin
+  OUTPUT natives_blob_bin
   DEPENDS libraries_extras
-  COMMAND python ${v8source}/tools/concatenate-files.py
-    ${CMAKE_BINARY_DIR}/v8build/gen/extras-libraries.bin
-    ${CMAKE_BINARY_DIR}/v8build/natives_blob.bin
+  COMMAND ${PYTHON_EXECUTABLE} ${v8source}/tools/concatenate-files.py
+    ${CMAKE_BINARY_DIR}/v8build/gen/extras_libraries.bin
+    ${CMAKE_BINARY_DIR}/v8build/gen/natives_blob.bin
+  COMMAND ${CMAKE_COMMAND} -E touch natives_blob_bin
 )
 
-add_custom_target(natives_blob.bin DEPENDS natives_blob.bin)
+add_custom_target(natives_blob DEPENDS natives_blob_bin)
 
 add_custom_command(
   OUTPUT system_googletest

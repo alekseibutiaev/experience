@@ -21,9 +21,12 @@ if(OPTION_V8_EMBEDDED_BUILTINS)
   set(${PROJECT_NAME}_gen
     ${CMAKE_BINARY_DIR}/v8build/gen/embedded.S
   )
-
   set_property(SOURCE ${${PROJECT_NAME}_gen} PROPERTY LANGUAGE C)
   set_source_files_properties(${${PROJECT_NAME}_gen} PROPERTIES GENERATED TRUE)
+else(OPTION_V8_EMBEDDED_BUILTINS)
+  set(${PROJECT_NAME}_sources ${${PROJECT_NAME}_sources}
+    ${v8source}/src/snapshot/embedded/embedded-empty.cc
+  )
 endif()
 
 add_definitions(-DV8_USE_EXTERNAL_STARTUP_DATA)
@@ -86,4 +89,6 @@ if(ENABLE_V8_EMBEDDED_BUILTINS)
   )
 
 endif()
+
+add_custom_target(v8_external_snapshot ALL DEPENDS ${${PROJECT_NAME}_obj} ${${PROJECT_NAME}_obj_pic})
 

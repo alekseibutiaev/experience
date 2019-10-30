@@ -2,7 +2,8 @@ cmake_minimum_required(VERSION 3.5)
 
 option(OPTION_ENABLE_GDB_JIT_INTERFACE "enable gdb git interface" OFF)
 option(OPTION_V8_EMBEDDED_BUILTINS "enable v8 embedded builtins" ON)
-
+option(OPTION_V8_USE_SNAPSHOT "enable use snapshot" ON)
+option(OPTION_V8_SNAPSHOT_NATIVE_CODE_COUNTERS "enable snapshot native code counters" ON)
 
 if( NOT CMAKE_BUILD_TYPE )
   set( CMAKE_BUILD_TYPE Release ... FORCE )
@@ -79,6 +80,13 @@ if(OPTION_V8_EMBEDDED_BUILTINS)
 else(OPTION_V8_EMBEDDED_BUILTINS)
   message("OPTION_V8_EMBEDDED_BUILTINS OFF")
 endif(OPTION_V8_EMBEDDED_BUILTINS)
+
+if(OPTION_V8_USE_SNAPSHOT)
+  add_definitions(-DV8_EMBEDDED_BUILTINS)
+  if(OPTION_V8_SNAPSHOT_NATIVE_CODE_COUNTERS)
+    add_definitions(-DV8_SNAPSHOT_NATIVE_CODE_COUNTERS)
+  endif(OPTION_V8_SNAPSHOT_NATIVE_CODE_COUNTERS)
+endif(OPTION_V8_USE_SNAPSHOT)
 
 if(0)
     set (GTEST_ROOT /usr/src/googletest/googlemock)
