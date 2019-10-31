@@ -19,20 +19,20 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   message("Compiler is: Visual Studio C++")
 endif()
 
+set(CXX_FLAGS_COMMON "-Wall -Werror -std=gnu++14 -Wno-deprecated-declarations")
+
 set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g3")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -g0 -DNDEBUG")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -g0")
 
 set(solution_dir ${CMAKE_CURRENT_SOURCE_DIR})
 set(v8source ${solution_dir}/sources)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
-set(CXX_FLAGS_COMMON "-Wall -Werror -std=gnu++14 -Wno-deprecated-declarations")
-
 if(CMAKE_BUILD_TYPE MATCHES Debug)
   message("Debug build.")
 elseif(CMAKE_BUILD_TYPE MATCHES Release)
+  add_definitions(-DNDEBUG)
   message("Release build.")
-  set(CXX_FLAGS_COMMON ${CXX_FLAGS_COMMON} -DNDEBUG)
 else()
   message("Some other build type.")
 endif()
