@@ -1,4 +1,3 @@
-grep -
 project(source)
 
 message("CMAKE_BINARY_DIR: " ${CMAKE_BINARY_DIR})

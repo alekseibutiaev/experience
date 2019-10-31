@@ -41,6 +41,30 @@
           "ignoreFailures": true
         }
       ]
+    },
+    {
+      "name": "d8",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "/opt/v8lib_d/bin/d8",
+      "args": ["--shell"],
+      "stopAtEntry": true,
+      "cwd": "${workspaceFolder}",
+      "environment": [
+        {
+          "name" : "LD_LIBRARY_PATH",
+          "value": "/opt/v8lib_d/lib/x86_64-linux-gnu/v8"
+        }
+      ],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ]
     }
   ]
 }
