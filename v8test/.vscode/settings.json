@@ -1,6 +1,7 @@
 {
   "cmake.configureArgs": [
     "-DUSE_WERROR=ON"
+    ,"-DV8_HOME=/opt/v8lib_d"
   ],
   "cmake.buildToolArgs": [
     "VERBOSE=1",

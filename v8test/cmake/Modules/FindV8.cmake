@@ -16,7 +16,6 @@ find_path(V8_INCLUDE_DIR v8/v8.h
     /usr
     /usr/local
     /opt/v8lib
-    /opt/v8lib_d
   PATH_SUFFIXES
     /include
   DOC "V8 - Headers"
@@ -25,6 +24,7 @@ find_library(V8_LIBRARY NAMES v8
   HINTS
     ${V8_HOME}
     ${V8_HOME}/lib/x86_64-linux-gnu
+    ${V8_HOME}/lib/i386-linux-gnu
   PATHS
     /usr
     /usr/lib
@@ -32,8 +32,6 @@ find_library(V8_LIBRARY NAMES v8
     /usr/lib/i386-linux-gnu
     /opt/v8lib/lib/x86_64-linux-gnu
     /opt/v8lib/lib/i386-linux-gnu
-    /opt/v8lib_d/lib/x86_64-linux-gnu
-    /opt/v8lib_d/lib/i386-linux-gnu
   PATH_SUFFIXES
     /v8 
   DOC "V8 - Library"
@@ -42,6 +40,7 @@ find_library(V8_LIBPLATFORM_LIBRARY NAMES v8_libplatform
   HINTS
     ${V8_HOME}
     ${V8_HOME}/lib/x86_64-linux-gnu
+    ${V8_HOME}/lib/i386-linux-gnu
   PATHS
     /usr
     /usr/lib
@@ -49,8 +48,6 @@ find_library(V8_LIBPLATFORM_LIBRARY NAMES v8_libplatform
     /usr/lib/i386-linux-gnu
     /opt/v8lib/lib/x86_64-linux-gnu
     /opt/v8lib/lib/i386-linux-gnu
-    /opt/v8lib_d/lib/x86_64-linux-gnu
-    /opt/v8lib_d/lib/i386-linux-gnu
   PATH_SUFFIXES
     /v8
   DOC "V8 - Library platform"

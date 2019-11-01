@@ -5,6 +5,27 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "d8",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/v8build/d8/d8",
+      "args": [
+        "--shell"
+      ],
+      "stopAtEntry": true,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "setupCommands": [
+          {
+              "description": "Enable pretty-printing for gdb",
+              "text": "-enable-pretty-printing",
+              "ignoreFailures": true
+          }
+      ]
+    },
+    {
       "name": "executable",
       "type": "cppdbg",
       "request": "launch",
