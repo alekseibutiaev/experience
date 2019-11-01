@@ -74,7 +74,9 @@ if(OPTION_ENABLE_GDB_JIT_INTERFACE)
   add_definitions(-DENABLE_GDB_JIT_INTERFACE)
 endif(OPTION_ENABLE_GDB_JIT_INTERFACE)
 
-  add_definitions(-DUCHAR_TYPE=uint16_t)
+add_definitions(-DUCHAR_TYPE=uint16_t)
+add_definitions(-D__STDC_CONSTANT_MACROS)
+add_definitions(-D__STDC_FORMAT_MACROS)
 
 if(OPTION_V8_EMBEDDED_BUILTINS)
   add_definitions(-DV8_EMBEDDED_BUILTINS)
