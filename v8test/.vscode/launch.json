@@ -22,8 +22,8 @@
           "ignoreFailures": true
         }
       ]
-    },
-    {
+    }
+    ,{
       "name": "test2",
       "type": "cppdbg",
       "request": "launch",
@@ -41,8 +41,27 @@
           "ignoreFailures": true
         }
       ]
-    },
-    {
+    }
+    ,{
+      "name": "test3",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/subproject/test3/test3",
+      "args": [],
+      "stopAtEntry": true,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ]
+    }
+    ,{
       "name": "d8",
       "type": "cppdbg",
       "request": "launch",
