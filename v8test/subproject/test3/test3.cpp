@@ -90,7 +90,8 @@ std::string execute(v8::Isolate* isolate, const char* script) {
 
 int main(int ac, char* av[]) {
   v8::V8::InitializeICUDefaultLocation(av[0]);
-  v8::V8::InitializeExternalStartupDataFromFile("/opt/v8lib/share/snapshot_blob.bin");
+//  v8::V8::InitializeExternalStartupDataFromFile("/opt/v8lib/share/snapshot_blob.bin");
+  v8::V8::InitializeExternalStartupData("/opt/v8lib/share/");
 //  v8::V8::SetSnapshotDataBlob(&sd);
   std::unique_ptr<v8::Platform> platform = v8::platform::NewDefaultPlatform();
   v8::V8::InitializePlatform(platform.get());
