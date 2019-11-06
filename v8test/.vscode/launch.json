@@ -62,6 +62,25 @@
       ]
     }
     ,{
+      "name": "test4",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/subproject/test4/test4",
+      "args": [],
+      "stopAtEntry": true,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ]
+    }
+    ,{
       "name": "d8",
       "type": "cppdbg",
       "request": "launch",

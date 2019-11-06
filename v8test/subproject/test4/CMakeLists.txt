@@ -1,7 +1,7 @@
 FILE(GLOB HEADER_FILES *.h *.hpp)
 FILE(GLOB SOURCE_FILES *.cpp)
 
-project(test3)
+project(test4)
 
 add_definitions(-D__SCRIPT_NAME__="${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}.js")
 

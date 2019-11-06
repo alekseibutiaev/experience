@@ -1,3 +1,4 @@
+#include <cstdio>
 #include <string>
 #include <memory>
 #include <fstream>
@@ -7,7 +8,68 @@
 #include <v8/v8.h>
 #include <v8/libplatform/libplatform.h>
 
-//const char* script = "var s = 0; for(var i = 1; i < 100; i++) s += i; s;";
+namespace {
+#if 0
+  inline std::string to_string(v8::Local<v8::Value> v) {
+    /*
+    v8::String::Utf8Value data(v->, v);
+    return p == 0 ? string() string(*data);
+    */
+    return std::string();
+  }
+
+  class file_t {
+  public:
+
+    bool open(const char* name) {
+      m_file = fopen(name, "rw");
+      return 0 != m_file;
+    }
+
+    std::size_t write(const char* buf, const std::size_t& size) {
+      return m_file ? fwrite(buf, sizeof(char), size, m_file) : 0;
+    }
+
+    std::size_t read(char* buf, const std::size_t& size) {
+      return m_file ? fread(buf, sizeof(char), size, m_file) : 0;
+    }
+
+  public:
+/*
+    static v8::Handle<v8::Value> open(v8::Local<v8::String> property,
+        const v8::PropertyCallbackInfo<v8::Value>& info) {
+    }
+*/
+  private:
+
+    static file_t* get_file_t(v8::Handle<v8::Object> obj) {
+      v8::Handle<v8::External> field = v8::Handle<v8::External>::Cast(obj->GetInternalField(0));
+      return static_cast<file_t*>(field->Value());
+    }
+
+  private:
+
+    FILE* m_file = 0;
+
+  };
+#endif
+
+  void some_function(const v8::FunctionCallbackInfo<v8::Value>& args) {
+    v8::HandleScope handle_scope(args.GetIsolate());
+    for(int i = 0; i < args.Length(); ++i) {
+      v8::String::Utf8Value str(args.GetIsolate(), args[i]);
+      std::cout << *str << std::endl;
+    }
+  }
+
+  v8::Local<v8::ObjectTemplate> get_global_ctx(v8::Isolate* isolate) {
+    v8::Local<v8::ObjectTemplate> tmpl = v8::ObjectTemplate::New(isolate);
+    tmpl->Set(v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), "test_function", v8::NewStringType::kNormal).ToLocalChecked(),
+      v8::FunctionTemplate::New(isolate, some_function));
+    return tmpl;
+  }
+
+}; /* namespace */
 
 // Extracts a C string from a V8 Utf8Value.
 const char* ToCString(const v8::String::Utf8Value& value) {
@@ -63,7 +125,8 @@ std::string execute(v8::Isolate* isolate, const std::string& script) {
   v8::TryCatch try_catch(isolate);
   v8::Isolate::Scope isolate_scope(isolate);
   // Create a new context.
-  v8::Local<v8::Context> context = v8::Context::New(isolate);
+  v8::Local<v8::ObjectTemplate> tmpl = get_global_ctx(isolate);
+  v8::Local<v8::Context> context = v8::Context::New(isolate, 0, tmpl);
   // Enter the context for compiling and running the hello world script.
   v8::Context::Scope context_scope(context);
   {
