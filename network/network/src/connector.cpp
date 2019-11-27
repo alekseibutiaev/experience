@@ -27,15 +27,14 @@ namespace {
 
   void handle_connect(net::details::socket_t* rsocket, net::accepted_func_t func,
       const net::error_code_t& err, endpoints_t endpoints) {
-    net::session_ptr session = err ? net::session_ptr() :
-      net::session_t::create(net::details::socket_ptr(rsocket));
-    func(session);
+    net::details::socket_ptr socket(rsocket);
+    net::session_ptr session = err ? net::session_ptr() : net::session_t::create(std::move(socket));
   }
 
   void handle_resolve(resolver_ptr rsl, net::accepted_func_t func, const net::error_code_t& err,
       endpoints_t endpoints) {
     if(!err) {
-      net::details::socket_t* socket(new net::details::socket_t(get_context(rsl)));
+      net::details::socket_t* socket = new net::details::socket_t(get_context(rsl));
       boost::asio::async_connect(*socket, endpoints, std::bind(&handle_connect, socket, func,
         std::placeholders::_1, std::placeholders::_2));
       return;
