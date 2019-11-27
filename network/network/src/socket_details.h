@@ -6,18 +6,17 @@ namespace net {
 
   namespace details {
 
-    class socket_t : public boost::asio::ip::tcp::socket {
+#if BOOST_VERSION <= 106501
+    using tcp_socket = boost::asio::ip::tcp::socket;
+#else
+    using tcp_socket = boost::asio::basic_stream_socket<boost::asio::ip::tcp, boost::asio::io_context::executor_type>;
+#endif
+
+    class socket_t : public tcp_socket {
     private:
-      using patent_t = boost::asio::ip::tcp::socket;
+      using patent_t = tcp_socket;
     public:
       using patent_t::patent_t;
-/*
-      using patent_t::close;
-      using patent_t::is_open;
-      using patent_t::async_read_some;
-      using patent_t::async_write_some;
-      using patent_t::get_io_service;
-*/
     };
 
   } /* namespace details */

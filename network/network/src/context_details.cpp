@@ -4,17 +4,28 @@ namespace net {
 
   namespace details {
 
-      void context_t::run() {
-        m_io_context.run();
+    context_t::context_t()
+#if BOOST_VERSION <= 106501
+      : m_work(m_io_context) {
+#else
+      : m_work(boost::asio::make_work_guard(m_io_context)) {
+#endif
       }
 
-      void context_t::stop() {
-        m_io_context.stop();
-      }
+    void context_t::run() {
+      m_io_context.run();
+    }
 
-      context_t::io_context_t& context_t::get_io_context() {
-        return m_io_context;
-      }
+    void context_t::stop() {
+#if BOOST_VERSION > 106501
+      m_work.reset();
+#endif
+      m_io_context.stop();
+    }
+
+    io_context_t& context_t::get_io_context() {
+      return m_io_context;
+    }
 
   } /* namespace details */
 

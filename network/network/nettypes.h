@@ -19,6 +19,9 @@ namespace net {
   class acceptor_t;
   using acceptor_ptr = std::unique_ptr<acceptor_t>;
 
+  class connector_t;
+  using connector_ptr = std::unique_ptr<connector_t>;
+
   class session_t;
   using session_ptr = std::shared_ptr<session_t>;
 

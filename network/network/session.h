@@ -3,6 +3,7 @@
 #include <atomic>
 #include <string>
 #include <memory>
+#include <utility>
 
 #include "nettypes.h"
 
@@ -12,7 +13,7 @@ namespace net {
   public:
     ~session_t();
     void read();
-    void send(const buffer_ptr& value);
+    void send(const buffer_ptr& value, const std::size_t offset = 0);
     void close();
     const std::string& address() const;
     void buffer_allocator(const buffer_allocator_t& value);
@@ -22,12 +23,13 @@ namespace net {
     static session_ptr create(details::socket_ptr&& value);
   private:
     using recv_buf_t = std::unique_ptr<buffer_t::value_type[]>;
+    using write_buf_t = std::pair<const buffer_ptr, std::size_t>;
   private:
     session_t(details::socket_ptr&& value);
     session_t(const session_t&) = delete;
     session_t& operator=(const session_t&) = delete;
     void close(const error_code_t& value);
-    void write_handler(const buffer_ptr buf, const error_code_t& err, std::size_t transferred);
+    void write_handler(const write_buf_t buf, const error_code_t& err, std::size_t transferred);
     void read_handler(const error_code_t& err, std::size_t transferred);
   private:
     std::atomic_bool m_is_open;
