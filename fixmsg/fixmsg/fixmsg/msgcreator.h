@@ -1,6 +1,6 @@
 #pragma once
 
-#include <list>
+#include <vector>
 #include <string>
 #include <utility>
 
@@ -13,15 +13,15 @@
 
 namespace ff {
 
-  using name_group_t = std::pair<std::string, FIX::FieldMap*>;
-  using group_stack_t = std::list<name_group_t>;
+//  using name_group_t = std::pair<std::string, FIX::FieldMap*>;
+  using group_stack_t = std::vector<std::string>;
 
   class msgcreator_t {
   public:
     msgcreator_t(ff::message_ptr& msg, const FIX::SessionID& sid);
-    void add_fild(const std::string& name, const std::string& value);
   protected:
-    bool is_set(const FIX::Message& msg, const int tag);
+    void add_fild(const std::string& name, const std::string& value, FIX::FieldMap* map);
+    bool is_set_msg(const FIX::Message& msg, const int tag);
     bool is_set(const FIX::FieldMap& map, const int tag);
   protected:
     ff::message_ptr& m_msg;
@@ -36,12 +36,7 @@ namespace ff {
   private:
     using attribute_t = pugi::xml_object_range<pugi::xml_attribute_iterator>;
   private:
-    void fill_attributes(const attribute_t& attr);
+    void fill_attributes(const attribute_t& attr, FIX::FieldMap* map);
   };
-
-/*
-    bool for_each(pugi::xml_node& node);
-    void operator()(const std::pair<std::string, std::string>& value);
-*/
 
 }; /* namespace ff */
