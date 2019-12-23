@@ -1,6 +1,8 @@
 set(PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 message("template SOURCES_DIR: " ${PROJECT_DIR})
 
+option(USE_WERROR ON)
+
 # 11 14 17
 #set(CMAKE_CXX_STANDARD 11)
 
