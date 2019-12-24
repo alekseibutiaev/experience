@@ -31,11 +31,11 @@ namespace ff {
   fixfactory_t::group_range_t fixfactory_t::group_range(const FIX::SessionID& sid, const std::string& value) {
     using value_t = group_map_t::value_type;
     const value_t key = value_t(gen_key(sid, value), 0);
-    auto lower = std::lower_bound(m_group_map.begin(), m_group_map.end(), v, [](const value_t& lv, const value_t& rv) {
+    auto lower = std::lower_bound(m_group_map.begin(), m_group_map.end(), key, [](const value_t& lv, const value_t& rv) {
       const std::string sl = lv.first.substr(0, std::min(lv.first.size(), rv.first.size()));
       return sl < rv.first;
     });
-    auto upper = std::upper_bound(m_group_map.begin(), m_group_map.end(), v, [](const value_t& lv, const value_t& rv) {
+    auto upper = std::upper_bound(m_group_map.begin(), m_group_map.end(), key, [](const value_t& lv, const value_t& rv) {
       const std::string sr = rv.first.substr(0, std::min(rv.first.size(), lv.first.size()));
       return lv.first < sr;
     });

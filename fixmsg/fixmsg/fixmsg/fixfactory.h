@@ -30,11 +30,11 @@ namespace ff {
     static group_ptr group(const FIX::SessionID& sid, const std::string& value);
     static group_range_t group_range(const FIX::SessionID& sid, const std::string& value);
     static message_ptr message(const FIX::SessionID& sid, const std::string& value);
-    static const std::string& name
   private:
     static const field_map_t m_field_map;
     static const group_map_t m_group_map;
     static const message_map_t m_message_map;
+    static const type_map_t m_type_map;
   }; 
 
 } /* namespace ff */
