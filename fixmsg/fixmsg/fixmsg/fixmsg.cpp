@@ -49,12 +49,13 @@ const std::string testxml2 =
 
 int main(int ac, char* av[]) {
   const std::string& inxml = testxml2;
+  const FIX::SessionID sid = FIX::SessionID("FIX.4.4", "sender", "target");
   std::cout << "test" << std::endl << inxml << std::endl;
   try {
     pugi::xml_document xml;
     if(const auto res = xml.load_string(inxml.c_str(), inxml.size())) {
       ff::message_ptr msg;
-      ff::from_xml from_xml(msg, FIX::SessionID("FIX.4.4", "sender", "target"));
+      ff::from_xml from_xml(msg, sid);
       xml.traverse(from_xml);
       std::string s = msg->toString();
       std::replace(s.begin(), s.end(), '\1', '|');
@@ -65,6 +66,12 @@ int main(int ac, char* av[]) {
       std::cout << "Error offset: " << res.offset << " (error at [..." <<
         (inxml.c_str() + res.offset) << std::endl;
     }
+    const auto r = ff::fixfactory_t::group_range(sid, "Advertisement");
+    std::for_each(r.first, r.second, [](const ff::fixfactory_t::group_map_t::value_type& v){
+      std::cout << v.first << std::endl;
+    });
+
+
   }
   catch(const std::exception& e) {
     std::cerr << e.what() << std::endl;
