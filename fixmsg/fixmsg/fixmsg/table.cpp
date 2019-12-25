@@ -2181,6 +2181,7 @@ namespace {
   };
 
   const ff::fixfactory_t::message_info_t test =
+#if 0
   {"9", "BO", "ContraryIntentionReport", &create_message<FIX50SP2::ContraryIntentionReport>,
     {
       {"NoPartyIDs", {&create_group<FIX50SP2::ContraryIntentionReport::NoPartyIDs>, {
@@ -2204,6 +2205,32 @@ namespace {
       }
     }
   };
+#else
+  {"9", "BO", "ContraryIntentionReport", &create_message<FIX50SP2::ContraryIntentionReport>,
+    {
+      {"NoComplexEvents", {&create_group<FIX50SP2::ContraryIntentionReport::NoComplexEvents>, {
+        {"NoComplexEventDates", {&create_group<FIX50SP2::ContraryIntentionReport::NoComplexEvents::NoComplexEventDates>, {
+          {"NoComplexEventTimes", {&create_group<FIX50SP2::ContraryIntentionReport::NoComplexEvents::NoComplexEventDates::NoComplexEventTimes>}},}}},}}
+      },
+      {"NoEvents", {&create_group<FIX50SP2::ContraryIntentionReport::NoEvents>}},
+      {"NoExpiration", {&create_group<FIX50SP2::ContraryIntentionReport::NoExpiration>}},
+      {"NoInstrumentParties", {&create_group<FIX50SP2::ContraryIntentionReport::NoInstrumentParties>, {
+        {"NoInstrumentPartySubIDs", {&create_group<FIX50SP2::ContraryIntentionReport::NoInstrumentParties::NoInstrumentPartySubIDs>}},}}
+      },
+      {"NoPartyIDs", {&create_group<FIX50SP2::ContraryIntentionReport::NoPartyIDs>, {
+        {"NoPartySubIDs", {&create_group<FIX50SP2::ContraryIntentionReport::NoPartyIDs::NoPartySubIDs>}},}}
+      },
+      {"NoSecurityAltID", {&create_group<FIX50SP2::ContraryIntentionReport::NoSecurityAltID>}},
+      {"NoUnderlyings", {&create_group<FIX50SP2::ContraryIntentionReport::NoUnderlyings>, {
+        {"NoUnderlyingSecurityAltID", {&create_group<FIX50SP2::ContraryIntentionReport::NoUnderlyings::NoUnderlyingSecurityAltID>}},
+        {"NoUnderlyingStips", {&create_group<FIX50SP2::ContraryIntentionReport::NoUnderlyings::NoUnderlyingStips>}},
+        {"NoUndlyInstrumentParties", {&create_group<FIX50SP2::ContraryIntentionReport::NoUnderlyings::NoUndlyInstrumentParties>, {
+          {"NoUndlyInstrumentPartySubIDs", {&create_group<FIX50SP2::ContraryIntentionReport::NoUnderlyings::NoUndlyInstrumentParties::NoUndlyInstrumentPartySubIDs>}},}}},}}
+      },
+    }
+  };
+
+#endif
 
 } /* namespace */
 

@@ -91,18 +91,19 @@ namespace {
 
   std::ostream& operator<<(std::ostream& os, const group_info_t& gi) {
     os << ", {" << gi.creator;
-    if(gi.sub_group.empty())
-      os << "}";
-    else
-      os << ", {" << gi.sub_group << "}";
+    if(!gi.sub_group.empty())
+      os << gi.sub_group;
+    os << "}";
     return os;
   }
 
   std::ostream& operator<<(std::ostream& os, const group_info_t::group_map_t& gp) {
+    using citer_t = group_info_t::group_map_t::const_iterator;
     if(!gp.empty()) {
       os << ", {";
-      for(const auto& i : gp)
-        os << "{\"" << i.first << "\"" << i.second;
+      for(citer_t it = gp.begin(); it != gp.end(); ++it)
+        os << "{\"" << it->first << "\"" << it->second <<
+          (1 == std::distance(it, gp.end()) ? "}" : "},");
       os << "}";
     }
     return os;
