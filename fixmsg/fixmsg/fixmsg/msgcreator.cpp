@@ -87,5 +87,10 @@ namespace ff {
       add_fild(v.name(), v.value(), map);
   }
 
+  void message_crack(const FIX::Message& msg, field_notice_f fn) {
+    //std::size_t depth;
+
+  }
+
 }; /* namespace ff */
 

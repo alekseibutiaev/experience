@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <utility>
+#include <functional>
 
 #include <pugixml.hpp>
 
@@ -15,6 +16,8 @@ namespace ff {
 
 //  using name_group_t = std::pair<std::string, FIX::FieldMap*>;
   using group_stack_t = std::vector<std::string>;
+  using field_t = std::pair<std::string, std::string>;
+  using field_notice_f = std::function<void(std::size_t, field_t)>;
 
   class msgcreator_t {
   public:
@@ -38,5 +41,7 @@ namespace ff {
   private:
     void fill_attributes(const attribute_t& attr, FIX::FieldMap* map);
   };
+
+  void message_crack(const FIX::Message& msg, field_notice_f fn);
 
 }; /* namespace ff */
