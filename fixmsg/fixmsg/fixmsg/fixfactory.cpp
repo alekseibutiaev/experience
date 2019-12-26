@@ -1,4 +1,5 @@
 #include <vector>
+#include <iterator>
 #include <algorithm>
 
 #include <quickfix/Group.h>
@@ -9,13 +10,13 @@
 
 namespace {
 
-  const std::string empty_str;
+  using csit_t = ff::strings_t::const_iterator;
 
+  const std::string empty_str;
 
   std::pair<std::string, std::string> gen_key(const FIX::Message& msg) {
     FIX::MsgType mtype;
     msg.getHeader().getField(mtype);
-    const std::string key = ff::fixfactory_t::version_id(msg) + "::" + mtype.getValue();
     return {ff::fixfactory_t::version_id(msg), mtype.getValue()};
   }
 
@@ -25,6 +26,16 @@ namespace {
     return key;
   }
 */
+
+  ff::group_ptr get_group_creator(const ff::fixfactory_t::group_info_t::group_map_t& map, csit_t begin, csit_t end) {
+    auto it = map.find(*begin);
+    if(it != map.end()) {
+      if(1 == std::distance(begin, end))
+        return it->second.creator();
+      return get_group_creator(it->second.sub_group, ++begin, end);
+    }
+    return ff::group_ptr();
+  }
 
 } /* namespace */
 
@@ -51,6 +62,23 @@ namespace ff {
       return i->creator(value);
     return field_ptr();
   }
+
+  const fixfactory_t::message_info_t* fixfactory_t::message_info_name(const FIX::SessionID& sid, const std::string& name) {
+    return message_info_name(version_id(sid), name);
+  }
+
+  const fixfactory_t::message_info_t* fixfactory_t::message_info_name(const FIX::Message& msg, const std::string& name) {
+    return message_info_name(version_id(msg), name);
+  }
+
+  const fixfactory_t::message_info_t* fixfactory_t::message_info_type(const FIX::SessionID& sid, const std::string& type) {
+    return message_info_type(version_id(sid), type);
+  }
+
+  const fixfactory_t::message_info_t* fixfactory_t::message_info_type(const FIX::Message& msg, const std::string& type) {
+    return message_info_type(version_id(msg), type);
+  }
+
 
 #if 0
   group_ptr fixfactory_t::group(const FIX::SessionID& sid, const std::string& value) {
@@ -84,6 +112,10 @@ namespace ff {
   }
 #endif
 
+  group_ptr fixfactory_t::group(const message_info_t* info, const strings_t& path){
+    return get_group_creator(info->sub_group, path.begin(), path.end());
+  }
+
   message_ptr fixfactory_t::message_name(const std::string& ver, const std::string& name) {
     if(const auto i = message_info_name(ver, name))
       return i->creator();
@@ -114,7 +146,7 @@ namespace ff {
 
   const std::string& fixfactory_t::msg_name(const FIX::Message& msg) {
     const auto key = gen_key(msg);
-    if(const auto i = message_info_name(key.first, key.second))
+    if(const auto i = message_info_type(key.first, key.second))
       return i->name;
     return empty_str;
   }

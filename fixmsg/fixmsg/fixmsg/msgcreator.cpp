@@ -16,13 +16,37 @@ namespace {
       is_set(msg->isSetField, tag);
   }
 */
-  std::string group_name(const ff::group_stack_t& stack, const std::string& name, const std::size_t depth) {
-    std::ostringstream oss;
-    for(std::size_t i = 0; i < depth; ++i)
-      oss << stack[i] << "::";
-    oss << name;
-    std::cout << oss.str() << std::endl;
-    return oss.str();
+
+  ff::strings_t group_path(const ff::strings_t& stack, const std::size_t depth, const std::string& name) {
+    auto end = stack.begin();
+    std::advance(end, depth - 1);
+    ff::strings_t res(stack.begin(), end);
+    res.push_back(name);
+    return res;
+  }
+
+  void int_message_crack(const FIX::FieldMap& map, ff::msg_tree_walker_t& walker,
+      const ff::fixfactory_t::message_info_t* mi, ff::strings_t& path) {
+    for(FIX::FieldMap::const_iterator it = map.begin(); it != map.end(); ++it) {
+      if(auto i = ff::fixfactory_t::field_info_by(it->getTag())) {
+        if(i->is_group) {
+          const std::size_t count = std::stoull(it->getString());
+          path.push_back(i->name);
+          walker.group(i->name, count);
+          if(ff::group_ptr group = ff::fixfactory_t::group(mi, path)) {
+            for(std::size_t i = 0; i < count; ++i) {
+              map.getGroup(i + 1, group->field(), *group);
+              int_message_crack(*group, walker, mi, path);
+              group->clear();
+            }
+          }
+          path.pop_back();
+          walker.exit();
+        }
+        else 
+          walker.field(i->name, it->getString());
+      }
+    }
   }
 
 } /* namespace */
@@ -32,6 +56,7 @@ namespace ff {
   msgcreator_t::msgcreator_t(ff::message_ptr& msg, const FIX::SessionID& sid)
       : m_msg(msg)
       , m_sid(sid)
+      , m_msg_info(0)
       , m_group_stack(10) {
   }
 
@@ -68,13 +93,15 @@ namespace ff {
     const std::string& name = node.name();
     if(!name.empty()) {
       if(0 == depth()) {
-        if(m_msg = std::move(ff::fixfactory_t::message(m_sid, name))) {
-          m_group_stack[depth()] = name;
-          fill_attributes(node.attributes(), m_msg.get());
+        if(0 == (m_msg_info = fixfactory_t::message_info_name(m_sid, name))) {
+          // error message;
+          return false;
         }
+        if(m_msg = std::move(m_msg_info->creator()))
+          fill_attributes(node.attributes(), m_msg.get());
       }
-      else if(ff::group_ptr grp = ff::fixfactory_t::group(m_sid, group_name(m_group_stack, name, depth()))) {
-        m_group_stack[depth()] = name;
+      else if(ff::group_ptr grp = ff::fixfactory_t::group(m_msg_info, group_path(m_group_stack, depth(), name))) {
+        m_group_stack[depth() - 1] = name;
         fill_attributes(node.attributes(), grp.get());
         m_msg->addGroup(*grp);
       }
@@ -87,9 +114,18 @@ namespace ff {
       add_fild(v.name(), v.value(), map);
   }
 
-  void message_crack(const FIX::Message& msg, field_notice_f fn) {
-    //std::size_t depth;
-
+  void message_crack(const FIX::Message& msg, msg_tree_walker_t& walker) {
+    const std::string name = fixfactory_t::msg_name(msg);
+    if(name.empty())
+      return;
+    if(auto mi = ff::fixfactory_t::message_info_name(msg, name)) {
+      ff::strings_t group_path;
+      walker.msg(fixfactory_t::msg_name(msg));
+      int_message_crack(msg.getHeader(), walker, mi, group_path);
+      int_message_crack(msg, walker, mi, group_path);
+      int_message_crack(msg.getTrailer(), walker, mi, group_path);
+      walker.exit();
+    }
   }
 
 }; /* namespace ff */

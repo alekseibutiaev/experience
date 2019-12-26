@@ -14,8 +14,6 @@
 
 namespace ff {
 
-//  using name_group_t = std::pair<std::string, FIX::FieldMap*>;
-  using group_stack_t = std::vector<std::string>;
   using field_t = std::pair<std::string, std::string>;
   using field_notice_f = std::function<void(std::size_t, field_t)>;
 
@@ -27,9 +25,12 @@ namespace ff {
     bool is_set_msg(const FIX::Message& msg, const int tag);
     bool is_set(const FIX::FieldMap& map, const int tag);
   protected:
+    using strings_t = std::vector<std::string>;
+  protected:
     ff::message_ptr& m_msg;
     const FIX::SessionID& m_sid;
-    group_stack_t m_group_stack;
+    const fixfactory_t::message_info_t* m_msg_info;
+    strings_t m_group_stack;
   };
 
   class from_xml : msgcreator_t, public pugi::xml_tree_walker {
@@ -42,6 +43,15 @@ namespace ff {
     void fill_attributes(const attribute_t& attr, FIX::FieldMap* map);
   };
 
-  void message_crack(const FIX::Message& msg, field_notice_f fn);
+  class msg_tree_walker_t {
+  public:
+    virtual ~msg_tree_walker_t() = default;
+    virtual void msg(const std::string& name) = 0;
+    virtual void field(const std::string& name, const std::string& value) = 0;
+    virtual void group(const std::string& name, const std::size_t& count) = 0;
+    virtual void exit() = 0;
+  };
+
+  void message_crack(const FIX::Message& msg, ff::msg_tree_walker_t& walker);
 
 }; /* namespace ff */

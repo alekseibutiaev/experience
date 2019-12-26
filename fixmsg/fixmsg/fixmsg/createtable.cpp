@@ -1,3 +1,4 @@
+#include <iostream>
 namespace {
 
   template <class T, std::size_t N>
@@ -5,9 +6,7 @@ namespace {
     return N;
   }
 
-  inf foo() {
-    
-  }
+  void foo() { foo(); };
 
 #if 0
   struct group_info_t {

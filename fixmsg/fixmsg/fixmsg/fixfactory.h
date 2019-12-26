@@ -3,6 +3,7 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <vector>
 
 #include <quickfix/Field.h>
 #include <quickfix/Group.h>
@@ -11,12 +12,15 @@
 
 namespace ff {
 
+  using strings_t = std::vector<std::string>;
+
   using field_ptr = std::unique_ptr<FIX::FieldBase>;
   using group_ptr = std::unique_ptr<FIX::Group>;
   using message_ptr = std::unique_ptr<FIX::Message>;
 
   class fixfactory_t {
   public:
+
     using field_creator_f = field_ptr(*)(const std::string&);
     using group_creator_f = group_ptr(*)();
     using msg_creator_f = message_ptr(*)();
@@ -43,6 +47,7 @@ namespace ff {
     };
 
   public:
+
     static std::string version_id(const FIX::SessionID& sid);
     static std::string version_id(const FIX::Message& msg);
     static const field_info_t* field_info_by(const std::string& name);
@@ -50,11 +55,14 @@ namespace ff {
     static field_ptr field(const std::string& name, const std::string& value = std::string());
     static field_ptr field(const int& tar, const std::string& value = std::string());
     static const message_info_t* message_info_name(const std::string& ver, const std::string& name);
+    static const message_info_t* message_info_name(const FIX::SessionID& sid, const std::string& name);
+    static const message_info_t* message_info_name(const FIX::Message& msg, const std::string& name);
     static const message_info_t* message_info_type(const std::string& ver, const std::string& type);
-#if 0
-    static group_ptr group(const FIX::SessionID& sid, const std::string& value);
-    static group_range_t group_range(const FIX::SessionID& sid, const std::string& value);
-#endif
+    static const message_info_t* message_info_type(const FIX::SessionID& sid, const std::string& type);
+    static const message_info_t* message_info_type(const FIX::Message& msg, const std::string& type);
+
+    static group_ptr group(const message_info_t* info, const strings_t& path);
+
     static message_ptr message_name(const std::string& ver, const std::string& name);
     static message_ptr message_name(const FIX::SessionID& sid, const std::string& name);
     static message_ptr message_name(const FIX::Message& msg, const std::string& name);
