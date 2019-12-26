@@ -9,17 +9,22 @@
 
 namespace {
 
-  std::string gen_key(const FIX::Message& msg) {
+  const std::string empty_str;
+
+
+  std::pair<std::string, std::string> gen_key(const FIX::Message& msg) {
     FIX::MsgType mtype;
     msg.getHeader().getField(mtype);
     const std::string key = ff::fixfactory_t::version_id(msg) + "::" + mtype.getValue();
-    return key;
+    return {ff::fixfactory_t::version_id(msg), mtype.getValue()};
   }
 
+/*
   std::string gen_key(const FIX::SessionID& sid, const std::string& value) {
     const std::string key = ff::fixfactory_t::version_id(sid) + std::string("::") + value;
     return key;
   }
+*/
 
 } /* namespace */
 
@@ -37,16 +42,17 @@ namespace ff {
 
   field_ptr fixfactory_t::field(const std::string& name, const std::string& value) {
     if(const auto i = field_info_by(name))
-      return i->create(value);
+      return i->creator(value);
     return field_ptr();
   }
 
   field_ptr fixfactory_t::field(const int& tag, const std::string& value) {
     if(const auto i = field_info_by(tag))
-      return i->create(value);
+      return i->creator(value);
     return field_ptr();
   }
 
+#if 0
   group_ptr fixfactory_t::group(const FIX::SessionID& sid, const std::string& value) {
     const auto it = m_group_map.find(gen_key(sid, value));
     return it == m_group_map.end() ? group_ptr() : it->second();
@@ -75,6 +81,42 @@ namespace ff {
     static const std::string empty;
     auto it = m_type_map.find(gen_key(msg));
     return it == m_type_map.end() ? empty : it->second;
+  }
+#endif
+
+  message_ptr fixfactory_t::message_name(const std::string& ver, const std::string& name) {
+    if(const auto i = message_info_name(ver, name))
+      return i->creator();
+    return message_ptr();
+  }
+
+  message_ptr fixfactory_t::message_name(const FIX::SessionID& sid, const std::string& name) {
+    return message_name(version_id(sid), name);
+  }
+
+  message_ptr fixfactory_t::message_name(const FIX::Message& msg, const std::string& name) {
+    return message_name(version_id(msg), name);
+  }
+
+  message_ptr fixfactory_t::message_type(const std::string& ver, const std::string& type) {
+    if(const auto i = message_info_type(ver, type))
+      return i->creator();
+    return message_ptr();
+  }
+
+  message_ptr fixfactory_t::message_type(const FIX::SessionID& sid, const std::string& type) {
+    return message_type(version_id(sid), type);
+  }
+
+  message_ptr fixfactory_t::message_type(const FIX::Message& msg, const std::string& type) {
+    return message_type(version_id(msg), type);
+  }
+
+  const std::string& fixfactory_t::msg_name(const FIX::Message& msg) {
+    const auto key = gen_key(msg);
+    if(const auto i = message_info_name(key.first, key.second))
+      return i->name;
+    return empty_str;
   }
 
 } /* namespace ff */

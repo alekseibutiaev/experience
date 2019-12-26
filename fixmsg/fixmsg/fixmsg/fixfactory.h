@@ -17,34 +17,29 @@ namespace ff {
 
   class fixfactory_t {
   public:
-    using field_func_t = field_ptr(*)(const std::string&);
-    using field_map_t = std::map<std::string, field_func_t>;
-    using group_func_t = group_ptr(*)();
-    using group_map_t = std::map<std::string, group_func_t>;
-    using msg_func_t = message_ptr(*)();
-    using message_map_t = std::map<std::string, msg_func_t>;
-    using group_range_t = std::pair<group_map_t::const_iterator, group_map_t::const_iterator>;
-    using type_map_t = std::map<std::string, std::string>;
+    using field_creator_f = field_ptr(*)(const std::string&);
+    using group_creator_f = group_ptr(*)();
+    using msg_creator_f = message_ptr(*)();
 
     struct field_info_t {
       const std::string name;
       const int tag;
-      const field_func_t create;
+      const field_creator_f creator;
       const bool is_group;
     };
 
     struct group_info_t {
-      using group_map_tt = std::map<std::string, group_info_t>;
-      const group_func_t create;
-      const group_map_tt sub_group;
-    } mm;
+      using group_map_t = std::map<std::string, group_info_t>;
+      const group_creator_f creator;
+      const group_map_t sub_group;
+    };
     
     struct message_info_t {
-      const std::string ver_id;
+      const std::string ver;
       const std::string type;
       const std::string name;
-      const msg_func_t creator;
-      const group_info_t::group_map_tt sub_group;
+      const msg_creator_f creator;
+      const group_info_t::group_map_t sub_group;
     };
 
   public:
@@ -54,16 +49,21 @@ namespace ff {
     static const field_info_t* field_info_by(const int& tag);
     static field_ptr field(const std::string& name, const std::string& value = std::string());
     static field_ptr field(const int& tar, const std::string& value = std::string());
+    static const message_info_t* message_info_name(const std::string& ver, const std::string& name);
+    static const message_info_t* message_info_type(const std::string& ver, const std::string& type);
+#if 0
     static group_ptr group(const FIX::SessionID& sid, const std::string& value);
     static group_range_t group_range(const FIX::SessionID& sid, const std::string& value);
-    static message_ptr message(const FIX::SessionID& sid, const std::string& value);
-    static const std::string& msg_name(const FIX::Message& msg);
+#endif
+    static message_ptr message_name(const std::string& ver, const std::string& name);
+    static message_ptr message_name(const FIX::SessionID& sid, const std::string& name);
+    static message_ptr message_name(const FIX::Message& msg, const std::string& name);
 
-  private:
-    //static const field_map_t m_field_map;
-    static const group_map_t m_group_map;
-    static const message_map_t m_message_map;
-    static const type_map_t m_type_map;
+    static message_ptr message_type(const std::string& ver, const std::string& type);
+    static message_ptr message_type(const FIX::SessionID& sid, const std::string& type);
+    static message_ptr message_type(const FIX::Message& msg, const std::string& type);
+
+    static const std::string& msg_name(const FIX::Message& msg);
   }; 
 
 } /* namespace ff */
