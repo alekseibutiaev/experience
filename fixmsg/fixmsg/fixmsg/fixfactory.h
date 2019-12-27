@@ -14,16 +14,16 @@ namespace ff {
 
   using strings_t = std::vector<std::string>;
 
-  using field_ptr = std::unique_ptr<FIX::FieldBase>;
-  using group_ptr = std::unique_ptr<FIX::Group>;
-  using message_ptr = std::unique_ptr<FIX::Message>;
+  using field_uptr = std::unique_ptr<FIX::FieldBase>;
+  using group_uptr = std::unique_ptr<FIX::Group>;
+  using message_uptr = std::unique_ptr<FIX::Message>;
 
   class fixfactory_t {
   public:
 
-    using field_creator_f = field_ptr(*)(const std::string&);
-    using group_creator_f = group_ptr(*)();
-    using msg_creator_f = message_ptr(*)();
+    using field_creator_f = field_uptr(*)(const std::string&);
+    using group_creator_f = group_uptr(*)();
+    using message_creator_f = message_uptr(*)();
 
     struct field_info_t {
       const std::string name;
@@ -42,7 +42,7 @@ namespace ff {
       const std::string ver;
       const std::string type;
       const std::string name;
-      const msg_creator_f creator;
+      const message_creator_f creator;
       const group_info_t::group_map_t sub_group;
     };
 
@@ -52,8 +52,8 @@ namespace ff {
     static std::string version_id(const FIX::Message& msg);
     static const field_info_t* field_info_by(const std::string& name);
     static const field_info_t* field_info_by(const int& tag);
-    static field_ptr field(const std::string& name, const std::string& value = std::string());
-    static field_ptr field(const int& tar, const std::string& value = std::string());
+    static field_uptr field(const std::string& name, const std::string& value = std::string());
+    static field_uptr field(const int& tar, const std::string& value = std::string());
     static const message_info_t* message_info_name(const std::string& ver, const std::string& name);
     static const message_info_t* message_info_name(const FIX::SessionID& sid, const std::string& name);
     static const message_info_t* message_info_name(const FIX::Message& msg, const std::string& name);
@@ -61,15 +61,15 @@ namespace ff {
     static const message_info_t* message_info_type(const FIX::SessionID& sid, const std::string& type);
     static const message_info_t* message_info_type(const FIX::Message& msg, const std::string& type);
 
-    static group_ptr group(const message_info_t* info, const strings_t& path);
+    static group_uptr group(const message_info_t* info, const strings_t& path);
 
-    static message_ptr message_name(const std::string& ver, const std::string& name);
-    static message_ptr message_name(const FIX::SessionID& sid, const std::string& name);
-    static message_ptr message_name(const FIX::Message& msg, const std::string& name);
+    static message_uptr message_name(const std::string& ver, const std::string& name);
+    static message_uptr message_name(const FIX::SessionID& sid, const std::string& name);
+    static message_uptr message_name(const FIX::Message& msg, const std::string& name);
 
-    static message_ptr message_type(const std::string& ver, const std::string& type);
-    static message_ptr message_type(const FIX::SessionID& sid, const std::string& type);
-    static message_ptr message_type(const FIX::Message& msg, const std::string& type);
+    static message_uptr message_type(const std::string& ver, const std::string& type);
+    static message_uptr message_type(const FIX::SessionID& sid, const std::string& type);
+    static message_uptr message_type(const FIX::Message& msg, const std::string& type);
 
     static const std::string& msg_name(const FIX::Message& msg);
   }; 

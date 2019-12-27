@@ -7,26 +7,16 @@
 #include "msgcreator.h"
 
 namespace {
-/*
-  ff::strings_t group_path(const ff::strings_t& stack, const std::size_t depth, const std::string& name) {
-    auto end = stack.begin();
-    std::advance(end, depth - 1);
-    ff::strings_t res(stack.begin(), end);
-    res.push_back(name);
-    return res;
-  }
-*/
+
   void int_message_crack(const FIX::FieldMap& map, ff::msg_tree_walker_t& walker,
       const ff::fixfactory_t::message_info_t* mi, ff::strings_t& path) {
     for(FIX::FieldMap::const_iterator it = map.begin(); it != map.end(); ++it) {
       if(auto i = ff::fixfactory_t::field_info_by(it->getTag())) {
-        if("NoNested2PartyIDs" == i->name)
-          std::cout << std::endl;
         if(i->is_group) {
           const std::size_t count = std::stoull(it->getString());
           path.push_back(i->name);
           walker.group(i->name, count);
-          if(ff::group_ptr group = ff::fixfactory_t::group(mi, path)) {
+          if(auto group = ff::fixfactory_t::group(mi, path)) {
             for(std::size_t i = 0; i < count; ++i) {
               map.getGroup(i + 1, group->field(), *group);
               int_message_crack(*group, walker, mi, path);
@@ -54,12 +44,12 @@ namespace ff {
 
   void msgcreator_t::add_field(const std::string& name, const std::string& value,
       FIX::FieldMap* map) {
-    if(ff::field_ptr field = ff::fixfactory_t::field(name, value)) {
-      if(FIX::Message* msg = dynamic_cast<FIX::Message*>(map)) {
+    if(auto field = ff::fixfactory_t::field(name, value)) {
+      if(auto msg = dynamic_cast<FIX::Message*>(map)) {
         if(!is_set_msg(*msg, field->getTag()))
           msg->setField(*field);
       }
-      else if(FIX::Group* grp = dynamic_cast<FIX::Group*>(map)) {
+      else if(auto grp = dynamic_cast<FIX::Group*>(map)) {
         grp->setField(*field);
       }
       else { /* error message */ }
@@ -118,7 +108,7 @@ namespace ff {
 
   ff::strings_t from_xml::path(const std::string& name) {
     ff::strings_t res;
-    for(int i = 1; i < depth(); ++i)
+    for(std::size_t i = 1; i < m_group_stack.size(); ++i)
       res.push_back(m_group_stack[i].second);
     res.push_back(name);
     return res;

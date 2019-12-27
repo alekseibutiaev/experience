@@ -608,20 +608,20 @@ namespace {
   using message_infos_t = std::vector<const ff::fixfactory_t::message_info_t*>;
 
   template<typename field_t>
-  ff::field_ptr create_field(const std::string& value) {
-    ff::field_ptr res(new field_t());
+  ff::field_uptr create_field(const std::string& value) {
+    ff::field_uptr res(new field_t());
     res->setString(value);
     return res;
   }
 
   template<typename group_t>
-  ff::group_ptr create_group() {
-    return ff::group_ptr(new group_t());
+  ff::group_uptr create_group() {
+    return ff::group_uptr(new group_t());
   }
 
   template<typename message_t>
-  ff::message_ptr create_message() {
-    return ff::message_ptr(new message_t());
+  ff::message_uptr create_message() {
+    return ff::message_uptr(new message_t());
   }
 
   const ff::fixfactory_t::field_info_t field_infos[/*1528*/] = {

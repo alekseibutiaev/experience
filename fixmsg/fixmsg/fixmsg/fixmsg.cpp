@@ -119,9 +119,11 @@ int main(int ac, char* av[]) {
       ff::msgcreator_t::messages_t msgs;
       ff::from_xml from_xml(msgs, sid);
       xml.traverse(from_xml);
-      std::string s = msgs.front()->toString();
-      std::replace(s.begin(), s.end(), '\1', '|');
-      std::cout << s << std::endl;
+      for(auto m : msgs) {
+        std::string s = m->toString();
+        std::replace(s.begin(), s.end(), '\1', '|');
+        std::cout << s << std::endl;
+      }
       const std::string& cl = ff::fixfactory_t::msg_name(*msgs.front());
       std::cout << cl << std::endl;
       walker_t w;
