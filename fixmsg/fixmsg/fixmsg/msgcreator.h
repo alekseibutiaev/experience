@@ -3,10 +3,12 @@
 #include <vector>
 #include <string>
 #include <utility>
+#include <memory>
 #include <functional>
 
 #include <pugixml.hpp>
 
+#include <quickfix/Group.h>
 #include <quickfix/SessionID.h>
 #include <quickfix/FieldMap.h>
 
@@ -19,7 +21,10 @@ namespace ff {
 
   class msgcreator_t {
   public:
-    msgcreator_t(ff::message_ptr& msg, const FIX::SessionID& sid);
+    using message_ptr = std::shared_ptr<FIX::Message>;
+    using messages_t = std::vector<message_ptr>;
+  public:
+    msgcreator_t(messages_t& messages, const FIX::SessionID& sid);
   protected:
     void add_fild(const std::string& name, const std::string& value, FIX::FieldMap* map);
     bool is_set_msg(const FIX::Message& msg, const int tag);
@@ -27,20 +32,28 @@ namespace ff {
   protected:
     using strings_t = std::vector<std::string>;
   protected:
-    ff::message_ptr& m_msg;
+    messages_t& m_messages;
     const FIX::SessionID& m_sid;
     const fixfactory_t::message_info_t* m_msg_info;
-    strings_t m_group_stack;
   };
 
   class from_xml : msgcreator_t, public pugi::xml_tree_walker {
   public:
-    from_xml(ff::message_ptr& msg, const FIX::SessionID& sid);
-    bool for_each(pugi::xml_node& node);
+    from_xml(msgcreator_t::messages_t& msg, const FIX::SessionID& sid);
+    bool for_each(pugi::xml_node& node) override;
+    bool end(pugi::xml_node& node) override;
   private:
     using attribute_t = pugi::xml_object_range<pugi::xml_attribute_iterator>;
+    using field_map_ptr = std::shared_ptr<FIX::FieldMap>;
+    using stack_element_t = std::pair<field_map_ptr, std::string>;
+    using group_stack_t = std::vector<stack_element_t>;
   private:
     void fill_attributes(const attribute_t& attr, FIX::FieldMap* map);
+    ff::strings_t path(const std::string& name);
+    void read_stack(const std::size_t& _depth);
+    field_map_ptr create_map(const bool flag, const std::string& name);
+  private:
+    group_stack_t m_group_stack;
   };
 
   class msg_tree_walker_t {

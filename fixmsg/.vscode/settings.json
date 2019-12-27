@@ -1,6 +1,7 @@
 {
   "cmake.configureArgs": [
-    "-DUSE_WERROR=ON"
+    "-DUSE_WERROR=ON",
+    "-DQUICKFIX_HOME=/opt/quickfix_d"
   ],
   "cmake.buildToolArgs": [
     "VERBOSE=1",
