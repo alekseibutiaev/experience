@@ -43,13 +43,11 @@ namespace ff {
     bool for_each(pugi::xml_node& node) override;
     bool end(pugi::xml_node& node) override;
   private:
-    using attribute_t = pugi::xml_object_range<pugi::xml_attribute_iterator>;
     using field_map_ptr = std::shared_ptr<FIX::FieldMap>;
     using stack_element_t = std::pair<field_map_ptr, std::string>;
     using group_stack_t = std::vector<stack_element_t>;
   private:
     field_map_ptr create_map(const bool flag, const std::string& name);
-    void fill_attributes(const attribute_t& attr, FIX::FieldMap* map);
     ff::strings_t path(const std::string& name);
     void read_stack(const std::size_t& _depth);
   private:

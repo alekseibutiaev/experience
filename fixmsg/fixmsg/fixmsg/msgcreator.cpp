@@ -82,7 +82,8 @@ namespace ff {
       return false;
     }
     if(auto map = create_map(0 != mi, name)) {
-      fill_attributes(node.attributes(), map.get());
+      for(auto a : node.attributes())
+        add_field(a.name(), a.value(), map.get());
       m_group_stack.emplace_back(std::move(map), name);
       return true;
     }
@@ -99,11 +100,6 @@ namespace ff {
   bool from_xml::end(pugi::xml_node& node) {
     read_stack(0);
     return true;
-  }
-
-  void from_xml::fill_attributes(const attribute_t& attr, FIX::FieldMap* map) {
-    for(auto v: attr)
-      add_field(v.name(), v.value(), map);
   }
 
   ff::strings_t from_xml::path(const std::string& name) {
