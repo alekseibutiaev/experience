@@ -48,10 +48,10 @@ namespace ff {
     using stack_element_t = std::pair<field_map_ptr, std::string>;
     using group_stack_t = std::vector<stack_element_t>;
   private:
+    field_map_ptr create_map(const bool flag, const std::string& name);
     void fill_attributes(const attribute_t& attr, FIX::FieldMap* map);
     ff::strings_t path(const std::string& name);
     void read_stack(const std::size_t& _depth);
-    field_map_ptr create_map(const bool flag, const std::string& name);
   private:
     group_stack_t m_group_stack;
   };

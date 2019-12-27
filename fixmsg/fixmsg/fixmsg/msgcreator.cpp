@@ -1,3 +1,4 @@
+#include <cassert>
 #include <sstream>
 #include <iterator>
 #include <iostream>
@@ -85,12 +86,12 @@ namespace ff {
       return true;
     const std::string& name = node.name();
     read_stack(depth());
-    const auto msg_info = m_msg_info;
-    if(0 == msg_info && 0 == ((m_msg_info = fixfactory_t::message_info_name(m_sid, name)))) {
+    const auto mi = m_msg_info;
+    if(0 == mi && 0 == (m_msg_info = fixfactory_t::message_info_name(m_sid, name))) {
       // error message;
       return false;
     }
-    if(from_xml::field_map_ptr map = create_map(0 != msg_info, name)) {
+    if(auto map = create_map(0 != mi, name)) {
       fill_attributes(node.attributes(), map.get());
       m_group_stack.emplace_back(std::move(map), name);
       return true;
@@ -99,6 +100,7 @@ namespace ff {
   }
 
   from_xml::field_map_ptr from_xml::create_map(const bool flag, const std::string& name) {
+    assert(0 != m_msg_info);
     if(flag)
       return ff::fixfactory_t::group(m_msg_info, path(name));
     return m_msg_info->creator();
