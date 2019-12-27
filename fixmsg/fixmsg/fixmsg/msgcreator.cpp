@@ -52,7 +52,7 @@ namespace ff {
       , m_msg_info(0) {
   }
 
-  void msgcreator_t::add_fild(const std::string& name, const std::string& value,
+  void msgcreator_t::add_field(const std::string& name, const std::string& value,
       FIX::FieldMap* map) {
     if(ff::field_ptr field = ff::fixfactory_t::field(name, value)) {
       if(FIX::Message* msg = dynamic_cast<FIX::Message*>(map)) {
@@ -113,7 +113,7 @@ namespace ff {
 
   void from_xml::fill_attributes(const attribute_t& attr, FIX::FieldMap* map) {
     for(auto v: attr)
-      add_fild(v.name(), v.value(), map);
+      add_field(v.name(), v.value(), map);
   }
 
   ff::strings_t from_xml::path(const std::string& name) {

@@ -26,7 +26,7 @@ namespace ff {
   public:
     msgcreator_t(messages_t& messages, const FIX::SessionID& sid);
   protected:
-    void add_fild(const std::string& name, const std::string& value, FIX::FieldMap* map);
+    void add_field(const std::string& name, const std::string& value, FIX::FieldMap* map);
     bool is_set_msg(const FIX::Message& msg, const int tag);
     bool is_set(const FIX::FieldMap& map, const int tag);
   protected:
