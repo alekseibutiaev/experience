@@ -52,6 +52,37 @@ const std::string testxml2 =
 "  </NoAllocs>"
 "</AllocationInstruction>";
 
+const std::string testxml3 =
+"<AllocationInstruction MsgType=\"J\" AllocID=\"allocid\" AllocTransType=\"0\" AllocType=\"7\" AllocNoOrdersType=\"1\">"
+"  <NoOrders ClOrdID=\"ordid\" OrderQty=\"12.232133\">"
+"    <NoNested2PartyIDs Nested2PartyID=\"saf\" Nested2PartyIDSource=\"D\" Nested2PartyRole=\"9\">"
+"      <NoNested2PartySubIDs Nested2PartySubID=\"dsfsd\" Nested2PartySubIDType=\"25\"/>"
+"        <NoNested2PartySubIDs Nested2PartySubID=\"fgd\" Nested2PartySubIDType=\"20\"/>"
+"    </NoNested2PartyIDs>"
+"  </NoOrders>"
+"  <NoOrders ClOrdID=\"oid\" OrderQty=\"16\">"
+"    <NoNested2PartyIDs Nested2PartyID=\"saf1\" Nested2PartyIDSource=\"D\" Nested2PartyRole=\"9\">"
+"      <NoNested2PartySubIDs Nested2PartySubID=\"dsfsd1\" Nested2PartySubIDType=\"25\"/>"
+"      <NoNested2PartySubIDs Nested2PartySubID=\"fgd1\" Nested2PartySubIDType=\"20\"/>"
+"    </NoNested2PartyIDs>"
+"  </NoOrders>"
+"  <NoExecs LastQty=\"10\" LastPx=\"12.00\"/>"
+"  <NoAllocs AllocAccount=\"AB\" AllocQty=\"12\">"
+"    <NoNestedPartyIDs NestedPartyID=\"askdlk\" NestedPartyIDSource=\"D\" NestedPartyRole=\"17\">"
+"      <NoNestedPartySubIDs NestedPartySubID=\"weqw\" NestedPartySubIDType=\"24\"/>"
+"      <NoNestedPartySubIDs NestedPartySubID=\"dw\" NestedPartySubIDType=\"21\"/>"
+"    </NoNestedPartyIDs>"
+"  </NoAllocs>"
+"</AllocationInstruction>"
+"<NewOrderSingle MsgType=\"D\" ClOrdID=\"100\" TransactTime=\"20190926-14:08:50\" Symbol=\"HSBK\" "
+    "Side=\"1\" OrdType=\"2\" TimeInForce=\"4\" Price=\"112.44000000\" OrderQty=\"2000\" "
+    "Account=\"I+1030800036\">"
+  "<NoTradingSessions NoTradingSessions=\"1\" radingSessionID=\"TQBR\"/>"
+"</NewOrderSingle>";
+
+
+//NoNestedPartyIDs=\"1\" NoNestedPartyIDs=\"1\"
+
 namespace {
 
   template <class T, std::size_t N>
@@ -75,25 +106,26 @@ namespace {
     }
   };
 
+
 } /* namespace */
 
 int main(int ac, char* av[]) {
-  const std::string& inxml = testxml2;
+  const std::string& inxml = testxml3;
   const FIX::SessionID sid = FIX::SessionID("FIX.4.4", "sender", "target");
   std::cout << "test" << std::endl << inxml << std::endl;
   try {
     pugi::xml_document xml;
     if(const auto res = xml.load_string(inxml.c_str(), inxml.size())) {
-      ff::message_ptr msg;
-      ff::from_xml from_xml(msg, sid);
+      ff::msgcreator_t::messages_t msgs;
+      ff::from_xml from_xml(msgs, sid);
       xml.traverse(from_xml);
-      std::string s = msg->toString();
+      std::string s = msgs.front()->toString();
       std::replace(s.begin(), s.end(), '\1', '|');
       std::cout << s << std::endl;
-      const std::string& cl = ff::fixfactory_t::msg_name(*msg);
+      const std::string& cl = ff::fixfactory_t::msg_name(*msgs.front());
       std::cout << cl << std::endl;
       walker_t w;
-      ff::message_crack(*msg, w);
+      ff::message_crack(*msgs.front(), w);
     }
     else {
       std::cout << "Error description: " << res.description() << std::endl;
