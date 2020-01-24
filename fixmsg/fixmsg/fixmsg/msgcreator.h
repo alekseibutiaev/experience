@@ -39,7 +39,9 @@ namespace ff {
 
   class from_xml : msgcreator_t, public pugi::xml_tree_walker {
   public:
-    from_xml(msgcreator_t::messages_t& msg, const FIX::SessionID& sid);
+    using log_out_t = std::function<void(const std::string&)>;
+  public:
+    from_xml(msgcreator_t::messages_t& msg, const FIX::SessionID& sid, const log_out_t& lo = log_out_t());
     bool for_each(pugi::xml_node& node) override;
     bool end(pugi::xml_node& node) override;
   private:
@@ -52,6 +54,16 @@ namespace ff {
     void read_stack(const std::size_t& _depth);
   private:
     group_stack_t m_group_stack;
+    log_out_t m_lo;
+  };
+
+  class from_text : msgcreator_t {
+  public:
+    from_text(msgcreator_t::messages_t& messages, const FIX::SessionID& sid);
+    ~from_text();
+    void operator()(const std::pair<std::string, std::string>& value);
+  private:
+    FIX::Message* m_msg;
   };
 
   class msg_tree_walker_t {

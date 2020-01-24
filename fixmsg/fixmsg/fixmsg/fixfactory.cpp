@@ -4,9 +4,25 @@
 
 #include <quickfix/Group.h>
 #include <quickfix/Session.h>
+#include <quickfix/Exceptions.h>
 #include <quickfix/FixFields.h>
 
 #include "fixfactory.h"
+
+#if 0
+
+#include "Common.h"
+#undef LOG_NAME
+#define LOG_NAME "MFIX"
+
+#define ENDL 
+
+#else
+
+#define LOG_DEBUG std::cout
+#define ENDL std::endl
+#endif
+
 
 namespace {
 
@@ -35,12 +51,32 @@ namespace {
 namespace ff {
 
   std::string fixfactory_t::version_id(const FIX::SessionID& sid) {
-    return FIX::Message::toApplVerID(sid.getBeginString());
+    if(sid.isFIXT()) {
+      if(FIX::Session* pSession = FIX::Session::lookupSession(sid)) {
+        FIX::ApplVerID applVerID = pSession->getSenderDefaultApplVerID();
+        std::string r = applVerID.getString();
+        return r;
+      }
+      return std::string();
+    }
+    else
+      return FIX::Message::toApplVerID(sid.getBeginString());
   }
 
   std::string fixfactory_t::version_id(const FIX::Message& msg) {
     FIX::BeginString bstr;
     msg.getHeader().getField(bstr);
+    if(bstr.getString() == FIX::BeginString_FIXT11) {
+      try {
+        FIX::ApplVerID ver;
+        msg.getHeader().getField(ver);
+        return ver.getString();
+      }
+      catch(const FIX::FieldNotFound& e) {
+        LOG_DEBUG << e.what() << "field: " << e.field << ENDL;
+      }
+      return "7";
+    }
     return FIX::Message::toApplVerID(bstr);
   }
 

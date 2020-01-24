@@ -600,7 +600,7 @@
 namespace {
 
   template <typename type_t, std::size_t N>
-  constexpr std::size_t array_size(const type_t (&array)[N]) noexcept {
+  constexpr std::size_t array_size(const type_t (&)[N]) noexcept {
     return N;
   }
 

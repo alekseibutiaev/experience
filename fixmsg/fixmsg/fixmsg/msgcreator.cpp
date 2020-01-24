@@ -6,11 +6,25 @@
 
 #include "msgcreator.h"
 
+#if 0
+
+#include "Common.h"
+#undef LOG_NAME
+#define LOG_NAME "MFIX"
+
+#else
+
+#define LOG_DEBUG std::cout
+
+#endif
+
+
 namespace {
 
   void int_message_crack(const FIX::FieldMap& map, ff::msg_tree_walker_t& walker,
       const ff::fixfactory_t::message_info_t* mi, ff::strings_t& path) {
     for(FIX::FieldMap::const_iterator it = map.begin(); it != map.end(); ++it) {
+      LOG_DEBUG << "tag: " << it->getTag() << " value: " << it->getString() << " fix string: " << it->getFixString() << std::endl;
       if(auto i = ff::fixfactory_t::field_info_by(it->getTag())) {
         if(i->is_group) {
           const std::size_t count = std::stoull(it->getString());
@@ -18,6 +32,10 @@ namespace {
           walker.group(i->name, count);
           if(auto group = ff::fixfactory_t::group(mi, path)) {
             for(std::size_t i = 0; i < count; ++i) {
+              if(!map.hasGroup(i + 1, group->field())) {
+                LOG_DEBUG << "group: " << i + 1 << group->field();
+                continue;
+              }
               map.getGroup(i + 1, group->field(), *group);
               int_message_crack(*group, walker, mi, path);
               group->clear();
@@ -67,8 +85,9 @@ namespace ff {
     return map.isSetField(tag);
   }
 
-  from_xml::from_xml(msgcreator_t::messages_t& messages, const FIX::SessionID& sid)
-      : msgcreator_t(messages, sid) {
+  from_xml::from_xml(msgcreator_t::messages_t& messages, const FIX::SessionID& sid, const from_xml::log_out_t& lo)
+      : msgcreator_t(messages, sid)
+      , m_lo(lo) {
   }
 
   bool from_xml::for_each(pugi::xml_node& node) {
@@ -78,7 +97,7 @@ namespace ff {
     read_stack(depth());
     const auto mi = m_msg_info;
     if(0 == mi && 0 == (m_msg_info = fixfactory_t::message_info_name(m_sid, name))) {
-      // error message;
+      m_lo("can`t open message: " + name);
       return false;
     }
     if(auto map = create_map(0 != mi, name)) {
@@ -87,6 +106,7 @@ namespace ff {
       m_group_stack.emplace_back(std::move(map), name);
       return true;
     }
+    m_lo("can`t create group: " + name);
     return false;
   }
 
@@ -97,7 +117,7 @@ namespace ff {
     return m_msg_info->creator();
   }
 
-  bool from_xml::end(pugi::xml_node& node) {
+  bool from_xml::end(pugi::xml_node&) {
     read_stack(0);
     return true;
   }
@@ -129,13 +149,41 @@ namespace ff {
     const std::string name = fixfactory_t::msg_name(msg);
     if(name.empty())
       return;
-    if(auto mi = ff::fixfactory_t::message_info_name(msg, name)) {
-      ff::strings_t group_path;
-      walker.msg(fixfactory_t::msg_name(msg));
-      int_message_crack(msg.getHeader(), walker, mi, group_path);
-      int_message_crack(msg, walker, mi, group_path);
-      int_message_crack(msg.getTrailer(), walker, mi, group_path);
-      walker.exit();
+    try {
+      if(auto mi = ff::fixfactory_t::message_info_name(msg, name)) {
+        ff::strings_t group_path;
+        walker.msg(name);
+        int_message_crack(msg.getHeader(), walker, mi, group_path);
+        int_message_crack(msg, walker, mi, group_path);
+        int_message_crack(msg.getTrailer(), walker, mi, group_path);
+        walker.exit();
+      }
+    }
+    catch(const FIX::Exception& e) {
+      LOG_DEBUG << e.what();
+    }
+  }
+
+  from_text::from_text(msgcreator_t::messages_t& messages, const FIX::SessionID& sid)
+      : msgcreator_t(messages, sid)
+      , m_msg(0) {
+  }
+
+  from_text::~from_text() {
+  }
+
+  void from_text::operator()(const std::pair<std::string, std::string>& value) {
+    if(0 == m_msg) {
+      message_uptr msg;
+      if((msg = std::move(ff::fixfactory_t::message_name(m_sid, value.first))) ||
+          (msg = std::move(ff::fixfactory_t::message_type(m_sid, value.first)))) {
+        m_messages.emplace_back(std::move(msg));
+        m_msg = m_messages.back().get();
+      }
+    }
+    else if(ff::field_uptr f = ff::fixfactory_t::field(value.first, value.second)) {
+      if(!is_set_msg(*m_msg, f->getTag()))
+        m_msg->setField(*f);
     }
   }
 

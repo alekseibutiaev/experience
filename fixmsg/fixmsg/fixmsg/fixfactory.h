@@ -60,18 +60,15 @@ namespace ff {
     static const message_info_t* message_info_type(const std::string& ver, const std::string& type);
     static const message_info_t* message_info_type(const FIX::SessionID& sid, const std::string& type);
     static const message_info_t* message_info_type(const FIX::Message& msg, const std::string& type);
-
     static group_uptr group(const message_info_t* info, const strings_t& path);
-
     static message_uptr message_name(const std::string& ver, const std::string& name);
     static message_uptr message_name(const FIX::SessionID& sid, const std::string& name);
     static message_uptr message_name(const FIX::Message& msg, const std::string& name);
-
     static message_uptr message_type(const std::string& ver, const std::string& type);
     static message_uptr message_type(const FIX::SessionID& sid, const std::string& type);
     static message_uptr message_type(const FIX::Message& msg, const std::string& type);
-
     static const std::string& msg_name(const FIX::Message& msg);
+
   }; 
 
 } /* namespace ff */

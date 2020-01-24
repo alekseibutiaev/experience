@@ -10,6 +10,8 @@
 
 #include <pugixml.hpp>
 #include <quickfix/SessionID.h>
+#include <quickfix/DataDictionary.h>
+#include <quickfix/Message.h>
 
 #include <msgcreator.h>
 
@@ -102,10 +104,11 @@ namespace {
       std::cout << "add group name: " << name << " count : " << count << std::endl;
     }
     void exit()  override {
-      std::cout << "exit"  << std::endl;
+      std::cout << "exit" << std::endl;
     }
   };
 
+  const std::string fix = "8=FIXT.1.19=9735=X34=135049=FIX5-Eq-Prod52=20200124-10:29:31.09756=148d13268=1279=155=NTK182_2601336=110=142";
 
 } /* namespace */
 
@@ -114,6 +117,7 @@ int main(int ac, char* av[]) {
   const FIX::SessionID sid = FIX::SessionID("FIX.4.4", "sender", "target");
   std::cout << "test" << std::endl << inxml << std::endl;
   try {
+#if 0
     pugi::xml_document xml;
     if(const auto res = xml.load_string(inxml.c_str(), inxml.size())) {
       ff::msgcreator_t::messages_t msgs;
@@ -134,7 +138,11 @@ int main(int ac, char* av[]) {
       std::cout << "Error offset: " << res.offset << " (error at [..." <<
         (inxml.c_str() + res.offset) << std::endl;
     }
-
+#endif
+    FIX::DataDictionary dd("/home/butiaev/tmp/ddddd/FIX50-KASE.xml");
+    FIX::Message msg(fix, dd, true);
+    walker_t w;
+    ff::message_crack(msg, w);
   }
   catch(const std::exception& e) {
     std::cerr << e.what() << std::endl;
@@ -142,7 +150,6 @@ int main(int ac, char* av[]) {
   catch(...){
     std::cerr << "unknown" << std::endl;
   }
-
 
   return 0;
 }
