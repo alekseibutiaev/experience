@@ -4,6 +4,8 @@
 #include <iostream>
 #include <algorithm>
 
+#include <quickfix/Group.h>
+
 #include "msgcreator.h"
 
 #if 0
@@ -11,11 +13,10 @@
 #include "Common.h"
 #undef LOG_NAME
 #define LOG_NAME "MFIX"
-
+#define ENDL
 #else
-
 #define LOG_DEBUG std::cout
-
+#define ENDL std::endl
 #endif
 
 
@@ -24,7 +25,6 @@ namespace {
   void int_message_crack(const FIX::FieldMap& map, ff::msg_tree_walker_t& walker,
       const ff::fixfactory_t::message_info_t* mi, ff::strings_t& path) {
     for(FIX::FieldMap::const_iterator it = map.begin(); it != map.end(); ++it) {
-      LOG_DEBUG << "tag: " << it->getTag() << " value: " << it->getString() << " fix string: " << it->getFixString() << std::endl;
       if(auto i = ff::fixfactory_t::field_info_by(it->getTag())) {
         if(i->is_group) {
           const std::size_t count = std::stoull(it->getString());
@@ -33,7 +33,7 @@ namespace {
           if(auto group = ff::fixfactory_t::group(mi, path)) {
             for(std::size_t i = 0; i < count; ++i) {
               if(!map.hasGroup(i + 1, group->field())) {
-                LOG_DEBUG << "group: " << i + 1 << group->field();
+                LOG_DEBUG << "not found group: " << i + 1 << group->field() ENDL;
                 continue;
               }
               map.getGroup(i + 1, group->field(), *group);
@@ -42,10 +42,14 @@ namespace {
             }
           }
           path.pop_back();
-          walker.exit();
+          walker.exit(i->name);
         }
-        else 
-          walker.field(i->name, it->getString());
+        else {
+          int delemiter = -1;
+          if(const FIX::Group* g = dynamic_cast<const FIX::Group*>(&map))
+            delemiter = g->delim();
+          walker.field(i->name, it->getString(), delemiter == -1 ? false : delemiter == it->getTag());
+        }
       }
     }
   }
@@ -156,7 +160,7 @@ namespace ff {
         int_message_crack(msg.getHeader(), walker, mi, group_path);
         int_message_crack(msg, walker, mi, group_path);
         int_message_crack(msg.getTrailer(), walker, mi, group_path);
-        walker.exit();
+        walker.exit(name);
       }
     }
     catch(const FIX::Exception& e) {

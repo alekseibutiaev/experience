@@ -96,19 +96,31 @@ namespace {
   public:
     void msg(const std::string& name) override {
       std::cout << "add message name: " << name << std::endl;
+      m_stungs.push_back("  ");
     }
-    void field(const std::string& name, const std::string& value) override {
-      std::cout << "add field name: " << name << " value : " << value << std::endl;
+    void field(const std::string& name, const std::string& value, const bool& obj) override {
+      std::copy(m_stungs.begin(), m_stungs.end(), std::ostream_iterator<std::string>(std::cout, ""));
+      std::cout << "add field name: " << name << " value : " << value << " obj: " << obj << std::endl;
     }
     void group(const std::string& name, const std::size_t& count ) override {
+      std::copy(m_stungs.begin(), m_stungs.end(), std::ostream_iterator<std::string>(std::cout, ""));
       std::cout << "add group name: " << name << " count : " << count << std::endl;
+      m_stungs.push_back("  ");
     }
-    void exit()  override {
-      std::cout << "exit" << std::endl;
+    void exit(const std::string& name) override {
+      m_stungs.pop_back();
+      std::copy(m_stungs.begin(), m_stungs.end(), std::ostream_iterator<std::string>(std::cout, ""));
+      std::cout << "exit name: " << name << std::endl;
     }
+  std::vector<std::string> m_stungs;
   };
 
-  const std::string fix = "8=FIXT.1.19=9735=X34=135049=FIX5-Eq-Prod52=20200124-10:29:31.09756=148d13268=1279=155=NTK182_2601336=110=142";
+  const std::string fix0 = "8=FIXT.1.19=9735=X34=135049=FIX5-Eq-Prod52=20200124-10:29:31.09756=148d13268=1279=155=NTK182_2601336=110=142";
+  const std::string fix1 = "8=FIXT.1.19=11135=X34=388349=FIX5-Eq-Prod52=20200124-10:37:16.66456=148d13268=1279=155=NTK182_2577336=15203=3115834310=112";
+  const std::string fix2 = "8=FIXT.1.19=11735=X34=386849=FIX5-Eq-Prod52=20200124-10:36:53.07556=148d13268=2279=155=EABRU200922336=1279=15240=05241=010=056";
+  const std::string fix3 = "8=FIX.4.49=30835=J70=allocid71=073=211=ordid756=1757=saf758=D759=9806=2760=dsfsd807=25760=fgd807=2038=12.23213311=oid756=1757=saf1758=D759=9806=2760=dsfsd1807=25760=fgd1807=2038=1678=179=AB80=12539=1524=askdlk525=D538=17804=2545=weqw805=24545=dw805=21124=132=1031=12.00626=7857=110=097"
+"8=FIX.4.49=10735=D1=I+103080003611=10038=200040=244=112.4400000054=155=HSBK59=460=20190926-14:08:50386=1386=110=014";
+
 
 } /* namespace */
 
@@ -117,7 +129,8 @@ int main(int ac, char* av[]) {
   const FIX::SessionID sid = FIX::SessionID("FIX.4.4", "sender", "target");
   std::cout << "test" << std::endl << inxml << std::endl;
   try {
-#if 0
+#if 1
+    std::string ss;
     pugi::xml_document xml;
     if(const auto res = xml.load_string(inxml.c_str(), inxml.size())) {
       ff::msgcreator_t::messages_t msgs;
@@ -125,6 +138,9 @@ int main(int ac, char* av[]) {
       xml.traverse(from_xml);
       for(auto m : msgs) {
         std::string s = m->toString();
+        ss = s;
+        std::ofstream ff("fix.fix");
+        ff << ss;
         std::replace(s.begin(), s.end(), '\1', '|');
         std::cout << s << std::endl;
       }
@@ -138,11 +154,12 @@ int main(int ac, char* av[]) {
       std::cout << "Error offset: " << res.offset << " (error at [..." <<
         (inxml.c_str() + res.offset) << std::endl;
     }
-#endif
+//#else
     FIX::DataDictionary dd("/home/butiaev/tmp/ddddd/FIX50-KASE.xml");
-    FIX::Message msg(fix, dd, true);
+    FIX::Message msg(ss, dd, true);
     walker_t w;
     ff::message_crack(msg, w);
+#endif
   }
   catch(const std::exception& e) {
     std::cerr << e.what() << std::endl;

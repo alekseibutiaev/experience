@@ -70,9 +70,9 @@ namespace ff {
   public:
     virtual ~msg_tree_walker_t() = default;
     virtual void msg(const std::string& name) = 0;
-    virtual void field(const std::string& name, const std::string& value) = 0;
+    virtual void field(const std::string& name, const std::string& value, const bool& obj) = 0;
     virtual void group(const std::string& name, const std::size_t& count) = 0;
-    virtual void exit() = 0;
+    virtual void exit(const std::string& name) = 0;
   };
 
   void message_crack(const FIX::Message& msg, ff::msg_tree_walker_t& walker);

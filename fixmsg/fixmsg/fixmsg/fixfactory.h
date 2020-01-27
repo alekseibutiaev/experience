@@ -37,7 +37,7 @@ namespace ff {
       const group_creator_f creator;
       const group_map_t sub_group;
     };
-    
+
     struct message_info_t {
       const std::string ver;
       const std::string type;
