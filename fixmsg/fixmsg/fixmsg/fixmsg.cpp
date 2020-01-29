@@ -98,9 +98,11 @@ namespace {
       std::cout << "add message name: " << name << std::endl;
       m_stungs.push_back("  ");
     }
-    void field(const std::string& name, const std::string& value, const bool& obj) override {
+    void field(const std::string& name, const std::string& value, const bool& obj,
+        const ff::msg_tree_walker_t::field_type_t& type) override {
       std::copy(m_stungs.begin(), m_stungs.end(), std::ostream_iterator<std::string>(std::cout, ""));
-      std::cout << "add field name: " << name << " value : " << value << " obj: " << obj << std::endl;
+      std::cout << "add field name: " << name << " value : " << value << " obj: " <<
+        obj << " type: " << static_cast<int>(type) << std::endl;
     }
     void group(const std::string& name, const std::size_t& count ) override {
       std::copy(m_stungs.begin(), m_stungs.end(), std::ostream_iterator<std::string>(std::cout, ""));
@@ -121,7 +123,6 @@ namespace {
   const std::string fix3 = "8=FIX.4.49=30835=J70=allocid71=073=211=ordid756=1757=saf758=D759=9806=2760=dsfsd807=25760=fgd807=2038=12.23213311=oid756=1757=saf1758=D759=9806=2760=dsfsd1807=25760=fgd1807=2038=1678=179=AB80=12539=1524=askdlk525=D538=17804=2545=weqw805=24545=dw805=21124=132=1031=12.00626=7857=110=097"
 "8=FIX.4.49=10735=D1=I+103080003611=10038=200040=244=112.4400000054=155=HSBK59=460=20190926-14:08:50386=1386=110=014";
   const std::string fix4 = "8=FIXT.1.1.9=96.35=X.34=239.49=FIX5-Eq-Prod.52=20200128-07:18:11.836.56=177d01.268=1.279=1.55=EABRK101020.336=1.10=065.";
-
 
 } /* namespace */
 

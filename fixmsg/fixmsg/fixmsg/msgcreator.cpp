@@ -4,8 +4,10 @@
 #include <iostream>
 #include <algorithm>
 
+#include <quickfix/Field.h>
 #include <quickfix/Group.h>
 
+#include "fixfactory.h"
 #include "msgcreator.h"
 
 #if 0
@@ -19,8 +21,36 @@
 #define ENDL << std::endl
 #endif
 
-
 namespace {
+
+  ff::msg_tree_walker_t::field_type_t get_type(const ff::field_uptr& value) {
+    if(0 != dynamic_cast<const FIX::StringField*>(value.get()))
+      return ff::msg_tree_walker_t::e_string;
+    if(0 != dynamic_cast<const FIX::CharField*>(value.get()))
+      return ff::msg_tree_walker_t::e_char;
+    if(0 != dynamic_cast<const FIX::DoubleField*>(value.get()))
+      return ff::msg_tree_walker_t::e_double;
+    if(0 != dynamic_cast<const FIX::IntField*>(value.get()))
+      return ff::msg_tree_walker_t::e_int;
+    if(0 != dynamic_cast<const FIX::BoolField*>(value.get()))
+      return ff::msg_tree_walker_t::e_bool;
+    if(0 != dynamic_cast<const FIX::UtcTimeStampField*>(value.get()))
+      return ff::msg_tree_walker_t::e_utc_time_stamp;
+    if(0 != dynamic_cast<const FIX::UtcDateField*>(value.get()))
+      return ff::msg_tree_walker_t::e_utc_date;
+    if(0 != dynamic_cast<const FIX::UtcTimeOnlyField*>(value.get()))
+      return ff::msg_tree_walker_t::e_utc_time_only;
+    if(0 != dynamic_cast<const FIX::CheckSumField*>(value.get()))
+      return ff::msg_tree_walker_t::e_check_sum;
+    return ff::msg_tree_walker_t::e_string;
+  }
+
+  bool is_delimiter(const FIX::FieldMap& map, const int tag) {
+    int tmp = -1;
+    if(const FIX::Group* g = dynamic_cast<const FIX::Group*>(&map))
+      tmp = g->delim();
+    return tmp == -1 ? false : tmp == tag;
+  }
 
   void int_message_crack(const FIX::FieldMap& map, ff::msg_tree_walker_t& walker,
       const ff::fixfactory_t::message_info_t* mi, ff::strings_t& path) {
@@ -44,12 +74,9 @@ namespace {
           path.pop_back();
           walker.exit(i->name);
         }
-        else {
-          int delemiter = -1;
-          if(const FIX::Group* g = dynamic_cast<const FIX::Group*>(&map))
-            delemiter = g->delim();
-          walker.field(i->name, it->getString(), delemiter == -1 ? false : delemiter == it->getTag());
-        }
+        else
+          walker.field(i->name, it->getString(), is_delimiter(map, it->getTag()),
+            get_type(i->creator(std::string())));
       }
     }
   }

@@ -68,9 +68,22 @@ namespace ff {
 
   class msg_tree_walker_t {
   public:
+    enum field_type_t {
+      e_string,
+      e_char,
+      e_double,
+      e_int,
+      e_bool,
+      e_utc_time_stamp,
+      e_utc_date,
+      e_utc_time_only,
+      e_check_sum
+    };
+  public:
     virtual ~msg_tree_walker_t() = default;
     virtual void msg(const std::string& name) = 0;
-    virtual void field(const std::string& name, const std::string& value, const bool& obj) = 0;
+    virtual void field(const std::string& name, const std::string& value,
+      const bool& obj, const field_type_t& type) = 0;
     virtual void group(const std::string& name, const std::size_t& count) = 0;
     virtual void exit(const std::string& name) = 0;
   };
