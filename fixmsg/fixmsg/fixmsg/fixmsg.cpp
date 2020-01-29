@@ -120,6 +120,7 @@ namespace {
   const std::string fix2 = "8=FIXT.1.19=11735=X34=386849=FIX5-Eq-Prod52=20200124-10:36:53.07556=148d13268=2279=155=EABRU200922336=1279=15240=05241=010=056";
   const std::string fix3 = "8=FIX.4.49=30835=J70=allocid71=073=211=ordid756=1757=saf758=D759=9806=2760=dsfsd807=25760=fgd807=2038=12.23213311=oid756=1757=saf1758=D759=9806=2760=dsfsd1807=25760=fgd1807=2038=1678=179=AB80=12539=1524=askdlk525=D538=17804=2545=weqw805=24545=dw805=21124=132=1031=12.00626=7857=110=097"
 "8=FIX.4.49=10735=D1=I+103080003611=10038=200040=244=112.4400000054=155=HSBK59=460=20190926-14:08:50386=1386=110=014";
+  const std::string fix4 = "8=FIXT.1.1.9=96.35=X.34=239.49=FIX5-Eq-Prod.52=20200128-07:18:11.836.56=177d01.268=1.279=1.55=EABRK101020.336=1.10=065.";
 
 
 } /* namespace */
@@ -154,9 +155,9 @@ int main(int ac, char* av[]) {
       std::cout << "Error offset: " << res.offset << " (error at [..." <<
         (inxml.c_str() + res.offset) << std::endl;
     }
-//#else
-    FIX::DataDictionary dd("/home/butiaev/tmp/ddddd/FIX50-KASE.xml");
-    FIX::Message msg(ss, dd, true);
+#else
+    FIX::DataDictionary dd("/home/butiaev/NetTrader/ini/fix/FIX50-KASE.xml");
+    FIX::Message msg(fix1, dd, true);
     walker_t w;
     ff::message_crack(msg, w);
 #endif

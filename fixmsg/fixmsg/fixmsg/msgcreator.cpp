@@ -16,7 +16,7 @@
 #define ENDL
 #else
 #define LOG_DEBUG std::cout
-#define ENDL std::endl
+#define ENDL << std::endl
 #endif
 
 
