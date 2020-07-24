@@ -1,5 +1,5 @@
 #pragma once
-
+#include <atomic>
 #include <boost/asio.hpp>
 
 namespace net {
@@ -16,7 +16,18 @@ namespace net {
     private:
       using patent_t = tcp_socket;
     public:
+#if defined(DEBUG)
+      template<typename... args_t>
+      socket_t(args_t&&... args)
+          : tcp_socket(std::forward<args_t>(args)...){
+        ++m_counrer;
+      }
+      ~socket_t();
+    public:
+      static std::atomic_ullong m_counrer;
+#else
       using patent_t::patent_t;
+#endif
     };
 
   } /* namespace details */

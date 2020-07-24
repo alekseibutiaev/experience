@@ -17,14 +17,14 @@ namespace net {
       ~acceptor_t();
       void listen() override;
       void close() override;
-      void accepted_callback(const accepted_func_t& value) override;
+      void accepted_callback(const socket_events_t& value) override;
     private:
       void accepted_handler(details::socket_ptr& socket, const error_code_t& value);
     private:
       context_ptr& m_context;
       boost::asio::ip::tcp::acceptor m_acceptor;
       details::socket_ptr m_socket;
-      accepted_func_t m_accepted;
+      socket_events_t m_accepted;
     };
 
   } /* namespace details */

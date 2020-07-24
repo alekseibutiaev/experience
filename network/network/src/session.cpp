@@ -73,17 +73,23 @@ namespace net {
     m_buffer_allocator = value;
   }
 
-  void session_t::receive_callback(const receive_func_t& value) {
+  void session_t::receive_callback(const receive_data_t& value) {
     m_receive = value;
   }
 
-  void session_t::disconnect_callback(const disconnect_func_t& value) {
+  void session_t::disconnect_callback(const socket_events_t& value) {
     m_disconnect = value;
   }
 
   session_ptr session_t::create(details::socket_ptr&& value) {
     return session_ptr(new session_t(std::move(value)));
   }
+
+#if defined(DEBUG)
+  unsigned long long session_t::sockets() {
+    return details::socket_ptr::element_type::m_counrer;
+  }
+#endif
 
   void session_t::close(const error_code_t& value) {
     if(m_is_open.exchange(false)) {
@@ -97,7 +103,7 @@ namespace net {
   void session_t::write_handler(const write_buf_t buf, const error_code_t& err, std::size_t transferred){
     if(err)
       close(err);
-    if(buf.first->size() - buf.second > transferred)
+    else if(buf.first->size() - buf.second > transferred)
       send(buf.first, buf.second + transferred);
   }
 

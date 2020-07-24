@@ -28,16 +28,21 @@ namespace net {
       m_acceptor.close();
     }
 
-    void acceptor_t::accepted_callback(const accepted_func_t& value) {
+    void acceptor_t::accepted_callback(const socket_events_t& value) {
       m_accepted = value;
     }
 
     void acceptor_t::accepted_handler(details::socket_ptr& socket, const error_code_t& err) {
-      if(!err) {
-        if(m_accepted)
-          m_accepted(net::session_t::create(std::move(socket)));
-        listen();
+      if(!m_acceptor.is_open()) {
+        m_context->get_error_handle()(true, __FUNCTION__, __LINE__, 
+          boost::asio::error::make_error_code(boost::asio::error::connection_aborted));
+        return;
       }
+      if(err)
+        m_context->get_error_handle()(false, __FUNCTION__, __LINE__, err);
+      else if(m_accepted)
+        m_accepted(net::session_t::create(std::move(socket)), err);
+      listen();
     }
 
   } /* namespace details */

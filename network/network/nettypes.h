@@ -4,6 +4,7 @@
 #include <vector>
 #include <functional>
 
+#include <boost/asio/error.hpp>
 #include <boost/system/error_code.hpp>
 
 namespace net {
@@ -25,10 +26,10 @@ namespace net {
   class session_t;
   using session_ptr = std::shared_ptr<session_t>;
 
-  using receive_func_t = std::function<void(const buffer_ptr)>;
-  using disconnect_func_t = std::function<void(session_ptr, const error_code_t&)>;
-  using accepted_func_t = std::function<void(session_ptr)>;
+  using receive_data_t = std::function<void(const buffer_ptr)>;
+  using socket_events_t = std::function<void(session_ptr, const error_code_t&)>;
   using buffer_allocator_t = std::function<buffer_ptr(const buffer_t::value_type*, std::size_t)>;
+  using error_handle_t = std::function<void(bool, const char*, const int, const error_code_t&)>;
 
   namespace details {
 

@@ -17,10 +17,13 @@ namespace net {
     void close();
     const std::string& address() const;
     void buffer_allocator(const buffer_allocator_t& value);
-    void receive_callback(const receive_func_t& value);
-    void disconnect_callback(const disconnect_func_t& value);
+    void receive_callback(const receive_data_t& value);
+    void disconnect_callback(const socket_events_t& value);
   public:
     static session_ptr create(details::socket_ptr&& value);
+#if defined(DEBUG)
+    static unsigned long long sockets();
+#endif
   private:
     using recv_buf_t = std::unique_ptr<buffer_t::value_type[]>;
     using write_buf_t = std::pair<const buffer_ptr, std::size_t>;
@@ -36,8 +39,8 @@ namespace net {
     details::socket_ptr m_socket;
     buffer_allocator_t m_buffer_allocator;
     recv_buf_t m_recv_buf;
-    receive_func_t m_receive;
-    disconnect_func_t m_disconnect;
+    receive_data_t m_receive;
+    socket_events_t m_disconnect;
     mutable std::string m_addres;
   private:
     const static std::size_t max_buffer = 10240;

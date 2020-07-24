@@ -13,9 +13,11 @@ namespace net {
 
     class context_t : public net::context_t {
     public:
-      context_t();
+      context_t(const error_handle_t& handelr);
       void run() override;
+      std::size_t run_one(error_code_t& err) override;
       void stop() override;
+      const error_handle_t& get_error_handle() override;
       io_context_t& get_io_context();
     private:
 #if BOOST_VERSION <= 106501
@@ -26,6 +28,7 @@ namespace net {
     private:
       io_context_t m_io_context;
       work_t m_work;
+      const error_handle_t m_handelr;
     };
 
   } /* namespace details */

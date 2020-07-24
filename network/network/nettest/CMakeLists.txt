@@ -13,7 +13,7 @@ add_executable(${PROJECT_NAME}_server server.cpp)
 target_link_libraries(${PROJECT_NAME}_server
   network_static
   ${Boost_LIBRARIES}
-  pthread
+  Threads::Threads
 )
 
 add_executable(${PROJECT_NAME}_client client.cpp)
@@ -21,5 +21,5 @@ add_executable(${PROJECT_NAME}_client client.cpp)
 target_link_libraries(${PROJECT_NAME}_client
   network_static
   ${Boost_LIBRARIES}
-  pthread
+  Threads::Threads
 )

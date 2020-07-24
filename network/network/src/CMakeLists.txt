@@ -8,6 +8,7 @@ include_directories(
 
 link_directories(
   ${Boost_LIBRARIES}
+  Threads::Threads
 )
 
 add_library(${PROJECT_NAME}_static STATIC ${HEADER_FILES} ${SOURCE_FILES})
