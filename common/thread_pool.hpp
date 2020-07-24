@@ -21,6 +21,7 @@ namespace tools {
   protected:
     thread_pool_base_t() = default;
     ~thread_pool_base_t() = default;
+    void name(const std::string& name);
     void execute(function_t value);
     void start(std::thread* begin, std::thread* end);
     void stop(std::thread* begin, std::thread* end);
@@ -46,6 +47,7 @@ namespace tools {
     storage_t m_queue;
     std::mutex m_mtx;
     std::condition_variable m_cv;
+    std::string m_name;
   private:
     static const std::string error;
     static const std::string unknown_error;
@@ -61,13 +63,14 @@ namespace tools {
     virtual ~thread_pool_t() {
       stop();
     }
+    using thread_pool_base_t::execute;
+    using thread_pool_base_t::name;
     void start() {
       thread_pool_base_t::start(std::begin(m_threads), std::end(m_threads));
     }
     void stop() {
       thread_pool_base_t::stop(std::begin(m_threads), std::end(m_threads));
     }
-    using thread_pool_base_t::execute;
   public:
     using thread_pool_base_t::m_exception_notice;
     using thread_pool_base_t::m_thread_started;

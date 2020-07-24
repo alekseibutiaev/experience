@@ -31,7 +31,7 @@ namespace tools {
       m_cache_node.splice(m_cache_node.end(), m_queue, m_queue.begin());
     }
 
-    bool empty() const{
+    bool empty() const {
       return m_queue.empty();
     }
 

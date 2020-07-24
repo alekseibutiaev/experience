@@ -28,11 +28,12 @@ namespace tools {
       if(0 != i % line_size)
         continue;
       os << hex << ' ' << sym << std::endl;
-      hexp = hex; 
+      hexp = hex;
       symp = sym;
     }
-    os << std::left << std::setfill(' ') << std::setw(line_size * 3) << hex
-      << ' ' << std::setw(line_size) << sym << std::endl;
+    if(value.m_size % line_size)
+      os << std::left << std::setfill(' ') << std::setw(line_size * 3) << hex
+        << ' ' << std::setw(line_size) << sym << std::endl;
     return os;
   }
 

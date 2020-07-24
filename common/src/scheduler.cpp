@@ -97,7 +97,7 @@ namespace tools {
       while(!m_stop) {
         {
           std::unique_lock<std::mutex> _(m_mutex);
-          while(m_list.empty())
+          while(!m_stop && m_list.empty())
             m_cv.wait(_);
           if(std::cv_status::timeout == m_cv.wait_until(_, m_list.front().first)) {
             auto it = std::upper_bound(m_list.cbegin(), m_list.cend(), m_list.front(), ft_less_t());

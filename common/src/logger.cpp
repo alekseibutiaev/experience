@@ -5,7 +5,7 @@
 
 namespace tools {
 
-  level_t::value_t level_t::show_level = level_t::e_debug;
+  level_t::value_t level_t::show_level = level_t::e_info;
 
   const std::string level_t::str[level_t::e_debug + 1] = {
     "ERROR   ",
@@ -22,8 +22,8 @@ namespace tools {
   logger_t::logger_t(ostream_ptr& value)
       : m_stop(false)
       , m_stream(std::move(value))
-      , m_timeformat(tools::time_milliseconds)
-      , m_th([&]() {out_tread();}) {
+      , m_timeformat(std::bind(&tools::time_milliseconds, 0))
+      , m_th([&](){out_tread();}) {
   }
 
   logger_t::~logger_t() {

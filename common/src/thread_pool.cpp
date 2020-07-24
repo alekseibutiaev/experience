@@ -1,3 +1,5 @@
+#include <iterator>
+#include "thread_tools.hpp"
 #include "thread_pool.hpp"
 
 namespace tools {
@@ -5,6 +7,10 @@ namespace tools {
   const std::string thread_pool_base_t::error = " error: ";
 
   const std::string thread_pool_base_t::unknown_error = " unknown error.";
+
+  void thread_pool_base_t::name(const std::string& name) {
+    m_name = name;
+  }
 
   void thread_pool_base_t::execute(function_t value) {
     std::unique_lock<std::mutex> _(m_mtx);
@@ -17,8 +23,12 @@ namespace tools {
   void thread_pool_base_t::start(std::thread* begin, std::thread* end) {
     try {
       m_stop = false;
-      for(std::thread* it = begin; it != end; ++it)
-        *it = std::move(std::thread([&](){thread_routine();}));
+      for(std::thread* it = begin; it != end; ++it) {
+        auto th = std::thread(std::bind(&thread_pool_base_t::thread_routine, this));
+        if(!m_name.empty())
+          set_name(th, m_name + std::to_string(std::distance(begin, it)));
+        *it = std::move(th);
+      }
       return;
     }
     catch(const std::exception& e) {
