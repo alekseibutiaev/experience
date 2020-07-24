@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
 
-FIND_PACKAGE(PythonInterp)
+FIND_PACKAGE(PythonInterp 3.6)
 
 if (PYTHONINTERP_FOUND)
   if (UNIX AND NOT APPLE)
@@ -13,7 +13,7 @@ if (PYTHONINTERP_FOUND)
         FIND_PACKAGE(PythonInterp)
         FIND_PACKAGE(PythonLibs REQUIRED)
     endif()
-  else()	
+  else()
     if (PYTHON_VERSION_MAJOR EQUAL 3)
         FIND_PACKAGE(Boost COMPONENTS python${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR})
         FIND_PACKAGE(PythonInterp 3)
