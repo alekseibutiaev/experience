@@ -16,7 +16,7 @@ namespace {
     return net::buffer_ptr(new net::buffer_t(data, data + size));
   };
 
-  net::details::io_context_t& get_context(net::details::socket_ptr& socket) {
+  net::details::io_context_t& get_io_context(net::details::socket_ptr& socket) {
 #if BOOST_VERSION <= 106501
     return socket->get_io_service();
 #else
@@ -37,8 +37,8 @@ namespace {
 namespace net {
 
   session_t::session_t(details::socket_ptr&& socket)
-    : m_is_open(true)
-    , m_socket(std::move(socket))
+    : m_socket(std::move(socket))
+    , m_is_open(true)
     , m_buffer_allocator(defalloc)
     , m_recv_buf(new recv_buf_t::element_type[max_buffer]) {
   }
@@ -93,7 +93,7 @@ namespace net {
 
   void session_t::close(const error_code_t& value) {
     if(m_is_open.exchange(false)) {
-      local_post(get_context(m_socket), std::bind(&keep_session, shared_from_this()));
+      local_post(get_io_context(m_socket), std::bind(&keep_session, shared_from_this()));
       m_socket->close();
       if(m_disconnect)
         m_disconnect(shared_from_this(), value);

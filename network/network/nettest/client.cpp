@@ -46,16 +46,11 @@ namespace {
     cv.notify_one();
   }
 
-  void error_handler(bool interrupt, const char* func, const int line, const net::error_code_t& err) {
-  }
-
 } /* namespace */
 
 int main(int ac, char* av[]) {
   try {
-    net::error_handle_t eh = std::bind(error_handler, std::placeholders::_1, std::placeholders::_2,
-      std::placeholders::_3, std::placeholders::_4);
-    net::context_ptr ctx = net::context_t::create(eh);
+    net::context_ptr ctx = net::context_t::create();
     std::thread th([&ctx](){ 
       ctx->run();
       std::cout << "stop thread" << std::endl;

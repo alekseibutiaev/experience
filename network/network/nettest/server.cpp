@@ -47,8 +47,8 @@ namespace  {
       session->disconnect_callback(std::bind(&echo_server_t::disconnected, this,
         std::placeholders::_1, std::placeholders::_2));
       echo_ptr echo(new echo_t(session));
-      echo->start();
       m_echo_map[session] = echo;
+      echo->start();
     }
     void disconnected(net::session_ptr session, const net::error_code_t& err) {
       std::cout << "disconnected" << std::endl;
@@ -60,17 +60,12 @@ namespace  {
     echo_map_t m_echo_map;
   };
 
-  void error_handler(bool interrupt, const char* func, const int line, const net::error_code_t& err) {
-  }
-
 } /* namespace */
 
 int main(int ac, char* av[]) {
 
   try {
-    net::error_handle_t eh = std::bind(error_handler, std::placeholders::_1, std::placeholders::_2,
-      std::placeholders::_3, std::placeholders::_4);
-    net::context_ptr ctx = net::context_t::create(eh);
+    net::context_ptr ctx = net::context_t::create();
     echo_server_t se(ctx);
     ctx->run();
   }

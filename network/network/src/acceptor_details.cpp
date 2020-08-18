@@ -14,6 +14,7 @@ namespace net {
       , m_acceptor(static_cast<details::context_t&>(*m_context).get_io_context(),
           boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port)) {
     }
+
     acceptor_t::~acceptor_t() {
       m_acceptor.close();
     }
@@ -33,16 +34,10 @@ namespace net {
     }
 
     void acceptor_t::accepted_handler(details::socket_ptr& socket, const error_code_t& err) {
-      if(!m_acceptor.is_open()) {
-        m_context->get_error_handle()(true, __FUNCTION__, __LINE__, 
-          boost::asio::error::make_error_code(boost::asio::error::connection_aborted));
-        return;
-      }
-      if(err)
-        m_context->get_error_handle()(false, __FUNCTION__, __LINE__, err);
-      else if(m_accepted)
-        m_accepted(net::session_t::create(std::move(socket)), err);
-      listen();
+      if(m_accepted)
+        m_accepted(err ? net::session_ptr() : net::session_t::create(std::move(socket)), err);
+      if(m_acceptor.is_open())
+        listen();
     }
 
   } /* namespace details */
