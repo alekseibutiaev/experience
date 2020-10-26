@@ -72,10 +72,10 @@ void Error_Handler(void);
 #define custom_Pin GPIO_PIN_0
 #define custom_GPIO_Port GPIOA
 #define custom_EXTI_IRQn EXTI0_IRQn
-#define USART_TX_Pin GPIO_PIN_2
-#define USART_TX_GPIO_Port GPIOA
-#define USART_RX_Pin GPIO_PIN_3
-#define USART_RX_GPIO_Port GPIOA
+#define USART2_TX_Pin GPIO_PIN_2
+#define USART2_TX_GPIO_Port GPIOA
+#define USART2_RX_Pin GPIO_PIN_3
+#define USART2_RX_GPIO_Port GPIOA
 #define LD2_Pin GPIO_PIN_5
 #define LD2_GPIO_Port GPIOA
 #define rowrscan_4_Pin GPIO_PIN_4
