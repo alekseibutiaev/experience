@@ -19,10 +19,15 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "usb_host.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include <stdio.h>
+#include <ctype.h>
+#include "retarget.h"
+#include "usbh_def.h"
+#include "usbh_hid.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -42,8 +47,6 @@
 /* Private variables ---------------------------------------------------------*/
 UART_HandleTypeDef hlpuart1;
 
-PCD_HandleTypeDef hpcd_USB_OTG_FS;
-
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -52,7 +55,8 @@ PCD_HandleTypeDef hpcd_USB_OTG_FS;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_LPUART1_UART_Init(void);
-static void MX_USB_OTG_FS_PCD_Init(void);
+void MX_USB_HOST_Process(void);
+
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -91,9 +95,10 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_LPUART1_UART_Init();
-  MX_USB_OTG_FS_PCD_Init();
+  MX_USB_HOST_Init();
   /* USER CODE BEGIN 2 */
-
+  RetargetInit(&hlpuart1);
+  printf("all initialized\n\n\n\n\n\n\n\n\n\n\n\n");
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -101,6 +106,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
+    MX_USB_HOST_Process();
 
     /* USER CODE BEGIN 3 */
   }
@@ -194,8 +200,8 @@ static void MX_LPUART1_UART_Init(void)
 
   /* USER CODE END LPUART1_Init 1 */
   hlpuart1.Instance = LPUART1;
-  hlpuart1.Init.BaudRate = 209700;
-  hlpuart1.Init.WordLength = UART_WORDLENGTH_7B;
+  hlpuart1.Init.BaudRate = 115200;
+  hlpuart1.Init.WordLength = UART_WORDLENGTH_8B;
   hlpuart1.Init.StopBits = UART_STOPBITS_1;
   hlpuart1.Init.Parity = UART_PARITY_NONE;
   hlpuart1.Init.Mode = UART_MODE_TX_RX;
@@ -209,41 +215,6 @@ static void MX_LPUART1_UART_Init(void)
   /* USER CODE BEGIN LPUART1_Init 2 */
 
   /* USER CODE END LPUART1_Init 2 */
-
-}
-
-/**
-  * @brief USB_OTG_FS Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_USB_OTG_FS_PCD_Init(void)
-{
-
-  /* USER CODE BEGIN USB_OTG_FS_Init 0 */
-
-  /* USER CODE END USB_OTG_FS_Init 0 */
-
-  /* USER CODE BEGIN USB_OTG_FS_Init 1 */
-
-  /* USER CODE END USB_OTG_FS_Init 1 */
-  hpcd_USB_OTG_FS.Instance = USB_OTG_FS;
-  hpcd_USB_OTG_FS.Init.dev_endpoints = 6;
-  hpcd_USB_OTG_FS.Init.speed = PCD_SPEED_FULL;
-  hpcd_USB_OTG_FS.Init.phy_itface = PCD_PHY_EMBEDDED;
-  hpcd_USB_OTG_FS.Init.Sof_enable = ENABLE;
-  hpcd_USB_OTG_FS.Init.low_power_enable = DISABLE;
-  hpcd_USB_OTG_FS.Init.lpm_enable = DISABLE;
-  hpcd_USB_OTG_FS.Init.battery_charging_enable = ENABLE;
-  hpcd_USB_OTG_FS.Init.use_dedicated_ep1 = DISABLE;
-  hpcd_USB_OTG_FS.Init.vbus_sensing_enable = ENABLE;
-  if (HAL_PCD_Init(&hpcd_USB_OTG_FS) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN USB_OTG_FS_Init 2 */
-
-  /* USER CODE END USB_OTG_FS_Init 2 */
 
 }
 
@@ -296,10 +267,29 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(USB_PowerSwitchOn_GPIO_Port, &GPIO_InitStruct);
 
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI15_10_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
+
 }
 
 /* USER CODE BEGIN 4 */
+void USBH_HID_EventCallback(USBH_HandleTypeDef *phost)
+{
+//  printf("all initialized\n");
+  if (USBH_HID_GetDeviceType(phost) == HID_KEYBOARD) {
+    HID_KEYBD_Info_TypeDef* ki = USBH_HID_GetKeybdInfo(phost);
 
+#if 1
+    printf("s = 0x%02X, lc = 0x%02X, ls = 0x%02X, la = 0x%02X, lg = 0x%02X, rc = 0x%02X, rs = 0x%02X, ra = 0x%02X, rg = 0x%02X, k0 = 0x%02X, k1 = 0x%02X, k1 = 0x%02X, k2 = 0x%02X, k3 = 0x%02X, k4 = 0x%02X, k5 = 0x%02X\n",
+    (int)ki->state, (int)ki->lctrl, (int)ki->lshift, (int)ki->lalt, (int)ki->lgui, (int)ki->rctrl, (int)ki->rshift, (int)ki->ralt,
+    (int)ki->rgui, (int)ki->keys[0], (int)ki->keys[1], (int)ki->keys[2], (int)ki->keys[3], (int)ki->keys[4], (int)ki->keys[5]);
+#else
+    char key = USBH_HID_GetASCIICode (ki);
+    printf("Key Pressed = %c 0x%02X\n", isprint(key) ? key : '.', (int)key);
+#endif
+  }
+}
 /* USER CODE END 4 */
 
 /**
