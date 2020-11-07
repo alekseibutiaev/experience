@@ -1,6 +1,9 @@
 #MicroXplorer Configuration settings - do not modify
 File.Version=6
 KeepUserPlacement=false
+LPUART1.BaudRate=115200
+LPUART1.IPParameters=BaudRate,WordLength
+LPUART1.WordLength=UART_WORDLENGTH_8B
 Mcu.Family=STM32L4
 Mcu.IP0=LPUART1
 Mcu.IP1=NVIC
@@ -39,10 +42,13 @@ MxCube.Version=6.0.0
 MxDb.Version=DB.6.0.0
 NVIC.BusFault_IRQn=true\:0\:0\:false\:false\:true\:true\:false
 NVIC.DebugMonitor_IRQn=true\:0\:0\:false\:false\:true\:true\:false
+NVIC.EXTI15_10_IRQn=true\:0\:0\:false\:false\:true\:true\:true
 NVIC.ForceEnableDMAVector=true
 NVIC.HardFault_IRQn=true\:0\:0\:false\:false\:true\:true\:false
+NVIC.LPUART1_IRQn=true\:0\:0\:false\:false\:true\:true\:true
 NVIC.MemoryManagement_IRQn=true\:0\:0\:false\:false\:true\:true\:false
 NVIC.NonMaskableInt_IRQn=true\:0\:0\:false\:false\:true\:true\:false
+NVIC.OTG_FS_IRQn=true\:0\:0\:false\:false\:true\:false\:true
 NVIC.PendSV_IRQn=true\:0\:0\:false\:false\:true\:true\:false
 NVIC.PriorityGroup=NVIC_PRIORITYGROUP_4
 NVIC.SVCall_IRQn=true\:0\:0\:false\:false\:true\:true\:false

@@ -98,7 +98,7 @@ int main(void)
   MX_USB_HOST_Init();
   /* USER CODE BEGIN 2 */
   RetargetInit(&hlpuart1);
-  printf("all initialized\n\n\n\n\n\n\n\n\n\n\n\n");
+  printf("all initialized\n");
   /* USER CODE END 2 */
 
   /* Infinite loop */
