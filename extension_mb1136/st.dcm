@@ -53,6 +53,7 @@ D Enhanced single channel power switches. Active low
 K 2151;2171
 F https://www.st.com/resource/en/datasheet/stmps2141.pdf
 $ENDCMP
+#
 $CMP STMPS2171STR
 D Enhanced single channel power switches. Active low
 K 2141;2161
@@ -63,6 +64,11 @@ $CMP STMPS2171TTR
 D Enhanced single channel power switches. Active low
 K 2141;2161
 F https://www.st.com/resource/en/datasheet/stmps2141.pdf
+$ENDCMP
+#
+$CMP USBLC6-2
+D Very low capacitance ESD protection
+F https://www.st.com/resource/en/datasheet/usblc6-2.pdf
 $ENDCMP
 #
 #End Doc Library
