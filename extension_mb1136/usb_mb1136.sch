@@ -477,17 +477,6 @@ Wire Wire Line
 Wire Wire Line
 	6550 3400 8350 3400
 $Comp
-L st:USBLC6-2 U1
-U 1 1 5FBFC3C2
-P 6100 3300
-F 0 "U1" H 6100 3625 50  0000 C CNN
-F 1 "USBLC6-2" H 6100 3534 50  0000 C CNN
-F 2 "Package_TO_SOT_SMD:SOT-23-6_Handsoldering" H 6100 3050 50  0001 C CNN
-F 3 "" H 6100 3500 50  0001 C CNN
-	1    6100 3300
-	1    0    0    -1  
-$EndComp
-$Comp
 L power:GND #PWR?
 U 1 1 5FBFE674
 P 5350 3600
@@ -520,4 +509,15 @@ Wire Wire Line
 	9300 2650 9300 3100
 Wire Wire Line
 	4650 2900 7850 2900
+$Comp
+L st:USBLC6-2 U2
+U 1 1 5FBFF8BC
+P 6100 3300
+F 0 "U2" H 6100 3625 50  0000 C CNN
+F 1 "USBLC6-2" H 6100 3534 50  0000 C CNN
+F 2 "Package_TO_SOT_SMD:SOT-23-6_Handsoldering" H 6100 3050 50  0001 C CNN
+F 3 "https://www.st.com/resource/en/datasheet/usblc6-2.pdf" H 6100 3500 50  0001 C CNN
+	1    6100 3300
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC
