@@ -15,8 +15,18 @@ D Enhanced single channel power switches. Active low
 F https://www.st.com/resource/en/datasheet/stmps2141.pdf
 $ENDCMP
 #
-$CMP STMPS2151
-D Enhanced single channel power switches. Active High
+$CMP STMPS2151MTR
+D Enhanced single channel power switches. Active low
+F https://www.st.com/resource/en/datasheet/stmps2141.pdf
+$ENDCMP
+#
+$CMP STMPS2151STR
+D Enhanced single channel power switches. Active low
+F https://www.st.com/resource/en/datasheet/stmps2141.pdf
+$ENDCMP
+#
+$CMP STMPS2151TTR
+D Enhanced single channel power switches. Active low
 F https://www.st.com/resource/en/datasheet/stmps2141.pdf
 $ENDCMP
 #
@@ -33,6 +43,23 @@ F https://www.st.com/resource/en/datasheet/stmps2141.pdf
 $ENDCMP
 #
 $CMP STMPS2161TTR
+D Enhanced single channel power switches. Active low
+K 2141;2161
+F https://www.st.com/resource/en/datasheet/stmps2141.pdf
+$ENDCMP
+#
+$CMP STMPS2171MTR
+D Enhanced single channel power switches. Active low
+K 2151;2171
+F https://www.st.com/resource/en/datasheet/stmps2141.pdf
+$ENDCMP
+$CMP STMPS2171STR
+D Enhanced single channel power switches. Active low
+K 2141;2161
+F https://www.st.com/resource/en/datasheet/stmps2141.pdf
+$ENDCMP
+#
+$CMP STMPS2171TTR
 D Enhanced single channel power switches. Active low
 K 2141;2161
 F https://www.st.com/resource/en/datasheet/stmps2141.pdf
