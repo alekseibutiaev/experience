@@ -72,7 +72,7 @@ $EndComp
 Text GLabel 2250 750  2    50   BiDi ~ 0
 PC11
 Text GLabel 2250 850  2    50   BiDi ~ 0
-PC11
+PD2
 Text GLabel 2250 950  2    50   UnSpc ~ 0
 E5V
 Text GLabel 2250 1050 2    50   UnSpc ~ 0
@@ -206,7 +206,7 @@ RESET
 Text GLabel 3500 1100 0    50   UnSpc ~ 0
 +3V3
 Text GLabel 3500 1200 0    50   UnSpc ~ 0
-+5
++5V
 Text GLabel 3500 1300 0    50   UnSpc ~ 0
 GND
 Text GLabel 3500 1400 0    50   UnSpc ~ 0
@@ -386,8 +386,6 @@ Wire Wire Line
 Wire Wire Line
 	950  1650 1350 1650
 Wire Wire Line
-	950  1750 1350 1750
-Wire Wire Line
 	950  1850 1350 1850
 Wire Wire Line
 	950  1950 1350 1950
@@ -437,7 +435,7 @@ Wire Wire Line
 	1850 2450 2250 2450
 Wire Wire Line
 	1850 2550 2250 2550
-NoConn ~ 3800 800 
+NoConn ~ 3900 800 
 NoConn ~ 1350 1150
 NoConn ~ 1350 1250
 NoConn ~ 1850 1150
@@ -481,143 +479,12 @@ Wire Wire Line
 	3500 900  3900 900 
 Wire Wire Line
 	10250 1300 10650 1300
-Text GLabel 8450 3250 0    50   BiDi ~ 0
-PA11
-Text GLabel 8450 3450 0    50   BiDi ~ 0
-PA12
-Text GLabel 8450 3650 0    50   BiDi ~ 0
-PA10
-Text GLabel 9900 3250 2    50   BiDi ~ 0
-USB_DM
-Text GLabel 9900 3450 2    50   BiDi ~ 0
-USB_DP
-Text GLabel 9900 3650 2    50   BiDi ~ 0
-USB_ID
-Text GLabel 9900 3050 2    50   BiDi ~ 0
-USB_VBUS
-Text GLabel 8450 3050 0    50   BiDi ~ 0
-PA9
-Text GLabel 8450 4050 0    50   BiDi ~ 0
-PC8
-Text GLabel 8450 4750 0    50   BiDi ~ 0
-PC9
-$Comp
-L Connector_Generic:Conn_01x03 J1
-U 1 1 5FDC7556
-P 9000 4050
-F 0 "J1" H 9080 4092 50  0000 L CNN
-F 1 "Conn_01x03" H 9080 4001 50  0000 L CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" H 9000 4050 50  0001 C CNN
-F 3 "~" H 9000 4050 50  0001 C CNN
-	1    9000 4050
-	1    0    0    -1  
-$EndComp
-$Comp
-L Connector_Generic:Conn_01x03 J2
-U 1 1 5FDDBD38
-P 9000 4750
-F 0 "J2" H 9080 4792 50  0000 L CNN
-F 1 "Conn_01x03" H 9080 4701 50  0000 L CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" H 9000 4750 50  0001 C CNN
-F 3 "~" H 9000 4750 50  0001 C CNN
-	1    9000 4750
-	1    0    0    -1  
-$EndComp
-Text GLabel 9900 3850 2    50   BiDi ~ 0
-USB_POWER_SWITCH_ON
-Text GLabel 9900 4250 2    50   BiDi ~ 0
-USB_DISCONNECT
-Wire Wire Line
-	8800 3950 8650 3950
-Wire Wire Line
-	8650 3950 8650 3850
-Wire Wire Line
-	8650 3850 9900 3850
-Wire Wire Line
-	8800 4150 8650 4150
-Wire Wire Line
-	8650 4150 8650 4250
-Wire Wire Line
-	8650 4250 9900 4250
-Text GLabel 9900 4550 2    50   BiDi ~ 0
-USB_OWER_CURRENT
-Text GLabel 9900 4950 2    50   BiDi ~ 0
-VBUS_DET
-Wire Wire Line
-	8800 4650 8650 4650
-Wire Wire Line
-	8650 4650 8650 4550
-Wire Wire Line
-	8650 4550 9900 4550
-Wire Wire Line
-	8650 4950 9900 4950
-Wire Wire Line
-	8800 4850 8650 4850
-Wire Wire Line
-	8650 4850 8650 4950
-Wire Wire Line
-	8450 3250 9900 3250
-Wire Wire Line
-	8450 3450 9900 3450
-Wire Wire Line
-	8450 3650 9900 3650
-Wire Wire Line
-	8450 3050 9900 3050
-Wire Wire Line
-	8450 4050 8800 4050
-Wire Wire Line
-	8450 4750 8800 4750
-$Comp
-L power:+5V #PWR?
-U 1 1 6002CECB
-P 4150 3650
-F 0 "#PWR?" H 4150 3500 50  0001 C CNN
-F 1 "+5V" H 4165 3823 50  0000 C CNN
-F 2 "" H 4150 3650 50  0001 C CNN
-F 3 "" H 4150 3650 50  0001 C CNN
-	1    4150 3650
-	1    0    0    -1  
-$EndComp
-Text GLabel 2950 3850 0    50   UnSpc ~ 0
-+5V
-Wire Wire Line
-	2950 3850 4150 3850
-Wire Wire Line
-	4150 3850 4150 3650
-$Comp
-L power:+3V3 #PWR?
-U 1 1 60036350
-P 4150 4300
-F 0 "#PWR?" H 4150 4150 50  0001 C CNN
-F 1 "+3V3" H 4165 4473 50  0000 C CNN
-F 2 "" H 4150 4300 50  0001 C CNN
-F 3 "" H 4150 4300 50  0001 C CNN
-	1    4150 4300
-	1    0    0    -1  
-$EndComp
-Text GLabel 2950 4500 0    50   UnSpc ~ 0
-+3V3
-Wire Wire Line
-	2950 4500 4150 4500
-Wire Wire Line
-	4150 4500 4150 4300
-$Comp
-L power:GND #PWR?
-U 1 1 60042548
-P 4150 3050
-F 0 "#PWR?" H 4150 2800 50  0001 C CNN
-F 1 "GND" H 4155 2877 50  0000 C CNN
-F 2 "" H 4150 3050 50  0001 C CNN
-F 3 "" H 4150 3050 50  0001 C CNN
-	1    4150 3050
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	2950 2850 4150 2850
-Wire Wire Line
-	4150 2850 4150 3050
-Text GLabel 2950 2850 0    50   UnSpc ~ 0
-GND
 Text GLabel 2250 1650 2    50   UnSpc ~ 0
 GND
+Wire Wire Line
+	950  1750 1350 1750
+NoConn ~ 1850 1950
+NoConn ~ 10250 2400
+NoConn ~ 10250 2500
+NoConn ~ 10250 1100
 $EndSCHEMATC

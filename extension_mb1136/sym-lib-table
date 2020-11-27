@@ -1,4 +1,3 @@
 (sym_lib_table
   (lib (name st)(type Legacy)(uri ${KIPRJMOD}/st.lib)(options "")(descr ""))
-  (lib (name extension_mb1136-rescue)(type Legacy)(uri ${KIPRJMOD}/extension_mb1136-rescue.lib)(options "")(descr ""))
 )
