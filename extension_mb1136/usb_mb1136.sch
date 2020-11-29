@@ -462,17 +462,6 @@ Wire Wire Line
 Wire Wire Line
 	5200 6350 5850 6350
 Connection ~ 5850 6350
-$Comp
-L st:STMPS2151MTR U1
-U 1 1 5FC77ABB
-P 6700 2000
-F 0 "U1" H 6700 2325 50  0000 C CNN
-F 1 "STMPS2151MTR" H 6700 2234 50  0000 C CNN
-F 2 "Package_SO:SO-8_3.9x4.9mm_P1.27mm" H 6800 1700 50  0001 C CNN
-F 3 "https://www.st.com/resource/en/datasheet/stmps2141.pdf" H 6700 2000 50  0001 C CNN
-	1    6700 2000
-	1    0    0    -1  
-$EndComp
 Text GLabel 900  1050 0    50   BiDi ~ 0
 PA13
 Text GLabel 900  1150 0    50   BiDi ~ 0
@@ -899,4 +888,15 @@ $EndComp
 Connection ~ 9100 1700
 Text GLabel 1850 6900 2    50   Output ~ 0
 USB_DISCONNECT
+$Comp
+L st:STMPS2151MTR U1
+U 1 1 5FC6B1F4
+P 6700 2000
+F 0 "U1" H 6700 2325 50  0000 C CNN
+F 1 "STMPS2151MTR" H 6700 2234 50  0000 C CNN
+F 2 "Package_SO:SO-8_3.9x4.9mm_P1.27mm" H 6800 1700 50  0001 C CNN
+F 3 "https://www.st.com/resource/en/datasheet/stmps2141.pdf" H 6700 2000 50  0001 C CNN
+	1    6700 2000
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC
