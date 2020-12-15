@@ -23,7 +23,6 @@ else(SYBDB_STATIC)
   set(SYBDB_LIB_NAME sybdb)
 endif(SYBDB_STATIC)
 
-
        FIND_LIBRARY(FreeTDS_LIBRARIES NAMES ${SYBDB_LIB_NAME})
   
        #set(FreeTDS_LIBRARIES ${FreeTDS_SYBDB_LIBRARIES} CACHE STRING "Libraries needed for sybase/mssql driver")
