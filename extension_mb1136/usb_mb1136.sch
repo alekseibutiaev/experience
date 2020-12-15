@@ -19,7 +19,7 @@ U 1 1 5FBD271C
 P 9800 1900
 F 0 "CNUSB_1" H 9570 1889 50  0000 R CNN
 F 1 "USB_OTG" H 9570 1798 50  0000 R CNN
-F 2 "" H 9950 1850 50  0001 C CNN
+F 2 "Connector_USB:USB_Micro-B_Molex-105017-0001" H 9950 1850 50  0001 C CNN
 F 3 " ~" H 9950 1850 50  0001 C CNN
 	1    9800 1900
 	-1   0    0    -1  
@@ -28,9 +28,9 @@ Text GLabel 4650 3400 0    50   BiDi ~ 0
 USB_DM
 Text GLabel 4650 3200 0    50   BiDi ~ 0
 USB_DP
-Text GLabel 4650 4150 0    50   BiDi ~ 0
+Text GLabel 4650 4150 0    50   Output ~ 0
 USB_ID
-Text GLabel 5250 2100 0    50   BiDi ~ 0
+Text GLabel 5250 2100 0    50   Input ~ 0
 USB_POWER_SWITCH_ON
 $Comp
 L Connector:USB_A CNUSB_2
@@ -38,7 +38,7 @@ U 1 1 5FF0ECB3
 P 9800 3000
 F 0 "CNUSB_2" H 9570 2989 50  0000 R CNN
 F 1 "USB_A" H 9570 2898 50  0000 R CNN
-F 2 "" H 9950 2950 50  0001 C CNN
+F 2 "Connector_USB:USB_A_Molex_67643_Horizontal" H 9950 2950 50  0001 C CNN
 F 3 " ~" H 9950 2950 50  0001 C CNN
 	1    9800 3000
 	-1   0    0    -1  
@@ -114,7 +114,7 @@ U 1 1 5FF205B2
 P 7350 2400
 F 0 "C1" H 7468 2446 50  0000 L CNN
 F 1 "4.7uF" H 7468 2355 50  0000 L CNN
-F 2 "" H 7388 2250 50  0001 C CNN
+F 2 "Capacitor_SMD:C_1206_3216Metric" H 7388 2250 50  0001 C CNN
 F 3 "~" H 7350 2400 50  0001 C CNN
 	1    7350 2400
 	1    0    0    -1  
@@ -150,7 +150,7 @@ Wire Wire Line
 	8000 1900 8000 1750
 Wire Wire Line
 	8000 1300 8000 1450
-Text GLabel 8150 1900 2    50   BiDi ~ 0
+Text GLabel 8150 1900 2    50   Output ~ 0
 USB_OWER_CURRENT
 Wire Wire Line
 	8000 1900 8150 1900
@@ -197,7 +197,7 @@ F 3 "~" H 5200 5850 50  0001 C CNN
 	1    5200 5850
 	1    0    0    -1  
 $EndComp
-Text GLabel 4700 5550 0    50   BiDi ~ 0
+Text GLabel 4700 5550 0    50   Output ~ 0
 VBUS_DET
 $Comp
 L Device:Q_NPN_BEC Q1
@@ -290,7 +290,7 @@ Wire Wire Line
 	5850 5700 5850 5900
 Wire Wire Line
 	5850 6350 6150 6350
-Text GLabel 4650 2900 0    50   BiDi ~ 0
+Text GLabel 4650 2900 0    50   Output ~ 0
 USB_VBUS
 Wire Wire Line
 	7850 2100 9100 2100
@@ -299,7 +299,7 @@ Wire Wire Line
 	5850 5450 5850 5700
 Wire Wire Line
 	6150 5400 6150 5500
-Text GLabel 4700 4850 0    50   BiDi ~ 0
+Text GLabel 4700 4850 0    50   Output ~ 0
 USB_VBUS
 Wire Wire Line
 	5850 4850 5850 5150
@@ -462,81 +462,70 @@ Wire Wire Line
 Wire Wire Line
 	5200 6350 5850 6350
 Connection ~ 5850 6350
-$Comp
-L st:STMPS2151MTR #U01
-U 1 1 5FC77ABB
-P 6700 2000
-F 0 "#U01" H 6700 2325 50  0000 C CNN
-F 1 "STMPS2151MTR" H 6700 2234 50  0000 C CNN
-F 2 "Package_SO:SO-8_3.9x4.9mm_P1.27mm" H 6800 1700 50  0001 C CNN
-F 3 "https://www.st.com/resource/en/datasheet/stmps2141.pdf" H 6700 2000 50  0001 C CNN
-	1    6700 2000
-	1    0    0    -1  
-$EndComp
-Text GLabel 1050 1350 0    50   BiDi ~ 0
+Text GLabel 900  1050 0    50   BiDi ~ 0
 PA13
-Text GLabel 1050 1450 0    50   BiDi ~ 0
+Text GLabel 900  1150 0    50   BiDi ~ 0
 PA14
-Text GLabel 1050 1550 0    50   BiDi ~ 0
+Text GLabel 900  1250 0    50   BiDi ~ 0
 PA15
-Text GLabel 1050 1650 0    50   UnSpc ~ 0
+Text GLabel 900  1350 0    50   UnSpc ~ 0
 GND
-Text GLabel 1050 1750 0    50   BiDi ~ 0
+Text GLabel 900  1450 0    50   BiDi ~ 0
 PB7
-Text GLabel 1050 1850 0    50   BiDi ~ 0
+Text GLabel 900  1550 0    50   BiDi ~ 0
 PC13
-Text GLabel 1050 1950 0    50   BiDi ~ 0
+Text GLabel 900  1650 0    50   BiDi ~ 0
 PC14
-Text GLabel 1050 2050 0    50   BiDi ~ 0
+Text GLabel 900  1750 0    50   BiDi ~ 0
 PC15
-Text GLabel 1050 2150 0    50   BiDi ~ 0
+Text GLabel 900  1850 0    50   BiDi ~ 0
 PD0
-Text GLabel 1050 2250 0    50   BiDi ~ 0
+Text GLabel 900  1950 0    50   BiDi ~ 0
 PD1
-Text GLabel 1050 2350 0    50   Input ~ 0
+Text GLabel 900  2050 0    50   Input ~ 0
 VBAT
-Text GLabel 1050 2450 0    50   BiDi ~ 0
+Text GLabel 900  2150 0    50   BiDi ~ 0
 PC2
-Text GLabel 1050 2550 0    50   BiDi ~ 0
+Text GLabel 900  2250 0    50   BiDi ~ 0
 PC3
 Wire Wire Line
-	1050 1350 1450 1350
+	900  1050 1300 1050
 Wire Wire Line
-	1050 1450 1450 1450
+	900  1150 1300 1150
 Wire Wire Line
-	1050 1550 1450 1550
+	900  1250 1300 1250
 Wire Wire Line
-	1050 1650 1450 1650
+	900  1350 1300 1350
 Wire Wire Line
-	1050 1850 1450 1850
+	900  1550 1300 1550
 Wire Wire Line
-	1050 1950 1450 1950
+	900  1650 1300 1650
 Wire Wire Line
-	1050 2050 1450 2050
+	900  1750 1300 1750
 Wire Wire Line
-	1050 2150 1450 2150
+	900  1850 1300 1850
 Wire Wire Line
-	1050 2250 1450 2250
+	900  1950 1300 1950
 Wire Wire Line
-	1050 2350 1450 2350
+	900  2050 1300 2050
 Wire Wire Line
-	1050 2450 1450 2450
+	900  2150 1300 2150
 Wire Wire Line
-	1050 2550 1450 2550
+	900  2250 1300 2250
 Wire Wire Line
-	1050 1750 1450 1750
-NoConn ~ 1450 1350
-NoConn ~ 1450 1450
-NoConn ~ 1450 1550
-NoConn ~ 1450 1750
-NoConn ~ 1450 1850
-NoConn ~ 1450 1950
-NoConn ~ 1450 2050
-NoConn ~ 1450 2150
-NoConn ~ 1450 2250
-NoConn ~ 1450 2350
-NoConn ~ 1450 2450
-NoConn ~ 1450 2550
+	900  1450 1300 1450
+NoConn ~ 1300 1050
+NoConn ~ 1300 1150
+NoConn ~ 1300 1250
+NoConn ~ 1300 1450
+NoConn ~ 1300 1550
+NoConn ~ 1300 1650
+NoConn ~ 1300 1750
+NoConn ~ 1300 1850
+NoConn ~ 1300 1950
+NoConn ~ 1300 2050
+NoConn ~ 1300 2150
+NoConn ~ 1300 2250
 Text GLabel 900  6700 0    50   BiDi ~ 0
 PC8
 Text GLabel 900  7400 0    50   BiDi ~ 0
@@ -567,10 +556,8 @@ F 3 "~" H 1450 7400 50  0001 C CNN
 	1    1450 7400
 	1    0    0    -1  
 $EndComp
-Text GLabel 1850 6500 2    50   BiDi ~ 0
+Text GLabel 1850 6500 2    50   Input ~ 0
 USB_POWER_SWITCH_ON
-Text GLabel 1850 6900 2    50   BiDi ~ 0
-USB_DISCONNECT
 Wire Wire Line
 	1250 6600 1100 6600
 Wire Wire Line
@@ -579,9 +566,9 @@ Wire Wire Line
 	1250 6800 1100 6800
 Wire Wire Line
 	1100 6800 1100 6900
-Text GLabel 1850 7200 2    50   BiDi ~ 0
+Text GLabel 1850 7200 2    50   Output ~ 0
 USB_OWER_CURRENT
-Text GLabel 1850 7600 2    50   BiDi ~ 0
+Text GLabel 1850 7600 2    50   Output ~ 0
 VBUS_DET
 Wire Wire Line
 	1250 7300 1100 7300
@@ -617,90 +604,90 @@ $EndComp
 $Comp
 L power:GND #PWR0120
 U 1 1 5FEBDF66
-P 1450 1650
-F 0 "#PWR0120" H 1450 1400 50  0001 C CNN
-F 1 "GND" V 1455 1522 50  0000 R CNN
-F 2 "" H 1450 1650 50  0001 C CNN
-F 3 "" H 1450 1650 50  0001 C CNN
-	1    1450 1650
+P 1300 1350
+F 0 "#PWR0120" H 1300 1100 50  0001 C CNN
+F 1 "GND" V 1305 1222 50  0000 R CNN
+F 2 "" H 1300 1350 50  0001 C CNN
+F 3 "" H 1300 1350 50  0001 C CNN
+	1    1300 1350
 	0    -1   1    0   
 $EndComp
-Text GLabel 1050 2650 0    50   BiDi ~ 0
+Text GLabel 900  2350 0    50   BiDi ~ 0
 PC6
-Text GLabel 1050 2750 0    50   BiDi ~ 0
+Text GLabel 900  2450 0    50   BiDi ~ 0
 PC5
-Text GLabel 1050 2950 0    50   BiDi ~ 0
+Text GLabel 900  2650 0    50   BiDi ~ 0
 PA12
-Text GLabel 1050 3050 0    50   BiDi ~ 0
+Text GLabel 900  2750 0    50   BiDi ~ 0
 PB11
-Text GLabel 1050 3250 0    50   BiDi ~ 0
+Text GLabel 900  2950 0    50   BiDi ~ 0
 PB2
-Text GLabel 1050 3350 0    50   BiDi ~ 0
+Text GLabel 900  3050 0    50   BiDi ~ 0
 PB1
-Text GLabel 1050 3450 0    50   BiDi ~ 0
+Text GLabel 900  3150 0    50   BiDi ~ 0
 PB15
-Text GLabel 1050 3550 0    50   BiDi ~ 0
+Text GLabel 900  3250 0    50   BiDi ~ 0
 PB14
-Text GLabel 1050 3650 0    50   BiDi ~ 0
+Text GLabel 900  3350 0    50   BiDi ~ 0
 PB13
-Text GLabel 1050 3850 0    50   BiDi ~ 0
+Text GLabel 900  3550 0    50   BiDi ~ 0
 PC4
-Text GLabel 1050 2850 0    50   UnSpc ~ 0
+Text GLabel 900  2550 0    50   UnSpc ~ 0
 U5V
-Text GLabel 1050 3150 0    50   UnSpc ~ 0
+Text GLabel 900  2850 0    50   UnSpc ~ 0
 GND
-Text GLabel 1050 3750 0    50   UnSpc ~ 0
+Text GLabel 900  3450 0    50   UnSpc ~ 0
 AGND
 Wire Wire Line
-	1450 2650 1050 2650
+	1300 2350 900  2350
 Wire Wire Line
-	1450 2750 1050 2750
+	1300 2450 900  2450
 Wire Wire Line
-	1450 2850 1050 2850
+	1300 2550 900  2550
 Wire Wire Line
-	1450 2950 1050 2950
+	1300 2650 900  2650
 Wire Wire Line
-	1450 3050 1050 3050
+	1300 2750 900  2750
 Wire Wire Line
-	1450 3150 1050 3150
+	1300 2850 900  2850
 Wire Wire Line
-	1450 3250 1050 3250
+	1300 2950 900  2950
 Wire Wire Line
-	1450 3350 1050 3350
+	1300 3050 900  3050
 Wire Wire Line
-	1450 3450 1050 3450
+	1300 3150 900  3150
 Wire Wire Line
-	1450 3550 1050 3550
+	1300 3250 900  3250
 Wire Wire Line
-	1450 3650 1050 3650
+	1300 3350 900  3350
 Wire Wire Line
-	1450 3850 1050 3850
+	1300 3550 900  3550
 Wire Wire Line
-	1450 3750 1050 3750
-NoConn ~ 1450 3850
-NoConn ~ 1450 3750
-NoConn ~ 1450 3650
-NoConn ~ 1450 3550
-NoConn ~ 1450 3450
-NoConn ~ 1450 3350
-NoConn ~ 1450 3250
-NoConn ~ 1450 3050
-NoConn ~ 1450 2950
-NoConn ~ 1450 2850
-NoConn ~ 1450 2750
-NoConn ~ 1450 2650
+	1300 3450 900  3450
+NoConn ~ 1300 3550
+NoConn ~ 1300 3450
+NoConn ~ 1300 3350
+NoConn ~ 1300 3250
+NoConn ~ 1300 3150
+NoConn ~ 1300 3050
+NoConn ~ 1300 2950
+NoConn ~ 1300 2750
+NoConn ~ 1300 2650
+NoConn ~ 1300 2550
+NoConn ~ 1300 2450
+NoConn ~ 1300 2350
 $Comp
 L power:GND #PWR0121
 U 1 1 6012303E
-P 1450 3150
-F 0 "#PWR0121" H 1450 2900 50  0001 C CNN
-F 1 "GND" V 1455 3022 50  0000 R CNN
-F 2 "" H 1450 3150 50  0001 C CNN
-F 3 "" H 1450 3150 50  0001 C CNN
-	1    1450 3150
+P 1300 2850
+F 0 "#PWR0121" H 1300 2600 50  0001 C CNN
+F 1 "GND" V 1305 2722 50  0000 R CNN
+F 2 "" H 1300 2850 50  0001 C CNN
+F 3 "" H 1300 2850 50  0001 C CNN
+	1    1300 2850
 	0    -1   1    0   
 $EndComp
-Text GLabel 4650 3950 0    50   BiDi ~ 0
+Text GLabel 4650 3950 0    50   Output ~ 0
 USB_DISCONNECT
 $Comp
 L Device:R R9
@@ -722,9 +709,9 @@ Wire Wire Line
 Connection ~ 4950 3200
 Wire Wire Line
 	4950 3200 5650 3200
-Text GLabel 1300 6100 2    50   BiDi ~ 0
+Text GLabel 1300 6100 2    50   Output ~ 0
 USB_ID
-Text GLabel 1300 6000 2    50   BiDi ~ 0
+Text GLabel 1300 6000 2    50   Output ~ 0
 USB_VBUS
 Text GLabel 900  6000 0    50   BiDi ~ 0
 PA9
@@ -746,115 +733,115 @@ Text GLabel 1300 6300 2    50   BiDi ~ 0
 USB_DP
 Text GLabel 1300 6200 2    50   BiDi ~ 0
 USB_DM
-NoConn ~ 1450 3950
-NoConn ~ 1450 4050
-NoConn ~ 1450 4150
+NoConn ~ 1300 3650
+NoConn ~ 1300 3750
+NoConn ~ 1300 3850
 Wire Wire Line
-	1050 4550 1450 4550
+	900  4250 1300 4250
 $Comp
 L power:GND #PWR0119
 U 1 1 5FE83AAA
-P 1450 4650
-F 0 "#PWR0119" H 1450 4400 50  0001 C CNN
-F 1 "GND" V 1455 4522 50  0000 R CNN
-F 2 "" H 1450 4650 50  0001 C CNN
-F 3 "" H 1450 4650 50  0001 C CNN
-	1    1450 4650
+P 1300 4350
+F 0 "#PWR0119" H 1300 4100 50  0001 C CNN
+F 1 "GND" V 1305 4222 50  0000 R CNN
+F 2 "" H 1300 4350 50  0001 C CNN
+F 3 "" H 1300 4350 50  0001 C CNN
+	1    1300 4350
 	0    -1   1    0   
 $EndComp
 $Comp
 L power:GND #PWR0118
 U 1 1 5FE7D054
-P 1450 4550
-F 0 "#PWR0118" H 1450 4300 50  0001 C CNN
-F 1 "GND" V 1455 4422 50  0000 R CNN
-F 2 "" H 1450 4550 50  0001 C CNN
-F 3 "" H 1450 4550 50  0001 C CNN
-	1    1450 4550
+P 1300 4250
+F 0 "#PWR0118" H 1300 4000 50  0001 C CNN
+F 1 "GND" V 1305 4122 50  0000 R CNN
+F 2 "" H 1300 4250 50  0001 C CNN
+F 3 "" H 1300 4250 50  0001 C CNN
+	1    1300 4250
 	0    -1   1    0   
 $EndComp
 $Comp
 L power:+3V3 #PWR0103
 U 1 1 5FE3CDF5
-P 1450 4350
-F 0 "#PWR0103" H 1450 4200 50  0001 C CNN
-F 1 "+3V3" V 1465 4478 50  0000 L CNN
-F 2 "" H 1450 4350 50  0001 C CNN
-F 3 "" H 1450 4350 50  0001 C CNN
-	1    1450 4350
+P 1300 4050
+F 0 "#PWR0103" H 1300 3900 50  0001 C CNN
+F 1 "+3V3" V 1315 4178 50  0000 L CNN
+F 2 "" H 1300 4050 50  0001 C CNN
+F 3 "" H 1300 4050 50  0001 C CNN
+	1    1300 4050
 	0    1    1    0   
 $EndComp
 $Comp
 L power:GND #PWR0102
 U 1 1 5FE04097
-P 1450 4250
-F 0 "#PWR0102" H 1450 4000 50  0001 C CNN
-F 1 "GND" V 1455 4122 50  0000 R CNN
-F 2 "" H 1450 4250 50  0001 C CNN
-F 3 "" H 1450 4250 50  0001 C CNN
-	1    1450 4250
+P 1300 3950
+F 0 "#PWR0102" H 1300 3700 50  0001 C CNN
+F 1 "GND" V 1305 3822 50  0000 R CNN
+F 2 "" H 1300 3950 50  0001 C CNN
+F 3 "" H 1300 3950 50  0001 C CNN
+	1    1300 3950
 	0    -1   1    0   
 $EndComp
 $Comp
 L power:+5V #PWR0112
 U 1 1 5FDE4076
-P 1450 4450
-F 0 "#PWR0112" H 1450 4300 50  0001 C CNN
-F 1 "+5V" V 1465 4578 50  0000 L CNN
-F 2 "" H 1450 4450 50  0001 C CNN
-F 3 "" H 1450 4450 50  0001 C CNN
-	1    1450 4450
+P 1300 4150
+F 0 "#PWR0112" H 1300 4000 50  0001 C CNN
+F 1 "+5V" V 1315 4278 50  0000 L CNN
+F 2 "" H 1300 4150 50  0001 C CNN
+F 3 "" H 1300 4150 50  0001 C CNN
+	1    1300 4150
 	0    1    1    0   
 $EndComp
-Text GLabel 1050 4550 0    50   UnSpc ~ 0
+Text GLabel 900  4250 0    50   UnSpc ~ 0
 GND
 Wire Wire Line
-	1450 4650 1050 4650
+	1300 4350 900  4350
 Wire Wire Line
-	1450 4450 1050 4450
+	1300 4150 900  4150
 Wire Wire Line
-	1450 4350 1050 4350
+	1300 4050 900  4050
 Wire Wire Line
-	1450 4250 1050 4250
+	1300 3950 900  3950
 Wire Wire Line
-	1450 4150 1050 4150
+	1300 3850 900  3850
 Wire Wire Line
-	1450 4050 1050 4050
+	1300 3750 900  3750
 Wire Wire Line
-	1450 3950 1050 3950
-Text GLabel 1050 4650 0    50   UnSpc ~ 0
+	1300 3650 900  3650
+Text GLabel 900  4350 0    50   UnSpc ~ 0
 GND
-Text GLabel 1050 4450 0    50   UnSpc ~ 0
+Text GLabel 900  4150 0    50   UnSpc ~ 0
 +5V
-Text GLabel 1050 4350 0    50   UnSpc ~ 0
+Text GLabel 900  4050 0    50   UnSpc ~ 0
 +3V3
-Text GLabel 1050 4250 0    50   UnSpc ~ 0
+Text GLabel 900  3950 0    50   UnSpc ~ 0
 GND
-Text GLabel 1050 4150 0    50   UnSpc ~ 0
+Text GLabel 900  3850 0    50   UnSpc ~ 0
 E5V
-Text GLabel 1050 4050 0    50   BiDi ~ 0
+Text GLabel 900  3750 0    50   BiDi ~ 0
 PD2
-Text GLabel 1050 3950 0    50   BiDi ~ 0
+Text GLabel 900  3650 0    50   BiDi ~ 0
 PC11
-NoConn ~ 1450 1250
-NoConn ~ 1450 1150
-NoConn ~ 1450 1050
-NoConn ~ 1450 950 
+NoConn ~ 1300 950 
+NoConn ~ 1300 850 
+NoConn ~ 1300 750 
+NoConn ~ 1300 650 
 Wire Wire Line
-	1050 1250 1450 1250
+	900  950  1300 950 
 Wire Wire Line
-	1050 1150 1450 1150
+	900  850  1300 850 
 Wire Wire Line
-	1050 1050 1450 1050
+	900  750  1300 750 
 Wire Wire Line
-	1050 950  1450 950 
-Text GLabel 1050 1250 0    50   Input ~ 0
+	900  650  1300 650 
+Text GLabel 900  950  0    50   Input ~ 0
 BOOT0
-Text GLabel 1050 1150 0    50   UnSpc ~ 0
+Text GLabel 900  850  0    50   UnSpc ~ 0
 VDD
-Text GLabel 1050 1050 0    50   BiDi ~ 0
+Text GLabel 900  750  0    50   BiDi ~ 0
 PC12
-Text GLabel 1050 950  0    50   BiDi ~ 0
+Text GLabel 900  650  0    50   BiDi ~ 0
 PC10
 Wire Wire Line
 	7500 900  8000 900 
@@ -886,5 +873,30 @@ F 2 "" H 6000 1650 50  0001 C CNN
 F 3 "" H 6000 1650 50  0001 C CNN
 	1    6000 1650
 	0    -1   -1   0   
+$EndComp
+$Comp
+L power:VBUS #PWR0109
+U 1 1 5FC46E71
+P 9100 1700
+F 0 "#PWR0109" H 9100 1550 50  0001 C CNN
+F 1 "VBUS" H 9115 1873 50  0000 C CNN
+F 2 "" H 9100 1700 50  0001 C CNN
+F 3 "~" H 9100 1700 50  0001 C CNN
+	1    9100 1700
+	1    0    0    -1  
+$EndComp
+Connection ~ 9100 1700
+Text GLabel 1850 6900 2    50   Output ~ 0
+USB_DISCONNECT
+$Comp
+L st:STMPS2151MTR U1
+U 1 1 5FC6B1F4
+P 6700 2000
+F 0 "U1" H 6700 2325 50  0000 C CNN
+F 1 "STMPS2151MTR" H 6700 2234 50  0000 C CNN
+F 2 "Package_SO:SO-8_3.9x4.9mm_P1.27mm" H 6800 1700 50  0001 C CNN
+F 3 "https://www.st.com/resource/en/datasheet/stmps2141.pdf" H 6700 2000 50  0001 C CNN
+	1    6700 2000
+	1    0    0    -1  
 $EndComp
 $EndSCHEMATC
