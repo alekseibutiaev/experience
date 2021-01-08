@@ -23,15 +23,12 @@ namespace pid {
     m_integral += error * m_dt;
     const double Iout = m_Ki * m_integral;
     // Derivative term
-    double derivative = (error - m_pre_error) / m_dt;
+    const double derivative = (error - m_pre_error) / m_dt;
     const double Dout = m_Kd * derivative;
     // Calculate total output
     double output = Pout + Iout + Dout;
     // Restrict to max/min
-    if( output > m_max )
-      output = m_max;
-    else if( output < m_min )
-      output = m_min;
+    output = output > m_max ? m_max : output < m_min ? m_min : output;
     // Save error to previous error
     m_pre_error = error;
     return output;

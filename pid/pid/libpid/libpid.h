@@ -13,12 +13,12 @@ namespace pid {
     pid_t(double dt, double max, double min, double Kp, double Kd, double Ki);
     double calculate(double setpoint, double pv);
   private:
-    double m_dt;
-    double m_max;
-    double m_min;
-    double m_Kp;
-    double m_Kd;
-    double m_Ki;
+    const double m_dt;
+    const double m_max;
+    const double m_min;
+    const double m_Kp;
+    const double m_Kd;
+    const double m_Ki;
     double m_pre_error;
     double m_integral;
   };
