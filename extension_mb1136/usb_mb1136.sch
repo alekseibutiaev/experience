@@ -875,7 +875,7 @@ U 1 1 60101ABF
 P 8550 2550
 F 0 "SW1" H 8550 2875 50  0000 C CNN
 F 1 "USB_SEL" H 8550 2784 50  0000 C CNN
-F 2 "Connector_PinSocket_2.54mm:PinSocket_2x03_P2.54mm_Vertical" H 8550 2400 50  0001 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_2x03_P2.54mm_Vertical" H 8550 2400 50  0001 C CNN
 F 3 "" H 8550 2400 50  0001 C CNN
 	1    8550 2550
 	1    0    0    -1  
@@ -886,7 +886,7 @@ U 1 1 601086B0
 P 8500 3400
 F 0 "SW2" H 8500 3725 50  0000 C CNN
 F 1 "USB_SEL" H 8500 3634 50  0000 C CNN
-F 2 "Connector_PinSocket_2.54mm:PinSocket_2x03_P2.54mm_Vertical" H 8500 3250 50  0001 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_2x03_P2.54mm_Vertical" H 8500 3250 50  0001 C CNN
 F 3 "" H 8500 3250 50  0001 C CNN
 	1    8500 3400
 	1    0    0    -1  
