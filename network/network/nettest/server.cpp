@@ -5,13 +5,15 @@
 #include <functional>
 
 #include "network.h"
+#include "clparametrs.h"
 
 namespace  {
 
   class echo_t {
   public:
-    echo_t(net::session_ptr session)
-        : m_session(session) {
+    echo_t(net::session_ptr session, const bool& no_echo)
+        : m_session(session)
+        , m_no_echo(no_echo) {
       m_session->receive_callback(std::bind(&echo_t::receive, this, std::placeholders::_1));
     }
     ~echo_t() {
@@ -23,19 +25,22 @@ namespace  {
   private:
     void receive(const net::buffer_ptr buf) {
       std::cout << std::string(buf->begin(), buf->end()) << std::endl;
-      m_session->send(buf);
+      if(!m_no_echo)
+        m_session->send(buf);
     }
   private:
     net::session_ptr m_session;
+    const bool& m_no_echo;
   };
 
   using echo_ptr = std::shared_ptr<echo_t>;
 
   class echo_server_t {
   public:
-    echo_server_t(net::context_ptr& ctx)
+    echo_server_t(net::context_ptr& ctx, const cl::params_t& param)
         : m_ctx(ctx)
-        , m_acceptor(net::acceptor_t::create(m_ctx, 55555)) {
+        , m_acceptor(net::acceptor_t::create(m_ctx, param.port))
+        , m_param(param) {
       m_acceptor->accepted_callback(std::bind(&echo_server_t::accepted, this,
         std::placeholders::_1));
       m_acceptor->listen();
@@ -46,7 +51,7 @@ namespace  {
     void accepted(net::session_ptr session) {
       session->disconnect_callback(std::bind(&echo_server_t::disconnected, this,
         std::placeholders::_1, std::placeholders::_2));
-      echo_ptr echo(new echo_t(session));
+      echo_ptr echo(new echo_t(session, m_param.no_echo));
       m_echo_map[session] = echo;
       echo->start();
     }
@@ -57,6 +62,7 @@ namespace  {
   private:
     net::context_ptr& m_ctx;
     net::acceptor_ptr m_acceptor;
+    const cl::params_t& m_param;
     echo_map_t m_echo_map;
   };
 
@@ -65,9 +71,11 @@ namespace  {
 int main(int ac, char* av[]) {
 
   try {
-    net::context_ptr ctx = net::context_t::create();
-    echo_server_t se(ctx);
-    ctx->run();
+    if(const auto& opt = cl::get_options(ac, av)) {
+      net::context_ptr ctx = net::context_t::create();
+      echo_server_t se(ctx, *opt);
+      ctx->run();
+    }
   }
   catch(const std::exception& e) {
   }

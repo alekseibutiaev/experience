@@ -7,6 +7,7 @@
 #include <functional>
 
 #include "network.h"
+#include "clparametrs.h"
 
 namespace {
 
@@ -50,26 +51,28 @@ namespace {
 
 int main(int ac, char* av[]) {
   try {
-    net::context_ptr ctx = net::context_t::create();
-    std::thread th([&ctx](){ 
-      ctx->run();
-      std::cout << "stop thread" << std::endl;
-    });
-    net::connector_t::connect(ctx, "localhost", 55555, std::bind(&connected, std::placeholders::_1));
-    std::unique_lock<std::mutex> _(mtx);
-    while(!echo)
-      cv.wait(_);
-    echo->start();
-    std::string msg;
-    for(;;) {
-      std::cin >> msg;
-      if("quit" == msg)
-        break;
-      echo->write(msg);
-    }
-    if(th.joinable()) {
-      ctx->stop();
-      th.join();
+    if(const auto& opt = cl::get_options(ac, av)) {
+      net::context_ptr ctx = net::context_t::create();
+      std::thread th([&ctx](){
+        ctx->run();
+        std::cout << "stop thread" << std::endl;
+      });
+      net::connector_t::connect(ctx, opt->host, opt->port, std::bind(&connected, std::placeholders::_1));
+      std::unique_lock<std::mutex> _(mtx);
+      while(!echo)
+        cv.wait(_);
+      echo->start();
+      std::string msg;
+      for(;;) {
+        std::cin >> msg;
+        if("quit" == msg)
+          break;
+        echo->write(msg);
+      }
+      if(th.joinable()) {
+        ctx->stop();
+        th.join();
+      }
     }
   }
   catch(const std::exception& e) {

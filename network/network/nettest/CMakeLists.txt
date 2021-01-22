@@ -8,7 +8,9 @@ include_directories(
   ${Boost_INCLUDE_DIRS}
 )
 
-add_executable(${PROJECT_NAME}_server server.cpp)
+add_library(${PROJECT_NAME}_param OBJECT clparametrs.h clparametrs.cpp)
+
+add_executable(${PROJECT_NAME}_server server.cpp $<TARGET_OBJECTS:${PROJECT_NAME}_param>)
 
 target_link_libraries(${PROJECT_NAME}_server
   network_static
@@ -16,7 +18,7 @@ target_link_libraries(${PROJECT_NAME}_server
   Threads::Threads
 )
 
-add_executable(${PROJECT_NAME}_client client.cpp)
+add_executable(${PROJECT_NAME}_client client.cpp $<TARGET_OBJECTS:${PROJECT_NAME}_param>)
 
 target_link_libraries(${PROJECT_NAME}_client
   network_static
