@@ -321,12 +321,12 @@ Text Label 1300 3500 2    50   ~ 0
 NET0
 Text Label 1300 3700 2    50   ~ 0
 NET1
-Text GLabel 5950 1000 0    50   BiDi ~ 0
+Text GLabel 4000 2000 2    50   BiDi ~ 0
 PF0
-Text GLabel 5950 1200 0    50   BiDi ~ 0
+Text GLabel 4000 2200 2    50   BiDi ~ 0
 PF1
-NoConn ~ 5950 1000
-NoConn ~ 5950 1200
+NoConn ~ 4000 2000
+NoConn ~ 4000 2200
 Text GLabel 2400 3500 2    50   BiDi ~ 0
 PC14
 Text GLabel 2400 3700 2    50   BiDi ~ 0
@@ -349,11 +349,17 @@ Wire Wire Line
 	1100 1900 1700 1900
 Wire Bus Line
 	2000 3300 1000 3300
+Connection ~ 1000 3300
+Text GLabel 4500 2000 2    50   BiDi ~ 0
+PC14
+Text GLabel 4500 2200 2    50   BiDi ~ 0
+PC15
+NoConn ~ 4500 2000
+NoConn ~ 4500 2200
 Wire Bus Line
 	2000 3300 2000 3600
 Wire Bus Line
 	1000 1900 1000 3300
-Connection ~ 1000 3300
 Wire Bus Line
 	1000 3300 1000 3600
 $EndSCHEMATC
