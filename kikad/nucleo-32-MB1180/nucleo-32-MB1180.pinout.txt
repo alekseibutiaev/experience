@@ -1,0 +1,385 @@
+            Arduino Nano connectors on NUCLEO-F031K6
++-----------+------------+----------+-----------+-------------------------+
+| Connector | Pin number | Pin name | STM32 pin | Function                |
++-----------+------------+----------+-----------+-------------------------+
+|                               Left connector                            |
++-----------+------------+----------+-----------+-------------------------+
+|           | 1          | D1       | PA9       | USART1_TX(1)            |
+|           | 2          | D0       | PA10      | USART1_RX(1)            |
+|           | 3          | RESET    | NRST      | RESET                   |
+|           | 4          | GND      | -         | Ground                  |
+|           | 5          | D2       | PA12      | -                       |
+|           | 6          | D3       | PB0       | TIM1_CH3                |
+|           | 7          | D4(5)    | PB7       | -                       |
+| CN1       | 8          | D5(5)    | PB6       | TIM16_CH1N(2)           |
+|           | 9          | D6       | PB1       | TIM14_CH1               |
+|           | 10         | D7(3)    | PF0       | -                       |
+|           | 11         | D8(3)    | PF1       | -                       |
+|           | 12         | D9       | PA8       | TIM1_CH1                |
+|           | 13         | D10      | PA11      | SPI_CS(4) || TIM1_CH4   |
+|           | 14         | D11      | PB5       | SPI1_MOSI || TIM2_CH2   |
+|           | 15         | D12      | PB4       | SPI1_MISO               |
++-----------+------------+----------+-----------+-------------------------+
+|                               Right connector                           |
++-----------+------------+----------+-----------+-------------------------+
+|           | 1          | VIN      | -         | Power input             |
+|           | 2          | GND      | -         | Ground                  |
+|           | 3          | RESET    | NRST      | RESET                   |
+|           | 4          | +5V      | -         | 5V input/output         |
+|           | 5          | A7       | PA2       | ADC_IN2                 |
+|           | 6          | A6       | PA7       | ADC_IN7                 |
+|           | 7          | A5(5)    | PA6       | ADC_IN6 || I2C1_SCL     |
+| CN2       | 8          | A4(5)    | PA5       | ADC_IN5 || I2C1_SDA     |
+|           | 9          | A3       | PA4       | ADC_IN4                 |
+|           | 10         | A2       | PA3       | ADC_IN3                 |
+|           | 11         | A1       | PA1       | ADC_IN1                 |
+|           | 12         | A0       | PA0       | ADC_IN0                 |
+|           | 13         | AREF     | -         | AVDD                    |
+|           | 14         | +3V3     | -         | 3.3V input/output       |
+|           | 15         | D13      | PB3       | SPI1_SCK                |
++-----------+------------+----------+-----------+-------------------------+
+1. Only one USART is available and it is shared between Arduino Nano and VCP.
+   The selection is done by remapping (no need to change the hardware
+   configuration).
+2. D5 PWM on inverted channel Timer 16.
+3. D7/D8 shared with OSC_IN/OSC_OUT.
+4. SPI_CS is made by GPIO.
+5. Limitations on A4 and A5, D4 and D5, related to I2C configuration, are
+   explained in Section 6.10: Solder bridges according to SB16/SB18 setting.
+***************************************************************************
+      Arduino Nano connectors on NUCLEO-F031K6, NUCLEO-F042K6
++-----------+------------+----------+-----------+-------------------------+
+| Connector | Pin number | Pin name | STM32 pin | Function                |
++-----------+------------+----------+-----------+-------------------------+
+|                               Left connector                            |
++-----------+------------+----------+-----------+-------------------------+
+|           | 1          | D1       | PA9       | USART1_TX               |
+|           | 2          | D0       | PA10      | USART1_RX               |
+|           | 3          | RESET    | NRST      | RESET                   |
+|           | 4          | GND      | -         | Ground                  |
+|           | 5          | D2       | PA12      | -                       |
+|           | 6          | D3       | PB0       | TIM1_CH3                |
+|           | 7          | D4(1)    | PB7       | -                       |
+| CN1       | 8          | D5(1)    | PB6       | TIM16_CH1N(2)           |
+|           | 9          | D6       | PB1       | TIM14_CH1               |
+|           | 10         | D7(3)    | PF0       | -                       |
+|           | 11         | D8(3)    | PF1       | -                       |
+|           | 12         | D9       | PA8       | TIM1_CH1                |
+|           | 13         | D10      | PA11      | SPI_CS(4) || TIM1_CH4   |
+|           | 14         | D11      | PB5       | SPI1_MOSI || TIM2_CH2   |
+|           | 15         | D12      | PB4       | SPI1_MISO               |
++-----------+------------+----------+-----------+-------------------------+
+|                               Right connector                           |
++-----------+------------+----------+-----------+-------------------------+
+|           | 1          | VIN      | -         | Power input             |
+|           | 2          | GND      | -         | Ground                  |
+|           | 3          | RESET    | NRST      | RESET                   |
+|           | 4          | +5V      | -         | 5V input/output         |
+|           | 5          | A7       | PA2       | ADC_IN2(5)              |
+|           | 6          | A6       | PA7       | ADC_IN7                 |
+|           | 7          | A5(5)    | PA6       | ADC_IN6 || I2C1_SCL     |
+| CN2       | 8          | A4(5)    | PA5       | ADC_IN5 || I2C1_SDA     |
+|           | 9          | A3       | PA4       | ADC_IN4                 |
+|           | 10         | A2       | PA3       | ADC_IN3                 |
+|           | 11         | A1       | PA1       | ADC_IN1                 |
+|           | 12         | A0       | PA0       | ADC_IN0                 |
+|           | 13         | AREF     | -         | AVDD                    |
+|           | 14         | +3V3     | -         | 3.3V input/output       |
+|           | 15         | D13      | PB3       | SPI1_SCK                |
++-----------+------------+----------+-----------+-------------------------+
+1. Limitations on A4 and A5, D4 and D5, related to I2C configuration, are
+   explained in Section 6.10: Solder bridges according to SB16/SB18 setting.
+2. D5 PWM on inverted channel Timer 16.
+3. D7/D8 shared with OSC_IN/OSC_OUT.
+4. SPI_CS is made by GPIO.
+5. A7 exclusive with VCP_TX.
+***************************************************************************
+              Arduino Nano connectors on NUCLEO-F301K8
++-----------+------------+----------+-----------+-------------------------+
+| Connector | Pin number | Pin name | STM32 pin | Function                |
++-----------+------------+----------+-----------+-------------------------+
+|                               Left connector                            |
++-----------+------------+----------+-----------+-------------------------+
+|           | 1          | D1       | PA9       | USART1_TX               |
+|           | 2          | D0       | PA10      | USART1_RX               |
+|           | 3          | RESET    | NRST      | RESET                   |
+|           | 4          | GND      | -         | Ground                  |
+|           | 5          | D2       | PA12      | -                       |
+|           | 6          | D3       | PB0       | TIM1_CH2N(1)            |
+|           | 7          | D4(2)    | PB7       | -                       |
+| CN1       | 8          | D5(2)    | PB6       | TIM16_CH1N(1)           |
+|           | 9          | D6       | PB1       | TIM1_CH3N(1)            |
+|           | 10         | D7(3)    | PF0       | -                       |
+|           | 11         | D8(3)    | PF1       | -                       |
+|           | 12         | D9       | PA8       | TIM1_CH1                |
+|           | 13         | D10      | PA11      | SPI_CS(4) || TIM1_CH4   |
+|           | 14         | D11      | PB5       | SPI1_MOSI || TIM2_CH2   |
+|           | 15         | D12      | PB4       | SPI1_MISO               |
++-----------+------------+----------+-----------+-------------------------+
+|                               Right connector                           |
++-----------+------------+----------+-----------+-------------------------+
+|           | 1          | VIN      | -         | Power input             |
+|           | 2          | GND      | -         | Ground                  |
+|           | 3          | RESET    | NRST      | RESET                   |
+|           | 4          | +5V      | -         | 5V input/output         |
+|           | 5          | A7       | PA2       | ADC1_IN3(5)             |
+|           | 6          | A6       | PA7       | ADC1_IN5                |
+|           | 7          | A5(2)    | PA6       | ADC1_IN10 || I2C1_SCL   |
+| CN2       | 8          | A4(2)    | PA5       | ADC(6) || I2C1_SDA      |
+|           | 9          | A3       | PA4       | ADC1_IN5                |
+|           | 10         | A2       | PA3       | ADC1_IN4                |
+|           | 11         | A1       | PA1       | ADC1_IN2                |
+|           | 12         | A0       | PA0       | ADC1_IN1                |
+|           | 13         | AREF     | -         | AVDD                    |
+|           | 14         | +3V3     | -         | 3.3V input/output       |
+|           | 15         | D13      | PB3       | SPI1_SCK                |
++-----------+------------+----------+-----------+-------------------------+
+1. D3, D5, and D6 PWM on inverted channel.
+2. Limitations on A4 and A5, D4 and D5, related to I2C configuration, are
+   explained in Section 6.10: Solder bridges according to SB16/SB18 setting.
+3. D7/D8 shared with OSC_IN/OSC_OUT.
+4. SPI_CS is made by GPIO.
+5. PA2 exclusive with VCP_TX.
+6. No ADC on A4.
+***************************************************************************
+              Arduino Nano connectors on NUCLEO-F303K8
++-----------+------------+----------+-----------+-------------------------+
+| Connector | Pin number | Pin name | STM32 pin | Function                |
++-----------+------------+----------+-----------+-------------------------+
+|                               Left connector                            |
++-----------+------------+----------+-----------+-------------------------+
+|           | 1          | D1       | PA9       | USART1_TX               |
+|           | 2          | D0       | PA10      | USART1_RX               |
+|           | 3          | RESET    | NRST      | RESET                   |
+|           | 4          | GND      | -         | Ground                  |
+|           | 5          | D2       | PA12      | -                       |
+|           | 6          | D3       | PB0       | TIM3_CH3                |
+|           | 7          | D4(1)    | PB7       | -                       |
+| CN1       | 8          | D5(1)    | PB6       | TIM16_CH1N(2)           |
+|           | 9          | D6       | PB1       | TIM1_CH4                |
+|           | 10         | D7(3)    | PF0       | -                       |
+|           | 11         | D8(3)    | PF1       | -                       |
+|           | 12         | D9       | PA8       | TIM1_CH1                |
+|           | 13         | D10      | PA11      | SPI_CS(4) || TIM1_CH4   |
+|           | 14         | D11      | PB5       | SPI1_MOSI || TIM2_CH2   |
+|           | 15         | D12      | PB4       | SPI1_MISO               |
++-----------+------------+----------+-----------+-------------------------+
+|                               Right connector                           |
++-----------+------------+----------+-----------+-------------------------+
+|           | 1          | VIN      | -         | Power input             |
+|           | 2          | GND      | -         | Ground                  |
+|           | 3          | RESET    | NRST      | RESET                   |
+|           | 4          | +5V      | -         | 5V input/output         |
+|           | 5          | A7       | PA2       | ADC2_IN3(5)             |
+|           | 6          | A6       | PA7       | ADC2_IN4                |
+|           | 7          | A5(1)    | PA6       | ADC2_IN3 || I2C1_SCL    |
+| CN2       | 8          | A4(1)    | PA5       | ADC2_IN2 || I2C1_SDA    |
+|           | 9          | A3       | PA4       | ADC2_IN1                |
+|           | 10         | A2       | PA3       | ADC1_IN4                |
+|           | 11         | A1       | PA1       | ADC1_IN2                |
+|           | 12         | A0       | PA0       | ADC1_IN1                |
+|           | 13         | AREF     | -         | AVDD                    |
+|           | 14         | +3V3     | -         | 3.3V input/output       |
+|           | 15         | D13      | PB3       | SPI1_SCK                |
++-----------+------------+----------+-----------+-------------------------+
+1. Limitations on A4 and A5, D4 and D5, related to I2C configuration, are
+   explained in Section 6.10: Solder bridges according to SB16/SB18 setting.
+2. D5 PWM on inverted channel Timer 16.
+3. D7/D8 shared with OSC_IN/OSC_OUT.
+4. SPI_CS is made by GPIO.
+5. A7 exclusive with VCP_TX.
+***************************************************************************
+              Arduino Nano connectors on NUCLEO-L011K4
++-----------+------------+----------+-----------+-------------------------+
+| Connector | Pin number | Pin name | STM32 pin | Function                |
++-----------+------------+----------+-----------+-------------------------+
+|                               Left connector                            |
++-----------+------------+----------+-----------+-------------------------+
+|           | 1          | D1       | PA9       | USART1_TX(1)            |
+|           | 2          | D0       | PA10      | USART1_RX(1)            |
+|           | 3          | RESET    | NRST      | RESET                   |
+|           | 4          | GND      | -         | Ground                  |
+|           | 5          | D2       | PA12      | -                       |
+|           | 6          | D3       | PB0       | TIM2_CH3(2)             |
+|           | 7          | D4(3)    | PB7       | -                       |
+| CN1       | 8          | D5(3)    | PB6       | TIM2_CH3(2)             |
+|           | 9          | D6       | PB1       | TIM2_CH4                |
+|           | 10         | D7(4)    | PC14      | -                       |
+|           | 11         | D8(4)    | PC15      | -                       |
+|           | 12         | D9       | PA8       | TIM(5)                  |
+|           | 13         | D10      | PA11      | SPI_CS(6) || TIM(5)     |
+|           | 14         | D11      | PB5       | SPI1_MOSI || TIM(5)     |
+|           | 15         | D12      | PB4       | SPI1_MISO               |
++-----------+------------+----------+-----------+-------------------------+
+|                               Right connector                           |
++-----------+------------+----------+-----------+-------------------------+
+|           | 1          | VIN      | -         | Power input             |
+|           | 2          | GND      | -         | Ground                  |
+|           | 3          | RESET    | NRST      | RESET                   |
+|           | 4          | +5V      | -         | 5V input/output         |
+|           | 5          | A7       | PA2       | ADC_IN2(7)              |
+|           | 6          | A6       | PA7       | ADC_IN7                 |
+|           | 7          | A5(3)    | PA6       | ADC_IN6 || I2C1_SCL     |
+| CN2       | 8          | A4(3)    | PA5       | ADC_IN5 || I2C1_SDA     |
+|           | 9          | A3       | PA4       | ADC_IN4                 |
+|           | 10         | A2       | PA3       | ADC_IN3                 |
+|           | 11         | A1       | PA1       | ADC_IN1                 |
+|           | 12         | A0       | PA0       | ADC_IN0                 |
+|           | 13         | AREF     | -         | AVDD                    |
+|           | 14         | +3V3     | -         | 3.3V input/output       |
+|           | 15         | D13      | PB3       | SPI1_SCK                |
++-----------+------------+----------+-----------+-------------------------+
+1. Only one USART is available and it is shared between Arduino Nano and VCP.
+   The selection is done by remapping (no hardware configuration to change).
+2. D3 and D5 PWM are using same channel of TIM2_CH3.
+3. Limitations on A4 and A5, D4 and D5, related to I2C configuration, are
+   explained in Section 6.10: Solder bridges according to SB16/SB18 setting.
+4. D7/D8 shared with OSC_IN/OSC_OUT.
+5. No PWM on D9, D10, D11.
+6. SPI_CS is made by GPIO.
+7. PA2 exclusive with VCP_TX.
+***************************************************************************
+              Arduino Nano connectors on NUCLEO-L031K6
++-----------+------------+----------+-----------+-------------------------+
+| Connector | Pin number | Pin name | STM32 pin | Function                |
++-----------+------------+----------+-----------+-------------------------+
+|                               Left connector                            |
++-----------+------------+----------+-----------+-------------------------+
+|           | 1          | D1       | PA9       | USART1_TX(1)            |
+|           | 2          | D0       | PA10      | USART1_RX(1)            |
+|           | 3          | RESET    | NRST      | RESET                   |
+|           | 4          | GND      | -         | Ground                  |
+|           | 5          | D2       | PA12      | -                       |
+|           | 6          | D3       | PB0       | TIM2_CH3                |
+|           | 7          | D4(2)    | PB7       | -                       |
+| CN1       | 8          | D5(2)    | PB6       | TIM2_CH3                |
+|           | 9          | D6       | PB1       | TIM2_CH4                |
+|           | 10         | D7(3)    | PC14      | -                       |
+|           | 11         | D8(3)    | PC15      | -                       |
+|           | 12         | D9       | PA8       | TIM2_CH1                |
+|           | 13         | D10      | PA11      | SPI_CS(4) || TIM21_CH2  |
+|           | 14         | D11      | PB5       | SPI1_MOSI || TIM22_CH2  |
+|           | 15         | D12      | PB4       | SPI1_MISO               |
++-----------+------------+----------+-----------+-------------------------+
+|                               Right connector                           |
++-----------+------------+----------+-----------+-------------------------+
+|           | 1          | VIN      | -         | Power input             |
+|           | 2          | GND      | -         | Ground                  |
+|           | 3          | RESET    | NRST      | RESET                   |
+|           | 4          | +5V      | -         | 5V input/output         |
+|           | 5          | A7       | PA2       | ADC_IN2(5)              |
+|           | 6          | A6       | PA7       | ADC_IN7                 |
+|           | 7          | A5(2)    | PA6       | ADC_IN6 || I2C1_SCL     |
+| CN2       | 8          | A4(2)    | PA5       | ADC_IN5 || I2C1_SDA     |
+|           | 9          | A3       | PA4       | ADC_IN4                 |
+|           | 10         | A2       | PA3       | ADC_IN3                 |
+|           | 11         | A1       | PA1       | ADC_IN1                 |
+|           | 12         | A0       | PA0       | ADC_IN0                 |
+|           | 13         | AREF     | -         | AVDD                    |
+|           | 14         | +3V3     | -         | 3.3V input/output       |
+|           | 15         | D13      | PB3       | SPI1_SCK                |
++-----------+------------+----------+-----------+-------------------------+
+1. Only one USART is available and it is shared between Arduino Nano and VCP.
+   The selection is done by remapping (no hardware configuration to change).
+2. Limitations on A4 and A5, D4 and D5, related to I2C configuration, are
+   explained in Section 6.10: Solder bridges according to SB16/SB18 setting.
+3. D7/D8 shared with OSC32_IN/OSC32_OUT.
+4. SPI_CS is made by GPIO.
+5. PA2 exclusive with VCP_TX.
+***************************************************************************
+              Arduino Nano connectors on NUCLEO-L412KB
++-----------+------------+----------+-----------+-------------------------+
+| Connector | Pin number | Pin name | STM32 pin | Function                |
++-----------+------------+----------+-----------+-------------------------+
+|                               Left connector                            |
++-----------+------------+----------+-----------+-------------------------+
+|           | 1          | D1       | PA9       | USART1_TX               |
+|           | 2          | D0       | PA10      | USART1_RX               |
+|           | 3          | RESET    | NRST      | RESET                   |
+|           | 4          | GND      | -         | Ground                  |
+|           | 5          | D2       | PA12      | -                       |
+|           | 6          | D3       | PB0       | TIM2_CH2N(1)            |
+|           | 7          | D4(2)    | PB7       | -                       |
+| CN1       | 8          | D5(2)    | PB6       | TIM16_CH1N(1)           |
+|           | 9          | D6       | PB1       | TIM1_CH3N(1)            |
+|           | 10         | D7(3)    | PC14      | -                       |
+|           | 11         | D8(3)    | PC15      | -                       |
+|           | 12         | D9       | PA8       | TIM1_CH1                |
+|           | 13         | D10      | PA11      | SPI_CS(4) || TIM1_CH4   |
+|           | 14         | D11      | PB5       | SPI1_MOSI || TIM        |
+|           | 15         | D12      | PB4       | SPI1_MISO               |
++-----------+------------+----------+-----------+-------------------------+
+|                               Right connector                           |
++-----------+------------+----------+-----------+-------------------------+
+|           | 1          | VIN      | -         | Power input             |
+|           | 2          | GND      | -         | Ground                  |
+|           | 3          | RESET    | NRST      | RESET                   |
+|           | 4          | +5V      | -         | 5V input/output         |
+|           | 5          | A7       | PA2       | ADC1_IN7(6)             |
+|           | 6          | A6       | PA7       | ADC1_IN12               |
+|           | 7          | A5(2)    | PA6       | ADC1_IN11 || I2C1_SCL   |
+| CN2       | 8          | A4(2)    | PA5       | ADC1_IN10 || I2C1_SDA   |
+|           | 9          | A3       | PA4       | ADC1_IN9                |
+|           | 10         | A2       | PA3       | ADC1_IN8                |
+|           | 11         | A1       | PA1       | ADC1_IN6                |
+|           | 12         | A0       | PA0       | ADC1_IN5                |
+|           | 13         | AREF     | -         | AVDD                    |
+|           | 14         | +3V3     | -         | 3.3V input/output       |
+|           | 15         | D13      | PB3       | SPI1_SCK                |
++-----------+------------+----------+-----------+-------------------------+
+1. D3, D5 and D6 PWM on inverted channel.
+2. Limitations on A4 and A5, D4 and D5, related to I2C configuration, are
+   explained in Section 6.10: Solder bridges according to SB16/SB18 setting.
+3. D7/D8 shared with OSC32_IN/OSC32_OUT.
+4. SPI_CS is made by GPIO.
+5. No PWM on D11.
+6. PA2 exclusive with VCP_TX.
+***************************************************************************
+            Arduino Nano connectors on NUCLEO-L432KC
++-----------+------------+----------+-----------+-------------------------+
+| Connector | Pin number | Pin name | STM32 pin | Function                |
++-----------+------------+----------+-----------+-------------------------+
+|                               Left connector                            |
++-----------+------------+----------+-----------+-------------------------+
+|           | 1          | D1       | PA9       | USART1_TX               |
+|           | 2          | D0       | PA10      | USART1_RX               |
+|           | 3          | RESET    | NRST      | RESET                   |
+|           | 4          | GND      | -         | Ground                  |
+|           | 5          | D2       | PA12      | -                       |
+|           | 6          | D3       | PB0       | TIM1_CH2N(1)            |
+|           | 7          | D4(2)    | PB7       | -                       |
+| CN1       | 8          | D5(2)    | PB6       | TIM16_CH1N(1)           |
+|           | 9          | D6       | PB1       | TIM1_CH3N(1)            |
+|           | 10         | D7(3)    | PC14      | -                       |
+|           | 11         | D8(3)    | PC15      | -                       |
+|           | 12         | D9       | PA8       | TIM1_CH1                |
+|           | 13         | D10      | PA11      | SPI_CS(4) || TIM1_CH4   |
+|           | 14         | D11      | PB5       | SPI1_MOSI || TIM(5)     |
+|           | 15         | D12      | PB4       | SPI1_MISO               |
++-----------+------------+----------+-----------+-------------------------+
+|                               Right connector                           |
++-----------+------------+----------+-----------+-------------------------+
+|           | 1          | VIN      | -         | Power input             |
+|           | 2          | GND      | -         | Ground                  |
+|           | 3          | RESET    | NRST      | RESET                   |
+|           | 4          | +5V      | -         | 5V input/output         |
+|           | 5          | A7       | PA2       | ADC12_IN7(6)            |
+|           | 6          | A6       | PA7       | ADC12_IN12              |
+|           | 7          | A5(2)    | PA6       | ADC12_IN11 || I2C1_SCL  |
+| CN2       | 8          | A4(2)    | PA5       | ADC12_IN10 || I2C1_SDA  |
+|           | 9          | A3       | PA4       | ADC12_IN9               |
+|           | 10         | A2       | PA3       | ADC12_IN8               |
+|           | 11         | A1       | PA1       | ADC12_IN6               |
+|           | 12         | A0       | PA0       | ADC12_IN5               |
+|           | 13         | AREF     | -         | AVDD                    |
+|           | 14         | +3V3     | -         | 3.3V input/output       |
+|           | 15         | D13      | PB3       | SPI1_SCK                |
++-----------+------------+----------+-----------+-------------------------+
+1. D3, D5 and D6 PWM on inverted channel.
+2. Limitations on A4 and A5, D4 and D5, related to I2C configuration,
+   are explained in Section 6.10: Solder bridges according to SB16/SB18 setting.
+3. D7/D8 shared with OSC32_IN/OSC32_OUT.
+4. SPI_CS is made by GPIO.
+5. No PWM on D11.
+6. PA2 exclusive with VCP_TX.
+
