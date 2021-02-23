@@ -8,4 +8,7 @@
   ],
   "editor.wordWrapColumn": 80,
   "cmake.saveBeforeBuild": true,
+  "files.associations": {
+    "chrono": "cpp"
+  },
 }

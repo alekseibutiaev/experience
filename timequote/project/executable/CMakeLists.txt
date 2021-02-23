@@ -16,7 +16,7 @@ link_directories(
 add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES})
 
 target_link_libraries(${PROJECT_NAME}
-  library_static
+#  library_static
   ${Boost_LIBRARIES}
   Threads::Threads
 )

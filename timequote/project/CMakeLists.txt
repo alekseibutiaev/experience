@@ -49,5 +49,5 @@ endif()
 message("CXX_FLAGS_DEBUG: " ${CMAKE_CXX_FLAGS_DEBUG})
 message("CXX_FLAGS_RELEASE: " ${CMAKE_CXX_FLAGS_RELEASE})
 
-add_subdirectory(library)
+#add_subdirectory(library)
 add_subdirectory(executable)

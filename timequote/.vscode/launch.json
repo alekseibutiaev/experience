@@ -8,8 +8,10 @@
       "name": "executable",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/build/template/executable/executable",
-      "args": [],
+      "program": "${workspaceFolder}/build/project/executable/executable",
+      "args": [
+        "/mnt/data1/butiaev/is14996/130241.txt"
+      ],
       "stopAtEntry": true,
       "cwd": "${workspaceFolder}",
       "environment": [],
