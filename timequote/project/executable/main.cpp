@@ -24,20 +24,13 @@ const std::string s1 = "210222 16:02:41.555696 15866:MSTP>D EBFNDT.US, 2021-02-2
 const std::string s2 = "210222 16:02:41.555696 15866:MSTP>D DFR+.US, 2021-02-22 16:02:41.454, 53625.36, /ModuleStopOrders.cpp:127";
 const std::string s3 = "210222 16:02:41.555696 15866:MSTP>D 0R+.US, 2021-02-22 16:02:41.454, 53625.36, /ModuleStopOrders.cpp:127";
 
-static const char* time_format = "%y%m%d %H:%M:%S";
-
-std::string string_from_time(const std::tm& value) {
-  char buf[128];
-  std::strftime(buf, sizeof(buf), time_format, &value);
-  return std::string(buf);
-}
-
 time_instr_t get_time_instr(const std::string& value) {
+  static const char* time_format = "%y%m%d %H:%M:%S";
 //  static const std::regex rgx("([0-9]{6} [0-9]{2}:[0-9]{2}:[0-9]{2})\\.([0-9]+)(.* )(.+\\.[A-Z]+)(.*)");
-    static const std::regex rgx("([0-9]{6} [0-9]{2}:[0-9]{2}:[0-9]{2})\\.([0-9]+)(.* )([0-9A-Z\\-\\+\\_]+\\.?[A-Z]+)(.*)");
+  static const std::regex rgx("([0-9]{6} [0-9]{2}:[0-9]{2}:[0-9]{2})\\.([0-9]+)(.* )([0-9A-Z\\-\\+\\_]+\\.?[A-Z]+)(.*)");
   enum {e_full, e_time, e_microsec, e_thread, e_inst, e_tail};
   std::smatch match;
-  if(std::regex_match(value, match, rgx)){
+  if(std::regex_match(value, match, rgx)) {
     std::tm tm = {};
     strptime(match[e_time].str().c_str(), time_format, &tm);
     return {match[e_inst].str(), std::chrono::system_clock::from_time_t(std::mktime(&tm))};
@@ -45,13 +38,18 @@ time_instr_t get_time_instr(const std::string& value) {
   return time_instr_t();
 }
 
-period_t& get_last_period(periods_t& value, const bool push) {
-  if(value.empty() || push)
+period_t& get_period(periods_t& value, const time_point_t tp) {
+  bool add = false;
+  bool e = value.empty();
+//  while(value.empty() || seconds_t(1) < std::chrono::duration_cast<seconds_t>(tp - std::get<e_to>(value.back())))
+  while(e || (add = seconds_t(0) < std::chrono::duration_cast<seconds_t>(tp - std::get<e_to>(value.back())))) {
     value.push_back(periods_t::value_type());
+    break;
+  }
   return value.back();
 }
 
-void fill_empty(std::ostream& os, time_point_t from, const time_point_t& to, const std::string& value = std::string()) {
+void fill_empty(std::ostream& os, time_point_t from, const time_point_t& to, const std::string& value = "0") {
   for(;from <= to; from = from + seconds_t(1))
     os << value << ';';
 }
@@ -73,23 +71,19 @@ int main(int ac, char* av[]) {
       return 1;
     }
     std::size_t idx = 0;
-    std::string last_inst;
     std::string line;
     maps_t maps;
     while(std::getline(ifs, line)) {
-      const time_instr_t r = get_time_instr(line);
-      if(r.first.empty())
+      const time_instr_t quote = get_time_instr(line);
+      if(quote.first.empty())
         std::cout << line << std::endl;
-      min_time = std::min<time_point_t>(min_time, r.second);
-      max_time = std::max<time_point_t>(max_time, r.second);
-      auto& tmp = maps[r.first];
-      const bool push = last_inst != r.first;
-      if(push)
-        last_inst = r.first;
-      period_t& period = get_last_period(tmp, push);
+      min_time = std::min<time_point_t>(min_time, quote.second);
+      max_time = std::max<time_point_t>(max_time, quote.second);
+      auto& tmp = maps[quote.first];
+      period_t& period = get_period(tmp, quote.second);
       if(std::get<e_from>(period) == time_point_t())
-        std::get<e_from>(period) = r.second;
-      std::get<e_to>(period) = r.second;
+        std::get<e_from>(period) = quote.second;
+      std::get<e_to>(period) = quote.second;
       ++std::get<e_count>(period);
       if(0 == ++idx % 1000000)
         std::cout << idx << std::endl;

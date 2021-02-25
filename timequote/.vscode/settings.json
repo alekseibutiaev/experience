@@ -6,8 +6,9 @@
     "VERBOSE=1",
     "-j4"
   ],
-  "editor.wordWrapColumn": 80,
   "cmake.saveBeforeBuild": true,
+  "cmake.buildDirectory" : "${workspaceRoot}/build_${buildType}",
+  "editor.wordWrapColumn": 80,
   "files.associations": {
     "chrono": "cpp"
   },

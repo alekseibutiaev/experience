@@ -8,9 +8,10 @@
       "name": "executable",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/build/project/executable/executable",
+      "program": "${workspaceFolder}/build_Debug/project/executable/executable",
       "args": [
-        "/mnt/data1/butiaev/is14996/130241.txt"
+        "/mnt/data1/butiaev/is14996/quotes_list.txt",
+        "test.out.csv"
       ],
       "stopAtEntry": true,
       "cwd": "${workspaceFolder}",
