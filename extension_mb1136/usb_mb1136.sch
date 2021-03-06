@@ -545,7 +545,7 @@ PC6
 Text GLabel 900  2450 0    50   BiDi ~ 0
 PC5
 Text GLabel 900  2650 0    50   BiDi ~ 0
-PA12
+PB12
 Text GLabel 900  2750 0    50   BiDi ~ 0
 PB11
 Text GLabel 900  2950 0    50   BiDi ~ 0
@@ -654,7 +654,7 @@ Wire Wire Line
 Wire Wire Line
 	1300 6300 900  6300
 Text GLabel 900  6300 0    50   BiDi ~ 0
-PB12
+PA12
 Text GLabel 900  6200 0    50   BiDi ~ 0
 PA11
 Text GLabel 1300 6300 2    50   BiDi ~ 0
