@@ -103,7 +103,6 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  int a = 0;
   while (1)
   {
     /* USER CODE END WHILE */
@@ -210,6 +209,7 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOD_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOC_CLK_ENABLE();
+  __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(USB_POWER_SWITCH_ON_GPIO_Port, USB_POWER_SWITCH_ON_Pin, GPIO_PIN_RESET);
@@ -230,6 +230,13 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+#if 1
+int __io_putchar(int ch) {
+    ITM_SendChar(ch);
+    return ch;
+}
+#endif
+
 #if 1
 void USBH_HID_EventCallback(USBH_HandleTypeDef *phost)
 {
