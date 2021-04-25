@@ -28,6 +28,7 @@
 #include "retarget.h"
 #include "usbh_def.h"
 #include "usbh_hid.h"
+#include "gpio_ex.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -103,12 +104,21 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  int a = 0;
   while (1)
   {
     /* USER CODE END WHILE */
     MX_USB_HOST_Process();
 
     /* USER CODE BEGIN 3 */
+    int b = (a & 255) << 8;
+    int c = (a & 31);
+//    int c = (a & 31);
+    HAL_GPIO_SetWord(GPIOB, b);
+    HAL_GPIO_SetWord(GPIOC, c);
+    //GPIOC->BSRR = c;
+//    HAL_GPIO_TogglePin(GPIOB, a);
+    a += 1;
   }
   /* USER CODE END 3 */
 }
@@ -207,12 +217,38 @@ static void MX_GPIO_Init(void)
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOD_CLK_ENABLE();
-  __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOC_CLK_ENABLE();
+  __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOC, KeyD0_Pin|KeyD1_Pin|KeyD2_Pin|KeyD3_Pin
+                          |KeyD4_Pin, GPIO_PIN_SET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_12|GPIO_PIN_13
+                          |GPIO_PIN_14|GPIO_PIN_15|GPIO_PIN_8|GPIO_PIN_9, GPIO_PIN_SET);
+
+  /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(USB_POWER_SWITCH_ON_GPIO_Port, USB_POWER_SWITCH_ON_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pins : KeyD0_Pin KeyD1_Pin KeyD2_Pin KeyD3_Pin
+                           KeyD4_Pin */
+  GPIO_InitStruct.Pin = KeyD0_Pin|KeyD1_Pin|KeyD2_Pin|KeyD3_Pin
+                          |KeyD4_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : PB10 PB11 PB12 PB13
+                           PB14 PB15 PB8 PB9 */
+  GPIO_InitStruct.Pin = GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_12|GPIO_PIN_13
+                          |GPIO_PIN_14|GPIO_PIN_15|GPIO_PIN_8|GPIO_PIN_9;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /*Configure GPIO pin : USB_POWER_SWITCH_ON_Pin */
   GPIO_InitStruct.Pin = USB_POWER_SWITCH_ON_Pin;
@@ -230,7 +266,7 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-#if 1
+#if 0
 int __io_putchar(int ch) {
     ITM_SendChar(ch);
     return ch;
