@@ -63,16 +63,16 @@
   */
 
 /*----------   -----------*/
-#define USBH_MAX_NUM_ENDPOINTS      4U
+#define USBH_MAX_NUM_ENDPOINTS      2U
 
 /*----------   -----------*/
-#define USBH_MAX_NUM_INTERFACES      255U
+#define USBH_MAX_NUM_INTERFACES      1U
 
 /*----------   -----------*/
 #define USBH_MAX_NUM_CONFIGURATION      1U
 
 /*----------   -----------*/
-#define USBH_KEEP_CFG_DESCRIPTOR      0U
+#define USBH_KEEP_CFG_DESCRIPTOR      1U
 
 /*----------   -----------*/
 #define USBH_MAX_NUM_SUPPORTED_CLASS      1U
