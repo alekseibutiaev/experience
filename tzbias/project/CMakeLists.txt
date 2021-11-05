@@ -21,8 +21,8 @@ set(THREADS_PREFER_PTHREAD_FLAG TRUE)
 find_package (Threads REQUIRED)
 
 if(CMAKE_USE_PTHREADS_INIT)
-    set(CUSTOM_C_FLAGS ${CUSTOM_C_FLAGS} "-pthread -lstdc++fs")
-    set(CUSTOM_CXX_FLAGS ${CUSTOM_CXX_FLAGS} "-pthread -lstdc++fs")
+    set(CUSTOM_C_FLAGS ${CUSTOM_C_FLAGS} "-pthread")
+    set(CUSTOM_CXX_FLAGS ${CUSTOM_CXX_FLAGS} "-pthread")
 endif(CMAKE_USE_PTHREADS_INIT)
 
 set(Boost_USE_STATIC_LIBS ON)

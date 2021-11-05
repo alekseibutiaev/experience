@@ -61,6 +61,8 @@
     "cinttypes": "cpp",
     "typeinfo": "cpp",
     "functional": "cpp",
-    "numeric": "cpp"
+    "numeric": "cpp",
+    "iomanip": "cpp"
   },
+  "cmake.configureOnOpen": false,
 }

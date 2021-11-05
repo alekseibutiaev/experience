@@ -1,3 +1,5 @@
+#define GCC_VERSION (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
+
 #include <errno.h>
 #include <stdlib.h>
 #include <ctime>
@@ -12,11 +14,27 @@
 #include <optional>
 #include <algorithm>
 #include <stdexcept>
-#include <experimental/filesystem>
+
+#if GCC_VERSION >= 80400
+  #include <filesystem>
+#else
+  #include <experimental/filesystem>
+#endif
 
 using tz_infos_t = std::map<std::string, long>;
 using tz_info_t = tz_infos_t::value_type;
-using path_t = std::experimental::filesystem::path;
+
+#if GCC_VERSION >= 80400
+  using path_t = std::filesystem::path;
+  using directory_iterator = std::filesystem::directory_iterator;
+  using std::filesystem::is_directory;
+  using std::filesystem::is_regular_file;
+#else
+  using path_t = std::experimental::filesystem::path;
+  using directory_iterator = std::experimental::filesystem::directory_iterator;
+  using std::experimental::filesystem::is_directory;
+  using std::experimental::filesystem::is_regular_file;
+#endif
 
 class tz_control_t {
 public:
@@ -44,8 +62,12 @@ const char* tz_control_t::tz_env = "TZ";
 
 void get_timezone(const std::time_t& time, tz_infos_t& infos, const path_t& from, const path_t& path) {
   try {
+#if GCC_VERSION >= 80400
+    const auto tzname = std::filesystem::relative(path, from).string();
+#else
     const auto tzname = std::accumulate(std::mismatch(from.begin(), from.end(), path.begin()).second,
       path.end(), path_t(), [](path_t& a, const path_t& b){ return a /= b; }).string();
+#endif
     tz_control_t tz(tzname);
     struct tm lctm;
     infos[tzname] = localtime_r(&time, &lctm)->tm_gmtoff;
@@ -56,10 +78,10 @@ void get_timezone(const std::time_t& time, tz_infos_t& infos, const path_t& from
 }
 
 void list_directory(const std::time_t& time, tz_infos_t& infos, const path_t& from, const path_t& path) {
-  for(const auto& entry : std::experimental::filesystem::directory_iterator(path))
-    if(std::experimental::filesystem::is_directory(entry))
+  for(const auto& entry : directory_iterator(path))
+    if(is_directory(entry))
       list_directory(time, infos, from, entry.path());
-    else if(std::experimental::filesystem::is_regular_file(entry))
+    else if(is_regular_file(entry))
       get_timezone(time, infos, from, entry.path());
 }
 
@@ -91,12 +113,13 @@ private:
 
 int main(int ac, char* av[]) {
   try {
+    std::cout << "gcc version " << GCC_VERSION << std::endl;
     const tz_control_t cur();
-    const std::experimental::filesystem::path tzfolder = "/usr/share/zoneinfo";
+    const path_t tzfolder = "/usr/share/zoneinfo";
     tz_infos_t infos;
     const auto& time = ::time(0);
+    //const auto& time = 1622877451;
     list_directory(time, infos, tzfolder, tzfolder);
-  //  list_directory(1622877451, infos, tzfolder, tzfolder);
     std::transform(infos.begin(), infos.end(), std::ostream_iterator<std::string>(std::cout, "\n"),
       show_time_t(time));
     return 0;
