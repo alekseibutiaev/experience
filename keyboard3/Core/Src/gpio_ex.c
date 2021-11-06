@@ -17,7 +17,7 @@ typedef union {
 
 void HAL_GPIO_SetWord(GPIO_TypeDef* GPIOx, uint16_t data) {
   bsrr_t reg;
-  reg.reg.reset = data ^ 65535;
+  reg.reg.reset = data ^ 0xFFFF;
   reg.reg.set = data;
   GPIOx->BSRR = reg.data;
 }

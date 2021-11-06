@@ -72,10 +72,16 @@ void HAL_HCD_MspInit(HCD_HandleTypeDef* hcdHandle)
     __HAL_RCC_GPIOA_CLK_ENABLE();
     /**USB_OTG_FS GPIO Configuration
     PA8     ------> USB_OTG_FS_SOF
+    PA9     ------> USB_OTG_FS_VBUS
     */
     GPIO_InitStruct.Pin = GPIO_PIN_8;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+    GPIO_InitStruct.Pin = GPIO_PIN_9;
+    GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
     /* Peripheral clock enable */
@@ -102,8 +108,9 @@ void HAL_HCD_MspDeInit(HCD_HandleTypeDef* hcdHandle)
 
     /**USB_OTG_FS GPIO Configuration
     PA8     ------> USB_OTG_FS_SOF
+    PA9     ------> USB_OTG_FS_VBUS
     */
-    HAL_GPIO_DeInit(GPIOA, GPIO_PIN_8);
+    HAL_GPIO_DeInit(GPIOA, GPIO_PIN_8|GPIO_PIN_9);
 
     /* Peripheral interrupt Deinit*/
     HAL_NVIC_DisableIRQ(OTG_FS_IRQn);
@@ -197,7 +204,7 @@ USBH_StatusTypeDef USBH_LL_Init(USBH_HandleTypeDef *phost)
 
   hhcd_USB_OTG_FS.Instance = USB_OTG_FS;
   hhcd_USB_OTG_FS.Init.Host_channels = 8;
-  hhcd_USB_OTG_FS.Init.speed = HCD_SPEED_FULL;
+  hhcd_USB_OTG_FS.Init.speed = HCD_SPEED_LOW;
   hhcd_USB_OTG_FS.Init.phy_itface = HCD_PHY_EMBEDDED;
   hhcd_USB_OTG_FS.Init.Sof_enable = ENABLE;
   if (HAL_HCD_Init(&hhcd_USB_OTG_FS) != HAL_OK)

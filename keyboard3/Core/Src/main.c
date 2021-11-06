@@ -109,8 +109,8 @@ int main(void)
   {
     /* USER CODE END WHILE */
     MX_USB_HOST_Process();
-#if 1
     /* USER CODE BEGIN 3 */
+#if 0
     int b = (a & 0xFF) << 8;
     int c = (a & 0x1F);
 //    int c = (a & 31);
@@ -120,8 +120,8 @@ int main(void)
 //    HAL_GPIO_TogglePin(GPIOB, a);
     a += 1;
 #endif
+    /* USER CODE END 3 */
   }
-  /* USER CODE END 3 */
 }
 
 /**
@@ -217,8 +217,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitTypeDef GPIO_InitStruct = {0};
 
   /* GPIO Ports Clock Enable */
-  __HAL_RCC_GPIOD_CLK_ENABLE();
   __HAL_RCC_GPIOC_CLK_ENABLE();
+  __HAL_RCC_GPIOD_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
@@ -227,8 +227,8 @@ static void MX_GPIO_Init(void)
                           |KeyD4_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_12|GPIO_PIN_13
-                          |GPIO_PIN_14|GPIO_PIN_15|GPIO_PIN_8|GPIO_PIN_9, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(GPIOB, KeyA2_Pin|KeyA3_Pin|KeyA4_Pin|KeyA5_Pin
+                          |KeyA6_Pin|KeyA7_Pin|KeyA0_Pin|KeyA1_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(USB_POWER_SWITCH_ON_GPIO_Port, USB_POWER_SWITCH_ON_Pin, GPIO_PIN_RESET);
@@ -242,10 +242,10 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PB10 PB11 PB12 PB13
-                           PB14 PB15 PB8 PB9 */
-  GPIO_InitStruct.Pin = GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_12|GPIO_PIN_13
-                          |GPIO_PIN_14|GPIO_PIN_15|GPIO_PIN_8|GPIO_PIN_9;
+  /*Configure GPIO pins : KeyA2_Pin KeyA3_Pin KeyA4_Pin KeyA5_Pin
+                           KeyA6_Pin KeyA7_Pin KeyA0_Pin KeyA1_Pin */
+  GPIO_InitStruct.Pin = KeyA2_Pin|KeyA3_Pin|KeyA4_Pin|KeyA5_Pin
+                          |KeyA6_Pin|KeyA7_Pin|KeyA0_Pin|KeyA1_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
@@ -260,7 +260,7 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pin : USB_OWER_CURRENT_Pin */
   GPIO_InitStruct.Pin = USB_OWER_CURRENT_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(USB_OWER_CURRENT_GPIO_Port, &GPIO_InitStruct);
 
@@ -274,7 +274,7 @@ int __io_putchar(int ch) {
 }
 #endif
 
-#if 1
+#if 0
 void USBH_HID_EventCallback(USBH_HandleTypeDef *phost)
 {
 //  printf("all initialized\n");

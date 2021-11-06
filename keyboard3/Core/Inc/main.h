@@ -72,10 +72,26 @@ void Error_Handler(void);
 #define DEBUG_RX_GPIO_Port GPIOA
 #define KeyD4_Pin GPIO_PIN_4
 #define KeyD4_GPIO_Port GPIOC
+#define KeyA2_Pin GPIO_PIN_10
+#define KeyA2_GPIO_Port GPIOB
+#define KeyA3_Pin GPIO_PIN_11
+#define KeyA3_GPIO_Port GPIOB
+#define KeyA4_Pin GPIO_PIN_12
+#define KeyA4_GPIO_Port GPIOB
+#define KeyA5_Pin GPIO_PIN_13
+#define KeyA5_GPIO_Port GPIOB
+#define KeyA6_Pin GPIO_PIN_14
+#define KeyA6_GPIO_Port GPIOB
+#define KeyA7_Pin GPIO_PIN_15
+#define KeyA7_GPIO_Port GPIOB
 #define USB_POWER_SWITCH_ON_Pin GPIO_PIN_8
 #define USB_POWER_SWITCH_ON_GPIO_Port GPIOC
 #define USB_OWER_CURRENT_Pin GPIO_PIN_9
 #define USB_OWER_CURRENT_GPIO_Port GPIOC
+#define KeyA0_Pin GPIO_PIN_8
+#define KeyA0_GPIO_Port GPIOB
+#define KeyA1_Pin GPIO_PIN_9
+#define KeyA1_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
