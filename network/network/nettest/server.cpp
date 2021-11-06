@@ -66,13 +66,17 @@ namespace  {
     echo_map_t m_echo_map;
   };
 
+  void error_handle(bool, const char*, const int, const net::error_code_t&){
+  }
+
 } /* namespace */
 
 int main(int ac, char* av[]) {
 
   try {
     if(const auto& opt = cl::get_options(ac, av)) {
-      net::context_ptr ctx = net::context_t::create();
+      net::context_ptr ctx = net::context_t::create(std::bind(error_handle, std::placeholders::_1,
+        std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
       echo_server_t se(ctx, *opt);
       ctx->run();
     }

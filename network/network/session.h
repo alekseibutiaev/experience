@@ -35,8 +35,8 @@ namespace net {
     void write_handler(const write_buf_t buf, const error_code_t& err, std::size_t transferred);
     void read_handler(const error_code_t& err, std::size_t transferred);
   private:
-    details::socket_ptr m_socket;
     std::atomic_bool m_is_open;
+    details::socket_ptr m_socket;
     buffer_allocator_t m_buffer_allocator;
     recv_buf_t m_recv_buf;
     receive_data_t m_receive;

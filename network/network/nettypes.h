@@ -29,6 +29,7 @@ namespace net {
   using receive_data_t = std::function<void(const buffer_ptr)>;
   using socket_events_t = std::function<void(session_ptr, const error_code_t&)>;
   using buffer_allocator_t = std::function<buffer_ptr(const buffer_t::value_type*, std::size_t)>;
+  using error_handle_t = std::function<void(bool, const char*, const int, const error_code_t&)>;
 
   namespace details {
 
