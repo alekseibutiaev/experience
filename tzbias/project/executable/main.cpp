@@ -1,12 +1,10 @@
 #define GCC_VERSION (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
 
-#include <errno.h>
-#include <stdlib.h>
 #include <ctime>
+#include <cerrno>
 #include <cstring>
 #include <map>
 #include <string>
-#include <numeric>
 #include <sstream>
 #include <iomanip>
 #include <iterator>
@@ -18,34 +16,41 @@
 #if GCC_VERSION >= 80400
   #include <filesystem>
 #else
+  #include <numeric>
   #include <experimental/filesystem>
 #endif
 
 using tz_infos_t = std::map<std::string, long>;
-using tz_info_t = tz_infos_t::value_type;
 
 #if GCC_VERSION >= 80400
   using path_t = std::filesystem::path;
-  using directory_iterator = std::filesystem::directory_iterator;
-  using std::filesystem::is_directory;
-  using std::filesystem::is_regular_file;
+  using directory_iterator_t = std::filesystem::directory_iterator;
+  auto is_directory = static_cast<bool(*)(const path_t&)>(std::filesystem::is_directory);
+  auto is_regular_file = static_cast<bool(*)(const path_t&)>(std::filesystem::is_regular_file);
+  auto is_symlink = static_cast<bool(*)(const path_t&)>(std::filesystem::is_symlink);
+  auto relative = static_cast<path_t(*)(const path_t&, const path_t&)>(std::filesystem::relative);
 #else
   using path_t = std::experimental::filesystem::path;
-  using directory_iterator = std::experimental::filesystem::directory_iterator;
-  using std::experimental::filesystem::is_directory;
-  using std::experimental::filesystem::is_regular_file;
+  using directory_iterator_t = std::experimental::filesystem::directory_iterator;
+  auto is_directory = static_cast<bool(*)(const path_t&)>(std::experimental::filesystem::is_directory);
+  auto is_regular_file = static_cast<bool(*)(const path_t&)>(std::experimental::filesystem::is_regular_file);
+  auto is_symlink = static_cast<bool(*)(const path_t&)>(std::experimental::filesystem::is_symlink);
+  auto relative = [](const path_t& a, const path_t& b) -> path_t {
+        return std::accumulate(std::mismatch(b.begin(), b.end(), a.begin()).second,
+          a.end(), path_t(), [](path_t& a, const path_t& b){ return a /= b; });
+      };
 #endif
 
 class tz_control_t {
 public:
   tz_control_t(const std::string& tz = std::string()) {
-    const char* tmp = ::getenv(tz_env);
-    m_cur = tmp ? string_try_t(tmp) : string_try_t();
-    if(!tz.empty() && 0 != ::setenv(tz_env, tz.c_str(), true)) {
-      char buf[256];
-      throw std::runtime_error(::strerror_r(errno, buf, sizeof buf));
+    if(const char* tmp = ::getenv(tz_env))
+      m_cur = string_try_t(tmp);
+    if(!tz.empty()) {
+      if(0 != ::setenv(tz_env, tz.c_str(), true))
+        throw std::runtime_error(::strerror(errno));
+      ::tzset();
     }
-    ::tzset();
   }
   ~tz_control_t() {
     m_cur ? ::setenv(tz_env, m_cur->c_str(), true) : ::unsetenv(tz_env);
@@ -60,17 +65,11 @@ private:
 
 const char* tz_control_t::tz_env = "TZ";
 
-void get_timezone(const std::time_t& time, tz_infos_t& infos, const path_t& from, const path_t& path) {
+void get_timezone(const std::time_t& time, tz_infos_t& infos, const std::string& tzname) {
   try {
-#if GCC_VERSION >= 80400
-    const auto tzname = std::filesystem::relative(path, from).string();
-#else
-    const auto tzname = std::accumulate(std::mismatch(from.begin(), from.end(), path.begin()).second,
-      path.end(), path_t(), [](path_t& a, const path_t& b){ return a /= b; }).string();
-#endif
     tz_control_t tz(tzname);
-    struct tm lctm;
-    infos[tzname] = localtime_r(&time, &lctm)->tm_gmtoff;
+    struct tm tm;
+    infos[tzname] = localtime_r(&time, &tm)->tm_gmtoff;
   }
   catch(const std::exception& e) {
     std::cerr << e.what() << std::endl;
@@ -78,11 +77,13 @@ void get_timezone(const std::time_t& time, tz_infos_t& infos, const path_t& from
 }
 
 void list_directory(const std::time_t& time, tz_infos_t& infos, const path_t& from, const path_t& path) {
-  for(const auto& entry : directory_iterator(path))
-    if(is_directory(entry))
-      list_directory(time, infos, from, entry.path());
-    else if(is_regular_file(entry))
-      get_timezone(time, infos, from, entry.path());
+  for(const auto& entry : directory_iterator_t(path)) {
+    const path_t tmp = entry.path(); 
+    if(is_directory(tmp))
+      list_directory(time, infos, from, tmp);
+    else if(is_regular_file(tmp) || is_symlink(tmp))
+      get_timezone(time, infos, relative(tmp, from).string());
+  }
 }
 
 class show_time_t {
@@ -90,16 +91,15 @@ public:
   show_time_t(const std::time_t time)
     : m_time(time) {
   }
-  std::string operator()(const tz_info_t& v) const {
+  std::string operator()(const tz_infos_t::value_type& v) const {
     try {
       tz_control_t tz(v.first);
-      char buf[256];
+      std::ostringstream oss; 
       struct tm tm;
-      const auto pos = strftime(buf, sizeof buf, " %a %Y-%m-%d %H:%M:%S", ::localtime_r(&m_time, &tm));
-      strftime(buf + pos, sizeof buf - pos, " UTC %a %Y-%m-%d %H:%M:%S", gmtime_r(&m_time, &tm));
-      std::ostringstream oss;
       oss << v.first << ' ' << v.second << "s " << std::setw(2) << std::setfill('0') << 
-        v.second / 3600 << ':' << std::setw(2) << std::setfill('0') << v.second % 3600 / 60 << buf;
+        v.second / 3600 << ':' << std::setw(2) << std::setfill('0') << v.second % 3600 / 60 <<
+        std::put_time(::localtime_r(&m_time, &tm), " %a %Y-%m-%d %H:%M:%S") <<
+        std::put_time(::gmtime_r(&m_time, &tm), " UTC %a %Y-%m-%d %H:%M:%S");
       return oss.str();
     }
     catch(const std::exception& e) {
@@ -114,14 +114,22 @@ private:
 int main(int ac, char* av[]) {
   try {
     std::cout << "gcc version " << GCC_VERSION << std::endl;
-    const tz_control_t cur();
+    const tz_control_t cur;
     const path_t tzfolder = "/usr/share/zoneinfo";
-    tz_infos_t infos;
-    const auto& time = ::time(0);
-    //const auto& time = 1622877451;
-    list_directory(time, infos, tzfolder, tzfolder);
-    std::transform(infos.begin(), infos.end(), std::ostream_iterator<std::string>(std::cout, "\n"),
-      show_time_t(time));
+    {
+      tz_infos_t infos;
+      const auto& time = 1622548800; // 2021-06-01 12:00:00
+      list_directory(time, infos, tzfolder, tzfolder);
+      std::transform(infos.begin(), infos.end(), std::ostream_iterator<std::string>(std::cout, "\n"),
+        show_time_t(time));
+    }
+    {
+      const time_t time = 1638360000; // 2021-12-01 12:00:00
+      tz_infos_t infos;
+      list_directory(time, infos, tzfolder, tzfolder);
+      std::transform(infos.begin(), infos.end(), std::ostream_iterator<std::string>(std::cout, "\n"),
+        show_time_t(time));
+    }
     return 0;
   }
   catch(const std::exception& e) {

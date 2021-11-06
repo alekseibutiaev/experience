@@ -13,7 +13,9 @@
       ],
       "stopAtEntry": true,
       "cwd": "${workspaceFolder}",
-      "environment": [],
+      "environment": [
+        { "name" : "TZ", "value": "Asia/Nicosia" }
+      ],
       "externalConsole": false,
       "MIMode": "gdb",
       "setupCommands": [
