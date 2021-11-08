@@ -29,6 +29,7 @@ using tz_infos_t = std::map<std::string, long>;
   auto is_regular_file = static_cast<bool(*)(const path_t&)>(std::filesystem::is_regular_file);
   auto is_symlink = static_cast<bool(*)(const path_t&)>(std::filesystem::is_symlink);
   auto relative = static_cast<path_t(*)(const path_t&, const path_t&)>(std::filesystem::relative);
+  auto read_symlink = static_cast<path_t(*)(const path_t&)>(std::filesystem::read_symlink);
 #else
   using path_t = std::experimental::filesystem::path;
   using directory_iterator_t = std::experimental::filesystem::directory_iterator;
@@ -39,6 +40,7 @@ using tz_infos_t = std::map<std::string, long>;
         return std::accumulate(std::mismatch(b.begin(), b.end(), a.begin()).second,
           a.end(), path_t(), [](path_t& a, const path_t& b){ return a /= b; });
       };
+  auto read_symlink = static_cast<path_t(*)(const path_t&)>(std::experimental::filesystem::read_symlink);
 #endif
 
 class tz_control_t {
@@ -78,10 +80,10 @@ void get_timezone(const std::time_t& time, tz_infos_t& infos, const std::string&
 
 void list_directory(const std::time_t& time, tz_infos_t& infos, const path_t& from, const path_t& path) {
   for(const auto& entry : directory_iterator_t(path)) {
-    const path_t tmp = entry.path(); 
+    const path_t tmp = entry.path();
     if(is_directory(tmp))
       list_directory(time, infos, from, tmp);
-    else if(is_regular_file(tmp) || is_symlink(tmp))
+    else if(is_regular_file(tmp) && !is_symlink(tmp))
       get_timezone(time, infos, relative(tmp, from).string());
   }
 }
@@ -111,25 +113,21 @@ private:
   const std::time_t m_time;
 };
 
+void process(const path_t& base, const std::time_t& time) {
+  tz_infos_t infos;
+  list_directory(time, infos, base, base);
+  std::transform(infos.begin(), infos.end(), std::ostream_iterator<std::string>(std::cout, "\n"),
+    show_time_t(time));
+}
+
 int main(int ac, char* av[]) {
   try {
     std::cout << "gcc version " << GCC_VERSION << std::endl;
     const tz_control_t cur;
     const path_t tzfolder = "/usr/share/zoneinfo";
-    {
-      tz_infos_t infos;
-      const auto& time = 1622548800; // 2021-06-01 12:00:00
-      list_directory(time, infos, tzfolder, tzfolder);
-      std::transform(infos.begin(), infos.end(), std::ostream_iterator<std::string>(std::cout, "\n"),
-        show_time_t(time));
-    }
-    {
-      const time_t time = 1638360000; // 2021-12-01 12:00:00
-      tz_infos_t infos;
-      list_directory(time, infos, tzfolder, tzfolder);
-      std::transform(infos.begin(), infos.end(), std::ostream_iterator<std::string>(std::cout, "\n"),
-        show_time_t(time));
-    }
+    process(tzfolder, std::time(0)); // current
+    process(tzfolder, 1622548800); // 2021-06-01 12:00:00
+    process(tzfolder, 1638360000); // 2021-12-01 12:00:00
     return 0;
   }
   catch(const std::exception& e) {

@@ -62,7 +62,8 @@
     "typeinfo": "cpp",
     "functional": "cpp",
     "numeric": "cpp",
-    "iomanip": "cpp"
+    "iomanip": "cpp",
+    "random": "cpp"
   },
   "cmake.configureOnOpen": false,
 }
