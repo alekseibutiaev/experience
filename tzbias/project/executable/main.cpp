@@ -13,35 +13,47 @@
 #include <algorithm>
 #include <stdexcept>
 
+#if 0
 #if GCC_VERSION >= 80400
   #include <filesystem>
-#else
-  #include <numeric>
-  #include <experimental/filesystem>
-#endif
 
-using tz_infos_t = std::map<std::string, long>;
-
-#if GCC_VERSION >= 80400
   using path_t = std::filesystem::path;
   using directory_iterator_t = std::filesystem::directory_iterator;
   auto is_directory = static_cast<bool(*)(const path_t&)>(std::filesystem::is_directory);
   auto is_regular_file = static_cast<bool(*)(const path_t&)>(std::filesystem::is_regular_file);
   auto is_symlink = static_cast<bool(*)(const path_t&)>(std::filesystem::is_symlink);
   auto relative = static_cast<path_t(*)(const path_t&, const path_t&)>(std::filesystem::relative);
-  auto read_symlink = static_cast<path_t(*)(const path_t&)>(std::filesystem::read_symlink);
 #else
+  #include <numeric>
+  #include <experimental/filesystem>
+
   using path_t = std::experimental::filesystem::path;
   using directory_iterator_t = std::experimental::filesystem::directory_iterator;
   auto is_directory = static_cast<bool(*)(const path_t&)>(std::experimental::filesystem::is_directory);
   auto is_regular_file = static_cast<bool(*)(const path_t&)>(std::experimental::filesystem::is_regular_file);
   auto is_symlink = static_cast<bool(*)(const path_t&)>(std::experimental::filesystem::is_symlink);
+/*
   auto relative = [](const path_t& a, const path_t& b) -> path_t {
         return std::accumulate(std::mismatch(b.begin(), b.end(), a.begin()).second,
           a.end(), path_t(), [](path_t& a, const path_t& b){ return a /= b; });
       };
-  auto read_symlink = static_cast<path_t(*)(const path_t&)>(std::experimental::filesystem::read_symlink);
+*/
+  auto relative = [](const path_t& a, const path_t& b) -> path_t {
+    return std::experimental::filesystem::w
+  }
+
 #endif
+#else
+  #include <boost/filesystem.hpp>
+  using path_t = boost::filesystem::path;
+  using directory_iterator_t = boost::filesystem::directory_iterator;
+  auto is_directory = static_cast<bool(*)(const path_t&)>(boost::filesystem::is_directory);
+  auto is_regular_file = static_cast<bool(*)(const path_t&)>(boost::filesystem::is_regular_file);
+  auto is_symlink = static_cast<bool(*)(const path_t&)>(boost::filesystem::is_symlink);
+  auto relative = static_cast<path_t(*)(const path_t&, const path_t&)>(boost::filesystem::relative);
+#endif
+
+using tz_infos_t = std::map<std::string, long>;
 
 class tz_control_t {
 public:

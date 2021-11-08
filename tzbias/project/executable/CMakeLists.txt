@@ -17,7 +17,8 @@ add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES})
 
 target_link_libraries(${PROJECT_NAME}
 #  library_static
-  ${Boost_LIBRARIES}
+  ${Boost_FILESYSTEM_LIBRARY}
+  ${Boost_SYSTEM_LIBRARY}
   stdc++fs
   Threads::Threads
 )

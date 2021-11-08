@@ -26,7 +26,7 @@ if(CMAKE_USE_PTHREADS_INIT)
 endif(CMAKE_USE_PTHREADS_INIT)
 
 set(Boost_USE_STATIC_LIBS ON)
-find_package(Boost 1.55 REQUIRED COMPONENTS system)
+find_package(Boost 1.55 REQUIRED COMPONENTS system filesystem)
 #unit_test_framework
 
 #Boost_FOUND            - True if headers and requested libraries were found
