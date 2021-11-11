@@ -13,36 +13,14 @@
 #include <algorithm>
 #include <stdexcept>
 
-#if 0
 #if GCC_VERSION >= 80400
   #include <filesystem>
-
   using path_t = std::filesystem::path;
   using directory_iterator_t = std::filesystem::directory_iterator;
   auto is_directory = static_cast<bool(*)(const path_t&)>(std::filesystem::is_directory);
   auto is_regular_file = static_cast<bool(*)(const path_t&)>(std::filesystem::is_regular_file);
   auto is_symlink = static_cast<bool(*)(const path_t&)>(std::filesystem::is_symlink);
   auto relative = static_cast<path_t(*)(const path_t&, const path_t&)>(std::filesystem::relative);
-#else
-  #include <numeric>
-  #include <experimental/filesystem>
-
-  using path_t = std::experimental::filesystem::path;
-  using directory_iterator_t = std::experimental::filesystem::directory_iterator;
-  auto is_directory = static_cast<bool(*)(const path_t&)>(std::experimental::filesystem::is_directory);
-  auto is_regular_file = static_cast<bool(*)(const path_t&)>(std::experimental::filesystem::is_regular_file);
-  auto is_symlink = static_cast<bool(*)(const path_t&)>(std::experimental::filesystem::is_symlink);
-/*
-  auto relative = [](const path_t& a, const path_t& b) -> path_t {
-        return std::accumulate(std::mismatch(b.begin(), b.end(), a.begin()).second,
-          a.end(), path_t(), [](path_t& a, const path_t& b){ return a /= b; });
-      };
-*/
-  auto relative = [](const path_t& a, const path_t& b) -> path_t {
-    return std::experimental::filesystem::w
-  }
-
-#endif
 #else
   #include <boost/filesystem.hpp>
   using path_t = boost::filesystem::path;
@@ -92,11 +70,16 @@ void get_timezone(const std::time_t& time, tz_infos_t& infos, const std::string&
 
 void list_directory(const std::time_t& time, tz_infos_t& infos, const path_t& from, const path_t& path) {
   for(const auto& entry : directory_iterator_t(path)) {
-    const path_t tmp = entry.path();
+    const path_t& tmp = entry.path();
     if(is_directory(tmp))
       list_directory(time, infos, from, tmp);
     else if(is_regular_file(tmp) && !is_symlink(tmp))
       get_timezone(time, infos, relative(tmp, from).string());
+    if(is_symlink(tmp)) {
+      std::cout << tmp << " " << boost::filesystem::canonical(tmp) << std::endl;
+      std::cout << tmp << " " << boost::filesystem::weakly_canonical(tmp) << std::endl;
+      std::cout << tmp << " " << relative(tmp, from) << std::endl;
+    }
   }
 }
 
