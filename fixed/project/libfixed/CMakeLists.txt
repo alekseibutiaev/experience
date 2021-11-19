@@ -1,7 +1,7 @@
 FILE(GLOB HEADER_FILES *.h *.hpp)
 FILE(GLOB SOURCE_FILES *.cpp)
 
-PROJECT(library)
+PROJECT(fixed)
 
 include_directories(
   ${PROJECT_DIR}

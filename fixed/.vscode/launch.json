@@ -8,7 +8,7 @@
       "name": "executable",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/build/template/executable/executable",
+      "program": "${workspaceFolder}/build/project/executable/executable",
       "args": [],
       "stopAtEntry": true,
       "cwd": "${workspaceFolder}",
