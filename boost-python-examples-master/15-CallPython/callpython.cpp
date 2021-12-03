@@ -18,7 +18,6 @@ public:
   }
 };
 
-
 int main(int ac, char* av[]) {
   try {
       // Initialize the Python interpreter.
