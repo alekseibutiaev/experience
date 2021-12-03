@@ -8,11 +8,21 @@
 #   define INIT_MODULE initmymodule
     extern "C" void INIT_MODULE();
 #endif
+class py_initialize_t {
+public:
+  py_initialize_t() {
+    Py_Initialize();
+  }
+  ~py_initialize_t() {
+     Py_Finalize();
+  }
+};
+
 
 int main(int ac, char* av[]) {
   try {
       // Initialize the Python interpreter.
-    Py_Initialize();
+    py_initialize_t ini;
     // Add the current directory to the path.
     boost::python::import("sys").attr("path").attr("append")(".");
     // Get the "hello_from_python" function from "hello.py".
