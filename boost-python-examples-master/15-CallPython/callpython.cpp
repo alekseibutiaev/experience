@@ -24,7 +24,8 @@ int main(int ac, char* av[]) {
     // Print out the return value.
     std::cout << "Return value: '" << return_value << "'" << std::endl;
     std::cout << "Return value: '" << param << "'" << std::endl;
-  } catch (boost::python::error_already_set& e) {
+  }
+  catch (boost::python::error_already_set& e) {
     PyErr_PrintEx(0);
     return 1;
   }
