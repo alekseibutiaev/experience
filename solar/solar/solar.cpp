@@ -132,14 +132,14 @@ namespace {
   }
 #endif
 
-  std::pair<glm::vec4, glm::mat4> get_light_direction(const idata_t& v) {
+  std::pair<glm::vec4, glm::mat4> get_sun_direction(const idata_t& v) {
     // https://en.wikipedia.org/wiki/Rotation_matrix
     // creating rotate matrix around axis Z. for calculate sunlight direction.
     std::pair<glm::vec4, glm::mat4> res;
     res.second = glm::rotate(glm::mat4(1.0f), v.op, az);
     // https://en.wikipedia.org/wiki/Unit_vector
     // rotate unit vector by axis X arount axis Z.
-    res.first = res.second * glm::vec4(ax, 0.0f);
+    res.first = glm::vec4(zero, 0.0f) - (res.second * glm::vec4(ax, 0.0f));
     return res;
   }
 
@@ -161,20 +161,14 @@ namespace {
     // create rotate matrix around axis Y on axial tilt angle.
     const auto at = glm::rotate(glm::mat4(1.0f), v.at, ay);
     // rotate planet point for axial tilt angle and return;
-    const auto res = at * pp;
-    return res;
+    return at * pp;
   }
 
   // if sunlight is not reachable for planet point then return empty object.
-  try_vec3_t get_solar_panel_normal(const glm::vec3& ld, const glm::vec3& pp) {
+  try_vec3_t get_solar_panel_normal(const glm::vec3& sd, const glm::vec3& pp) {
     // https://en.wikipedia.org/wiki/Normal_(geometry)
-    if (0.0f <= glm::dot(ld, pp))
-      return try_vec3_t();
-    // caltulate vector to sun direction from light direction vector
-    const auto tosun = zero - ld;
-    // caltulate normale for solar panele and normalize it
-    const auto res = glm::normalize(tosun + pp);
-    return try_vec3_t(res);
+    // Check up the illumination of a point planet and calculate normalе solar panel, and normalize it.
+    return glm::dot(sd, pp) < 0.0f ? try_vec3_t() : try_vec3_t(glm::normalize(sd + pp));
   }
 
 } /* namespace */
@@ -188,13 +182,13 @@ int main( int ac, char* av[] ) {
     const idata_t id = get_user_data();
 #endif
     std::cout << id << std::endl;
-    // get sun light direction and rotate matrix
-    const auto ld = get_light_direction(id);
-    std::cout << ld.first << std::endl;
-    // get planet ponint depends of longitude, latitude, axial tilt, date & time.
-    const auto pp = get_planet_point(id, ld.second);
-    // calculate hormal for solat panel 
-    if (const auto spn = get_solar_panel_normal(ld.first, pp))
+    // get sun direction and rotate matrix
+    const auto sd = get_sun_direction(id);
+    std::cout << sd.first << std::endl;
+    // get planet ponint depends of longitude, latitude, axial tilt, date, time.
+    const auto pp = get_planet_point(id, sd.second);
+    // calculate normal for solat panel 
+    if (const auto spn = get_solar_panel_normal(sd.first, pp))
       std::cout << "solar panel normale is " << *spn << std::endl;
     else
       std::cout << "planet point on the shadow side." << std::endl;
