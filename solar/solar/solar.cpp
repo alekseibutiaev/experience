@@ -59,6 +59,7 @@ namespace {
   const glm::vec3 ay(0.0f, 1.0f, 0.0f);
   const glm::vec3 az(0.0f, 0.0f, 1.0f);
   const glm::vec3 zero(0.0f, 0.0f, 0.0f);
+  const glm::mat4 identity(1.0f);
 
   struct idata_t {
     float op;                // orbital position
@@ -136,7 +137,7 @@ namespace {
     // https://en.wikipedia.org/wiki/Rotation_matrix
     // creating rotate matrix around axis Z. for calculate sunlight direction.
     std::pair<glm::vec4, glm::mat4> res;
-    res.second = glm::rotate(glm::mat4(1.0f), v.op, az);
+    res.second = glm::rotate(identity, v.op, az);
     // https://en.wikipedia.org/wiki/Unit_vector
     // rotate unit vector by axis X arount axis Z.
     res.first = glm::vec4(zero, 0.0f) - (res.second * glm::vec4(ax, 0.0f));
@@ -149,17 +150,16 @@ namespace {
     enum { e_greenwich, e_auxiliary, e_count };
     glm::vec4 ar[e_count] = { mtx * glm::vec4(ax, 0.0f), mtx * glm::vec4(ay, 0.0f) };
     // crate rotate matrix around axis Z on longitude plus rotation period angle.
-    const auto lon = glm::rotate(glm::mat4(1.0f), v.longitude + v.rpp, az);
+    const auto lon = glm::rotate(identity, v.longitude + v.rpp, az);
     // rotate both vector on longitude plus rotation period angle.
     for (auto& it : ar)
       it = lon * it;
     // create rotare matrix arount axis auxiliary on latitude angle;
-    const auto lat = glm::rotate(glm::mat4(1.0f), v.latitude,
-      { ar[e_auxiliary].x, ar[e_auxiliary].y, ar[e_auxiliary].z });
+    const auto lat = glm::rotate(identity, v.latitude, glm::vec3(ar[e_auxiliary]));
     // get planet points depens of longitude plus rotation period and latitude.
     const auto pp = lat * ar[e_greenwich];
     // create rotate matrix around axis Y on axial tilt angle.
-    const auto at = glm::rotate(glm::mat4(1.0f), v.at, ay);
+    const auto at = glm::rotate(identity, v.at, ay);
     // rotate planet point for axial tilt angle and return;
     return at * pp;
   }
