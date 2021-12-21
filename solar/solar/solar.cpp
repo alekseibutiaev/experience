@@ -90,25 +90,29 @@ namespace {
     return glm::radians(degrees);
   }
 
+#if DEBUG_INPUT
+  idata_t get_user_data( const std::string& date, const float& latitude, const float& longitude, const float& at) {
+    idata_t res;
+    std::tm tm = { 0 };
+    std::istringstream iss(date);
+    iss >> std::get_time(&tm, "%Y %m %d %T");
+    res.op = get_orbital_position(tm);
+    res.rpp = get_rotation_position(tm);
+    res.latitude = glm::radians(latitude);
+    res.longitude = glm::radians(longitude);
+    res.at = glm::radians(at);
+    return res;
+  }
+#else
   idata_t get_user_data() {
     std::tm tm = {0};
     idata_t res = {0};
-#if DEBUG_INPUT
-    std::istringstream iss("2020 04 01 00:00:00");
-    iss >> std::get_time(&tm, "%Y %m %d %T");
-#else
     std::cout << "Please input date in format YYYY mm[01 ... 12] dd[01 ... 31] HH[00 ... 23]:MM[00 ... 59]:SS[00 ... 60] ";
     std::cin >> std::get_time(&tm, "%Y %m %d %T");
-#endif
     if(std::cin.fail())
       throw std::invalid_argument("wrong input data.");
     res.op = get_orbital_position(tm);
     res.rpp = get_rotation_position(tm);
-#if DEBUG_INPUT
-    res.latitude = glm::radians(58.0f);
-    res.longitude = glm::radians(100.0f);
-    res.at = glm::radians(-23.3f);
-#else
     std::cout << "please input latitude [-90 ... 90]: ";
     std::cin >> res.latitude;
     if(std::cin.fail() || res.latitude < -90.0f || res.latitude > 90.0f)
@@ -124,9 +128,9 @@ namespace {
     if (std::cin.fail() || res.at < -90.0f || res.at > 90.0f)
       throw std::invalid_argument("wrong input axial tilt.");
     res.at = glm::radians(res.at);
-#endif
     return res;
   }
+#endif
 
   std::pair<glm::vec4, glm::mat4> get_light_direction(const idata_t& v) {
     // https://en.wikipedia.org/wiki/Rotation_matrix
@@ -140,13 +144,13 @@ namespace {
   }
 
   glm::vec4 get_planet_point(const idata_t& v, const glm::mat4& mtx) {
-    // crate two unit vector first bt axis X (vwctor for greenwich / prime meridian ),
+    // crate two unit vector first by axis X (vwctor for greenwich / prime meridian ),
     // second auxiliary vector by axis Y and rotate both on light direction angle.
     enum { e_greenwich, e_auxiliary, e_count };
     glm::vec4 ar[e_count] = { mtx * glm::vec4(ax, 0.0f), mtx * glm::vec4(ay, 0.0f) };
     // crate rotate matrix atound axis Z on longitude angle plus rotation period.
     const auto lon = glm::rotate(glm::mat4(1.0f), v.longitude + v.rpp, az);
-    // rotate both vector on longitude angle.
+    // rotate both vector on longitude plus rotation period angle.
     for (auto& it : ar)
       it = lon * it;
     // create rotare matrix arount axis auxiliary on latitude angle;
@@ -154,20 +158,21 @@ namespace {
       { ar[e_auxiliary].x, ar[e_auxiliary].y, ar[e_auxiliary].z });
     // get planet points depens of longitude plus rotation period and latitude.
     const auto pp = lat * ar[e_greenwich];
-    // create rotate matrix around axis Y on axial tilt angle
+    // create rotate matrix around axis Y on axial tilt angle.
     const auto at = glm::rotate(glm::mat4(1.0f), v.at, ay);
-    // retate planet point for axial tilt angle and return;
+    // rotate planet point for axial tilt angle and return;
     const auto res = at * pp;
     return res;
   }
 
-  // if sun light is nor reachable for planet point then return empty object.
+  // if sunlight is not reachable for planet point then return empty object.
   try_vec3_t get_solar_panel_normal(const glm::vec3& ld, const glm::vec3& pp) {
     // https://en.wikipedia.org/wiki/Normal_(geometry)
     if (0.0f <= glm::dot(ld, pp))
       return try_vec3_t();
     // caltulate vector to sun direction from light direction vector
     const auto tosun = zero - ld;
+    // caltulate normale for solar panele and normalize it
     const auto res = glm::normalize(tosun + pp);
     return try_vec3_t(res);
   }
@@ -177,7 +182,11 @@ namespace {
 int main( int ac, char* av[] ) {
   try {
     // request data from user
+#if DEBUG_INPUT
+    const idata_t id = get_user_data("2020 01 01 18:00:00", -85.0f, 0.0f, -23.3f);
+#else
     const idata_t id = get_user_data();
+#endif
     std::cout << id << std::endl;
     // get sun light direction and rotate matrix
     const auto ld = get_light_direction(id);
@@ -188,7 +197,7 @@ int main( int ac, char* av[] ) {
     if (const auto spn = get_solar_panel_normal(ld.first, pp))
       std::cout << "solar panel normale is " << *spn << std::endl;
     else
-      std::cout << "a planet point on the shadow side/" << std::endl;
+      std::cout << "a planet point on the shadow side." << std::endl;
     return 0;
   }
   catch (const std::exception& e) {
