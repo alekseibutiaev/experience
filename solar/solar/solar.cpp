@@ -44,7 +44,7 @@
 
 namespace glm {
 
-  std::ostream&  operator<<(std::ostream& os, const glm::vec3& v) {
+  std::ostream& operator<<(std::ostream& os, const glm::vec3& v) {
     os << "vec3( x: " << v.x << ", y: " << v.y << ", z: " << v.z << " )";
     return os;
   }
