@@ -134,21 +134,21 @@ namespace {
 
   std::pair<glm::vec4, glm::mat4> get_light_direction(const idata_t& v) {
     // https://en.wikipedia.org/wiki/Rotation_matrix
-    // creating rotate  matrix around axis Z. for calculate sunlight direction.
+    // creating rotate matrix around axis Z. for calculate sunlight direction.
     std::pair<glm::vec4, glm::mat4> res;
     res.second = glm::rotate(glm::mat4(1.0f), v.op, az);
     // https://en.wikipedia.org/wiki/Unit_vector
-    // rotate unit vector by axis X arount axis X.
+    // rotate unit vector by axis X arount axis Z.
     res.first = res.second * glm::vec4(ax, 0.0f);
     return res;
   }
 
   glm::vec4 get_planet_point(const idata_t& v, const glm::mat4& mtx) {
-    // crate two unit vector first by axis X (vwctor for greenwich / prime meridian ),
+    // crate two unit vector first by axis X (vector for greenwich / prime meridian ),
     // second auxiliary vector by axis Y and rotate both on light direction angle.
     enum { e_greenwich, e_auxiliary, e_count };
     glm::vec4 ar[e_count] = { mtx * glm::vec4(ax, 0.0f), mtx * glm::vec4(ay, 0.0f) };
-    // crate rotate matrix atound axis Z on longitude angle plus rotation period.
+    // crate rotate matrix around axis Z on longitude plus rotation period angle.
     const auto lon = glm::rotate(glm::mat4(1.0f), v.longitude + v.rpp, az);
     // rotate both vector on longitude plus rotation period angle.
     for (auto& it : ar)
@@ -197,7 +197,7 @@ int main( int ac, char* av[] ) {
     if (const auto spn = get_solar_panel_normal(ld.first, pp))
       std::cout << "solar panel normale is " << *spn << std::endl;
     else
-      std::cout << "a planet point on the shadow side." << std::endl;
+      std::cout << "planet point on the shadow side." << std::endl;
     return 0;
   }
   catch (const std::exception& e) {
