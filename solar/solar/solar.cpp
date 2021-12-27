@@ -21,15 +21,9 @@
 //         |/
 //         *---->x
 
-#define _USE_MATH_DEFINES
-
 #define DEBUG_INPUT 1
 
-#include <glm/glm.hpp>
-#include <glm/ext.hpp>
-
 #include <ctime>
-#include <cmath>
 
 #include <utility>
 #include <iomanip>
@@ -40,6 +34,11 @@
 #if DEBUG_INPUT
   #include <sstream>
 #endif
+
+#include <glm/glm.hpp>
+#include <glm/ext.hpp>
+#include <glm/ext/scalar_constants.hpp>
+#include <glm/ext/matrix_transform.hpp>
 
 namespace glm {
 
@@ -57,7 +56,8 @@ namespace glm {
 
 namespace {
 
-  const float PIx2 = static_cast<float>(2 * M_PI);
+  const auto PIx2 = glm::pi<float>() * 2;
+  const auto identity = glm::identity<glm::mat4>();
 
   using try_vec2_t = std::optional<glm::vec2>;
 
@@ -90,7 +90,6 @@ namespace {
     return os;
   }
 
-  const glm::mat4 identity(1.0f);
 
   struct idata_t {
     float op;                // orbital position
@@ -150,12 +149,12 @@ namespace {
     res.latitude = glm::radians(res.latitude);
     std::cout << "please input longitude [-180 ... 180]: ";
     std::cin >> res.longitude;
-    if (std::cin.fail() || res.longitude < -180.0f || res.longitude > 180.0f)
+    if(std::cin.fail() || res.longitude < -180.0f || res.longitude > 180.0f)
       throw std::invalid_argument("wrong input longitude.");
     res.longitude = glm::radians(res.longitude);
     std::cout << "please input  axial tilt [-90 ... 90] positive new year from samer other wise from winter: ";
     std::cin >> res.at;
-    if (std::cin.fail() || res.at < -90.0f || res.at > 90.0f)
+    if(std::cin.fail() || res.at < -90.0f || res.at > 90.0f)
       throw std::invalid_argument("wrong input axial tilt.");
     res.at = glm::radians(res.at);
     return res;
@@ -166,7 +165,7 @@ namespace {
     // https://en.wikipedia.org/wiki/Rotation_matrix
     // creating rotate matrix around axis Z. for calculate sunlight direction.
     std::pair<сoordinate_t, glm::mat4> res;
-    res.second = glm::rotate( identity, v.op, сoordinate_t::az );
+    res.second = glm::rotate(identity, v.op, сoordinate_t::az);
     // https://en.wikipedia.org/wiki/Unit_vector
     // rotate unit vector by axis X arount axis Z.
     res.first = сoordinate_t().rotate( res.second );
@@ -195,8 +194,7 @@ namespace {
   try_vec2_t get_solar_panel_normal(const сoordinate_t& sd, const сoordinate_t& pp) {
     // https://en.wikipedia.org/wiki/Normal_(geometry)
     // Check up the illumination of a point planet and calculate normalе solar panel, and normalize it.
-    const auto& tmp = glm::dot(sd.axises[сoordinate_t::e_ax], pp.axises[сoordinate_t::e_ax]);
-    if(0.0f <= tmp)
+    if(0.0f <= glm::dot(sd.axises[сoordinate_t::e_ax], pp.axises[сoordinate_t::e_ax]))
       return try_vec2_t();
     // calulate angle
     return try_vec2_t({glm::degrees(std::acos(glm::dot(glm::vec3(sd.axises[сoordinate_t::e_ay]), glm::vec3(pp.axises[сoordinate_t::e_ax])))),
@@ -222,11 +220,10 @@ int main( int ac, char* av[] ) {
     const auto pp = get_planet_point(id, sd.second);
     std::cout << pp << std::endl;
     // calculate normal for solat panel
-    if (const auto spa = get_solar_panel_normal(sd.first, pp))
+    if(const auto spa = get_solar_panel_normal(sd.first, pp))
       std::cout << "solar panel angle is " << *spa << std::endl;
     else
       std::cout << "planet point on the shadow side." << std::endl;
-
     return 0;
   }
   catch (const std::exception& e) {
@@ -234,4 +231,3 @@ int main( int ac, char* av[] ) {
   }
   return 1;
 }
-
