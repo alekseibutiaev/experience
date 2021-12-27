@@ -110,7 +110,7 @@ namespace {
     tmp.tm_mday = 1;
     const std::time_t ys = std::mktime(&tmp);
     ++tmp.tm_year;
-    return PIx2 * (std::mktime(&val) - ys) / (std::mktime(&tmp) - ys);;
+    return PIx2 * (std::mktime(&val) - ys) / (std::mktime(&tmp) - ys);
   }
 
   float get_rotation_position(std::tm val) {
