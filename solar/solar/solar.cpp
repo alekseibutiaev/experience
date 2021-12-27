@@ -90,11 +90,6 @@ namespace {
     return os;
   }
 
-  const glm::vec3 ax(1.0f, 0.0f, 0.0f);
-  const glm::vec3 ay(0.0f, 1.0f, 0.0f);
-  const glm::vec3 az(0.0f, 0.0f, 1.0f);
-  const glm::vec3 zero(0.0f, 0.0f, 0.0f);
-
   const glm::mat4 identity(1.0f);
 
   struct idata_t {
@@ -171,7 +166,7 @@ namespace {
     // https://en.wikipedia.org/wiki/Rotation_matrix
     // creating rotate matrix around axis Z. for calculate sunlight direction.
     std::pair<сoordinate_t, glm::mat4> res;
-    res.second = glm::rotate( identity, v.op, az );
+    res.second = glm::rotate( identity, v.op, сoordinate_t::az );
     // https://en.wikipedia.org/wiki/Unit_vector
     // rotate unit vector by axis X arount axis Z.
     res.first = сoordinate_t().rotate( res.second );
