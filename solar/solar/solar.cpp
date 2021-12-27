@@ -176,6 +176,10 @@ namespace {
   сoordinate_t get_planet_point(const idata_t& v, const glm::mat4& mtx) {
     // crate coordinate system for planet point and rotate it light direction angle.
     сoordinate_t pp = сoordinate_t().rotate(mtx);
+    // crate rotate matrix around axis Z on longitude plus rotation period angle.
+    const auto lon = glm::rotate(identity, v.longitude + v.rpp, glm::vec3(pp.axises[сoordinate_t::e_az]));
+    // rotate both vector on longitude plus rotation period angle.
+    pp.rotate(lon);
     // create rotare matrix arount axis y on latitude angle;
     const auto lat = glm::rotate(identity, v.latitude, glm::vec3(pp.axises[сoordinate_t::e_ay]));
     // get planet points depens of longitude plus rotation period and latitude.
@@ -196,7 +200,7 @@ namespace {
       return try_vec2_t();
     // calulate angle
     return try_vec2_t({glm::degrees(std::acos(glm::dot(glm::vec3(sd.axises[сoordinate_t::e_ay]), glm::vec3(pp.axises[сoordinate_t::e_ax])))),
-      glm::degrees(std::acos(glm::dot(glm::vec3(сoordinate_t::ay), glm::vec3(pp.axises[сoordinate_t::e_ay]))))});
+      glm::degrees(std::acos(glm::dot(glm::vec3(sd.axises[сoordinate_t::e_az]), glm::vec3(pp.axises[сoordinate_t::e_ax]))))});
   }
 
 } /* namespace */
@@ -205,7 +209,7 @@ int main( int ac, char* av[] ) {
   try {
     // request data from user
 #if DEBUG_INPUT
-    idata_t id = get_user_data("2020 01 01 12:00:00", -85.0f, 0.0f, -23.3f);
+    idata_t id = get_user_data("2020 01 01 00:00:00", -85.0f, 0.0f, -23.3f);
     //id.op = glm::radians(90.0f);
 #else
     const idata_t id = get_user_data();
