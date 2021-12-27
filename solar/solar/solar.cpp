@@ -210,7 +210,6 @@ int main( int ac, char* av[] ) {
     // request data from user
 #if DEBUG_INPUT
     idata_t id = get_user_data("2020 01 01 00:00:00", -85.0f, 0.0f, -23.3f);
-    //id.op = glm::radians(90.0f);
 #else
     const idata_t id = get_user_data();
 #endif
@@ -223,8 +222,8 @@ int main( int ac, char* av[] ) {
     const auto pp = get_planet_point(id, sd.second);
     std::cout << pp << std::endl;
     // calculate normal for solat panel
-    if (const auto spn = get_solar_panel_normal(sd.first, pp))
-      std::cout << "solar panel normale is " << *spn << std::endl;
+    if (const auto spa = get_solar_panel_normal(sd.first, pp))
+      std::cout << "solar panel angle is " << *spa << std::endl;
     else
       std::cout << "planet point on the shadow side." << std::endl;
 
