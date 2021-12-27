@@ -167,7 +167,7 @@ namespace {
     res.second = glm::rotate(identity, v.op, сoordinate_t::az);
     // https://en.wikipedia.org/wiki/Unit_vector
     // rotate unit vector by axis X arount axis Z.
-    res.first = сoordinate_t().rotate( res.second );
+    res.first = сoordinate_t().rotate(res.second);
     return res;
   }
 
