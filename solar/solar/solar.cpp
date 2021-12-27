@@ -56,10 +56,10 @@ namespace glm {
 
 namespace {
 
+  using try_vec2_t = std::optional<glm::vec2>;
+
   const auto PIx2 = glm::pi<float>() * 2;
   const auto identity = glm::identity<glm::mat4>();
-
-  using try_vec2_t = std::optional<glm::vec2>;
 
   struct сoordinate_t {
   public:
@@ -89,8 +89,7 @@ namespace {
       << "axis z: " << glm::vec3(v.axises[сoordinate_t::e_az]) << std::endl;
     return os;
   }
-
-
+  
   struct idata_t {
     float op;                // orbital position
     float rpp;               // rotation period position
