@@ -19,7 +19,9 @@
 //         |  /
 //         | /
 //         |/
-//         *--------->x
+//         *---->x
+
+#define _USE_MATH_DEFINES
 
 #define DEBUG_INPUT 1
 
@@ -27,6 +29,7 @@
 #include <glm/ext.hpp>
 
 #include <ctime>
+#include <cmath>
 
 #include <utility>
 #include <iomanip>
@@ -40,6 +43,11 @@
 
 namespace glm {
 
+  std::ostream& operator<<(std::ostream& os, const glm::vec2& v) {
+    os << "vec2( x: " << v.x << ", y: " << v.y << " )";
+    return os;
+  }
+
   std::ostream& operator<<(std::ostream& os, const glm::vec3& v) {
     os << "vec3( x: " << v.x << ", y: " << v.y << ", z: " << v.z << " )";
     return os;
@@ -49,12 +57,44 @@ namespace glm {
 
 namespace {
 
-  using try_vec3_t = std::optional<glm::vec3>;
+  const float PIx2 = static_cast<float>(2 * M_PI);
+
+  using try_vec2_t = std::optional<glm::vec2>;
+
+  struct сoordinate_t {
+  public:
+      enum { e_ax, e_ay, e_az, e_count };
+  public:
+      glm::vec4 axises[e_count] = { glm::vec4(ax, 0.0f), glm::vec4(ay, 0.0f), glm::vec4(az, 0.0f) };
+      const сoordinate_t& rotate( const glm::mat4 val ) {
+        for (auto& it : axises)
+          it = val * it;
+        return *this;
+      }
+  public:
+    static const glm::vec3 ax;
+    static const glm::vec3 ay;
+    static const glm::vec3 az;
+    static const glm::vec3 zero;
+  };
+
+  const glm::vec3 сoordinate_t::ax = { 1.0f, 0.0f, 0.0f };
+  const glm::vec3 сoordinate_t::ay = { 0.0f, 1.0f, 0.0f };
+  const glm::vec3 сoordinate_t::az = { 0.0f, 0.0f, 1.0f };
+  const glm::vec3 сoordinate_t::zero = { 0.0f, 0.0f, 0.0f };
+
+  std::ostream& operator<<(std::ostream& os, const сoordinate_t& v) {
+    os << "axis x: " << glm::vec3(v.axises[сoordinate_t::e_ax]) << std::endl
+      << "axis y: " << glm::vec3(v.axises[сoordinate_t::e_ay]) << std::endl
+      << "axis z: " << glm::vec3(v.axises[сoordinate_t::e_az]) << std::endl;
+    return os;
+  }
 
   const glm::vec3 ax(1.0f, 0.0f, 0.0f);
   const glm::vec3 ay(0.0f, 1.0f, 0.0f);
   const glm::vec3 az(0.0f, 0.0f, 1.0f);
   const glm::vec3 zero(0.0f, 0.0f, 0.0f);
+
   const glm::mat4 identity(1.0f);
 
   struct idata_t {
@@ -77,14 +117,12 @@ namespace {
     tmp.tm_mday = 1;
     const std::time_t ys = std::mktime(&tmp);
     ++tmp.tm_year;
-    const float degrees = 360.0f * (std::mktime(&val) - ys) / (std::mktime(&tmp) - ys);
-    return glm::radians(degrees);
+    return PIx2 * (std::mktime(&val) - ys) / (std::mktime(&tmp) - ys);;
   }
 
   float get_rotation_position(std::tm val) {
     const std::time_t time = (val.tm_hour * 60 + val.tm_min) * 60 + val.tm_sec;
-    const float degrees = 360.0f * time / (24 * 60 * 60);
-    return glm::radians(degrees);
+    return PIx2 * time / (24 * 60 * 60);
   }
 
 #if DEBUG_INPUT
@@ -129,42 +167,41 @@ namespace {
   }
 #endif
 
-  std::pair<glm::vec4, glm::mat4> get_sun_direction(const idata_t& v) {
+  std::pair<сoordinate_t, glm::mat4> get_sun_direction(const idata_t& v) {
     // https://en.wikipedia.org/wiki/Rotation_matrix
     // creating rotate matrix around axis Z. for calculate sunlight direction.
-    std::pair<glm::vec4, glm::mat4> res;
-    res.second = glm::rotate(identity, v.op, az);
+    std::pair<сoordinate_t, glm::mat4> res;
+    res.second = glm::rotate( identity, v.op, az );
     // https://en.wikipedia.org/wiki/Unit_vector
     // rotate unit vector by axis X arount axis Z.
-    res.first = glm::vec4(zero, 0.0f) - (res.second * glm::vec4(ax, 0.0f));
+    res.first = сoordinate_t().rotate( res.second );
     return res;
   }
 
-  glm::vec4 get_planet_point(const idata_t& v, const glm::mat4& mtx) {
-    // crate two unit vector first by axis X (vector for greenwich / prime meridian ),
-    // second auxiliary vector by axis Y and rotate both on light direction angle.
-    enum { e_greenwich, e_auxiliary, e_count };
-    glm::vec4 ar[e_count] = { mtx * glm::vec4(ax, 0.0f), mtx * glm::vec4(ay, 0.0f) };
-    // crate rotate matrix around axis Z on longitude plus rotation period angle.
-    const auto lon = glm::rotate(identity, v.longitude + v.rpp, az);
-    // rotate both vector on longitude plus rotation period angle.
-    for (auto& it : ar)
-      it = lon * it;
-    // create rotare matrix arount axis auxiliary on latitude angle;
-    const auto lat = glm::rotate(identity, v.latitude, glm::vec3(ar[e_auxiliary]));
+  сoordinate_t get_planet_point(const idata_t& v, const glm::mat4& mtx) {
+    // crate coordinate system for planet point and rotate it light direction angle.
+    сoordinate_t pp = сoordinate_t().rotate(mtx);
+    // create rotare matrix arount axis y on latitude angle;
+    const auto lat = glm::rotate(identity, v.latitude, glm::vec3(pp.axises[сoordinate_t::e_ay]));
     // get planet points depens of longitude plus rotation period and latitude.
-    const auto pp = lat * ar[e_greenwich];
+    pp.rotate(lat);
     // create rotate matrix around axis Y on axial tilt angle.
-    const auto at = glm::rotate(identity, v.at, ay);
+    const auto at = glm::rotate(identity, v.at, сoordinate_t::ay);
     // rotate planet point for axial tilt angle and return;
-    return at * pp;
+    pp.rotate(at);
+    return pp;
   }
 
   // if sunlight is not reachable for planet point then return empty object.
-  try_vec3_t get_solar_panel_normal(const glm::vec3& sd, const glm::vec3& pp) {
+  try_vec2_t get_solar_panel_normal(const сoordinate_t& sd, const сoordinate_t& pp) {
     // https://en.wikipedia.org/wiki/Normal_(geometry)
     // Check up the illumination of a point planet and calculate normalе solar panel, and normalize it.
-    return glm::dot(sd, pp) < 0.0f ? try_vec3_t() : try_vec3_t(glm::normalize(sd + pp));
+    const auto& tmp = glm::dot(sd.axises[сoordinate_t::e_ax], pp.axises[сoordinate_t::e_ax]);
+    if(0.0f <= tmp)
+      return try_vec2_t();
+    // calulate angle
+    return try_vec2_t({glm::degrees(std::acos(glm::dot(glm::vec3(sd.axises[сoordinate_t::e_ay]), glm::vec3(pp.axises[сoordinate_t::e_ax])))),
+      glm::degrees(std::acos(glm::dot(glm::vec3(сoordinate_t::ay), glm::vec3(pp.axises[сoordinate_t::e_ay]))))});
   }
 
 } /* namespace */
@@ -173,21 +210,25 @@ int main( int ac, char* av[] ) {
   try {
     // request data from user
 #if DEBUG_INPUT
-    const idata_t id = get_user_data("2020 01 01 18:00:00", -85.0f, 0.0f, -23.3f);
+    idata_t id = get_user_data("2020 01 01 12:00:00", -85.0f, 0.0f, -23.3f);
+    //id.op = glm::radians(90.0f);
 #else
     const idata_t id = get_user_data();
 #endif
     std::cout << id << std::endl;
     // get sun direction and rotate matrix
     const auto sd = get_sun_direction(id);
+    std::cout << сoordinate_t() << std::endl;
     std::cout << sd.first << std::endl;
     // get planet ponint depends of longitude, latitude, axial tilt, date, time.
     const auto pp = get_planet_point(id, sd.second);
-    // calculate normal for solat panel 
+    std::cout << pp << std::endl;
+    // calculate normal for solat panel
     if (const auto spn = get_solar_panel_normal(sd.first, pp))
       std::cout << "solar panel normale is " << *spn << std::endl;
     else
       std::cout << "planet point on the shadow side." << std::endl;
+
     return 0;
   }
   catch (const std::exception& e) {
@@ -195,3 +236,4 @@ int main( int ac, char* av[] ) {
   }
   return 1;
 }
+
