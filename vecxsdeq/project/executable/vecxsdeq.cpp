@@ -42,17 +42,19 @@ std::pair<std::size_t, const char*> to_random(std::size_t val) {
 
 int main(int ac, char* av[]) {
 
-  test<std::vector<long long>>(1000000, to_front);
-  test<std::deque<long long>>(1000000, to_front);
-  test<std::list<long long>>(1000000, to_front);
+  const std::size_t count = 1000000;
+
+  test<std::vector<long long>>(count, to_front);
+  test<std::deque<long long>>(count, to_front);
+  test<std::list<long long>>(count, to_front);
   std::cout << std::endl;
-  test<std::vector<long long>>(1000000, to_end);
-  test<std::deque<long long>>(1000000, to_end);
-  test<std::list<long long>>(1000000, to_end);
+  test<std::vector<long long>>(count, to_end);
+  test<std::deque<long long>>(count, to_end);
+  test<std::list<long long>>(count, to_end);
   std::cout << std::endl;
-  test<std::vector<long long>>(1000000, to_random);
-  test<std::deque<long long>>(1000000, to_random);
-  test<std::list<long long>>(1000000, to_random);
+  test<std::vector<long long>>(count, to_random);
+  test<std::deque<long long>>(count, to_random);
+  test<std::list<long long>>(count, to_random);
 
   return 0;
 }
