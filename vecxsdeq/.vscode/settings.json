@@ -1,0 +1,19 @@
+{
+  "cmake.configureArgs": [
+    "-DUSE_WERROR=ON"
+  ],
+  "cmake.buildToolArgs": [
+    "VERBOSE=1",
+    "-j4"
+  ],
+  "cmake.buildDirectory" : "${workspaceRoot}/build_${buildType}",
+  "cmake.saveBeforeBuild": true,
+  "cmake.configureOnOpen": false,
+  "editor.rulers": [
+    100
+  ],
+  "editor.tabSize": 2,
+  "editor.wordWrapColumn": 80,
+  "cmake.saveBeforeBuild": true,
+}
+
