@@ -1,5 +1,6 @@
 #include <list>
 #include <deque>
+#include <string>
 #include <vector>
 #include <chrono>
 #include <random>
@@ -39,11 +40,30 @@ std::pair<std::size_t, const char*> to_random(std::size_t val) {
   return {std::round(d(gen)), __FUNCTION__};
 }
 
+void test() {
+  const auto start = std::chrono::system_clock::now();
+  std::list<std::size_t> t;
+  for(std::size_t i = 0; i < 1000000; ++i)
+    t.insert(t.end(), 0);
+  const std::chrono::duration<double> diff = std::chrono::system_clock::now() - start;
+  std::cout << typeid(t).name() << " type: " << " time is: " << diff.count() << std::endl;
+}
+
+void tttt( const std::string& v, bool c) {
+  std::cout << v << std::endl;
+  return;
+}
 
 int main(int ac, char* av[]) {
 
+  tttt("1", true);
+  tttt("2", false);
+
+return 0;
   const std::size_t count = 1000000;
 
+  test();
+  std::cout << std::endl;
   test<std::vector<long long>>(count, to_front);
   test<std::deque<long long>>(count, to_front);
   test<std::list<long long>>(count, to_front);
