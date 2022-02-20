@@ -31,11 +31,4 @@ namespace net {
   using buffer_allocator_t = std::function<buffer_ptr(const buffer_t::value_type*, std::size_t)>;
   using error_handle_t = std::function<void(bool, const char*, const int, const error_code_t&)>;
 
-  namespace details {
-
-    class socket_t;
-    using socket_ptr = std::unique_ptr<socket_t>;
-
-  } /* namespace details */
-
 } /* namespace net */

@@ -1,18 +1,8 @@
-#include "socket_details.h"
-
 #include "context_details.h"
 
 namespace net {
 
   namespace details {
-
-#if defined(DEBUG)
-    std::atomic_ullong socket_t::m_counrer;
-
-    socket_t::~socket_t() {
-      --m_counrer;
-    }
-#endif
 
     context_t::context_t(const error_handle_t& handelr)
       : m_handelr(handelr)
