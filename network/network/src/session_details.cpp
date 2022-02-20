@@ -1,9 +1,22 @@
+#include <functional>
+
 #include "session_details.h"
+
+namespace {
+
+  const auto defalloc = [](const net::buffer_t::value_type* data, std::size_t size) {
+    return net::buffer_ptr(new net::buffer_t(data, data + size));
+  };
+
+} /* namespace */
+
 
 namespace net {
 
   session_t::session_t()
-    : m_is_open(true) {
+    : m_is_open(true)
+    , m_buffer_allocator(defalloc)
+    , m_recv_buf(new recv_buf_t::element_type[max_buffer]) {
   }
 
   void session_t::close() {
