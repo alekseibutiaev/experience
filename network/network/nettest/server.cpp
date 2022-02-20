@@ -56,7 +56,7 @@ namespace  {
       echo->start();
     }
     void disconnected(net::session_ptr session, const net::error_code_t& err) {
-      std::cout << "disconnected" << std::endl;
+      std::cout << "disconnected " << err.message() << std::endl;
       m_echo_map.erase(session);
     }
   private:

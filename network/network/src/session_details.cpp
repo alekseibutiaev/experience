@@ -2,6 +2,10 @@
 
 namespace net {
 
+  session_t::session_t()
+    : m_is_open(true) {
+  }
+
   void session_t::close() {
     close(boost::system::errc::make_error_code(boost::system::errc::success));
   }

@@ -27,6 +27,8 @@ namespace net {
     using recv_buf_t = std::unique_ptr<buffer_t::value_type[]>;
     using write_buf_t = std::pair<const buffer_ptr, std::size_t>;
   protected:
+    session_t();
+  protected:
     std::atomic_bool m_is_open;
     buffer_allocator_t m_buffer_allocator;
     recv_buf_t m_recv_buf;
