@@ -28,6 +28,33 @@
           "ignoreFailures": true
         }
       ]
+    },
+    {
+      "name": "client",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build_Debug/network/nettest/nettest_client",
+      "args": [
+        "--host=localhost",
+        "--port=32768"
+      ],
+      "args_back": [
+        "-n",
+        "end"
+      ],
+      "stopAtEntry": true,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "console": "externalTerminal",
+      "MIMode": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ]
     }
+
   ]
 }
