@@ -13,10 +13,6 @@ namespace {
   void keep_session(const net::session_ptr) {
   }
 
-  const auto defalloc = [](const net::buffer_t::value_type* data, std::size_t size) {
-    return net::buffer_ptr(new net::buffer_t(data, data + size));
-  };
-
   template<typename socket_t>
   net::details::io_context_t& get_context(socket_t& socket) {
 #if BOOST_VERSION <= 106501
