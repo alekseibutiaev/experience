@@ -15,12 +15,14 @@ namespace cl {
           "if set then server do not send echo")
       ("host,H", boost::program_options::value(&res.host)->default_value(res.host),
           "host")
+      ("file,F", boost::program_options::value(&res.file)->default_value(res.file),
+          "file name for local socket")
       ("port,p", boost::program_options::value(&res.port)->default_value(res.port),
           "ip port. can not by 0");
     boost::program_options::variables_map vm;
     boost::program_options::store(boost::program_options::parse_command_line(ac, av, opt), vm);
     boost::program_options::notify(vm);
-    if(res.help || 0 == res.port) {
+    if(res.help || (res.file.empty() && 0 == res.port)) {
       std::cout << opt << std::endl;
       return params_try_t();
     }

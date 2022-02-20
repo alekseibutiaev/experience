@@ -39,8 +39,8 @@ namespace  {
   public:
     echo_server_t(net::context_ptr& ctx, const cl::params_t& param)
         : m_ctx(ctx)
-        , m_acceptor(net::acceptor_t::tcp_ip_v4(m_ctx, param.port))
-        , m_param(param) {
+        , m_param(param)
+        , m_acceptor(get_acceptor(m_ctx, m_param)){
       m_acceptor->accepted_callback(std::bind(&echo_server_t::accepted, this,
         std::placeholders::_1));
       m_acceptor->listen();
@@ -59,10 +59,14 @@ namespace  {
       std::cout << "disconnected " << err.message() << std::endl;
       m_echo_map.erase(session);
     }
+    net::acceptor_ptr get_acceptor(net::context_ptr& ctx, const cl::params_t& param) {
+      return param.file.empty() ? net::acceptor_t::tcp_ip_v4(m_ctx, param.port) :
+        net::acceptor_t::local_stream_protocol(m_ctx, param.file);
+    }
   private:
     net::context_ptr& m_ctx;
-    net::acceptor_ptr m_acceptor;
     const cl::params_t& m_param;
+    net::acceptor_ptr m_acceptor;
     echo_map_t m_echo_map;
   };
 
