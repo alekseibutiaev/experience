@@ -10,8 +10,11 @@
       "request": "launch",
       "program": "${workspaceFolder}/build_Debug/network/nettest/nettest_server",
       "args": [
-        "-n",
         "--port=32768"
+      ],
+      "args_back": [
+        "-n",
+        "end"
       ],
       "stopAtEntry": true,
       "cwd": "${workspaceFolder}",

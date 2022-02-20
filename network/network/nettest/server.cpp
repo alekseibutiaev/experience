@@ -39,7 +39,7 @@ namespace  {
   public:
     echo_server_t(net::context_ptr& ctx, const cl::params_t& param)
         : m_ctx(ctx)
-        , m_acceptor(net::acceptor_t::create(m_ctx, param.port))
+        , m_acceptor(net::acceptor_t::tcp_ip_v4(m_ctx, param.port))
         , m_param(param) {
       m_acceptor->accepted_callback(std::bind(&echo_server_t::accepted, this,
         std::placeholders::_1));

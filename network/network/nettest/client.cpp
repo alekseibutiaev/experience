@@ -61,7 +61,7 @@ int main(int ac, char* av[]) {
         ctx->run();
         std::cout << "stop thread" << std::endl;
       });
-      net::connector_t::connect(ctx, opt->host, opt->port, std::bind(&connected, std::placeholders::_1));
+      net::connector_t::tcp_ip_v4(ctx, opt->host, opt->port, std::bind(&connected, std::placeholders::_1));
       std::unique_lock<std::mutex> _(mtx);
       while(!echo)
         cv.wait(_);
