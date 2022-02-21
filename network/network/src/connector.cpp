@@ -9,26 +9,26 @@
 
 namespace {
 
-  using resolver_ptr = std::shared_ptr<boost::asio::ip::tcp::resolver>;
-  using endpoints_t = boost::asio::ip::tcp::resolver::iterator;
-  using tcp_ip_ptr = std::shared_ptr<net::details::tcp_ip_t>;
-
+  using resolver_ptr = std::shared_ptr<net::details::tcp_ip_protocol_t::resolver>;
+  using endpoints_t = net::details::tcp_ip_protocol_t::resolver::iterator;
+  using socket_t = net::details::session_t<net::details::tcp_ip_protocol_t>::socket_type;
+  using socket_ptr = std::shared_ptr<socket_t>;
 
   inline net::details::io_context_t& get_ctx(net::context_ptr& value) {
     return static_cast<net::details::context_t&>(*value).get_io_context();
   }
 
-  void handle_connect(tcp_ip_ptr socket, net::socket_events_t func,
+  void handle_connect(socket_ptr socket, net::socket_events_t func,
       const net::error_code_t& err, endpoints_t endpoints) {
     net::session_ptr session = err ? net::session_ptr() :
-      std::make_shared<net::details::session_t<net::details::tcp_ip_t>>(std::move(*socket));
+      std::make_shared<net::details::session_t<net::details::tcp_ip_protocol_t>>(std::move(*socket));
     func(session, err);
   }
 
   void handle_resolve(resolver_ptr, net::context_ptr& context, net::socket_events_t func,
       const net::error_code_t& err, endpoints_t endpoints) {
     if(!err) {
-      auto socket = std::make_shared<net::details::tcp_ip_t>(get_ctx(context));
+      auto socket = std::make_shared<socket_t>(get_ctx(context));
       boost::asio::async_connect(*socket, endpoints, std::bind(&handle_connect, socket, func,
         std::placeholders::_1, std::placeholders::_2));
       return;
@@ -46,10 +46,11 @@ namespace net {
 
   session_ptr connector_t::tcp_ip_v4(context_ptr& context, const std::string& host, const std::string& port) {
     auto& ctx = get_ctx(context);
-    net::details::tcp_ip_t socket(ctx);
-    boost::system::error_code err;
-    boost::asio::connect(socket, boost::asio::ip::tcp::resolver(ctx).resolve({host, port}), err);
-    return err ? net::session_ptr() : std::make_shared<net::details::session_t<net::details::tcp_ip_t>>(std::move(socket));
+    socket_t socket(ctx);
+    error_code_t err;
+    boost::asio::connect(socket, net::details::tcp_ip_protocol_t::resolver(ctx).resolve({host, port}), err);
+    return err ? net::session_ptr() :
+      std::make_shared<net::details::session_t<net::details::tcp_ip_protocol_t>>(std::move(socket));
   }
 
   void connector_t::tcp_ip_v4(context_ptr& context, const std::string& host, const unsigned short& port,
@@ -59,7 +60,7 @@ namespace net {
 
   void connector_t::tcp_ip_v4(context_ptr& context, const std::string& host, const std::string& port,
       socket_events_t func) {
-    auto rsl = std::make_shared<boost::asio::ip::tcp::resolver>(get_ctx(context));
+    auto rsl = std::make_shared<net::details::tcp_ip_protocol_t::resolver>(get_ctx(context));
     rsl->async_resolve({host, port}, std::bind(&handle_resolve, rsl, std::ref(context), func,
       std::placeholders::_1, std::placeholders::_2));
   }

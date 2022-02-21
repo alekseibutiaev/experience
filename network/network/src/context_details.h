@@ -1,7 +1,7 @@
 #pragma once
 
-#include <boost/version.hpp>
 #include <boost/asio.hpp>
+#include <boost/version.hpp>
 
 #include "nettype_details.h"
 

@@ -1,8 +1,11 @@
 #pragma once
+
 #include <atomic>
+#include <memory>
 #include <functional>
 
 #include <boost/asio.hpp>
+//#include <boost/asio/ssl.hpp>
 #include <boost/lexical_cast.hpp>
 
 #include "nettype_details.h"
@@ -37,17 +40,24 @@ namespace net {
 
   namespace details {
 
+/*
 #if BOOST_VERSION <= 106501
     using tcp_ip_t = boost::asio::basic_stream_socket<boost::asio::ip::tcp>;
     using local_stream_protocol_t = boost::asio::basic_stream_socket<boost::asio::local::stream_protocol>;
+    using ssh_t = boost::asio::ssl::stream<boost::asio::ip::tcp::socket>;
 #else
     using ip_tcp_t = boost::asio::basic_stream_socket<boost::asio::ip::tcp, boost::asio::io_context::executor_type>;
 #endif
+*/
 
-    template<typename socket_t>
+    template<typename protocol_t>
     class session_t : public net::session_t {
     public:
-      session_t(socket_t&& socket)
+      using protocol_type = protocol_t;
+      using socket_type = typename protocol_t::socket;
+//      using socket_ptr = std::shared_ptr<socket_ptr>;
+    public:
+      session_t(socket_type&& socket)
         : m_socket(std::move(socket)) {
       }
     private:
@@ -90,7 +100,7 @@ namespace net {
         }
       }
     private:
-      socket_t m_socket;
+      socket_type m_socket;
     };
 
   } /* namespace details */

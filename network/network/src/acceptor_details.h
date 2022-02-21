@@ -4,6 +4,7 @@
 
 #include "nettypes.h"
 #include "context_details.h"
+#include "nettype_details.h"
 #include "session_details.h"
 
 #include "acceptor.h"
@@ -19,12 +20,14 @@ namespace net {
 
   namespace details {
 
-    template<typename socket_t>
+    template<typename protocol_t>
     class acceptor_t : public net::acceptor_t {
     public:
-      using protocol_acceptor_t =  typename socket_t::protocol_type::acceptor;
+      using protocol_type = protocol_t;
+      using acceptor_type =  typename protocol_t::acceptor;
+      using socket_type = typename protocol_t::socket;
     public:
-      acceptor_t(context_ptr& context, protocol_acceptor_t&& acceptor)
+      acceptor_t(context_ptr& context, acceptor_type&& acceptor)
         : m_context(context)
         , m_acceptor(std::move(acceptor))
         , m_socket(static_cast<details::context_t&>(*context).get_io_context())
@@ -50,23 +53,27 @@ namespace net {
       }
       void accepted_handler(const error_code_t& err) {
         if(!m_acceptor.is_open()) {
-          m_error(true, __FUNCTION__, __LINE__,
-              boost::asio::error::make_error_code(boost::asio::error::connection_aborted));
+          m_error(true, __FUNCTION__, __LINE__, ca);
           return;
         }
         if(err)
             m_error(false, __FUNCTION__, __LINE__, err);
         else if(m_accepted)
-          m_accepted(std::make_shared<details::session_t<socket_t>>(std::move(m_socket)), err);
+          m_accepted(std::make_shared<details::session_t<protocol_type>>(std::move(m_socket)), err);
         listen();
       }
     private:
       context_ptr& m_context;
-      protocol_acceptor_t m_acceptor;
-      socket_t m_socket;
+      acceptor_type m_acceptor;
+      socket_type m_socket;
       error_handle_t m_error;
       socket_events_t m_accepted;
+    private:
+      static const net::error_code_t ca;
     };
+
+    template<typename protocol_t>
+    const net::error_code_t acceptor_t<protocol_t>::ca = boost::asio::error::make_error_code(boost::asio::error::connection_aborted);
 
 
   } /* namespace details */
