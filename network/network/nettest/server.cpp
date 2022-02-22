@@ -41,10 +41,8 @@ namespace  {
         : m_ctx(ctx)
         , m_param(param)
         , m_acceptor(get_acceptor(m_ctx, m_param)){
-      m_acceptor->accepted_callback(std::bind(&echo_server_t::accepted, this,
-        std::placeholders::_1));
-      m_acceptor->error_callback(std::bind(&echo_server_t::empty_error, this,
-        std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
+      m_acceptor->accepted_callback(std::bind(&echo_server_t::accepted, this, std::placeholders::_1));
+      m_acceptor->error_callback(std::bind(&echo_server_t::empty_error, this, std::placeholders::_1));
       m_acceptor->listen();
     }
   private:
@@ -65,8 +63,8 @@ namespace  {
       return param.file.empty() ? net::acceptor_t::tcp_ip_v4(m_ctx, param.port) :
         net::acceptor_t::local_stream_protocol(m_ctx, param.file);
     }
-    void empty_error(bool, const char*, const int, const net::error_code_t& err) {
-      std::cout << err.message() << std::endl;
+    void empty_error(const net::error_code_t& err) {
+      std::cout << "Error: " << err.message() << std::endl;
     }
   private:
     net::context_ptr& m_ctx;
@@ -75,7 +73,7 @@ namespace  {
     echo_map_t m_echo_map;
   };
 
-  void error_handle(bool, const char*, const int, const net::error_code_t&){
+  void error_handle(const net::error_code_t&) {
   }
 
 } /* namespace */

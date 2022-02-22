@@ -11,7 +11,7 @@
 
 namespace {
 
-  void empty_error(bool, const char*, const int, const net::error_code_t&) {
+  void empty_error(const net::error_code_t&) {
   }
 
 } /* namespace */
@@ -31,8 +31,7 @@ namespace net {
         : m_context(context)
         , m_acceptor(std::move(acceptor))
         , m_socket(static_cast<details::context_t&>(*context).get_io_context())
-        , m_error(std::bind(empty_error, std::placeholders::_1, std::placeholders::_2,
-            std::placeholders::_3, std::placeholders::_4)) {
+        , m_error(std::bind(empty_error, std::placeholders::_1)) {
       }
       ~acceptor_t() {
         close();
@@ -53,11 +52,11 @@ namespace net {
       }
       void accepted_handler(const error_code_t& err) {
         if(!m_acceptor.is_open()) {
-          m_error(true, __FUNCTION__, __LINE__, ca);
+          m_error(ca);
           return;
         }
         if(err)
-            m_error(false, __FUNCTION__, __LINE__, err);
+            m_error(err);
         else if(m_accepted)
           m_accepted(std::make_shared<details::session_t<protocol_type>>(std::move(m_socket)), err);
         listen();
