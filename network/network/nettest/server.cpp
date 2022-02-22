@@ -43,6 +43,8 @@ namespace  {
         , m_acceptor(get_acceptor(m_ctx, m_param)){
       m_acceptor->accepted_callback(std::bind(&echo_server_t::accepted, this,
         std::placeholders::_1));
+      m_acceptor->error_callback(std::bind(&echo_server_t::empty_error, this,
+        std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
       m_acceptor->listen();
     }
   private:
@@ -62,6 +64,9 @@ namespace  {
     net::acceptor_ptr get_acceptor(net::context_ptr& ctx, const cl::params_t& param) {
       return param.file.empty() ? net::acceptor_t::tcp_ip_v4(m_ctx, param.port) :
         net::acceptor_t::local_stream_protocol(m_ctx, param.file);
+    }
+    void empty_error(bool, const char*, const int, const net::error_code_t& err) {
+      std::cout << err.message() << std::endl;
     }
   private:
     net::context_ptr& m_ctx;

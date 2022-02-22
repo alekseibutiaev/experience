@@ -15,12 +15,10 @@ namespace net {
   }
 
   acceptor_ptr acceptor_t::local_stream_protocol(context_ptr& context, const std::string& file) {
-    using stream_protocol_t = boost::asio::local::stream_protocol;
-    auto ep = details::local_stream_protocol_t::endpoint(file);
     auto ac = details::local_stream_protocol_t::acceptor(
       static_cast<details::context_t&>(*context).get_io_context(),
       details::local_stream_protocol_t::endpoint(file));
-    return acceptor_ptr(new net::details::acceptor_t<stream_protocol_t>(context, std::move(ac)));
+    return acceptor_ptr(new net::details::acceptor_t<details::local_stream_protocol_t>(context, std::move(ac)));
   }
 
 } /* namespace net */

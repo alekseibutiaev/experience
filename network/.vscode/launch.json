@@ -10,9 +10,10 @@
       "request": "launch",
       "program": "${workspaceFolder}/build_Debug/network/nettest/nettest_server",
       "args": [
-        "--file=testfile"
+        "--port=32768",
       ],
       "args_back": [
+        "--file=testfile",
         "--port=32768",
         "-n",
         "end"

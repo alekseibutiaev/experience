@@ -75,7 +75,6 @@ namespace net {
     template<typename protocol_t>
     const net::error_code_t acceptor_t<protocol_t>::ca = boost::asio::error::make_error_code(boost::asio::error::connection_aborted);
 
-
   } /* namespace details */
 
 } /* namespace net */
