@@ -55,7 +55,6 @@ namespace net {
     public:
       using protocol_type = protocol_t;
       using socket_type = typename protocol_t::socket;
-//      using socket_ptr = std::shared_ptr<socket_ptr>;
     public:
       session_t(socket_type&& socket)
         : m_socket(std::move(socket)) {

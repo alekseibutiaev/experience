@@ -47,7 +47,7 @@ namespace {
     cv.notify_one();
   }
 
-  void error_handle(bool, const char*, const int, const net::error_code_t&){
+  void error_handle(const net::error_code_t&){
   }
 
 } /* namespace */
@@ -55,8 +55,7 @@ namespace {
 int main(int ac, char* av[]) {
   try {
     if(const auto& opt = cl::get_options(ac, av)) {
-      net::context_ptr ctx = net::context_t::create(std::bind(error_handle, std::placeholders::_1,
-        std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
+      net::context_ptr ctx = net::context_t::create(std::bind(error_handle, std::placeholders::_1));
       std::thread th([&ctx](){
         ctx->run();
         std::cout << "stop thread" << std::endl;
