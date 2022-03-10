@@ -10,8 +10,10 @@ namespace net {
   public:
     static session_ptr tcp_ip_v4(context_ptr& context, const std::string& host, const unsigned short& port);
     static session_ptr tcp_ip_v4(context_ptr& context, const std::string& host, const std::string& port);
-    static void tcp_ip_v4(context_ptr& context, const std::string& host, const unsigned short& port, socket_events_t func);
-    static void tcp_ip_v4(context_ptr& context, const std::string& host, const std::string& port, socket_events_t func);
+    static void tcp_ip_v4(context_ptr& context, socket_events_t func, const std::string& host, const unsigned short& port);
+    static void tcp_ip_v4(context_ptr& context, socket_events_t func, const std::string& host, const std::string& port);
+    static session_ptr local_stream(context_ptr& context, const std::string& file);
+    static void local_stream(context_ptr& context, socket_events_t func, const std::string& file);
   };
 
 } /* namespace net */
