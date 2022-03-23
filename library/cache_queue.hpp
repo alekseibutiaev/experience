@@ -14,7 +14,7 @@ namespace tools {
 
   public:
 
-    void add(const type_t& value) {
+    void push(const type_t& value) {
       if(!m_cache_node.empty()) {
         m_queue.splice(m_queue.end(), m_cache_node, m_cache_node.begin());
         m_queue.back() = value;
@@ -23,11 +23,21 @@ namespace tools {
         m_queue.push_back(value);
     }
 
+
+    void push(type_t&& value) {
+      if(!m_cache_node.empty()) {
+        m_queue.splice(m_queue.end(), m_cache_node, m_cache_node.begin());
+        m_queue.back() = std::move(value);
+      }
+      else
+        m_queue.push_back(std::move(value));
+    }
+
     type_t& front() {
       return m_queue.front();
     }
 
-    void store_front() {
+    void pop() {
       m_cache_node.splice(m_cache_node.end(), m_queue, m_queue.begin());
     }
 

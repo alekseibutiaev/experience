@@ -5,9 +5,11 @@
 #include <functional>
 #include <condition_variable>
 
+#include "cache_queue.hpp"
+
 namespace tools {
 
-  template< unsigned int N >
+  template< std::size_t N >
   class thread_pool {
 
   public:
@@ -26,8 +28,9 @@ namespace tools {
     void start() {
       try {
         m_stop = false;
-        for(unsigned int i = 0; i < N; ++i)
-          m_threads[ i ] = std::move(std::thread([&](){thread_routine();}));
+        select_empty(m_idle_notice);
+        for(std::size_t i = 0; i < N; ++i)
+          m_threads[ i ] = std::move(std::thread(&thread_pool<N>::thread_routine, this, i));
         return;
       }
       catch(const std::exception& e) {
@@ -54,13 +57,14 @@ namespace tools {
     void execute(function_t value) {
       std::unique_lock<std::mutex> _(m_mtx);
       if(!m_stop){
-        m_queue.add(value);
+        m_queue.push(std::move(value));
         m_cv.notify_one();
       }
     }
 
   public:
 
+    function_t m_idle_notice;
     exception_notice_t m_exception_notice;
     thread_notice_t m_thread_started;
     thread_notice_t m_thread_finished;
@@ -68,30 +72,46 @@ namespace tools {
 
   public:
 
-    static const unsigned int  thread_count = N;
+    static const std::size_t thread_count = N;
 
   private:
 
-    typedef cache_queue<function_t> storage_t;
+    using checkit_t = bool(thread_pool<N>::*)(const std::size_t&);
+    using storage_t = cache_queue<function_t>;
 
   private:
 
-    void thread_routine() {
+    void select_empty(const function_t& value) {
+      m_empty = value ? &thread_pool<N>::idle_detect : &thread_pool<N>::queue_check;
+    }
+
+    bool queue_check(const std::size_t& idx) {
+      return m_wait[idx] = m_queue.empty();
+    }
+
+    bool idle_detect(const std::size_t& idx) {
+      m_wait[idx] = m_queue.empty();
+      std::size_t t = 0;
+      if(thread_count == (t = std::count(std::begin(m_wait), std::end(m_wait), true)))
+        m_idle_notice();
+      return m_wait[idx];
+    }
+
+    void thread_routine(const std::size_t idx) {
       try {
         thread_started(std::this_thread::get_id());
         storage_t::value_t f;
-        while (!m_queue.empty() || !m_stop) {
+        m_wait[idx] = (this->*m_empty)(idx);
+        while (!m_wait[idx] || !m_stop) {
           {
             std::unique_lock<std::mutex> _(m_mtx);
-            while (!m_stop && m_queue.empty())
-              m_cv.wait(_);
-            if (m_queue.empty())
+            m_cv.wait(_, [&]{return !(!m_stop && (this->*m_empty)(idx));});
+            if (m_wait[idx])
               continue;
-            f.swap(m_queue.front());
-            m_queue.store_front();
+            f = std::move(m_queue.front());
+            m_queue.pop();
           }
-          if (f)
-            execute_internal(f);
+          execute_internal(std::move(f));
         }
         thread_finished(std::this_thread::get_id());
       }
@@ -151,6 +171,8 @@ namespace tools {
   private:
 
     bool m_stop = false;
+    bool m_wait[ N ] = { false };
+    checkit_t m_empty;
     storage_t m_queue;
     std::mutex m_mtx;
     std::condition_variable m_cv;
@@ -163,10 +185,10 @@ namespace tools {
 
   };
 
-  template< unsigned int N >
+  template< std::size_t N >
   const std::string thread_pool<N>::error = " error: ";
 
-  template< unsigned int N >
+  template< std::size_t N >
   const std::string thread_pool<N>::unknown_error = " unknown error.";
 
 }; /* namespace tools */
