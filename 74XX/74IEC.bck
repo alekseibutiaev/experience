@@ -23,6 +23,14 @@ K TTL NAND 2-input
 F https://www.ti.com/lit/ds/symlink/sn7400.pdf
 $ENDCMP
 #
+$CMP 74XX04
+D 6-ch, NOT
+$ENDCMP
+#
+$CMP 74XX05
+D 6-ch, NOT Open Collector
+$ENDCMP
+#
 $CMP 74XX08
 D 4-ch, 2-input, AND gates
 K TTL AND 2-input
@@ -40,15 +48,82 @@ D 3-ch, 3-input NAND gates
 K TTL 3-input NAND
 $ENDCMP
 #
+$CMP 74XX1002
+D 4-ch, 2-input, NAND gates Open Collector
+K TTL NAND 2-input
+F https://www.ti.com/lit/ds/symlink/sn7400.pdf
+$ENDCMP
+#
+$CMP 74XX1003
+D 4-ch, 2-input, NAND gates Open Collector
+K TTL NAND 2-input
+F https://www.ti.com/lit/ds/symlink/sn7400.pdf
+$ENDCMP
+#
+$CMP 74XX1004
+D 6-ch, NOT
+$ENDCMP
+#
+$CMP 74XX1005
+D 6-ch, NOT
+$ENDCMP
+#
+$CMP 74XX1008
+D 4-ch, 2-input, AND gates
+K TTL AND 2-input
+F https://www.ti.com/lit/ds/symlink/sn7408.pdf
+$ENDCMP
+#
+$CMP 74XX1020
+D 2-ch, 4-input, NAND gate
+K TTL 4-input MAND
+$ENDCMP
+#
+$CMP 74XX1032
+D 4-ch, 2-input, OR gates
+K TTL OR 2-input
+F https://www.ti.com/lit/ds/symlink/sn7432.pdf
+$ENDCMP
+#
+$CMP 74XX11
+D 3-ch, 3-input NAND gates
+K TTL 3-input NAND
+$ENDCMP
+#
+$CMP 74XX12
+D 3-ch, 3-input NAND gates Open Colector
+K TTL 3-input NAND
+$ENDCMP
+#
 $CMP 74XX136
 D 4-ch, 2-input, XOR gates Open Collector
 K TTL XOR 2-input Open Collector
 F https://www.ti.com/lit/ds/symlink/sn74136.pdf
 $ENDCMP
 #
+$CMP 74XX15
+D 3-ch, 3-input NAND gates Open Collector
+K TTL 3-input NAND
+$ENDCMP
+#
 $CMP 74XX20
+D 2-ch, 4-input, NAND gate
+K TTL 4-input MAND
+$ENDCMP
+#
+$CMP 74XX21
 D 2-ch, 4-input, AND gate
 K TTL 4-input AND
+$ENDCMP
+#
+$CMP 74XX22
+D 2-ch, 4-input, NAND gate Open Collector
+K TTL 4-input MAND
+$ENDCMP
+#
+$CMP 74XX27
+D 3-ch, 3-input NOR gates Open Collector
+K TTL 3-input NOR
 $ENDCMP
 #
 $CMP 74XX30
@@ -62,10 +137,38 @@ K TTL OR 2-input
 F https://www.ti.com/lit/ds/symlink/sn7432.pdf
 $ENDCMP
 #
+$CMP 74XX33
+D 4-ch, 2-input, NOR gates Open Collector
+K TTL NOR 2-inputs
+$ENDCMP
+#
+$CMP 74XX54
+D 4-Wide AND-OR-invert Gates
+$ENDCMP
+#
 $CMP 74XX86
 D 4-ch, 2-input, XOR gates
 K TTL XOR 2-input
 F https://www.ti.com/lit/ds/symlink/sn7486.pdf
+$ENDCMP
+#
+$CMP 74xx1000
+D 4-ch, 2-input, NAND gates
+K TTL NAND 2-input
+F https://www.ti.com/lit/ds/symlink/sn7400.pdf
+$ENDCMP
+#
+$CMP 74xx1011
+D 3-ch, 3-input NAND gates
+K TTL 3-input NAND
+$ENDCMP
+#
+$CMP 74xx1034
+D 6-ch, OT
+$ENDCMP
+#
+$CMP 74xx1035
+D 6-ch, Buffer Open Collector
 $ENDCMP
 #
 #End Doc Library
