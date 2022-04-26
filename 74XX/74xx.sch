@@ -68,4 +68,26 @@ F 3 "" H 2750 2650 50  0001 C CNN
 	2    2750 2350
 	1    0    0    -1  
 $EndComp
+$Comp
+L 74IEC:74AHC00 U?
+U 1 1 6267D21E
+P 5300 3100
+F 0 "U?" H 5300 3365 50  0000 C CNN
+F 1 "74AHC00" H 5300 3274 50  0000 C CNN
+F 2 "" H 5300 2850 50  0001 C CNN
+F 3 "https://www.ti.com/lit/ds/symlink/sn7400.pdf" H 5300 3250 50  0001 C CNN
+	1    5300 3100
+	1    0    0    -1  
+$EndComp
+$Comp
+L 74IEC:74HC00 U?
+U 1 1 6267E1DC
+P 5800 3100
+F 0 "U?" H 5800 3365 50  0000 C CNN
+F 1 "74HC00" H 5800 3274 50  0000 C CNN
+F 2 "" H 5800 2850 50  0001 C CNN
+F 3 "https://www.ti.com/lit/ds/symlink/sn7400.pdf" H 5800 3250 50  0001 C CNN
+	1    5800 3100
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC
