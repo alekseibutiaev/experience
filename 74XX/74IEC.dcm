@@ -2700,7 +2700,7 @@ D 4-bit Binary Counters
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
-$CMP 74xx1034
+$CMP 74XX1034
 D 6-ch, Inverting Drivers Buffered Output
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
