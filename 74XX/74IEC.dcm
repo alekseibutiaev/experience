@@ -139,6 +139,7 @@ $ENDCMP
 #
 $CMP 74163
 D Synchronous 4-bit binary counter with synchronous clear
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
 $CMP 74164
@@ -337,6 +338,7 @@ $ENDCMP
 #
 $CMP 74AC163
 D Synchronous 4-bit binary counter with synchronous clear
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
 $CMP 74AC164
@@ -478,6 +480,7 @@ $ENDCMP
 #
 $CMP 74ACT163
 D Synchronous 4-bit binary counter with synchronous clear
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
 $CMP 74ACT164
@@ -890,6 +893,7 @@ $ENDCMP
 #
 $CMP 74ALS163
 D Synchronous 4-bit binary counter with synchronous clear
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
 $CMP 74ALS164
@@ -1104,6 +1108,7 @@ $ENDCMP
 #
 $CMP 74AS163
 D Synchronous 4-bit binary counter with synchronous clear
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
 $CMP 74AS174
@@ -1298,6 +1303,7 @@ $ENDCMP
 #
 $CMP 74F163
 D Synchronous 4-bit binary counter with synchronous clear
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
 $CMP 74F174
@@ -1481,6 +1487,7 @@ $ENDCMP
 #
 $CMP 74HC163
 D Synchronous 4-bit binary counter with synchronous clear
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
 $CMP 74HC164
@@ -1677,6 +1684,11 @@ D 6-ch, NOT, Schimitt-Trigger
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
+$CMP 74HCT163
+D Synchronous 4-bit binary counter with synchronous clear
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
 $CMP 74HCT164
 D 8-bit Parallel-out Serial Shift Registers
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
@@ -1760,10 +1772,6 @@ $ENDCMP
 $CMP 74HCY161
 D Synchronous 4-bit binary counter with asynchronous clear
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
-$ENDCMP
-#
-$CMP 74HCY163
-D Synchronous 4-bit binary counter with synchronous clear
 $ENDCMP
 #
 $CMP 74L00
@@ -1936,6 +1944,7 @@ $ENDCMP
 #
 $CMP 74LS163
 D Synchronous 4-bit binary counter with synchronous clear
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
 $CMP 74LS164
@@ -2161,6 +2170,7 @@ $ENDCMP
 #
 $CMP 74LV163
 D Synchronous 4-bit binary counter with synchronous clear
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
 $CMP 74LV164
@@ -2716,6 +2726,7 @@ $ENDCMP
 #
 $CMP 74XX54
 D 4-Wide AND-OR-invert Gates
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
 $CMP 74XX7001
