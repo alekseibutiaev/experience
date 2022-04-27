@@ -3,7 +3,7 @@ set -x
 while IFS= read -r line
 do
   R=`echo ${line} | grep ALIAS`
-  if [ -z ${R} ]
+  if [ -z "${R}" ]
   then
     echo ${line}
   else
