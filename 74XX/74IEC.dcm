@@ -39,6 +39,11 @@ D 6-ch, NOT Open Collector, Buffered Output
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
+$CMP 7407
+D 6-ch, NOT Open Collector, Buffered Output
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
 $CMP 7408
 D 4-ch, 2-input, AND gates
 K TTL AND 2-input
@@ -49,6 +54,12 @@ $CMP 7409
 D 4-ch, 2-input, AND gates Open Collector
 K TTL AND 2-input
 F https://www.ti.com/lit/ds/symlink/sn7408.pdf
+$ENDCMP
+#
+$CMP 7410
+D 3-ch, 3-input NAND gates
+K TTL 3-input NAND
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
 $CMP 7412
@@ -69,6 +80,18 @@ K TTL 4-input MAND
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
+$CMP 74132
+D 4-ch, 2-input, NAND gates, Schmitt-Trigger Inputs
+K TTL NAND 2-input
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74136
+D 4-ch, 2-input, XOR gates Open Collector
+K TTL XOR 2-input Open Collector
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
 $CMP 7414
 D 6-ch, NOT, Schimitt-Trigger
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
@@ -76,6 +99,36 @@ $ENDCMP
 #
 $CMP 7416
 D 6-ch, NOT Open Collector, high-voltage outputs
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74160
+D Synchronous 4-bit decade counter with direct clear
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74161
+D Synchronous 4-bit binary counter with asynchronous clear
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74162
+D Synchronous 4-bit decade counter with synchronous clear
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 7417
+D 6-ch, Open Collector
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74190
+D Synchronous 4-bit Up/down Decade And Binary Counters
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74191
+D Synchronous 4-bit Up/down Binary Counters
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
@@ -120,6 +173,12 @@ D 2-ch, d-type positive-edge-triggered flip-flops with clear and preset
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
+$CMP 7486
+D 4-ch, 2-input, XOR gates
+K TTL XOR 2-input
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
 $CMP 74AC00
 D 4-ch, 2-input, NAND gates
 K TTL NAND 2-input
@@ -148,6 +207,12 @@ K TTL AND 2-input
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
+$CMP 74AC10
+D 3-ch, 3-input NAND gates
+K TTL 3-input NAND
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
 $CMP 74AC11
 D 3-ch, 3-input NAND gates
 K TTL 3-input NAND
@@ -160,8 +225,29 @@ K TTL 4-input MAND
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
+$CMP 74AC132
+D 4-ch, 2-input, NAND gates, Schmitt-Trigger Inputs
+K TTL NAND 2-input
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
 $CMP 74AC14
 D 6-ch, NOT, Schimitt-Trigger
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74AC161
+D Synchronous 4-bit binary counter with asynchronous clear
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74AC190
+D Synchronous 4-bit Up/down Decade And Binary Counters
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74AC191
+D Synchronous 4-bit Up/down Binary Counters
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
@@ -194,6 +280,12 @@ D 2-ch, d-type positive-edge-triggered flip-flops with clear and preset
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
+$CMP 74AC86
+D 4-ch, 2-input, XOR gates
+K TTL XOR 2-input
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
 $CMP 74ACT00
 D 4-ch, 2-input, NAND gates
 K TTL NAND 2-input
@@ -222,6 +314,12 @@ K TTL AND 2-input
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
+$CMP 74ACT10
+D 3-ch, 3-input NAND gates
+K TTL 3-input NAND
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
 $CMP 74ACT11
 D 3-ch, 3-input NAND gates
 K TTL 3-input NAND
@@ -234,8 +332,29 @@ K TTL 4-input MAND
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
+$CMP 74ACT132
+D 4-ch, 2-input, NAND gates, Schmitt-Trigger Inputs
+K TTL NAND 2-input
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
 $CMP 74ACT14
 D 6-ch, NOT, Schimitt-Trigger
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74ACT161
+D Synchronous 4-bit binary counter with asynchronous clear
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74ACT190
+D Synchronous 4-bit Up/down Decade And Binary Counters
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74ACT191
+D Synchronous 4-bit Up/down Binary Counters
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
@@ -268,6 +387,12 @@ D 2-ch, d-type positive-edge-triggered flip-flops with clear and preset
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
+$CMP 74ACT86
+D 4-ch, 2-input, XOR gates
+K TTL XOR 2-input
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
 $CMP 74AHC00
 D 4-ch, 2-input, NAND gates
 K TTL NAND 2-input
@@ -296,6 +421,12 @@ K TTL AND 2-input
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
+$CMP 74AHC132
+D 4-ch, 2-input, NAND gates, Schmitt-Trigger Inputs
+K TTL NAND 2-input
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
 $CMP 74AHC14
 D 6-ch, NOT, Schimitt-Trigger
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
@@ -309,6 +440,12 @@ $ENDCMP
 #
 $CMP 74AHC74
 D 2-ch, d-type positive-edge-triggered flip-flops with clear and preset
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74AHC86
+D 4-ch, 2-input, XOR gates
+K TTL XOR 2-input
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
@@ -335,6 +472,12 @@ K TTL AND 2-input
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
+$CMP 74AHCT132
+D 4-ch, 2-input, NAND gates, Schmitt-Trigger Inputs
+K TTL NAND 2-input
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
 $CMP 74AHCT32
 D 4-ch, 2-input, OR gates
 K TTL OR 2-input
@@ -343,6 +486,12 @@ $ENDCMP
 #
 $CMP 74AHCT74
 D 2-ch, d-type positive-edge-triggered flip-flops with clear and preset
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74AHCT86
+D 4-ch, 2-input, XOR gates
+K TTL XOR 2-input
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
@@ -403,6 +552,12 @@ K TTL AND 2-input
 F https://www.ti.com/lit/ds/symlink/sn7408.pdf
 $ENDCMP
 #
+$CMP 74ALS10
+D 3-ch, 3-input NAND gates
+K TTL 3-input NAND
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
 $CMP 74ALS1000
 D 4-ch, 2-input, NAND gates
 K TTL NAND 2-input
@@ -437,6 +592,12 @@ K TTL AND 2-input
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
+$CMP 74ALS1010
+D 3-ch, 3-input NAND gates, Buffered Output
+K TTL 3-input NAND
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
 $CMP 74ALS1011
 D 3-ch, 3-input NAND gates, Buffered Output
 K TTL 3-input NAND
@@ -455,6 +616,11 @@ K TTL OR 2-input
 F https://www.ti.com/lit/ds/symlink/sn7432.pdf
 $ENDCMP
 #
+$CMP 74ALS1035
+D 6-ch, Open Collector
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
 $CMP 74ALS11
 D 3-ch, 3-input NAND gates
 K TTL 3-input NAND
@@ -467,6 +633,17 @@ K TTL 3-input NAND
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
+$CMP 74ALS133
+D 1-ch, 13-input NAND Gates
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74ALS136
+D 4-ch, 2-input, XOR gates Open Collector
+K TTL XOR 2-input Open Collector
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
 $CMP 74ALS140
 D 2-ch, 4-input, NAND gate, Buffered Output
 K TTL 4-input MAND
@@ -476,6 +653,31 @@ $ENDCMP
 $CMP 74ALS15
 D 4-ch, 2-input, AND gates Open Collector
 K TTL AND 2-input
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74ALS160
+D Synchronous 4-bit decade counter with direct clear
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74ALS161
+D Synchronous 4-bit binary counter with asynchronous clear
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74ALS162
+D Synchronous 4-bit decade counter with synchronous clear
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74ALS190
+D Synchronous 4-bit Up/down Decade And Binary Counters
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74ALS191
+D Synchronous 4-bit Up/down Binary Counters
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
@@ -520,6 +722,12 @@ D 2-ch, d-type positive-edge-triggered flip-flops with clear and preset
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
+$CMP 74ALS86
+D 4-ch, 2-input, XOR gates
+K TTL XOR 2-input
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
 $CMP 74ALVC00
 D 4-ch, 2-input, NAND gates
 K TTL NAND 2-input
@@ -540,6 +748,12 @@ $ENDCMP
 $CMP 74ALVC08
 D 4-ch, 2-input, AND gates
 K TTL AND 2-input
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74ALVC10
+D 3-ch, 3-input NAND gates
+K TTL 3-input NAND
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
@@ -568,6 +782,12 @@ $ENDCMP
 $CMP 74AS08
 D 4-ch, 2-input, AND gates
 K TTL AND 2-input
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74AS10
+D 3-ch, 3-input NAND gates
+K TTL 3-input NAND
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
@@ -600,6 +820,27 @@ K TTL 3-input NAND
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
+$CMP 74AS136
+D 4-ch, 2-input, XOR gates Open Collector
+K TTL XOR 2-input Open Collector
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74AS160
+D Synchronous 4-bit decade counter with direct clear
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74AS161
+D Synchronous 4-bit binary counter with asynchronous clear
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74AS162
+D Synchronous 4-bit decade counter with synchronous clear
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
 $CMP 74AS20
 D 2-ch, 4-input, NAND gate
 K TTL 4-input MAND
@@ -629,6 +870,12 @@ D 2-ch, d-type positive-edge-triggered flip-flops with clear and preset
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
+$CMP 74AS86
+D 4-ch, 2-input, XOR gates
+K TTL XOR 2-input
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
 $CMP 74AUC00
 D 4-ch, 2-input, NAND gates
 K TTL NAND 2-input
@@ -641,6 +888,11 @@ K TTL NOR 2-inputs
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
+$CMP 74AUC07
+D 6-ch, Open Collector
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
 $CMP 74AUC08
 D 4-ch, 2-input, AND gates
 K TTL AND 2-input
@@ -649,6 +901,11 @@ $ENDCMP
 #
 $CMP 74AUC14
 D 6-ch, NOT, Schimitt-Trigger
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74AUC17
+D 6-ch, Open Collector, Buffered Output
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
@@ -697,9 +954,35 @@ K TTL AND 2-input
 F https://www.ti.com/lit/ds/symlink/sn7408.pdf
 $ENDCMP
 #
+$CMP 74F10
+D 3-ch, 3-input NAND gates
+K TTL 3-input NAND
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
 $CMP 74F11
 D 3-ch, 3-input NAND gates
 K TTL 3-input NAND
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74F160
+D Synchronous 4-bit decade counter with direct clear
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74F161
+D Synchronous 4-bit binary counter with asynchronous clear
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74F162
+D Synchronous 4-bit decade counter with synchronous clear
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74F190
+D Synchronous 4-bit Up/down Decade And Binary Counters
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
@@ -735,6 +1018,12 @@ $ENDCMP
 #
 $CMP 74F74
 D 2-ch, d-type positive-edge-triggered flip-flops with clear and preset
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74F86
+D 4-ch, 2-input, XOR gates
+K TTL XOR 2-input
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
@@ -778,14 +1067,56 @@ K TTL AND 2-input
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
+$CMP 74HC10
+D 3-ch, 3-input NAND gates
+K TTL 3-input NAND
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
 $CMP 74HC11
 D 3-ch, 3-input NAND gates
 K TTL 3-input NAND
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
+$CMP 74HC132
+D 4-ch, 2-input, NAND gates, Schmitt-Trigger Inputs
+K TTL NAND 2-input
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74HC133
+D 1-ch, 13-input NAND Gates
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
 $CMP 74HC14
 D 6-ch, NOT, Schimitt-Trigger
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74HC160
+D Synchronous 4-bit decade counter with direct clear
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74HC161
+D Synchronous 4-bit binary counter with asynchronous clear
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74HC162
+D Synchronous 4-bit decade counter with synchronous clear
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74HC190
+D Synchronous 4-bit Up/down Decade And Binary Counters
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74HC191
+D Synchronous 4-bit Up/down Binary Counters
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
@@ -813,6 +1144,12 @@ K TTL OR 2-input
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
+$CMP 74HC386
+D 4-ch, 2-input, XOR gates
+K TTL XOR 2-input
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
 $CMP 74HC4049
 D 6-ch, NOT
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
@@ -826,6 +1163,12 @@ $ENDCMP
 #
 $CMP 74HC74
 D 2-ch, d-type positive-edge-triggered flip-flops with clear and preset
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74HC86
+D 4-ch, 2-input, XOR gates
+K TTL XOR 2-input
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
@@ -863,14 +1206,31 @@ K TTL AND 2-input
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
+$CMP 74HCT10
+D 3-ch, 3-input NAND gates
+K TTL 3-input NAND
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
 $CMP 74HCT11
 D 3-ch, 3-input NAND gates
 K TTL 3-input NAND
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
+$CMP 74HCT132
+D 4-ch, 2-input, NAND gates, Schmitt-Trigger Inputs
+K TTL NAND 2-input
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
 $CMP 74HCT14
 D 6-ch, NOT, Schimitt-Trigger
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74HCT191
+D Synchronous 4-bit Up/down Binary Counters
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
@@ -903,8 +1263,19 @@ D 2-ch, d-type positive-edge-triggered flip-flops with clear and preset
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
+$CMP 74HCT86
+D 4-ch, 2-input, XOR gates
+K TTL XOR 2-input
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
 $CMP 74HCU04
 D 6-ch, NOT
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74HCY161
+D Synchronous 4-bit binary counter with asynchronous clear
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
@@ -953,6 +1324,11 @@ D 6-ch, NOT Open Collector, Buffered Output
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
+$CMP 74LS07
+D 6-ch, NOT Open Collector, Buffered Output
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
 $CMP 74LS08
 D 4-ch, 2-input, AND gates
 K TTL AND 2-input
@@ -963,6 +1339,12 @@ $CMP 74LS09
 D 4-ch, 2-input, AND gates Open Collector
 K TTL AND 2-input
 F https://www.ti.com/lit/ds/symlink/sn7408.pdf
+$ENDCMP
+#
+$CMP 74LS10
+D 3-ch, 3-input NAND gates
+K TTL 3-input NAND
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
 $CMP 74LS1004
@@ -992,6 +1374,18 @@ K TTL 4-input MAND
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
+$CMP 74LS132
+D 4-ch, 2-input, NAND gates, Schmitt-Trigger Inputs
+K TTL NAND 2-input
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74LS136
+D 4-ch, 2-input, XOR gates Open Collector
+K TTL XOR 2-input Open Collector
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
 $CMP 74LS14
 D 6-ch, NOT, Schimitt-Trigger
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
@@ -1003,6 +1397,21 @@ K TTL AND 2-input
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
+$CMP 74LS160
+D Synchronous 4-bit decade counter with direct clear
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74LS161
+D Synchronous 4-bit binary counter with asynchronous clear
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74LS162
+D Synchronous 4-bit decade counter with synchronous clear
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
 $CMP 74LS18
 D 2-ch, 4-input, NAND gate, Schmitt-Trigger Inputs
 K TTL 4-input MAND
@@ -1011,6 +1420,16 @@ $ENDCMP
 #
 $CMP 74LS19
 D 6-ch, NOT, Schimitt-Trigger
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74LS190
+D Synchronous 4-bit Up/down Decade And Binary Counters
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74LS191
+D Synchronous 4-bit Up/down Binary Counters
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
@@ -1032,6 +1451,12 @@ K TTL 4-input MAND
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
+$CMP 74LS24
+D 4-ch, 2-input, NAND gates, Schmitt-Trigger Inputs
+K TTL NAND 2-input
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
 $CMP 74LS30
 D 1-ch, 8-input NAND gates
 K TTL 8-in NAND
@@ -1044,6 +1469,12 @@ K TTL OR 2-input
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
+$CMP 74LS386
+D 4-ch, 2-input, XOR gates
+K TTL XOR 2-input
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
 $CMP 74LS40
 D 2-ch, 4-input, NAND gate, Buffered Output
 K TTL 4-input MAND
@@ -1052,6 +1483,12 @@ $ENDCMP
 #
 $CMP 74LS74
 D 2-ch, d-type positive-edge-triggered flip-flops with clear and preset
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74LS86
+D 4-ch, 2-input, XOR gates
+K TTL XOR 2-input
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
@@ -1082,9 +1519,20 @@ D 6-ch, NOT Open Collector, Buffered Output
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
+$CMP 74LV07
+D 6-ch, Open Collector, Buffered Output
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
 $CMP 74LV08
 D 4-ch, 2-input, AND gates
 K TTL AND 2-input
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74LV10
+D 3-ch, 3-input NAND gates
+K TTL 3-input NAND
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
@@ -1094,8 +1542,19 @@ K TTL 3-input NAND
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
+$CMP 74LV132
+D 4-ch, 2-input, NAND gates, Schmitt-Trigger Inputs
+K TTL NAND 2-input
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
 $CMP 74LV14
 D 6-ch, NOT, Schimitt-Trigger
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74LV161
+D Synchronous 4-bit binary counter with asynchronous clear
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
@@ -1122,6 +1581,12 @@ D 2-ch, d-type positive-edge-triggered flip-flops with clear and preset
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
+$CMP 74LV86
+D 4-ch, 2-input, XOR gates
+K TTL XOR 2-input
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
 $CMP 74LVC00
 D 4-ch, 2-input, NAND gates
 K TTL NAND 2-input
@@ -1144,9 +1609,20 @@ D 6-ch, NOT Open Collector, Buffered Output
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
+$CMP 74LVC07
+D 6-ch, Open Collector
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
 $CMP 74LVC08
 D 4-ch, 2-input, AND gates
 K TTL AND 2-input
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74LVC10
+D 3-ch, 3-input NAND gates
+K TTL 3-input NAND
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
@@ -1163,6 +1639,12 @@ $ENDCMP
 #
 $CMP 74LVC74
 D 2-ch, d-type positive-edge-triggered flip-flops with clear and preset
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74LVC86
+D 4-ch, 2-input, XOR gates
+K TTL XOR 2-input
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
@@ -1210,15 +1692,42 @@ K TTL AND 2-input
 F https://www.ti.com/lit/ds/symlink/sn7408.pdf
 $ENDCMP
 #
+$CMP 74S10
+D 3-ch, 3-input NAND gates
+K TTL 3-input NAND
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
 $CMP 74S11
 D 3-ch, 3-input NAND gates
 K TTL 3-input NAND
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
+$CMP 74S132
+D 4-ch, 2-input, NAND gates, Schmitt-Trigger Inputs
+K TTL NAND 2-input
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74S133
+D 1-ch, 13-input NAND Gates
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
 $CMP 74S15
 D 4-ch, 2-input, AND gates Open Collector
 K TTL AND 2-input
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74S161
+D Synchronous 4-bit binary counter with synchronous clear
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74S162
+D Synchronous 4-bit decade counter with synchronous clear
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
@@ -1254,6 +1763,12 @@ $ENDCMP
 #
 $CMP 74S74
 D 2-ch, d-type positive-edge-triggered flip-flops with clear and preset
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74S86
+D 4-ch, 2-input, XOR gates
+K TTL XOR 2-input
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
@@ -1296,6 +1811,11 @@ D 6-ch, NOT Open Collector, Buffered Output
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
+$CMP 74XX07
+D 6-ch, Open Collector
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
 $CMP 74XX08
 D 4-ch, 2-input, AND gates
 K TTL AND 2-input
@@ -1311,11 +1831,32 @@ $ENDCMP
 $CMP 74XX10
 D 3-ch, 3-input NAND gates
 K TTL 3-input NAND
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74XX107
+D Dual J-K flip-flops with clear
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
 $CMP 74XX11
 D 3-ch, 3-input NAND gates
 K TTL 3-input NAND
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74XX112
+D Dual J-K negative-edge-triggered flip-flops with clear and preset
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74XX113
+D Dual J-K negative-edge-triggered flip-flops with preset
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74XX114
+D Dual J-K negative-edge-triggered flip-flops with preset, common clear and common clock
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
@@ -1336,10 +1877,15 @@ K TTL 4-input MAND
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
+$CMP 74XX133
+D 1-ch, 13-input NAND Gates
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
 $CMP 74XX136
 D 4-ch, 2-input, XOR gates Open Collector
 K TTL XOR 2-input Open Collector
-F https://www.ti.com/lit/ds/symlink/sn74136.pdf
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
 $CMP 74XX14
@@ -1350,6 +1896,54 @@ $ENDCMP
 $CMP 74XX15
 D 3-ch, 3-input NAND gates Open Collector
 K TTL 3-input NAND
+$ENDCMP
+#
+$CMP 74XX160
+D Synchronous 4-bit decade counter with asynchronous clear
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74XX161
+D Synchronous 4-bit binary counter with asynchronous clear
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74XX162
+D Synchronous 4-bit decade counter with synchronous clear
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74XX163
+D Synchronous 4-bit binary counter with synchronous clear
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74XX17
+D 6-ch, Schmitt-Trigger Inputs
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74XX175
+D Quadruple d-type flip-flops with clear
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74XX190
+D Synchronous 4-bit Up/down Decade And Binary Counters
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74XX191
+D Synchronous 4-bit Up/down Binary Counters
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74XX192
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74XX193
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
 $CMP 74XX20
@@ -1367,6 +1961,12 @@ $ENDCMP
 $CMP 74XX22
 D 2-ch, 4-input, NAND gate Open Collector
 K TTL 4-input MAND
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74XX24
+D 4-ch, 2-input, NAND gates, Schmitt-Trigger Inputs
+K TTL NAND 2-input
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
@@ -1392,6 +1992,11 @@ D 4-ch, 2-input, NOR gates Open Collector
 K TTL NOR 2-inputs
 $ENDCMP
 #
+$CMP 74XX393
+D 2-ch 4-bit Binary Counters
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
 $CMP 74XX54
 D 4-Wide AND-OR-invert Gates
 $ENDCMP
@@ -1407,10 +2012,23 @@ D 2-ch, d-type positive-edge-triggered flip-flops with clear and preset
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
+$CMP 74XX75
+D 4-bit Bistable latches
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
 $CMP 74XX86
 D 4-ch, 2-input, XOR gates
 K TTL XOR 2-input
-F https://www.ti.com/lit/ds/symlink/sn7486.pdf
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74XX90
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74XX93
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
 $CMP 74xx1034
