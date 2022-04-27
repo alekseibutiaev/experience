@@ -141,6 +141,11 @@ $CMP 74163
 D Synchronous 4-bit binary counter with synchronous clear
 $ENDCMP
 #
+$CMP 74164
+D 8-bit Parallel-out Serial Shift Registers
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
 $CMP 7417
 D 6-ch, Open Collector
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
@@ -334,6 +339,11 @@ $CMP 74AC163
 D Synchronous 4-bit binary counter with synchronous clear
 $ENDCMP
 #
+$CMP 74AC164
+D 8-bit Parallel-out Serial Shift Registers
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
 $CMP 74AC174
 D 6-ch. D-type Flip-flops With Common Clear and Common Reset
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
@@ -468,6 +478,11 @@ $ENDCMP
 #
 $CMP 74ACT163
 D Synchronous 4-bit binary counter with synchronous clear
+$ENDCMP
+#
+$CMP 74ACT164
+D 8-bit Parallel-out Serial Shift Registers
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
 $CMP 74ACT174
@@ -875,6 +890,11 @@ $ENDCMP
 #
 $CMP 74ALS163
 D Synchronous 4-bit binary counter with synchronous clear
+$ENDCMP
+#
+$CMP 74ALS164
+D 8-bit Parallel-out Serial Shift Registers
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
 $CMP 74ALS174
@@ -1463,6 +1483,11 @@ $CMP 74HC163
 D Synchronous 4-bit binary counter with synchronous clear
 $ENDCMP
 #
+$CMP 74HC164
+D 8-bit Parallel-out Serial Shift Registers
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
 $CMP 74HC174
 D 6-ch. D-type Flip-flops With Common Clear and Common Reset
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
@@ -1649,6 +1674,11 @@ $ENDCMP
 #
 $CMP 74HCT14
 D 6-ch, NOT, Schimitt-Trigger
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74HCT164
+D 8-bit Parallel-out Serial Shift Registers
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
@@ -1908,6 +1938,11 @@ $CMP 74LS163
 D Synchronous 4-bit binary counter with synchronous clear
 $ENDCMP
 #
+$CMP 74LS164
+D 8-bit Parallel-out Serial Shift Registers
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
 $CMP 74LS174
 D 6-ch. D-type Flip-flops With Common Clear and Common Reset
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
@@ -2126,6 +2161,11 @@ $ENDCMP
 #
 $CMP 74LV163
 D Synchronous 4-bit binary counter with synchronous clear
+$ENDCMP
+#
+$CMP 74LV164
+D 8-bit Parallel-out Serial Shift Registers
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
 $CMP 74LV174
@@ -2560,6 +2600,16 @@ $ENDCMP
 #
 $CMP 74XX163
 D Synchronous 4-bit binary counter with synchronous clear
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74XX164
+D 8-bit Parallel-out Serial Shift Registers
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74XX165
+D Parallel-Load 8-bit Shift Registers
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
