@@ -162,6 +162,11 @@ K TTL NAND 2-input
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
+$CMP 74393
+D 2-ch 4-bit Binary Counters
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
 $CMP 7440
 D 2-ch, 4-input, NAND gate, Buffered Outpu
 K TTL 4-input MAND
@@ -1150,6 +1155,11 @@ K TTL XOR 2-input
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
+$CMP 74HC393
+D 2-ch 4-bit Binary Counters
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
 $CMP 74HC4049
 D 6-ch, NOT
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
@@ -1255,6 +1265,11 @@ $ENDCMP
 $CMP 74HCT32
 D 4-ch, 2-input, OR gates
 K TTL OR 2-input
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74HCT393
+D 2-ch 4-bit Binary Counters
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
@@ -1472,6 +1487,11 @@ $ENDCMP
 $CMP 74LS386
 D 4-ch, 2-input, XOR gates
 K TTL XOR 2-input
+F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
+$ENDCMP
+#
+$CMP 74LS393
+D 2-ch 4-bit Binary Counters
 F https://www.ti.com/lit/ug/scyd013b/scyd013b.pdf
 $ENDCMP
 #
