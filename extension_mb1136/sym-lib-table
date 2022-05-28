@@ -1,4 +1,0 @@
-(sym_lib_table
-  (lib (name st)(type Legacy)(uri ${KIPRJMOD}/st.lib)(options "")(descr ""))
-  (lib (name usb_connector_switch)(type Legacy)(uri ${KIPRJMOD}/usb_connector_switch.lib)(options "")(descr ""))
-)
