@@ -1,0 +1,487 @@
+{
+  "buildType": {
+    "default": "Debug",
+    "description": "Build Type Selection",
+    "choices": {
+      "Debug": {
+        "short": "Debug system boost",
+        "long": "Build with no optimizations and debugging information for system boost",
+        "buildType": "Debug",
+        "settings": {
+          "CMAKE_BUILD_TYPE": "Debug"
+        }
+      },
+      "Release": {
+        "short": "Release system boost",
+        "long": "Build with optimizations and without debuging information for system boost",
+        "buildType": "Release",
+        "settings": {
+          "CMAKE_BUILD_TYPE": "Release"
+        }
+      },
+      "Debug boost_1_63_0": {
+        "short": "Debug boost_1_63_0",
+        "long": "Build with no optimizations and debugging information for boost_1_63_0",
+        "buildType": "Debug",
+        "settings": {
+          "CMAKE_BUILD_TYPE": "Debug",
+          "Boost_NO_BOOST_CMAKE" : "TRUE",
+          "Boost_NO_SYSTEM_PATHS" : "TRUE",
+          "BOOST_ROOT" : "/home/boost/boost_1_63_0"
+        }
+      },
+      "Release_boost_1_63_0": {
+        "short": "Release boost_1_63_0",
+        "long": "Build with optimizations and without debuging information for for boost_1_63_0",
+        "buildType": "Release",
+        "settings": {
+          "CMAKE_BUILD_TYPE": "Release",
+          "Boost_NO_BOOST_CMAKE" : "TRUE",
+          "Boost_NO_SYSTEM_PATHS" : "TRUE",
+          "BOOST_ROOT" : "/home/boost/boost_1_63_0"
+        }
+      },
+      "Debug boost_1_64_0": {
+        "short": "Debug boost_1_64_0",
+        "long": "Build with no optimizations and debugging information for boost_1_64_0",
+        "buildType": "Debug",
+        "settings": {
+          "CMAKE_BUILD_TYPE": "Debug",
+          "Boost_NO_BOOST_CMAKE" : "TRUE",
+          "Boost_NO_SYSTEM_PATHS" : "TRUE",
+          "BOOST_ROOT" : "/home/boost/boost_1_64_0"
+        }
+      },
+      "Release_boost_1_64_0": {
+        "short": "Release boost_1_64_0",
+        "long": "Build with optimizations and without debuging information for for boost_1_64_0",
+        "buildType": "Release",
+        "settings": {
+          "CMAKE_BUILD_TYPE": "Release",
+          "Boost_NO_BOOST_CMAKE" : "TRUE",
+          "Boost_NO_SYSTEM_PATHS" : "TRUE",
+          "BOOST_ROOT" : "/home/boost/boost_1_64_0"
+        }
+      },
+      "Debug boost_1_65_0": {
+        "short": "Debug boost_1_65_0",
+        "long": "Build with no optimizations and debugging information for boost_1_65_0",
+        "buildType": "Debug",
+        "settings": {
+          "CMAKE_BUILD_TYPE": "Debug",
+          "Boost_NO_BOOST_CMAKE" : "TRUE",
+          "Boost_NO_SYSTEM_PATHS" : "TRUE",
+          "BOOST_ROOT" : "/home/boost/boost_1_65_0"
+        }
+      },
+      "Release_boost_1_65_0": {
+        "short": "Release boost_1_65_0",
+        "long": "Build with optimizations and without debuging information for for boost_1_65_0",
+        "buildType": "Release",
+        "settings": {
+          "CMAKE_BUILD_TYPE": "Release",
+          "Boost_NO_BOOST_CMAKE" : "TRUE",
+          "Boost_NO_SYSTEM_PATHS" : "TRUE",
+          "BOOST_ROOT" : "/home/boost/boost_1_65_0"
+        }
+      },
+      "Debug boost_1_65_1": {
+        "short": "Debug boost_1_65_1",
+        "long": "Build with no optimizations and debugging information for boost_1_65_1",
+        "buildType": "Debug",
+        "settings": {
+          "CMAKE_BUILD_TYPE": "Debug",
+          "Boost_NO_BOOST_CMAKE" : "TRUE",
+          "Boost_NO_SYSTEM_PATHS" : "TRUE",
+          "BOOST_ROOT" : "/home/boost/boost_1_65_1"
+        }
+      },
+      "Release_boost_1_65_1": {
+        "short": "Release boost_1_65_1",
+        "long": "Build with optimizations and without debuging information for for boost_1_65_1",
+        "buildType": "Release",
+        "settings": {
+          "CMAKE_BUILD_TYPE": "Release",
+          "Boost_NO_BOOST_CMAKE" : "TRUE",
+          "Boost_NO_SYSTEM_PATHS" : "TRUE",
+          "BOOST_ROOT" : "/home/boost/boost_1_66_0"
+        }
+      },
+      "Debug boost_1_66_0": {
+        "short": "Debug boost_1_66_0",
+        "long": "Build with no optimizations and debugging information for boost_1_66_0",
+        "buildType": "Debug",
+        "settings": {
+          "CMAKE_BUILD_TYPE": "Debug",
+          "Boost_NO_BOOST_CMAKE" : "TRUE",
+          "Boost_NO_SYSTEM_PATHS" : "TRUE",
+          "BOOST_ROOT" : "/home/boost/boost_1_66_0"
+        }
+      },
+      "Release_boost_1_66_0": {
+        "short": "Release boost_1_66_0",
+        "long": "Build with optimizations and without debuging information for for boost_1_66_0",
+        "buildType": "Release",
+        "settings": {
+          "CMAKE_BUILD_TYPE": "Release",
+          "Boost_NO_BOOST_CMAKE" : "TRUE",
+          "Boost_NO_SYSTEM_PATHS" : "TRUE",
+          "BOOST_ROOT" : "/home/boost/boost_1_66_0"
+        }
+      },
+      "Debug boost_1_67_0": {
+        "short": "Debug boost_1_67_0",
+        "long": "Build with no optimizations and debugging information for boost_1_67_0",
+        "buildType": "Debug",
+        "settings": {
+          "CMAKE_BUILD_TYPE": "Debug",
+          "Boost_NO_BOOST_CMAKE" : "TRUE",
+          "Boost_NO_SYSTEM_PATHS" : "TRUE",
+          "BOOST_ROOT" : "/home/boost/boost_1_67_0"
+        }
+      },
+      "Release_boost_1_67_0": {
+        "short": "Release boost_1_67_0",
+        "long": "Build with optimizations and without debuging information for for boost_1_67_0",
+        "buildType": "Release",
+        "settings": {
+          "CMAKE_BUILD_TYPE": "Release",
+          "Boost_NO_BOOST_CMAKE" : "TRUE",
+          "Boost_NO_SYSTEM_PATHS" : "TRUE",
+          "BOOST_ROOT" : "/home/boost/boost_1_67_0"
+        }
+      },
+      "Debug boost_1_68_0": {
+        "short": "Debug boost_1_68_0",
+        "long": "Build with no optimizations and debugging information for boost_1_68_0",
+        "buildType": "Debug",
+        "settings": {
+          "CMAKE_BUILD_TYPE": "Debug",
+          "Boost_NO_BOOST_CMAKE" : "TRUE",
+          "Boost_NO_SYSTEM_PATHS" : "TRUE",
+          "BOOST_ROOT" : "/home/boost/boost_1_68_0"
+        }
+      },
+      "Release_boost_1_68_0": {
+        "short": "Release boost_1_68_0",
+        "long": "Build with optimizations and without debuging information for for boost_1_68_0",
+        "buildType": "Release",
+        "settings": {
+          "CMAKE_BUILD_TYPE": "Release",
+          "Boost_NO_BOOST_CMAKE" : "TRUE",
+          "Boost_NO_SYSTEM_PATHS" : "TRUE",
+          "BOOST_ROOT" : "/home/boost/boost_1_68_0"
+        }
+      },
+      "Debug boost_1_69_0": {
+        "short": "Debug boost_1_69_0",
+        "long": "Build with no optimizations and debugging information for boost_1_69_0",
+        "buildType": "Debug",
+        "settings": {
+          "CMAKE_BUILD_TYPE": "Debug",
+          "Boost_NO_BOOST_CMAKE" : "TRUE",
+          "Boost_NO_SYSTEM_PATHS" : "TRUE",
+          "BOOST_ROOT" : "/home/boost/boost_1_69_0"
+        }
+      },
+      "Release_boost_1_69_0": {
+        "short": "Release boost_1_69_0",
+        "long": "Build with optimizations and without debuging information for for boost_1_69_0",
+        "buildType": "Release",
+        "settings": {
+          "CMAKE_BUILD_TYPE": "Release",
+          "Boost_NO_BOOST_CMAKE" : "TRUE",
+          "Boost_NO_SYSTEM_PATHS" : "TRUE",
+          "BOOST_ROOT" : "/home/boost/boost_1_69_0"
+        }
+      },
+      "Debug boost_1_70_0": {
+        "short": "Debug boost_1_70_0",
+        "long": "Build with no optimizations and debugging information for boost_1_70_0",
+        "buildType": "Debug",
+        "settings": {
+          "CMAKE_BUILD_TYPE": "Debug",
+          "Boost_NO_BOOST_CMAKE" : "TRUE",
+          "Boost_NO_SYSTEM_PATHS" : "TRUE",
+          "BOOST_ROOT" : "/home/boost/boost_1_70_0"
+        }
+      },
+      "Release_boost_1_70_0": {
+        "short": "Release boost_1_70_0",
+        "long": "Build with optimizations and without debuging information for for boost_1_70_0",
+        "buildType": "Release",
+        "settings": {
+          "CMAKE_BUILD_TYPE": "Release",
+          "Boost_NO_BOOST_CMAKE" : "TRUE",
+          "Boost_NO_SYSTEM_PATHS" : "TRUE",
+          "BOOST_ROOT" : "/home/boost/boost_1_70_0"
+        }
+      },
+      "Debug boost_1_71_0": {
+        "short": "Debug boost_1_71_0",
+        "long": "Build with no optimizations and debugging information for boost_1_71_0",
+        "buildType": "Debug",
+        "settings": {
+          "CMAKE_BUILD_TYPE": "Debug",
+          "Boost_NO_BOOST_CMAKE" : "TRUE",
+          "Boost_NO_SYSTEM_PATHS" : "TRUE",
+          "BOOST_ROOT" : "/home/boost/boost_1_71_0"
+        }
+      },
+      "Release_boost_1_71_0": {
+        "short": "Release boost_1_71_0",
+        "long": "Build with optimizations and without debuging information for for boost_1_71_0",
+        "buildType": "Release",
+        "settings": {
+          "CMAKE_BUILD_TYPE": "Release",
+          "Boost_NO_BOOST_CMAKE" : "TRUE",
+          "Boost_NO_SYSTEM_PATHS" : "TRUE",
+          "BOOST_ROOT" : "/home/boost/boost_1_71_0"
+        }
+      },
+      "Debug boost_1_72_0": {
+        "short": "Debug boost_1_72_0",
+        "long": "Build with no optimizations and debugging information for boost_1_72_0",
+        "buildType": "Debug",
+        "settings": {
+          "CMAKE_BUILD_TYPE": "Debug",
+          "Boost_NO_BOOST_CMAKE" : "TRUE",
+          "Boost_NO_SYSTEM_PATHS" : "TRUE",
+          "BOOST_ROOT" : "/home/boost/boost_1_72_0"
+        }
+      },
+      "Release_boost_1_72_0": {
+        "short": "Release boost_1_72_0",
+        "long": "Build with optimizations and without debuging information for for boost_1_72_0",
+        "buildType": "Release",
+        "settings": {
+          "CMAKE_BUILD_TYPE": "Release",
+          "Boost_NO_BOOST_CMAKE" : "TRUE",
+          "Boost_NO_SYSTEM_PATHS" : "TRUE",
+          "BOOST_ROOT" : "/home/boost/boost_1_72_0"
+        }
+      },
+      "Debug boost_1_73_0": {
+        "short": "Debug boost_1_73_0",
+        "long": "Build with no optimizations and debugging information for boost_1_73_0",
+        "buildType": "Debug",
+        "settings": {
+          "CMAKE_BUILD_TYPE": "Debug",
+          "Boost_NO_BOOST_CMAKE" : "TRUE",
+          "Boost_NO_SYSTEM_PATHS" : "TRUE",
+          "BOOST_ROOT" : "/home/boost/boost_1_73_0"
+        }
+      },
+      "Release_boost_1_73_0": {
+        "short": "Release boost_1_73_0",
+        "long": "Build with optimizations and without debuging information for for boost_1_73_0",
+        "buildType": "Release",
+        "settings": {
+          "CMAKE_BUILD_TYPE": "Release",
+          "Boost_NO_BOOST_CMAKE" : "TRUE",
+          "Boost_NO_SYSTEM_PATHS" : "TRUE",
+          "BOOST_ROOT" : "/home/boost/boost_1_73_0"
+        }
+      },
+      "Debug boost_1_74_0": {
+        "short": "Debug boost_1_74_0",
+        "long": "Build with no optimizations and debugging information for boost_1_74_0",
+        "buildType": "Debug",
+        "settings": {
+          "CMAKE_BUILD_TYPE": "Debug",
+          "Boost_NO_BOOST_CMAKE" : "TRUE",
+          "Boost_NO_SYSTEM_PATHS" : "TRUE",
+          "BOOST_ROOT" : "/home/boost/boost_1_74_0"
+        }
+      },
+      "Release_boost_1_74_0": {
+        "short": "Release boost_1_74_0",
+        "long": "Build with optimizations and without debuging information for for boost_1_74_0",
+        "buildType": "Release",
+        "settings": {
+          "CMAKE_BUILD_TYPE": "Release",
+          "Boost_NO_BOOST_CMAKE" : "TRUE",
+          "Boost_NO_SYSTEM_PATHS" : "TRUE",
+          "BOOST_ROOT" : "/home/boost/boost_1_74_0"
+        }
+      },
+      "Debug boost_1_75_0": {
+        "short": "Debug boost_1_75_0",
+        "long": "Build with no optimizations and debugging information for boost_1_75_0",
+        "buildType": "Debug",
+        "settings": {
+          "CMAKE_BUILD_TYPE": "Debug",
+          "Boost_NO_BOOST_CMAKE" : "TRUE",
+          "Boost_NO_SYSTEM_PATHS" : "TRUE",
+          "BOOST_ROOT" : "/home/boost/boost_1_75_0"
+        }
+      },
+      "Release_boost_1_75_0": {
+        "short": "Release boost_1_75_0",
+        "long": "Build with optimizations and without debuging information for for boost_1_75_0",
+        "buildType": "Release",
+        "settings": {
+          "CMAKE_BUILD_TYPE": "Release",
+          "Boost_NO_BOOST_CMAKE" : "TRUE",
+          "Boost_NO_SYSTEM_PATHS" : "TRUE",
+          "BOOST_ROOT" : "/home/boost/boost_1_75_0"
+        }
+      },
+      "Debug boost_1_76_0": {
+        "short": "Debug boost_1_76_0",
+        "long": "Build with no optimizations and debugging information for boost_1_76_0",
+        "buildType": "Debug",
+        "settings": {
+          "CMAKE_BUILD_TYPE": "Debug",
+          "Boost_NO_BOOST_CMAKE" : "TRUE",
+          "Boost_NO_SYSTEM_PATHS" : "TRUE",
+          "BOOST_ROOT" : "/home/boost/boost_1_76_0"
+        }
+      },
+      "Release_boost_1_76_0": {
+        "short": "Release boost_1_76_0",
+        "long": "Build with optimizations and without debuging information for for boost_1_76_0",
+        "buildType": "Release",
+        "settings": {
+          "CMAKE_BUILD_TYPE": "Release",
+          "Boost_NO_BOOST_CMAKE" : "TRUE",
+          "Boost_NO_SYSTEM_PATHS" : "TRUE",
+          "BOOST_ROOT" : "/home/boost/boost_1_76_0"
+        }
+      },
+      "Debug boost_1_77_0": {
+        "short": "Debug boost_1_77_0",
+        "long": "Build with no optimizations and debugging information for boost_1_77_0",
+        "buildType": "Debug",
+        "settings": {
+          "CMAKE_BUILD_TYPE": "Debug",
+          "Boost_NO_BOOST_CMAKE" : "TRUE",
+          "Boost_NO_SYSTEM_PATHS" : "TRUE",
+          "BOOST_ROOT" : "/home/boost/boost_1_77_0"
+        }
+      },
+      "Release_boost_1_77_0": {
+        "short": "Release boost_1_77_0",
+        "long": "Build with optimizations and without debuging information for for boost_1_77_0",
+        "buildType": "Release",
+        "settings": {
+          "CMAKE_BUILD_TYPE": "Release",
+          "Boost_NO_BOOST_CMAKE" : "TRUE",
+          "Boost_NO_SYSTEM_PATHS" : "TRUE",
+          "BOOST_ROOT" : "/home/boost/boost_1_77_0"
+        }
+      },
+      "Debug boost_1_78_0": {
+        "short": "Debug boost_1_78_0",
+        "long": "Build with no optimizations and debugging information for boost_1_78_0",
+        "buildType": "Debug",
+        "settings": {
+          "CMAKE_BUILD_TYPE": "Debug",
+          "Boost_NO_BOOST_CMAKE" : "TRUE",
+          "Boost_NO_SYSTEM_PATHS" : "TRUE",
+          "BOOST_ROOT" : "/home/boost/boost_1_78_0"
+        }
+      },
+      "Release_boost_1_78_0": {
+        "short": "Release boost_1_78_0",
+        "long": "Build with optimizations and without debuging information for for boost_1_78_0",
+        "buildType": "Release",
+        "settings": {
+          "CMAKE_BUILD_TYPE": "Release",
+          "Boost_NO_BOOST_CMAKE" : "TRUE",
+          "Boost_NO_SYSTEM_PATHS" : "TRUE",
+          "BOOST_ROOT" : "/home/boost/boost_1_78_0"
+        }
+      },
+      "Debug boost_1_79_0": {
+        "short": "Debug boost_1_79_0",
+        "long": "Build with no optimizations and debugging information for boost_1_79_0",
+        "buildType": "Debug",
+        "settings": {
+          "CMAKE_BUILD_TYPE": "Debug",
+          "Boost_NO_BOOST_CMAKE" : "TRUE",
+          "Boost_NO_SYSTEM_PATHS" : "TRUE",
+          "BOOST_ROOT" : "/home/boost/boost_1_79_0"
+        }
+      },
+      "Release_boost_1_79_0": {
+        "short": "Release boost_1_79_0",
+        "long": "Build with optimizations and without debuging information for for boost_1_79_0",
+        "buildType": "Release",
+        "settings": {
+          "CMAKE_BUILD_TYPE": "Release",
+          "Boost_NO_BOOST_CMAKE" : "TRUE",
+          "Boost_NO_SYSTEM_PATHS" : "TRUE",
+          "BOOST_ROOT" : "/home/boost/boost_1_79_0"
+        }
+      },
+      "Debug boost_1_80_0": {
+        "short": "Debug boost_1_80_0",
+        "long": "Build with no optimizations and debugging information for boost_1_80_0",
+        "buildType": "Debug",
+        "settings": {
+          "CMAKE_BUILD_TYPE": "Debug",
+          "Boost_NO_BOOST_CMAKE" : "TRUE",
+          "Boost_NO_SYSTEM_PATHS" : "TRUE",
+          "BOOST_ROOT" : "/home/boost/boost_1_80_0"
+        }
+      },
+      "Release_boost_1_80_0": {
+        "short": "Release boost_1_80_0",
+        "long": "Build with optimizations and without debuging information for for boost_1_80_0",
+        "buildType": "Release",
+        "settings": {
+          "CMAKE_BUILD_TYPE": "Release",
+          "Boost_NO_BOOST_CMAKE" : "TRUE",
+          "Boost_NO_SYSTEM_PATHS" : "TRUE",
+          "BOOST_ROOT" : "/home/boost/boost_1_80_0"
+        }
+      },
+      "Debug boost_1_81_0": {
+        "short": "Debug boost_1_81_0",
+        "long": "Build with no optimizations and debugging information for boost_1_81_0",
+        "buildType": "Debug",
+        "settings": {
+          "CMAKE_BUILD_TYPE": "Debug",
+          "Boost_NO_BOOST_CMAKE" : "TRUE",
+          "Boost_NO_SYSTEM_PATHS" : "TRUE",
+          "BOOST_ROOT" : "/home/boost/boost_1_81_0"
+        }
+      },
+      "Release_boost_1_81_0": {
+        "short": "Release boost_1_81_0",
+        "long": "Build with optimizations and without debuging information for for boost_1_81_0",
+        "buildType": "Release",
+        "settings": {
+          "CMAKE_BUILD_TYPE": "Release",
+          "Boost_NO_BOOST_CMAKE" : "TRUE",
+          "Boost_NO_SYSTEM_PATHS" : "TRUE",
+          "BOOST_ROOT" : "/home/boost/boost_1_81_0"
+        }
+      },
+      "Debug boost_1_XX_0": {
+        "short": "Debug boost_1_XX_0",
+        "long": "Build with no optimizations and debugging information for boost_1_XX_0",
+        "buildType": "Debug",
+        "settings": {
+          "CMAKE_BUILD_TYPE": "Debug",
+          "Boost_NO_BOOST_CMAKE" : "TRUE",
+          "Boost_NO_SYSTEM_PATHS" : "TRUE",
+          "BOOST_ROOT" : "/home/boost/boost_1_XX_0"
+        }
+      },
+      "Release_boost_1_XX_0": {
+        "short": "Release boost_1_XX_0",
+        "long": "Build with optimizations and without debuging information for for boost_1_XX_0",
+        "buildType": "Release",
+        "settings": {
+          "CMAKE_BUILD_TYPE": "Release",
+          "Boost_NO_BOOST_CMAKE" : "TRUE",
+          "Boost_NO_SYSTEM_PATHS" : "TRUE",
+          "BOOST_ROOT" : "/home/boost/boost_1_XX_0"
+        }
+      }
+    }
+  }
+}
+ 
