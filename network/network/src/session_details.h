@@ -20,8 +20,10 @@ namespace {
   net::details::io_context_t& get_context(socket_t& socket) {
 #if BOOST_VERSION <= 106501
     return socket.get_io_service();
-#else
+#elif BOOST_VERSION <= 106900
     return socket.get_executor().context();
+#else
+    return *socket.get_executor().template target<net::details::io_context_t>();
 #endif
   }
 
