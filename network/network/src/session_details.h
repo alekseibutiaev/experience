@@ -23,7 +23,8 @@ namespace {
 #elif BOOST_VERSION <= 106900
     return socket.get_executor().context();
 #else
-    return *socket.get_executor().template target<net::details::io_context_t>();
+    auto* tmp =  socket.get_executor().template target<net::details::io_context_t>();
+    return *tmp;
 #endif
   }
 

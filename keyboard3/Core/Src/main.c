@@ -54,8 +54,8 @@ UART_HandleTypeDef huart2;
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
-static void MX_GPIO_Init(void);
-static void MX_USART2_UART_Init(void);
+void MX_GPIO_Init(void);
+void MX_USART2_UART_Init(void);
 void MX_USB_HOST_Process(void);
 
 /* USER CODE BEGIN PFP */
@@ -109,8 +109,9 @@ int main(void)
   {
     /* USER CODE END WHILE */
     MX_USB_HOST_Process();
+
     /* USER CODE BEGIN 3 */
-#if 0
+#if 1
     int b = (a & 0xFF) << 8;
     int c = (a & 0x1F);
 //    int c = (a & 31);
@@ -120,8 +121,8 @@ int main(void)
 //    HAL_GPIO_TogglePin(GPIOB, a);
     a += 1;
 #endif
-    /* USER CODE END 3 */
   }
+  /* USER CODE END 3 */
 }
 
 /**
@@ -150,6 +151,7 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+
   /** Initializes the CPU, AHB and APB buses clocks
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
@@ -169,6 +171,7 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+
   /** Configure the Systick interrupt time
   */
   __HAL_RCC_PLLI2S_ENABLE();
@@ -179,7 +182,7 @@ void SystemClock_Config(void)
   * @param None
   * @retval None
   */
-static void MX_USART2_UART_Init(void)
+void MX_USART2_UART_Init(void)
 {
 
   /* USER CODE BEGIN USART2_Init 0 */
@@ -212,7 +215,7 @@ static void MX_USART2_UART_Init(void)
   * @param None
   * @retval None
   */
-static void MX_GPIO_Init(void)
+void MX_GPIO_Init(void)
 {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
 
@@ -274,31 +277,6 @@ int __io_putchar(int ch) {
 }
 #endif
 
-#if 0
-void USBH_HID_EventCallback(USBH_HandleTypeDef *phost)
-{
-//  printf("all initialized\n");
-  if (USBH_HID_GetDeviceType(phost) == HID_KEYBOARD) {
-    HID_KEYBD_Info_TypeDef* ki = USBH_HID_GetKeybdInfo(phost);
-
-#if 1
-    printf("st = 0x%02X, lc = 0x%02X, ls = 0x%02X, "
-      "la = 0x%02X, lg = 0x%02X, rc = 0x%02X, "
-      "rs = 0x%02X, ra = 0x%02X, rg = 0x%02X, "
-      "k0 = 0x%02X, k1 = 0x%02X, k2 = 0x%02X, "
-      "k3 = 0x%02X, k4 = 0x%02X, k5 = 0x%02X\n",
-    (int)ki->state, (int)ki->lctrl, (int)ki->lshift,
-	(int)ki->lalt, (int)ki->lgui, (int)ki->rctrl,
-	(int)ki->rshift, (int)ki->ralt, (int)ki->rgui,
-	(int)ki->keys[0], (int)ki->keys[1], (int)ki->keys[2],
-	(int)ki->keys[3], (int)ki->keys[4], (int)ki->keys[5]);
-#else
-    char key = USBH_HID_GetASCIICode (ki);
-    printf("Key Pressed = %c 0x%02X\n", isprint(key) ? key : '.', (int)key);
-#endif
-  }
-}
-#endif
 /* USER CODE END 4 */
 
 /**
@@ -332,5 +310,3 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
