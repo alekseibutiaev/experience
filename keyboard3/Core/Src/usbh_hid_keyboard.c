@@ -32,30 +32,7 @@ key_receive_t* usbh_hid_keyboard(USBH_HandleTypeDef *phost) {
   return 0;
 }
 
-/*
- USBH_StatusTypeDef USBH_HID_SetReport(USBH_HandleTypeDef *phost,
-                                      uint8_t reportType,
-                                      uint8_t reportId,
-                                      uint8_t *reportBuff,
-                                      uint8_t reportLen)
- */
-
 USBH_StatusTypeDef usbh_hid_keboard_led(USBH_HandleTypeDef* phost, key_leds_t* leds) {
-#if 0
   return USBH_HID_SetReport(phost, 2, 0, &leds->data, sizeof(leds->data));
-#else
-  phost->Control.setup.b.bmRequestType = USB_H2D | USB_REQ_RECIPIENT_INTERFACE | \
-                                         USB_REQ_TYPE_CLASS;
-
-
-  phost->Control.setup.b.bRequest = USB_HID_SET_REPORT;
-  phost->Control.setup.b.wValue.w = (uint16_t)(((uint32_t)2<< 8U) | (uint32_t)0);
-
-  phost->Control.setup.b.wIndex.w = 0U;
-  phost->Control.setup.b.wLength.w = 1;
-
-  return USBH_CtlReq(phost, &leds->data, 1);
-
-#endif
 }
 

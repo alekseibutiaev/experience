@@ -12,7 +12,7 @@
 
 
 
-key_leds_t leds;
+key_leds_t leds = { 0 };
 
 int find_key(key_receive_t* kr, uint8_t value) {
   for(int i = 0; i < sizeof(kr->data.keys); ++i)
