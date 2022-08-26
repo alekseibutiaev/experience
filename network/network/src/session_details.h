@@ -18,9 +18,9 @@ namespace {
 
   template<typename socket_t>
   net::details::io_context_t& get_context(socket_t& socket) {
-#if BOOST_VERSION <= 106501
+#if BOOST_VERSION < 106600
     return socket.get_io_service();
-#elif BOOST_VERSION <= 106900
+#elif BOOST_VERSION < 107000
     return socket.get_executor().context();
 #else
     auto* tmp =  socket.get_executor().template target<net::details::io_context_t>();
@@ -29,7 +29,7 @@ namespace {
   }
 
   void local_post(net::details::io_context_t& ctx, std::function<void()> func) {
-#if BOOST_VERSION <= 106501
+#if BOOST_VERSION < 106600
     ctx.post(func);
 #else
     boost::asio::post(ctx, func);
@@ -42,16 +42,6 @@ namespace {
 namespace net {
 
   namespace details {
-
-/*
-#if BOOST_VERSION <= 106501
-    using tcp_ip_t = boost::asio::basic_stream_socket<boost::asio::ip::tcp>;
-    using local_stream_protocol_t = boost::asio::basic_stream_socket<boost::asio::local::stream_protocol>;
-    using ssh_t = boost::asio::ssl::stream<boost::asio::ip::tcp::socket>;
-#else
-    using ip_tcp_t = boost::asio::basic_stream_socket<boost::asio::ip::tcp, boost::asio::io_context::executor_type>;
-#endif
-*/
 
     template<typename protocol_t>
     class session_t : public net::session_t {

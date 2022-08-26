@@ -7,7 +7,7 @@ namespace net {
 
   namespace details {
 
-#if BOOST_VERSION <= 106501
+#if BOOST_VERSION < 106600
       using io_context_t = boost::asio::io_service;
 #else
       using io_context_t = boost::asio::io_context;

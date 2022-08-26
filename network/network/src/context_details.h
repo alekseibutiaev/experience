@@ -20,7 +20,7 @@ namespace net {
       const error_handle_t& get_error_handle() override;
       io_context_t& get_io_context();
     private:
-#if BOOST_VERSION <= 106501
+#if BOOST_VERSION < 106600
       using work_t = boost::asio::io_service::work;
 #else
       using work_t = boost::asio::executor_work_guard<boost::asio::io_context::executor_type>;

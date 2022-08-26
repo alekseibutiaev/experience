@@ -38,12 +38,17 @@ namespace {
   using echo_ptr = std::shared_ptr<echo_t>;
 
   echo_ptr echo;
+  bool cn = false;
   std::mutex mtx;
   std::condition_variable cv;
 
-  void connected(net::session_ptr sess) {
+  void connected(net::session_ptr sess, const net::error_code_t& err) {
+    if(err)
+      std::cerr << err.message() << std::endl;
+    else
+      echo = std::make_shared<echo_t>(sess);
     std::lock_guard<std::mutex> _(mtx);
-    echo = std::make_shared<echo_t>(sess);
+    cn = true;
     cv.notify_one();
   }
 
@@ -53,24 +58,32 @@ namespace {
 } /* namespace */
 
 int main(int ac, char* av[]) {
+  std::size_t bv = BOOST_VERSION;
+  std::cout << bv << std::endl;
   try {
     if(const auto& opt = cl::get_options(ac, av)) {
+      std::cout << opt->host << " " << opt->port << std::endl;
+      const auto& param = *opt;
+
       net::context_ptr ctx = net::context_t::create(std::bind(error_handle, std::placeholders::_1));
       std::thread th([&ctx](){
         ctx->run();
         std::cout << "stop thread" << std::endl;
       });
-      net::connector_t::tcp_ip_v4(ctx, opt->host, opt->port, std::bind(&connected, std::placeholders::_1));
+      net::connector_t::tcp_ip_v4(ctx, opt->host, opt->port, std::bind(&connected,
+        std::placeholders::_1, std::placeholders::_2));
       std::unique_lock<std::mutex> _(mtx);
-      while(!echo)
+      while(!cn)
         cv.wait(_);
-      echo->start();
-      std::string msg;
-      for(;;) {
-        std::cin >> msg;
-        if("quit" == msg)
-          break;
-        echo->write(msg);
+      if(echo) {
+        echo->start();
+        std::string msg;
+        for(;;) {
+          std::cin >> msg;
+          if("quit" == msg)
+            break;
+          echo->write(msg);
+        }
       }
       if(th.joinable()) {
         ctx->stop();
