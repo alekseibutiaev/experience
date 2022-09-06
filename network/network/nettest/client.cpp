@@ -58,12 +58,9 @@ namespace {
 } /* namespace */
 
 int main(int ac, char* av[]) {
-  std::size_t bv = BOOST_VERSION;
-  std::cout << bv << std::endl;
+  std::cout << BOOST_VERSION << std::endl;
   try {
     if(const auto& opt = cl::get_options(ac, av)) {
-      std::cout << opt->host << " " << opt->port << std::endl;
-      const auto& param = *opt;
 
       net::context_ptr ctx = net::context_t::create(std::bind(error_handle, std::placeholders::_1));
       std::thread th([&ctx](){

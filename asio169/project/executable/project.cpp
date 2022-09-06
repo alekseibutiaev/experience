@@ -40,7 +40,10 @@ int main(int ac, char* av[]) {
     auto th = std::thread(&th_t::run, std::ref(ttt));
 
     boost::asio::ip::tcp::resolver res(ioctx);
-    res.async_resolve(host, service, std::bind(&resolve_handle, std::placeholders::_1, std::placeholders::_2));
+    //res.async_resolve(host, service, std::bind(&resolve_handle, std::placeholders::_1, std::placeholders::_2));
+    auto r = res.resolve(host, service);
+    boost::asio::ip::tcp::socket s(ioctx);
+    boost::asio::connect(s, r.begin(), r.end());
     while(!stop)
         std::this_thread::sleep_for(std::chrono::seconds(1));
 
