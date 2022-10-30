@@ -49,13 +49,14 @@
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
+static uint32_t mask = 0xFF;
 
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
-void MX_GPIO_Init(void);
-void MX_USART2_UART_Init(void);
+static void MX_GPIO_Init(void);
+static void MX_USART2_UART_Init(void);
 void MX_USB_HOST_Process(void);
 
 /* USER CODE BEGIN PFP */
@@ -104,23 +105,22 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  int a = 0;
+  uint32_t previous  = 0;
   while (1)
   {
     /* USER CODE END WHILE */
     MX_USB_HOST_Process();
 
     /* USER CODE BEGIN 3 */
-#if 1
-    int b = (a & 0xFF) << 8;
-    int c = (a & 0x1F);
-//    int c = (a & 31);
-    HAL_GPIO_SetWord(GPIOB, b);
-    HAL_GPIO_SetWord(GPIOC, c);
-    //GPIOC->BSRR = c;
-//    HAL_GPIO_TogglePin(GPIOB, a);
-    a += 1;
-#endif
+    uint32_t tmp = GPIOB->IDR >> 8 & mask;
+    if(previous != tmp) {
+      previous = tmp;
+//      HAL_GPIO_TogglePin (USER_LED_GPIO_Port, USER_LED_Pin);
+      printf("%u%u%u%u%u%u%u%u\n",
+        previous & 0x80 ? 1 : 0, previous & 0x40 ? 1 : 0, previous & 0x20 ? 1 : 0, previous & 0x10 ? 1 : 0,
+        previous & 0x08 ? 1 : 0, previous & 0x04 ? 1 : 0, previous & 0x02 ? 1 : 0, previous & 0x01 ? 1 : 0);
+    }
+
   }
   /* USER CODE END 3 */
 }
@@ -182,7 +182,7 @@ void SystemClock_Config(void)
   * @param None
   * @retval None
   */
-void MX_USART2_UART_Init(void)
+static void MX_USART2_UART_Init(void)
 {
 
   /* USER CODE BEGIN USART2_Init 0 */
@@ -215,7 +215,7 @@ void MX_USART2_UART_Init(void)
   * @param None
   * @retval None
   */
-void MX_GPIO_Init(void)
+static void MX_GPIO_Init(void)
 {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
 
@@ -230,10 +230,6 @@ void MX_GPIO_Init(void)
                           |KeyD4_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, KeyA2_Pin|KeyA3_Pin|KeyA4_Pin|KeyA5_Pin
-                          |KeyA6_Pin|KeyA7_Pin|KeyA0_Pin|KeyA1_Pin, GPIO_PIN_SET);
-
-  /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(USB_POWER_SWITCH_ON_GPIO_Port, USB_POWER_SWITCH_ON_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pins : KeyD0_Pin KeyD1_Pin KeyD2_Pin KeyD3_Pin
@@ -245,13 +241,12 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : KeyA2_Pin KeyA3_Pin KeyA4_Pin KeyA5_Pin
-                           KeyA6_Pin KeyA7_Pin KeyA0_Pin KeyA1_Pin */
-  GPIO_InitStruct.Pin = KeyA2_Pin|KeyA3_Pin|KeyA4_Pin|KeyA5_Pin
-                          |KeyA6_Pin|KeyA7_Pin|KeyA0_Pin|KeyA1_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+  /*Configure GPIO pins : KeyA10_Pin KeyA11_Pin KeyA12_Pin KeyA14_Pin
+                           KeyA15_Pin KeyA8_Pin KeyA9_Pin */
+  GPIO_InitStruct.Pin = KeyA10_Pin|KeyA11_Pin|KeyA12_Pin|KeyA14_Pin
+                          |KeyA15_Pin|KeyA8_Pin|KeyA9_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /*Configure GPIO pin : USB_POWER_SWITCH_ON_Pin */
