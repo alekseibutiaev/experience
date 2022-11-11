@@ -115,10 +115,12 @@ int main(void)
     uint32_t tmp = GPIOB->IDR >> 8 & mask;
     if(previous != tmp) {
       previous = tmp;
-//      HAL_GPIO_TogglePin (USER_LED_GPIO_Port, USER_LED_Pin);
+      HAL_GPIO_TogglePin (USER_LED_GPIO_Port, USER_LED_Pin);
+#if 0
       printf("%u%u%u%u%u%u%u%u\n",
         previous & 0x80 ? 1 : 0, previous & 0x40 ? 1 : 0, previous & 0x20 ? 1 : 0, previous & 0x10 ? 1 : 0,
         previous & 0x08 ? 1 : 0, previous & 0x04 ? 1 : 0, previous & 0x02 ? 1 : 0, previous & 0x01 ? 1 : 0);
+#endif
     }
 
   }
@@ -230,6 +232,9 @@ static void MX_GPIO_Init(void)
                           |KeyD4_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(USER_LED_GPIO_Port, USER_LED_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(USB_POWER_SWITCH_ON_GPIO_Port, USB_POWER_SWITCH_ON_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pins : KeyD0_Pin KeyD1_Pin KeyD2_Pin KeyD3_Pin
@@ -240,6 +245,13 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : USER_LED_Pin */
+  GPIO_InitStruct.Pin = USER_LED_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(USER_LED_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : KeyA10_Pin KeyA11_Pin KeyA12_Pin KeyA14_Pin
                            KeyA15_Pin KeyA8_Pin KeyA9_Pin */

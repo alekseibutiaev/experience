@@ -70,6 +70,8 @@ void Error_Handler(void);
 #define DEBUG_TX_GPIO_Port GPIOA
 #define DEBUG_RX_Pin GPIO_PIN_3
 #define DEBUG_RX_GPIO_Port GPIOA
+#define USER_LED_Pin GPIO_PIN_5
+#define USER_LED_GPIO_Port GPIOA
 #define KeyD4_Pin GPIO_PIN_4
 #define KeyD4_GPIO_Port GPIOC
 #define KeyA10_Pin GPIO_PIN_10

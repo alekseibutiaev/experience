@@ -106,7 +106,6 @@ static void  USBH_HID_ParseHIDDesc(HID_DescTypeDef *desc, uint8_t *buf);
 
 extern USBH_StatusTypeDef USBH_HID_MouseInit(USBH_HandleTypeDef *phost);
 extern USBH_StatusTypeDef USBH_HID_KeybdInit(USBH_HandleTypeDef *phost);
-extern USBH_StatusTypeDef usbh_hid_keyboard_init(USBH_HandleTypeDef *phost);
 
 USBH_ClassTypeDef  HID_Class =
 {
@@ -176,11 +175,7 @@ static USBH_StatusTypeDef USBH_HID_InterfaceInit(USBH_HandleTypeDef *phost)
   if (phost->device.CfgDesc.Itf_Desc[interface].bInterfaceProtocol == HID_KEYBRD_BOOT_CODE)
   {
     USBH_UsrLog("KeyBoard device found!");
-#if 1
-    HID_Handle->Init = usbh_hid_keyboard_init;
-#else
-	HID_Handle->Init = USBH_HID_KeybdInit;
-#endif
+    HID_Handle->Init = USBH_HID_KeybdInit;
   }
   else if (phost->device.CfgDesc.Itf_Desc[interface].bInterfaceProtocol  == HID_MOUSE_BOOT_CODE)
   {
@@ -462,16 +457,19 @@ static USBH_StatusTypeDef USBH_HID_Process(USBH_HandleTypeDef *phost)
 #endif
         }
       }
-      /* IN Endpoint Stalled */
-      else if (USBH_LL_GetURBState(phost, HID_Handle->InPipe) == USBH_URB_STALL) {
-        /* Issue Clear Feature on interrupt IN endpoint */
-        if (USBH_ClrFeature(phost, HID_Handle->ep_addr) == USBH_OK) {
+      else
+      {
+        /* IN Endpoint Stalled */
+        if (USBH_LL_GetURBState(phost, HID_Handle->InPipe) == USBH_URB_STALL)
+        {
+          /* Issue Clear Feature on interrupt IN endpoint */
+          if (USBH_ClrFeature(phost, HID_Handle->ep_addr) == USBH_OK)
+          {
             /* Change state to issue next IN token */
             HID_Handle->state = HID_GET_DATA;
+          }
         }
       }
-      else if(phost->RequestState == CMD_WAIT)
-        USBH_CtlReq(phost, 0, 0);
       break;
 
     default:
