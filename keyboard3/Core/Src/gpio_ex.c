@@ -9,8 +9,8 @@
 
 typedef union {
   struct {
-    uint16_t reset;
     uint16_t set;
+    uint16_t reset;
   } reg;
   uint32_t data;
 } bsrr_t;

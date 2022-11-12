@@ -235,6 +235,9 @@ extern "C" {
 #define KEY_RIGHT_GUI                          0xE7
 
 
+#define MAX_KEY 6
+
+
 typedef union {
   struct {
     uint8_t lctrl : 1;
@@ -246,7 +249,7 @@ typedef union {
     uint8_t ralt : 1;
     uint8_t rgui : 1;
     uint8_t reserv;
-    uint8_t keys[6];
+    uint8_t keys[MAX_KEY];
   } data;
   uint8_t buf[8];
 } key_receive_t;
@@ -261,9 +264,17 @@ typedef union {
   uint8_t data;
 } key_leds_t;
 
+typedef struct {
+  uint8_t top;
+  uint8_t tbit;
+  uint8_t lower;
+  uint8_t lbit;
+} membrane_t;
+
 USBH_StatusTypeDef usbh_hid_keyboard_init(USBH_HandleTypeDef* phost);
 key_receive_t* usbh_hid_keyboard(USBH_HandleTypeDef* phost);
 USBH_StatusTypeDef usbh_hid_keboard_led(USBH_HandleTypeDef* phost, key_leds_t* leds);
+
 
 
 #ifdef __cplusplus

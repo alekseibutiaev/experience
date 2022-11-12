@@ -12,7 +12,6 @@ static uint8_t receive[sizeof(keys.buf)];
 
 //static key_transmit_t transmit;
 
-
 USBH_StatusTypeDef usbh_hid_keyboard_init(USBH_HandleTypeDef *phost) {
   uint32_t i;
   HID_HandleTypeDef* HID_Handle = (HID_HandleTypeDef*)phost->pActiveClass->pData;

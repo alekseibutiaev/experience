@@ -25,6 +25,7 @@
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
 #include <ctype.h>
+#include <string.h>
 #include "retarget.h"
 #include "usbh_def.h"
 #include "usbh_hid.h"
@@ -33,7 +34,10 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-
+typedef struct {
+  int kb : 5;
+  int    : 27;
+} keybit_t;
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -49,7 +53,9 @@
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-static uint32_t mask = 0xFF;
+static const uint16_t addr_mask = KeyA8_Pin | KeyA9_Pin| KeyA10_Pin| KeyA11_Pin |
+  KeyA12_Pin | KeyA13_Pin | KeyA14_Pin | KeyA15_Pin;
+static const uint16_t data_mask = KeyD0_Pin | KeyD1_Pin | KeyD2_Pin | KeyD3_Pin | KeyD4_Pin;
 
 /* USER CODE END PV */
 
@@ -60,12 +66,12 @@ static void MX_USART2_UART_Init(void);
 void MX_USB_HOST_Process(void);
 
 /* USER CODE BEGIN PFP */
-
+static void answer();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+uint8_t zx_keys[256] = {0};
 /* USER CODE END 0 */
 
 /**
@@ -75,7 +81,6 @@ void MX_USB_HOST_Process(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -99,30 +104,49 @@ int main(void)
   MX_USART2_UART_Init();
   MX_USB_HOST_Init();
   /* USER CODE BEGIN 2 */
-  RetargetInit(&huart2);
+  RetargetInit(&huart2);\
+  memset(zx_keys, 0xFF, sizeof(zx_keys));
+  GPIOC->ODR |= data_mask;
   printf("all initialized\n");
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  uint32_t previous  = 0;
-  while (1)
-  {
+  int a = 0;
+  while (1)   {
     /* USER CODE END WHILE */
-    MX_USB_HOST_Process();
-
+    if(0 == (a % 1000))
+      MX_USB_HOST_Process();
     /* USER CODE BEGIN 3 */
-    uint32_t tmp = GPIOB->IDR >> 8 & mask;
+#if 0
+    answer();
+#else
+    HAL_GPIO_TogglePin (USER_LED_GPIO_Port, USER_LED_Pin);
+    uint8_t  addr = (uint8_t)((GPIOB->IDR & addr_mask) >> 8);
+    if(0xFE == addr || 0xFD == addr || 0xFB == addr || 0xF7 == addr ||
+        0xEF == addr || 0xDF == addr || 0xBF == addr || 0x7F == addr)
+      printf("0x%02X\n", addr);
+    ((keybit_t*)&GPIOC->ODR)->kb = zx_keys[addr];
+    HAL_GPIO_TogglePin (USER_LED_GPIO_Port, USER_LED_Pin);
+#endif
+#if 0
     if(previous != tmp) {
       previous = tmp;
-      HAL_GPIO_TogglePin (USER_LED_GPIO_Port, USER_LED_Pin);
-#if 0
-      printf("%u%u%u%u%u%u%u%u\n",
-        previous & 0x80 ? 1 : 0, previous & 0x40 ? 1 : 0, previous & 0x20 ? 1 : 0, previous & 0x10 ? 1 : 0,
-        previous & 0x08 ? 1 : 0, previous & 0x04 ? 1 : 0, previous & 0x02 ? 1 : 0, previous & 0x01 ? 1 : 0);
-#endif
+      uint8_t val = zx_keys[previous];
+      uint16_t rrr = val & data_mask;
+      GPIOC->ODR |= rrr;
     }
+#endif
+#if 0
+    if(a != 0 && idx == 0) {
+      for(int i = 0 ; i < 256; ++i)
+        printf("%c%02X", i %16 == 0 ? '\n': ' ', buf[i]);
+      printf("\n------------------\n");
+    }
+#endif
 
+
+    ++a;
   }
   /* USER CODE END 3 */
 }
@@ -222,10 +246,10 @@ static void MX_GPIO_Init(void)
   GPIO_InitTypeDef GPIO_InitStruct = {0};
 
   /* GPIO Ports Clock Enable */
-  __HAL_RCC_GPIOC_CLK_ENABLE();
-  __HAL_RCC_GPIOD_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
+  __HAL_RCC_GPIOC_CLK_ENABLE();
+//  __HAL_RCC_GPIOD_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOC, KeyD0_Pin|KeyD1_Pin|KeyD2_Pin|KeyD3_Pin
@@ -253,10 +277,10 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(USER_LED_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : KeyA10_Pin KeyA11_Pin KeyA12_Pin KeyA14_Pin
-                           KeyA15_Pin KeyA8_Pin KeyA9_Pin */
-  GPIO_InitStruct.Pin = KeyA10_Pin|KeyA11_Pin|KeyA12_Pin|KeyA14_Pin
-                          |KeyA15_Pin|KeyA8_Pin|KeyA9_Pin;
+  /*Configure GPIO pins : KeyA10_Pin KeyA11_Pin KeyA12_Pin KeyA13_Pin
+                           KeyA14_Pin KeyA15_Pin KeyA8_Pin KeyA9_Pin */
+  GPIO_InitStruct.Pin = KeyA10_Pin|KeyA11_Pin|KeyA12_Pin|KeyA13_Pin
+                          |KeyA14_Pin|KeyA15_Pin|KeyA8_Pin|KeyA9_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
@@ -277,6 +301,13 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+void answer() {
+//  HAL_GPIO_TogglePin (USER_LED_GPIO_Port, USER_LED_Pin);
+  uint8_t v = (uint8_t)((GPIOB->IDR & addr_mask) >> 8);
+  ((keybit_t*)&GPIOC->ODR)->kb = zx_keys[v];
+//  HAL_GPIO_TogglePin (USER_LED_GPIO_Port, USER_LED_Pin);
+}
+
 #if 0
 int __io_putchar(int ch) {
     ITM_SendChar(ch);

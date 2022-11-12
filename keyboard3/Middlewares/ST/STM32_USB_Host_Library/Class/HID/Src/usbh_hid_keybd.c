@@ -407,6 +407,18 @@ static USBH_StatusTypeDef USBH_HID_KeybdDecode(USBH_HandleTypeDef *phost)
   return   USBH_FAIL;
 }
 
+USBH_StatusTypeDef  USBH_HID_SetKeybdStatus(USBH_HandleTypeDef *phost, uint8_t len, uint8_t* data) {
+#if 1
+  return USBH_HID_SetReport(phost, 2, 0, data, len);
+#else
+  HID_HandleTypeDef* HID_Handle = (HID_HandleTypeDef*)phost->pActiveClass->pData;
+  USBH_HID_FifoWrite(&HID_Handle->fifo, data, (uint16_t)len);
+  HID_Handle->DataReady = 1;
+  return USBH_OK;
+#endif
+
+}
+
 /**
   * @brief  USBH_HID_GetASCIICode
   *         The function decode keyboard data into ASCII characters.
