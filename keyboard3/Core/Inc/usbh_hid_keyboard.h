@@ -240,14 +240,19 @@ extern "C" {
 
 typedef union {
   struct {
-    uint8_t lctrl : 1;
-    uint8_t lshift : 1;
-    uint8_t lalt : 1;
-    uint8_t lgui : 1;
-    uint8_t rctrl : 1;
-    uint8_t rshift : 1;
-    uint8_t ralt : 1;
-    uint8_t rgui : 1;
+    union {
+      struct {
+        uint8_t lctrl : 1;
+        uint8_t lshift : 1;
+        uint8_t lalt : 1;
+        uint8_t lgui : 1;
+        uint8_t rctrl : 1;
+        uint8_t rshift : 1;
+        uint8_t ralt : 1;
+        uint8_t rgui : 1;
+      } bits;
+      uint8_t byte;
+    } mod;
     uint8_t reserv;
     uint8_t keys[MAX_KEY];
   } data;
@@ -274,8 +279,6 @@ typedef struct {
 USBH_StatusTypeDef usbh_hid_keyboard_init(USBH_HandleTypeDef* phost);
 key_receive_t* usbh_hid_keyboard(USBH_HandleTypeDef* phost);
 USBH_StatusTypeDef usbh_hid_keboard_led(USBH_HandleTypeDef* phost, key_leds_t* leds);
-
-
 
 #ifdef __cplusplus
 }
