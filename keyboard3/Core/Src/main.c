@@ -38,6 +38,8 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define USER_LED_ACTIVE 0
+#define USB_INTERVAL 1000
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -103,23 +105,27 @@ int main(void)
   memset(zx_keys, 0xFF, sizeof(zx_keys));
   GPIOC->ODR |= data_mask;
   printf("all initialized\n");
+#if (USER_LED_ACTIVE == 1)
+  HAL_GPIO_WritePin(USER_LED_GPIO_Port, USER_LED_Pin, GPIO_PIN_RESET);
+#endif
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  int a = 0;
-  while (1)   {
+  int usb_ctrl = 0;
+  for(;;) {
     /* USER CODE END WHILE */
-    if(0 == (a % 1000))
-      MX_USB_HOST_Process();
     /* USER CODE BEGIN 3 */
-//    HAL_GPIO_TogglePin (USER_LED_GPIO_Port, USER_LED_Pin);
-#if 1
+#if (USER_LED_ACTIVE == 1)
+    HAL_GPIO_TogglePin (USER_LED_GPIO_Port, USER_LED_Pin);
+#endif
+    if(0 == (usb_ctrl++ % USB_INTERVAL))
+      MX_USB_HOST_Process();
     uint8_t addr = (uint8_t)((GPIOB->IDR & addr_mask) >> 8);
     GPIOC->ODR = (GPIOC->ODR & ~data_mask) | (zx_keys[addr] & data_mask);
+#if (USER_LED_ACTIVE == 1)
+    HAL_GPIO_TogglePin (USER_LED_GPIO_Port, USER_LED_Pin);
 #endif
-//    HAL_GPIO_TogglePin (USER_LED_GPIO_Port, USER_LED_Pin);
-    ++a;
   }
   /* USER CODE END 3 */
 }
