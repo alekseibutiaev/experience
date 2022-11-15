@@ -111,7 +111,7 @@ void prepare_keys(const key_receive_t* keys, const key_leds_t* leds) {
     if(0 == memchr(keys->data.keys, previous.data.keys[i], sizeof(keys->data.keys)))
       zx_keyboards[layers[previous.data.keys[i]].top] |= KEYDATA_MASK;
   }
-  printbuf(zx_keyboards, sizeof(zx_keyboards));
+//  printbuf(zx_keyboards, sizeof(zx_keyboards));
   memcpy(&previous, keys, sizeof(key_receive_t));
 }
 
