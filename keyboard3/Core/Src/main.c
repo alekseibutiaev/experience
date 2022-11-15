@@ -129,8 +129,6 @@ int main(void)
     if(0 == (usb_ctr++ % USB_INTERVAL))
       MX_USB_HOST_Process();
     uint8_t addr = (uint8_t)(GPIOB->IDR >> 8);
-    if(KEYDATA_MASK != zx_keyboards[addr])
-      printf("0X%02X 0X%02X\n", addr, zx_keyboards[addr]);
     GPIOC->ODR = (GPIOC->ODR & ~KEYDATA_MASK) | zx_keyboards[addr];
 #if (MEASURE_RESPONSE_TIME == 1)
     HAL_GPIO_TogglePin(USER_LED_GPIO_Port, USER_LED_Pin);
