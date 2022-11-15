@@ -1,20 +1,21 @@
 /*
- * usb_module.c
+ * zx_keyboard.c
  *
- *  Created on: Apr 17, 2021
+ *  Created on: Nov 15, 2022
  *      Author: butiaev
  */
+#include <stdio.h>
+#include "main.h"
+#include "zx_keyboard.h"
 
-#include <string.h>
-#include "usbh_def.h"
-#include "usbh_hid.h"
-#include "usbh_hid_keyboard.h"
+typedef struct {
+  uint8_t top;
+  uint8_t tbit;
+  uint8_t lower;
+  uint8_t lbit;
+} key_layer_t;
 
-key_leds_t leds = { 0 };
-
-extern uint8_t zx_keys[256];
-
-const membrane_t membrane[256] = {
+const key_layer_t layers[256] = {
 /*00*/  {0xFF, 0x1F, 0xFF, 0x1F}, /*  */ {0xFF, 0x1F, 0xFF, 0x1F}, /*  */ {0xFF, 0x1F, 0xFF, 0x1F}, /*  */ {0xFF, 0x1F, 0xFF, 0x1F}, /*  */
 /*04*/  {0xFD, 0x1E, 0xFF, 0x1F}, /*A */ {0x7F, 0x0F, 0xFF, 0x1F}, /*B */ {0xFE, 0x17, 0xFF, 0x1F}, /*C */ {0xFD, 0x1B, 0xFF, 0x1F}, /*D */
 /*08*/  {0xFB, 0x1B, 0xFF, 0x1F}, /*E */ {0xFD, 0x17, 0xFF, 0x1F}, /*F */ {0xFD, 0x0F, 0xFF, 0x1F}, /*G */ {0xBF, 0x0F, 0xFF, 0x1F}, /*H */
@@ -81,57 +82,32 @@ const membrane_t membrane[256] = {
 /*FC*/  {0xFF, 0x1F, 0xFF, 0x1F}, /*  */ {0xFF, 0x1F, 0xFF, 0x1F}, /*  */ {0xFF, 0x1F, 0xFF, 0x1F}, /*  */ {0xFF, 0x1F, 0xFF, 0x1F}, /*  */
 };
 
-int find_key(key_receive_t* kr, uint8_t value) {
-  for(int i = 0; i < sizeof(kr->data.keys); ++i)
-    if(kr->data.keys[i] == value)
-      return 1;
-  return 0;
+uint8_t zx_keyboards[256] = {0};
+
+void printbuf(const uint8_t* buf, const uint32_t size) {
+  for(uint32_t i = 0; i < size; ++i)
+    printf("0x%02X%c%c", buf[i], (buf[i] == KEYDATA_MASK ? ' ' : '*'), ((i + 1) % 16 ? ' ' : '\n'));
 }
 
-void printline(char n, uint8_t val) {
-  int num = val == 0x7F ? 8 : val == 0xBF ? 7 : val == 0xDF ? 6 : val == 0xEF ? 5
-   : val == 0xF7 ? 4 : val == 0xFB ? 3 : val == 0xFD ? 2 : val == 0xFE ? 1 : 0;
-  if(num)
-   printf("%c%02d ", n, num - 1 + (n == 'B' ? 0 : 8));
-}
-
-uint8_t not_exist(const uint8_t* preious, const uint8_t cur) {
-  for(int i = 0; i < MAX_KEY; ++i)
-    if(preious[i] == cur)
-      return 0;
-  return cur;
-}
-
-void presskey(uint8_t keys[MAX_KEY]) {
-  static uint8_t preious[MAX_KEY] = {0};
-  for(int i = 0; i < MAX_KEY; ++i) {
-    if(not_exist(preious, keys[i]))
-      zx_keys[membrane[keys[i]].top] &= membrane[keys[i]].tbit;
-    if(not_exist(keys, preious[i]))
-      zx_keys[membrane[preious[i]].top] = 0xFF;
+void prepare_keys(const key_receive_t* keys, const key_leds_t* leds) {
+  static key_receive_t previous = {0};
+#if 1
+  printf("lc = %d,ls = %d, la = %d, lg = %d, rc = %d, rs = %d, ra = %d, rg = %d, "
+    "k0 = 0x%02X, k1 = 0x%02X, k2 = 0x%02X, k3 = 0x%02X, k4 = 0x%02X, k5 = 0x%02X\n",
+    (int)keys->data.mod.bits.lctrl, (int)keys->data.mod.bits.lshift,
+    (int)keys->data.mod.bits.lalt, (int)keys->data.mod.bits.lgui,
+    (int)keys->data.mod.bits.rctrl, (int)keys->data.mod.bits.rshift,
+    (int)keys->data.mod.bits.ralt, (int)keys->data.mod.bits.rgui,
+    (int)keys->data.keys[0], (int)keys->data.keys[1], (int)keys->data.keys[2],
+    (int)keys->data.keys[3], (int)keys->data.keys[4], (int)keys->data.keys[5]);
+#endif
+  for(int i = 0; i < sizeof(keys->data.keys); ++i) {
+    if(0 == memchr(previous.data.keys, keys->data.keys[i], sizeof(previous.data.keys)))
+      zx_keyboards[layers[keys->data.keys[i]].top] &= layers[keys->data.keys[i]].tbit;
+    if(0 == memchr(keys->data.keys, previous.data.keys[i], sizeof(keys->data.keys)))
+      zx_keyboards[layers[previous.data.keys[i]].top] = KEYDATA_MASK;
   }
-  memcpy(preious, keys, MAX_KEY);
+//  printbuf(zx_keyboards, sizeof(zx_keyboards));
+  memcpy(&previous, keys, sizeof(key_receive_t));
 }
 
-void USBH_HID_EventCallback(USBH_HandleTypeDef* phost) {
-  if (USBH_HID_GetDeviceType(phost) == HID_KEYBOARD) {
-    key_receive_t* kr = usbh_hid_keyboard(phost);
-    printf(
-      "lc = %d, ls = %d, la = %d, lg = %d, rc = %d, rs = %d, ra = %d, rg = %d, "
-      "k0 = 0x%02X, k1 = 0x%02X, k2 = 0x%02X, k3 = 0x%02X, k4 = 0x%02X, k5 = 0x%02X\n",
-      (int)kr->data.mod.bits.lctrl, (int)kr->data.mod.bits.lshift,
-      (int)kr->data.mod.bits.lalt, (int)kr->data.mod.bits.lgui,
-      (int)kr->data.mod.bits.rctrl, (int)kr->data.mod.bits.rshift,
-      (int)kr->data.mod.bits.ralt, (int)kr->data.mod.bits.rgui,
-      (int)kr->data.keys[0], (int)kr->data.keys[1], (int)kr->data.keys[2],
-      (int)kr->data.keys[3], (int)kr->data.keys[4], (int)kr->data.keys[5]);
-    uint8_t tmp = leds.data;
-    leds.leds.num = find_key(kr, KEY_KEYPAD_NUM_LOCK_AND_CLEAR) ? !leds.leds.num : leds.leds.num;
-    leds.leds.caps = find_key(kr, KEY_CAPS_LOCK) ? !leds.leds.caps : leds.leds.caps;
-    leds.leds.scroll = find_key(kr, KEY_SCROLL_LOCK) ? !leds.leds.scroll : leds.leds.scroll;
-    if(leds.data != tmp)
-      usbh_hid_keboard_led(phost, &leds);
-    presskey(kr->data.keys);
-  }
-
-}

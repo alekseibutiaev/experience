@@ -5,8 +5,10 @@
  *      Author: butiaev
  */
 
+#include <string.h>
 #include "usbh_hid_keyboard.h"
 
+static keys_callback_t callback = 0;
 static key_receive_t keys;
 static uint8_t receive[sizeof(keys.buf)];
 
@@ -35,3 +37,24 @@ USBH_StatusTypeDef usbh_hid_keboard_led(USBH_HandleTypeDef* phost, key_leds_t* l
   return USBH_HID_SetReport(phost, 2, 0, &leds->data, sizeof(leds->data));
 }
 
+void set_keys_callback(keys_callback_t keys_callback) {
+  callback = keys_callback;
+}
+
+void USBH_HID_EventCallback(USBH_HandleTypeDef* phost) {
+  static key_leds_t leds = { 0 };
+  if(USBH_HID_GetDeviceType(phost) == HID_KEYBOARD) {
+    key_receive_t* kr = usbh_hid_keyboard(phost);
+    const uint8_t tmp = leds.data;
+    if(0 != memchr(kr->data.keys, KEY_KEYPAD_NUM_LOCK_AND_CLEAR, sizeof(kr->data.keys)))
+      leds.leds.num = !leds.leds.num;
+    if(0 != memchr(kr->data.keys, KEY_CAPS_LOCK, sizeof(kr->data.keys)))
+      leds.leds.caps = !leds.leds.caps;
+    if(0 != memchr(kr->data.keys, KEY_SCROLL_LOCK, sizeof(kr->data.keys)))
+      leds.leds.scroll = !leds.leds.scroll;
+    if(tmp != leds.data)
+      usbh_hid_keboard_led(phost, &leds);
+    if(callback)
+      (*callback)(kr, &leds);
+  }
+}

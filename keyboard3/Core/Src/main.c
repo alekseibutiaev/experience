@@ -30,6 +30,7 @@
 #include "usbh_def.h"
 #include "usbh_hid.h"
 #include "gpio_ex.h"
+#include "zx_keyboard.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -51,8 +52,10 @@
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
+#if 0
 static const uint16_t addr_mask = KeyA8_Pin | KeyA9_Pin| KeyA10_Pin| KeyA11_Pin |
   KeyA12_Pin | KeyA13_Pin | KeyA14_Pin | KeyA15_Pin;
+#endif
 static const uint16_t data_mask = KeyD0_Pin | KeyD1_Pin | KeyD2_Pin | KeyD3_Pin | KeyD4_Pin;
 
 /* USER CODE END PV */
@@ -68,7 +71,9 @@ void MX_USB_HOST_Process(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-uint8_t zx_keys[256] = {0};
+extern uint8_t zx_keyboards[256];
+
+extern USBH_HandleTypeDef hUsbHostFS;
 /* USER CODE END 0 */
 
 /**
@@ -99,12 +104,14 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART2_UART_Init();
+  hUsbHostFS.pData = &prepare_keys;
   MX_USB_HOST_Init();
   /* USER CODE BEGIN 2 */
   RetargetInit(&huart2);\
-  memset(zx_keys, data_mask, sizeof(zx_keys));
+  memset(zx_keyboards, data_mask, sizeof(zx_keyboards));
   GPIOC->ODR |= data_mask;
   printf("all initialized\n");
+  set_keys_callback(&prepare_keys);
 #if (MEASURE_RESPONSE_TIME == 1)
   HAL_GPIO_WritePin(USER_LED_GPIO_Port, USER_LED_Pin, GPIO_PIN_RESET);
 #endif
@@ -122,7 +129,9 @@ int main(void)
     if(0 == (usb_ctr++ % USB_INTERVAL))
       MX_USB_HOST_Process();
     uint8_t addr = (uint8_t)(GPIOB->IDR >> 8);
-    GPIOC->ODR = (GPIOC->ODR & ~data_mask) | zx_keys[addr];
+    if(KEYDATA_MASK != zx_keyboards[addr])
+      printf("0X%02X 0X%02X\n", addr, zx_keyboards[addr]);
+    GPIOC->ODR = (GPIOC->ODR & ~KEYDATA_MASK) | zx_keyboards[addr];
 #if (MEASURE_RESPONSE_TIME == 1)
     HAL_GPIO_TogglePin(USER_LED_GPIO_Port, USER_LED_Pin);
 #endif
