@@ -26,10 +26,9 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
-#include "retarget.h"
+#include "uart_dbg.h"
 #include "usbh_def.h"
 #include "usbh_hid.h"
-#include "gpio_ex.h"
 #include "zx_keyboard.h"
 /* USER CODE END Includes */
 
@@ -52,12 +51,6 @@
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-#if 0
-static const uint16_t addr_mask = KeyA8_Pin | KeyA9_Pin| KeyA10_Pin| KeyA11_Pin |
-  KeyA12_Pin | KeyA13_Pin | KeyA14_Pin | KeyA15_Pin;
-#endif
-static const uint16_t data_mask = KeyD0_Pin | KeyD1_Pin | KeyD2_Pin | KeyD3_Pin | KeyD4_Pin;
-
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -104,12 +97,11 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART2_UART_Init();
-  hUsbHostFS.pData = &prepare_keys;
   MX_USB_HOST_Init();
   /* USER CODE BEGIN 2 */
-  RetargetInit(&huart2);\
-  memset(zx_keyboards, data_mask, sizeof(zx_keyboards));
-  GPIOC->ODR |= data_mask;
+  uart_dbg_init(&huart2);
+  memset(zx_keyboards, KEYDATA_MASK, sizeof(zx_keyboards));
+  GPIOC->ODR |= KEYDATA_MASK;
   printf("all initialized\n");
   set_keys_callback(&prepare_keys);
 #if (MEASURE_RESPONSE_TIME == 1)
@@ -212,10 +204,9 @@ static void MX_USART2_UART_Init(void)
   huart2.Init.Mode = UART_MODE_TX_RX;
   huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
   huart2.Init.OverSampling = UART_OVERSAMPLING_16;
+
   if (HAL_UART_Init(&huart2) != HAL_OK)
-  {
     Error_Handler();
-  }
   /* USER CODE BEGIN USART2_Init 2 */
 
   /* USER CODE END USART2_Init 2 */
@@ -289,8 +280,11 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 #if 0
 int __io_putchar(int ch) {
-    ITM_SendChar(ch);
-    return ch;
+  ITM_SendChar(ch);
+  return ch;
+}
+int __io_getchar(void) {
+  return ITM_ReceiveChar();
 }
 #endif
 
