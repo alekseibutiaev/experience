@@ -86,6 +86,7 @@ void Error_Handler(void);
 #define KeyA15_GPIO_Port GPIOB
 #define KeyRequest_Pin GPIO_PIN_0
 #define KeyRequest_GPIO_Port GPIOC
+#define KeyRequest_EXTI_IRQn EXTI0_IRQn
 #define USER_LED_Pin GPIO_PIN_5
 #define USER_LED_GPIO_Port GPIOA
 #define USB_POWER_SWITCH_ON_Pin GPIO_PIN_8

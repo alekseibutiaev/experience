@@ -236,11 +236,11 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(USB_POWER_SWITCH_ON_GPIO_Port, USB_POWER_SWITCH_ON_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin : KeyRequest_Pin */
-  GPIO_InitStruct.Pin = KeyRequest_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  /*Configure GPIO pins : KeyRequest_Pin USB_OWER_CURRENT_Pin */
+  GPIO_InitStruct.Pin = KeyRequest_Pin|USB_OWER_CURRENT_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(KeyRequest_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /*Configure GPIO pin : USER_LED_Pin */
   GPIO_InitStruct.Pin = USER_LED_Pin;
@@ -273,15 +273,20 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(USB_POWER_SWITCH_ON_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : USB_OWER_CURRENT_Pin */
-  GPIO_InitStruct.Pin = USB_OWER_CURRENT_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(USB_OWER_CURRENT_GPIO_Port, &GPIO_InitStruct);
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI0_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 
 }
 
 /* USER CODE BEGIN 4 */
+#if 1
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+  printf("interrupt 0x%04X\n", GPIO_Pin);
+  HAL_GPIO_TogglePin(USER_LED_GPIO_Port, USER_LED_Pin);
+}
+#endif
+
 #if 0
 int __io_putchar(int ch) {
   ITM_SendChar(ch);
