@@ -101,7 +101,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
   uart_dbg_init(&huart2);
   memset(zx_keyboards, KEYDATA_MASK, sizeof(zx_keyboards));
-  GPIOC->ODR |= KEYDATA_MASK;
+  KEY_DATA_PORT->ODR |= KEYDATA_MASK;
   printf("all initialized\n");
   set_keys_callback(&prepare_keys);
 #if (MEASURE_RESPONSE_TIME == 1)
@@ -121,7 +121,7 @@ int main(void)
     if(0 == (usb_ctr++ % USB_INTERVAL))
       MX_USB_HOST_Process();
     uint8_t addr = (uint8_t)(GPIOB->IDR >> 8);
-    GPIOC->ODR = (GPIOC->ODR & ~KEYDATA_MASK) | zx_keyboards[addr];
+    KEY_DATA_PORT->ODR = (KEY_DATA_PORT->ODR & ~KEYDATA_MASK) | zx_keyboards[addr];
 #if (MEASURE_RESPONSE_TIME == 1)
     HAL_GPIO_TogglePin(USER_LED_GPIO_Port, USER_LED_Pin);
 #endif
@@ -236,11 +236,11 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(USB_POWER_SWITCH_ON_GPIO_Port, USB_POWER_SWITCH_ON_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : KeyRequest_Pin USB_OWER_CURRENT_Pin */
-  GPIO_InitStruct.Pin = KeyRequest_Pin|USB_OWER_CURRENT_Pin;
+  /*Configure GPIO pin : KeyRequest_Pin */
+  GPIO_InitStruct.Pin = KeyRequest_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(KeyRequest_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : USER_LED_Pin */
   GPIO_InitStruct.Pin = USER_LED_Pin;
@@ -272,6 +272,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(USB_POWER_SWITCH_ON_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : USB_OWER_CURRENT_Pin */
+  GPIO_InitStruct.Pin = USB_OWER_CURRENT_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(USB_OWER_CURRENT_GPIO_Port, &GPIO_InitStruct);
 
   /* EXTI interrupt init*/
   HAL_NVIC_SetPriority(EXTI0_IRQn, 0, 0);
