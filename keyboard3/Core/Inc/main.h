@@ -59,15 +59,15 @@ void Error_Handler(void);
 
 /* Private defines -----------------------------------------------------------*/
 #define KeyD0_Pin GPIO_PIN_0
-#define KeyD0_GPIO_Port GPIOC
+#define KeyD0_GPIO_Port GPIOB
 #define KeyD1_Pin GPIO_PIN_1
-#define KeyD1_GPIO_Port GPIOC
+#define KeyD1_GPIO_Port GPIOB
 #define KeyD2_Pin GPIO_PIN_2
-#define KeyD2_GPIO_Port GPIOC
+#define KeyD2_GPIO_Port GPIOB
 #define KeyD3_Pin GPIO_PIN_3
-#define KeyD3_GPIO_Port GPIOC
+#define KeyD3_GPIO_Port GPIOB
 #define KeyD4_Pin GPIO_PIN_4
-#define KeyD4_GPIO_Port GPIOC
+#define KeyD4_GPIO_Port GPIOB
 #define KeyA8_Pin GPIO_PIN_8
 #define KeyA8_GPIO_Port GPIOB
 #define KeyA9_Pin GPIO_PIN_9
@@ -84,16 +84,18 @@ void Error_Handler(void);
 #define KeyA14_GPIO_Port GPIOB
 #define KeyA15_Pin GPIO_PIN_15
 #define KeyA15_GPIO_Port GPIOB
+#define KeyRequest_Pin GPIO_PIN_0
+#define KeyRequest_GPIO_Port GPIOC
 #define USER_LED_Pin GPIO_PIN_5
 #define USER_LED_GPIO_Port GPIOA
-#define DEBUG_TX_Pin GPIO_PIN_2
-#define DEBUG_TX_GPIO_Port GPIOA
-#define DEBUG_RX_Pin GPIO_PIN_3
-#define DEBUG_RX_GPIO_Port GPIOA
 #define USB_POWER_SWITCH_ON_Pin GPIO_PIN_8
 #define USB_POWER_SWITCH_ON_GPIO_Port GPIOC
 #define USB_OWER_CURRENT_Pin GPIO_PIN_9
 #define USB_OWER_CURRENT_GPIO_Port GPIOC
+#define DEBUG_TX_Pin GPIO_PIN_2
+#define DEBUG_TX_GPIO_Port GPIOA
+#define DEBUG_RX_Pin GPIO_PIN_3
+#define DEBUG_RX_GPIO_Port GPIOA
 /* USER CODE BEGIN Private defines */
 #define KEYDATA_MASK (KeyD0_Pin | KeyD1_Pin | KeyD2_Pin | KeyD3_Pin | KeyD4_Pin)
 /* USER CODE END Private defines */
