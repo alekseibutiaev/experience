@@ -120,7 +120,9 @@ int main(void)
 #endif
     if(0 == (usb_ctr++ % USB_INTERVAL))
       MX_USB_HOST_Process();
-    uint8_t addr = (uint8_t)(GPIOB->IDR >> 8);
+    uint8_t addr = (uint8_t)(KEYADDR_PORT->IDR >> 8);
+/*    if(0xFF != addr)
+      printf("addr: 0x%02X\n", addr);*/
     KEYDATA_PORT->ODR = (KEYDATA_PORT->ODR & ~KEYBIT_MASK) | zx_keyboards[addr];
 #if (MEASURE_RESPONSE_TIME == 1)
     HAL_GPIO_TogglePin(USER_LED_GPIO_Port, USER_LED_Pin);
@@ -229,20 +231,23 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOC_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(USER_LED_GPIO_Port, USER_LED_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOC, KeyD0_Pin|KeyD1_Pin|KeyD2_Pin|KeyD3_Pin
+                          |KeyD4_Pin|KeyD5_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, KeyD0_Pin|KeyD1_Pin|KeyD2_Pin|KeyD3_Pin
-                          |KeyD4_Pin|KeyD5_Pin|KeyD6_Pin|KeyD7_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(USER_LED_GPIO_Port, USER_LED_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(USB_POWER_SWITCH_ON_GPIO_Port, USB_POWER_SWITCH_ON_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin : KeyRequest_Pin */
-  GPIO_InitStruct.Pin = KeyRequest_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
-  HAL_GPIO_Init(KeyRequest_GPIO_Port, &GPIO_InitStruct);
+  /*Configure GPIO pins : KeyD0_Pin KeyD1_Pin KeyD2_Pin KeyD3_Pin
+                           KeyD4_Pin KeyD5_Pin */
+  GPIO_InitStruct.Pin = KeyD0_Pin|KeyD1_Pin|KeyD2_Pin|KeyD3_Pin
+                          |KeyD4_Pin|KeyD5_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /*Configure GPIO pin : USER_LED_Pin */
   GPIO_InitStruct.Pin = USER_LED_Pin;
@@ -251,14 +256,11 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(USER_LED_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : KeyD0_Pin KeyD1_Pin KeyD2_Pin KeyD3_Pin
-                           KeyD4_Pin KeyD5_Pin KeyD6_Pin KeyD7_Pin */
-  GPIO_InitStruct.Pin = KeyD0_Pin|KeyD1_Pin|KeyD2_Pin|KeyD3_Pin
-                          |KeyD4_Pin|KeyD5_Pin|KeyD6_Pin|KeyD7_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
-  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+  /*Configure GPIO pin : KeyRequest_Pin */
+  GPIO_InitStruct.Pin = KeyRequest_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(KeyRequest_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : KeyA10_Pin KeyA11_Pin KeyA12_Pin KeyA13_Pin
                            KeyA14_Pin KeyA15_Pin KeyA8_Pin KeyA9_Pin */
