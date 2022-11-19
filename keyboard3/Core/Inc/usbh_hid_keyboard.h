@@ -271,13 +271,6 @@ typedef union {
 
 typedef void(*keys_callback_t)(const key_receive_t*, const key_leds_t*);
 
-typedef struct {
-  uint8_t top;
-  uint8_t tbit;
-  uint8_t lower;
-  uint8_t lbit;
-} membrane_t;
-
 USBH_StatusTypeDef usbh_hid_keyboard_init(USBH_HandleTypeDef* phost);
 key_receive_t* usbh_hid_keyboard(USBH_HandleTypeDef* phost);
 USBH_StatusTypeDef usbh_hid_keboard_led(USBH_HandleTypeDef* phost, key_leds_t* leds);

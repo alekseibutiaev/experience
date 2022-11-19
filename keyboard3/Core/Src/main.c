@@ -101,7 +101,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
   uart_dbg_init(&huart2);
   memset(zx_keyboards, KEYDATA_MASK, sizeof(zx_keyboards));
-  KEY_DATA_PORT->ODR |= KEYDATA_MASK;
+  KEYDATA_PORT->ODR |= KEYDATA_MASK;
   printf("all initialized\n");
   set_keys_callback(&prepare_keys);
 #if (MEASURE_RESPONSE_TIME == 1)
@@ -121,7 +121,7 @@ int main(void)
     if(0 == (usb_ctr++ % USB_INTERVAL))
       MX_USB_HOST_Process();
     uint8_t addr = (uint8_t)(GPIOB->IDR >> 8);
-    KEY_DATA_PORT->ODR = (KEY_DATA_PORT->ODR & ~KEYDATA_MASK) | zx_keyboards[addr];
+    KEYDATA_PORT->ODR = (KEYDATA_PORT->ODR & ~KEYDATA_MASK) | zx_keyboards[addr];
 #if (MEASURE_RESPONSE_TIME == 1)
     HAL_GPIO_TogglePin(USER_LED_GPIO_Port, USER_LED_Pin);
 #endif
@@ -205,7 +205,9 @@ static void MX_USART2_UART_Init(void)
   huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
   huart2.Init.OverSampling = UART_OVERSAMPLING_16;
   if (HAL_UART_Init(&huart2) != HAL_OK)
+  {
     Error_Handler();
+  }
   /* USER CODE BEGIN USART2_Init 2 */
 
   /* USER CODE END USART2_Init 2 */
@@ -231,7 +233,7 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, KeyD0_Pin|KeyD1_Pin|KeyD2_Pin|KeyD3_Pin
-                          |KeyD4_Pin, GPIO_PIN_SET);
+                          |KeyD4_Pin|KeyD5_Pin|KeyD6_Pin|KeyD7_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(USB_POWER_SWITCH_ON_GPIO_Port, USB_POWER_SWITCH_ON_Pin, GPIO_PIN_RESET);
@@ -250,9 +252,9 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(USER_LED_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : KeyD0_Pin KeyD1_Pin KeyD2_Pin KeyD3_Pin
-                           KeyD4_Pin */
+                           KeyD4_Pin KeyD5_Pin KeyD6_Pin KeyD7_Pin */
   GPIO_InitStruct.Pin = KeyD0_Pin|KeyD1_Pin|KeyD2_Pin|KeyD3_Pin
-                          |KeyD4_Pin;
+                          |KeyD4_Pin|KeyD5_Pin|KeyD6_Pin|KeyD7_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;

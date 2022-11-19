@@ -68,6 +68,12 @@ void Error_Handler(void);
 #define KeyD3_GPIO_Port GPIOB
 #define KeyD4_Pin GPIO_PIN_4
 #define KeyD4_GPIO_Port GPIOB
+#define KeyD5_Pin GPIO_PIN_5
+#define KeyD5_GPIO_Port GPIOB
+#define KeyD6_Pin GPIO_PIN_6
+#define KeyD6_GPIO_Port GPIOB
+#define KeyD7_Pin GPIO_PIN_7
+#define KeyD7_GPIO_Port GPIOB
 #define KeyA8_Pin GPIO_PIN_8
 #define KeyA8_GPIO_Port GPIOB
 #define KeyA9_Pin GPIO_PIN_9
@@ -87,18 +93,20 @@ void Error_Handler(void);
 #define KeyRequest_Pin GPIO_PIN_0
 #define KeyRequest_GPIO_Port GPIOC
 #define KeyRequest_EXTI_IRQn EXTI0_IRQn
+#define DEBUG_TX_Pin GPIO_PIN_2
+#define DEBUG_TX_GPIO_Port GPIOA
+#define DEBUG_RX_Pin GPIO_PIN_3
+#define DEBUG_RX_GPIO_Port GPIOA
 #define USER_LED_Pin GPIO_PIN_5
 #define USER_LED_GPIO_Port GPIOA
 #define USB_POWER_SWITCH_ON_Pin GPIO_PIN_8
 #define USB_POWER_SWITCH_ON_GPIO_Port GPIOC
 #define USB_OWER_CURRENT_Pin GPIO_PIN_9
 #define USB_OWER_CURRENT_GPIO_Port GPIOC
-#define DEBUG_TX_Pin GPIO_PIN_2
-#define DEBUG_TX_GPIO_Port GPIOA
-#define DEBUG_RX_Pin GPIO_PIN_3
-#define DEBUG_RX_GPIO_Port GPIOA
 /* USER CODE BEGIN Private defines */
-#define KEYDATA_MASK (KeyD0_Pin | KeyD1_Pin | KeyD2_Pin | KeyD3_Pin | KeyD4_Pin)
+#define KEYDATA_PORT GPIOB
+#define KEYDATA_MASK (KeyD0_Pin | KeyD1_Pin | KeyD2_Pin | KeyD3_Pin | KeyD4_Pin | \
+    KeyD5_Pin | KeyD6_Pin | KeyD2_Pin | KeyD7_Pin)
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus
