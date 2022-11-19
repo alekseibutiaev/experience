@@ -105,8 +105,7 @@ void Error_Handler(void);
 #define USB_OWER_CURRENT_GPIO_Port GPIOC
 /* USER CODE BEGIN Private defines */
 #define KEYDATA_PORT GPIOB
-#define KEYDATA_MASK (KeyD0_Pin | KeyD1_Pin | KeyD2_Pin | KeyD3_Pin | KeyD4_Pin | \
-    KeyD5_Pin | KeyD6_Pin | KeyD2_Pin | KeyD7_Pin)
+#define KEYBIT_MASK (KeyD0_Pin | KeyD1_Pin | KeyD2_Pin | KeyD3_Pin | KeyD4_Pin )
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

@@ -100,8 +100,8 @@ int main(void)
   MX_USB_HOST_Init();
   /* USER CODE BEGIN 2 */
   uart_dbg_init(&huart2);
-  memset(zx_keyboards, KEYDATA_MASK, sizeof(zx_keyboards));
-  KEYDATA_PORT->ODR |= KEYDATA_MASK;
+  memset(zx_keyboards, KEYBIT_MASK, sizeof(zx_keyboards));
+  KEYDATA_PORT->ODR |= KEYBIT_MASK;
   printf("all initialized\n");
   set_keys_callback(&prepare_keys);
 #if (MEASURE_RESPONSE_TIME == 1)
@@ -121,7 +121,7 @@ int main(void)
     if(0 == (usb_ctr++ % USB_INTERVAL))
       MX_USB_HOST_Process();
     uint8_t addr = (uint8_t)(GPIOB->IDR >> 8);
-    KEYDATA_PORT->ODR = (KEYDATA_PORT->ODR & ~KEYDATA_MASK) | zx_keyboards[addr];
+    KEYDATA_PORT->ODR = (KEYDATA_PORT->ODR & ~KEYBIT_MASK) | zx_keyboards[addr];
 #if (MEASURE_RESPONSE_TIME == 1)
     HAL_GPIO_TogglePin(USER_LED_GPIO_Port, USER_LED_Pin);
 #endif
