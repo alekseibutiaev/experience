@@ -150,7 +150,7 @@ uint8_t zx_keyboards[256] = {0};
 
 void printbuf(const uint8_t* buf, const uint32_t size) {
   for(uint32_t i = 0; i < size; ++i)
-    printf("0x%02X%c%c", buf[i], (buf[i] == KEYBIT_MASK ? ' ' : '*'), ((i + 1) % 16 ? ' ' : '\n'));
+    printf("0x%02X%c%c", buf[i], ' ', ((i + 1) % 16 ? ' ' : '\n'));
 }
 
 void prepare_keys(const key_receive_t* keys, const key_leds_t* leds) {

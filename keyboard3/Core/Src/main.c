@@ -38,13 +38,10 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define MEASURE_RESPONSE_TIME 0
-#define USB_INTERVAL 1000
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -65,7 +62,6 @@ void MX_USB_HOST_Process(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 extern uint8_t zx_keyboards[256];
-
 extern USBH_HandleTypeDef hUsbHostFS;
 /* USER CODE END 0 */
 
@@ -120,10 +116,10 @@ int main(void)
 #endif
     if(0 == (usb_ctr++ % USB_INTERVAL))
       MX_USB_HOST_Process();
+#ifndef FE_INTERRUPT
     uint8_t addr = (uint8_t)(KEYADDR_PORT->IDR >> 8);
-/*    if(0xFF != addr)
-      printf("addr: 0x%02X\n", addr);*/
     KEYDATA_PORT->ODR = (KEYDATA_PORT->ODR & ~KEYBIT_MASK) | zx_keyboards[addr];
+#endif
 #if (MEASURE_RESPONSE_TIME == 1)
     HAL_GPIO_TogglePin(USER_LED_GPIO_Port, USER_LED_Pin);
 #endif
@@ -255,13 +251,13 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(USER_LED_GPIO_Port, &GPIO_InitStruct);
-
+#ifdef FE_INTERRUPT
   /*Configure GPIO pin : KeyRequest_Pin */
   GPIO_InitStruct.Pin = KeyRequest_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(KeyRequest_GPIO_Port, &GPIO_InitStruct);
-
+#endif
   /*Configure GPIO pins : KeyA10_Pin KeyA11_Pin KeyA12_Pin KeyA13_Pin
                            KeyA14_Pin KeyA15_Pin KeyA8_Pin KeyA9_Pin */
   GPIO_InitStruct.Pin = KeyA10_Pin|KeyA11_Pin|KeyA12_Pin|KeyA13_Pin
@@ -282,18 +278,18 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(USB_OWER_CURRENT_GPIO_Port, &GPIO_InitStruct);
-
+#ifdef FE_INTERRUPT
   /* EXTI interrupt init*/
   HAL_NVIC_SetPriority(EXTI0_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(EXTI0_IRQn);
-
+#endif
 }
 
 /* USER CODE BEGIN 4 */
-#if 1
+#ifdef FE_INTERRUPT
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
-  printf("interrupt 0x%04X\n", GPIO_Pin);
-  HAL_GPIO_TogglePin(USER_LED_GPIO_Port, USER_LED_Pin);
+  uint8_t addr = (uint8_t)(KEYADDR_PORT->IDR >> 8);
+  KEYDATA_PORT->ODR = (KEYDATA_PORT->ODR & ~KEYBIT_MASK) | zx_keyboards[addr];
 }
 #endif
 

@@ -47,7 +47,8 @@ extern "C" {
 
 /* Exported macro ------------------------------------------------------------*/
 /* USER CODE BEGIN EM */
-
+#define MEASURE_RESPONSE_TIME 0
+#define USB_INTERVAL 1000
 /* USER CODE END EM */
 
 /* Exported functions prototypes ---------------------------------------------*/
@@ -92,9 +93,11 @@ void Error_Handler(void);
 #define DEBUG_RX_GPIO_Port GPIOA
 #define USER_LED_Pin GPIO_PIN_5
 #define USER_LED_GPIO_Port GPIOA
+#ifdef FE_INTERRUPT
 #define KeyRequest_Pin GPIO_PIN_0
 #define KeyRequest_GPIO_Port GPIOB
 #define KeyRequest_EXTI_IRQn EXTI0_IRQn
+#endif
 #define USB_POWER_SWITCH_ON_Pin GPIO_PIN_8
 #define USB_POWER_SWITCH_ON_GPIO_Port GPIOC
 #define USB_OWER_CURRENT_Pin GPIO_PIN_9
