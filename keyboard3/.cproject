@@ -160,14 +160,14 @@
 							<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.objcopy.symbolsrec.1525743255" name="MCU Output Converter Motorola S-rec with symbols" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.objcopy.symbolsrec"/>
 						</toolChain>
 					</folderInfo>
-					<fileInfo id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.release.253739991.927111283" name="usbh_hid_mouse.c" rcbsApplicability="disable" resourcePath="Middlewares/ST/STM32_USB_Host_Library/Class/HID/Src/usbh_hid_mouse.c" toolsToInvoke="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.1703887015.233655168">
-						<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.1703887015.233655168" name="MCU GCC Compiler" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.1703887015">
-							<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.1242446455" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
+					<fileInfo id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.release.253739991.1971549595" name="stm32f1xx_hal_hcd.c" rcbsApplicability="disable" resourcePath="Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_hcd.c" toolsToInvoke="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.1703887015.157209236">
+						<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.1703887015.157209236" name="MCU GCC Compiler" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.1703887015">
+							<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.1346639330" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
 						</tool>
 					</fileInfo>
 					<sourceEntries>
 						<entry excluding="Src/gpio_ex.c|Src/retarget.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
+						<entry excluding="STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_pwr.c|STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_flash.c|STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_flash_ex.c|STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_dma.c|STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_tim_ex.c|STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_tim.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
 						<entry excluding="ST/STM32_USB_Host_Library/Class/HID/Src/usbh_hid_mouse.c|ST/STM32_USB_Host_Library/Class/HID/Src/usbh_hid_keybd.c|ST/STM32_USB_Host_Library/Class/HID/Src/usbh_hid_parser.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Middlewares"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="USB_HOST"/>
 					</sourceEntries>
