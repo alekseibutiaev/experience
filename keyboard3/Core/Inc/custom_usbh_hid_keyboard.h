@@ -8,11 +8,12 @@
 #ifndef INC_CUSTOM_USBH_HID_KEYBOARD_H_
 #define INC_CUSTOM_USBH_HID_KEYBOARD_H_
 
+#include "usbh_hid.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "usbh_hid.h"
 
 #define KEY_NONE                               0x00
 #define KEY_ERRORROLLOVER                      0x01
@@ -234,9 +235,7 @@ extern "C" {
 #define KEY_RIGHTALT                           0xE6
 #define KEY_RIGHT_GUI                          0xE7
 
-
 #define MAX_KEY 6
-
 
 typedef union {
   struct {
