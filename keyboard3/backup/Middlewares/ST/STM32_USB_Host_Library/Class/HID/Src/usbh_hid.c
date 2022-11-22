@@ -176,16 +176,12 @@ static USBH_StatusTypeDef USBH_HID_InterfaceInit(USBH_HandleTypeDef *phost)
   if (phost->device.CfgDesc.Itf_Desc[interface].bInterfaceProtocol == HID_KEYBRD_BOOT_CODE)
   {
     USBH_UsrLog("KeyBoard device found!");
-#if 1
     HID_Handle->Init = usbh_hid_keyboard_init;
-#else
-	HID_Handle->Init = USBH_HID_KeybdInit;
-#endif
   }
   else if (phost->device.CfgDesc.Itf_Desc[interface].bInterfaceProtocol  == HID_MOUSE_BOOT_CODE)
   {
     USBH_UsrLog("Mouse device found!");
-    HID_Handle->Init = USBH_HID_MouseInit;
+    HID_Handle->Init = usbh_hid_keyboard_init;
   }
   else
   {

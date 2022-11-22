@@ -10,7 +10,7 @@
 
 #define SYMBOL_SHIFT 232
 
-#include "usbh_hid_keyboard.h"
+#include <custom_usbh_hid_keyboard.h>
 
 void printbuf(const uint8_t* buf, const uint32_t size);
 void prepare_keys(const key_receive_t* keys, const key_leds_t* leds);

@@ -5,8 +5,8 @@
  *      Author: butiaev
  */
 
-#ifndef INC_USBH_HID_KEYBOARD_H_
-#define INC_USBH_HID_KEYBOARD_H_
+#ifndef INC_CUSTOM_USBH_HID_KEYBOARD_H_
+#define INC_CUSTOM_USBH_HID_KEYBOARD_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -276,9 +276,8 @@ key_receive_t* usbh_hid_keyboard(USBH_HandleTypeDef* phost);
 USBH_StatusTypeDef usbh_hid_keboard_led(USBH_HandleTypeDef* phost, key_leds_t* leds);
 void set_keys_callback(keys_callback_t);
 
-
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* INC_USBH_HID_KEYBOARD_H_ */
+#endif /* INC_CUSTOM_USBH_HID_KEYBOARD_H_ */

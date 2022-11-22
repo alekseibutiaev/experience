@@ -1,0 +1,30 @@
+diff --git a/keyboard3/Middlewares/ST/STM32_USB_Host_Library/Class/HID/Src/usbh_hid.c b/keyboard3/Middlewares/ST/STM32_USB_Host_Library/Class/HID/Src/usbh_hid.c
+index be9b308..76a1782 100644
+--- a/keyboard3/Middlewares/ST/STM32_USB_Host_Library/Class/HID/Src/usbh_hid.c
++++ b/keyboard3/Middlewares/ST/STM32_USB_Host_Library/Class/HID/Src/usbh_hid.c
+@@ -457,19 +457,16 @@ static USBH_StatusTypeDef USBH_HID_Process(USBH_HandleTypeDef *phost)
+ #endif
+         }
+       }
+-      else
+-      {
+-        /* IN Endpoint Stalled */
+-        if (USBH_LL_GetURBState(phost, HID_Handle->InPipe) == USBH_URB_STALL)
+-        {
+-          /* Issue Clear Feature on interrupt IN endpoint */
+-          if (USBH_ClrFeature(phost, HID_Handle->ep_addr) == USBH_OK)
+-          {
++      /* IN Endpoint Stalled */
++      else if (USBH_LL_GetURBState(phost, HID_Handle->InPipe) == USBH_URB_STALL) {
++        /* Issue Clear Feature on interrupt IN endpoint */
++        if (USBH_ClrFeature(phost, HID_Handle->ep_addr) == USBH_OK) {
+             /* Change state to issue next IN token */
+             HID_Handle->state = HID_GET_DATA;
+-          }
+         }
+       }
++      else if(phost->RequestState == CMD_WAIT)
++        USBH_CtlReq(phost, 0, 0);
+       break;
+ 
+     default:
