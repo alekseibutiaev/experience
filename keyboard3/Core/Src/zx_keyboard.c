@@ -169,12 +169,10 @@ void prepare_keys(const key_receive_t* keys, const key_leds_t* leds) {
     zx_keyboards[layers[SYMBOL_SHIFT].top] &= layers[SYMBOL_SHIFT].tbit;
   else
     zx_keyboards[layers[SYMBOL_SHIFT].top] |= KEYBIT_MASK;
-  for(int i = 0; i < sizeof(keys->data.keys); ++i) {
-    if(0 == memchr(previous.data.keys, keys->data.keys[i], sizeof(previous.data.keys))){
+  for(int i = 0; i < sizeof(keys->data.keys); ++i)
+    if(keys->data.keys[i] && 0 == memchr(previous.data.keys, keys->data.keys[i], sizeof(previous.data.keys))){
       zx_keyboards[layers[keys->data.keys[i]].top] &= layers[keys->data.keys[i]].tbit;
-      printf("addr: 0x%02X, data: 0x%02X\n", layers[keys->data.keys[i]].top, layers[keys->data.keys[i]].tbit);
-    }
-    if(0 == memchr(keys->data.keys, previous.data.keys[i], sizeof(keys->data.keys)))
+    if(previous.data.keys[i] && 0 == memchr(keys->data.keys, previous.data.keys[i], sizeof(keys->data.keys)))
       zx_keyboards[layers[previous.data.keys[i]].top] |= KEYBIT_MASK;
   }
 //  printbuf(zx_keyboards, sizeof(zx_keyboards));

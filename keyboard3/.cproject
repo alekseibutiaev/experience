@@ -160,11 +160,14 @@
 							<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.objcopy.symbolsrec.1525743255" name="MCU Output Converter Motorola S-rec with symbols" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.objcopy.symbolsrec"/>
 						</toolChain>
 					</folderInfo>
+					<fileInfo id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.release.253739991.484993424" name="usbh_hid_mouse.c" rcbsApplicability="disable" resourcePath="Middlewares/ST/STM32_USB_Host_Library/Class/HID/Src/usbh_hid_mouse.c" toolsToInvoke="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.1703887015.95055623">
+						<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.1703887015.95055623" name="MCU GCC Compiler" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.1703887015"/>
+					</fileInfo>
 					<sourceEntries>
 						<entry excluding="Src/gpio_ex.c|Src/retarget.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="USB_HOST"/>
-						<entry excluding="ST/STM32_USB_Host_Library/Class/HID/Src/usbh_hid_keybd.c|ST/STM32_USB_Host_Library/Class/HID/Src/usbh_hid_parser.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Middlewares"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
+						<entry excluding="ST/STM32_USB_Host_Library/Class/HID/Src/usbh_hid_mouse.c|ST/STM32_USB_Host_Library/Class/HID/Src/usbh_hid_keybd.c|ST/STM32_USB_Host_Library/Class/HID/Src/usbh_hid_parser.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Middlewares"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="USB_HOST"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -354,6 +357,8 @@
 		</scannerConfigBuildInfo>
 	</storageModule>
 	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="Release_Int"/>
+		<configuration configurationName="Debug_Int"/>
 		<configuration configurationName="Debug">
 			<resource resourceType="PROJECT" workspacePath="/keyboard3"/>
 		</configuration>
