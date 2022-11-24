@@ -64,7 +64,8 @@ void MX_USB_HOST_Process(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-extern uint8_t zx_keyboards[256];
+extern uint8_t table[2][256];
+extern int ts;
 
 extern USBH_HandleTypeDef hUsbHostFS;
 /* USER CODE END 0 */
@@ -100,7 +101,7 @@ int main(void)
   MX_USB_HOST_Init();
   /* USER CODE BEGIN 2 */
   uart_dbg_init(&huart2);
-  memset(zx_keyboards, KEYDATA_MASK, sizeof(zx_keyboards));
+  memset(table, KEYDATA_MASK, sizeof(table));
   GPIOC->ODR |= KEYDATA_MASK;
   printf("all initialized\n");
   set_keys_callback(&prepare_keys);
@@ -121,7 +122,7 @@ int main(void)
     if(0 == (usb_ctr++ % USB_INTERVAL))
       MX_USB_HOST_Process();
     uint8_t addr = (uint8_t)(GPIOB->IDR >> 8);
-    GPIOC->ODR = (GPIOC->ODR & ~KEYDATA_MASK) | zx_keyboards[addr];
+    GPIOC->ODR = (GPIOC->ODR & ~KEYDATA_MASK) | table[ts][addr];
 #if (MEASURE_RESPONSE_TIME == 1)
     HAL_GPIO_TogglePin(USER_LED_GPIO_Port, USER_LED_Pin);
 #endif

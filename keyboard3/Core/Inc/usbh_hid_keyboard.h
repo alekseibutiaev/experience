@@ -234,9 +234,7 @@ extern "C" {
 #define KEY_RIGHTALT                           0xE6
 #define KEY_RIGHT_GUI                          0xE7
 
-
 #define MAX_KEY 6
-
 
 typedef union {
   struct {
@@ -282,7 +280,6 @@ USBH_StatusTypeDef usbh_hid_keyboard_init(USBH_HandleTypeDef* phost);
 key_receive_t* usbh_hid_keyboard(USBH_HandleTypeDef* phost);
 USBH_StatusTypeDef usbh_hid_keboard_led(USBH_HandleTypeDef* phost, key_leds_t* leds);
 void set_keys_callback(keys_callback_t);
-
 
 #ifdef __cplusplus
 }
