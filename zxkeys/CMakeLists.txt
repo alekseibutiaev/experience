@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.9)
+cmake_minimum_required(VERSION 3.5)
 project(zxkeys)
 
 set(CMAKE_C_FLAGS_DEBUG "-g3 -O0")

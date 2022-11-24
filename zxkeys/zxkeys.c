@@ -151,22 +151,31 @@ void build_registr(uint8_t (*keyreg)[8], const uint8_t(*keys)[6]) {
   }
 }
 
-uint8_t assemply_data(const uint8_t (*keyreg)[8], const uint8_t addr) {
-  return ((addr & 0x01) ? (*keyreg)[0] : 0xFF) &
-    ((addr & 0x02) ? (*keyreg)[1] : 0xFF) &
-    ((addr & 0x04) ? (*keyreg)[2] : 0xFF) &
-    ((addr & 0x08) ? (*keyreg)[3] : 0xFF) &
-    ((addr & 0x10) ? (*keyreg)[4] : 0xFF) &
-    ((addr & 0x20) ? (*keyreg)[5] : 0xFF) &
-    ((addr & 0x40) ? (*keyreg)[6] : 0xFF) &
-    ((addr & 0x80) ? (*keyreg)[7] : 0xFF);
-}
+uint8_t assemply_data(const uint8_t (*regs)[8], const uint8_t addr) {
+  uint8_t res = 0xFF;
+  if(addr & 0x01)
+    res &= (*regs)[0];
+  if(addr & 0x02)
+    res &= (*regs)[1];
+  if(addr & 0x04)
+    res &= (*regs)[2];
+  if(addr & 0x08)
+    res &= (*regs)[3];
+  if(addr & 0x10)
+    res &= (*regs)[4];
+  if(addr & 0x20)
+    res &= (*regs)[5];
+  if(addr & 0x40)
+    res &= (*regs)[6];
+  if(addr & 0x80)
+    res &= (*regs)[7];
+  return res;}
 
 void build_key_table(uint8_t(*table)[256], const uint8_t(*keys)[6]) {
   uint8_t reg[8] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
   build_registr(&reg, keys);
   for(int i = 0; i < sizeof(*table); ++i)
-    (*table)[i] = assemply_data(&reg, ~i);
+    (*table)[i] = assemply_data(&reg, ~(uint8_t)i);
 }
 
 void printbuf(const uint8_t* buf, const int size) {
@@ -176,9 +185,12 @@ void printbuf(const uint8_t* buf, const int size) {
 }
 
 int main(int ac, char* av[]) {
-  const uint8_t keys[6] = {KEY_A, KEY_W, KEY_X, KEY_J, KEY_H, KEY_G};
+  const uint8_t keys1[6] = {KEY_A, KEY_W, KEY_X, KEY_J, KEY_H, KEY_G};
+  const uint8_t keys2[6] = {KEY_NONE, KEY_NONE, KEY_NONE, KEY_NONE, KEY_NONE, KEY_NONE};
   uint8_t table[256] = {0};
-  build_key_table(&table, &keys);
+  build_key_table(&table, &keys1);
+  printbuf(table, sizeof(table));
+  build_key_table(&table, &keys2);
   printbuf(table, sizeof(table));
   printf("exit\n");
   return 0;
