@@ -145,7 +145,14 @@ const key_layer_t layers[256] = {
 };
 
 uint8_t zx_keyboards[256] = {0};
+uint8_t table[256] = {0};
 uint8_t zx_keyreg[8] = {0};
+
+int debug_index(uint8_t val) {
+  int res = 0;
+  for(; val != 0 && 0 != (0x01 & val); val >>= 1, ++res){}
+  return res;
+}
 
 void fill_keyboards(uint8_t (*keboard)[256], const uint8_t(*keys)[6]) {
   for(int i = 0; i < sizeof(*keboard); ++i) {
@@ -159,12 +166,6 @@ void fill_keyboards(uint8_t (*keboard)[256], const uint8_t(*keys)[6]) {
   }
 }
 
-int debug_index(uint8_t val) {
-  int res = 0;
-  for(; val != 0 && 0 != (0x01 & val); val >>= 1, ++res){}
-  return res;
-}
-
 void fill_registr(uint8_t (*keyreg)[8], const uint8_t(*keys)[6]) {
   memset(*keyreg, 0xFF, sizeof(*keyreg));
   for(int i = 0; i < sizeof(*keys) && (*keys)[i]; ++i) {
@@ -175,18 +176,31 @@ void fill_registr(uint8_t (*keyreg)[8], const uint8_t(*keys)[6]) {
   }
 }
 
+void fill_registr1(uint8_t (*keyreg)[8], const uint8_t(*keys)[6]) {
+  for(int i = 0; i < sizeof(*keys) && (*keys)[i]; ++i) {
+    const key_layer_t* kl = layers + (*keys)[i];
+    uint8_t idx = debug_index(kl->top);
+    (*keyreg)[idx] &= kl->tbit;
+  }
+}
+
 uint8_t assemply_data(const uint8_t (*keyreg)[8], uint8_t addr) {
   addr = ~addr;
-  uint8_t res =
-  ((addr & 0x01) ? (*keyreg)[0] : 0xFF) &
-  ((addr & 0x02) ? (*keyreg)[1] : 0xFF) &
-  ((addr & 0x04) ? (*keyreg)[2] : 0xFF) &
-  ((addr & 0x08) ? (*keyreg)[3] : 0xFF) &
-  ((addr & 0x10) ? (*keyreg)[4] : 0xFF) &
-  ((addr & 0x20) ? (*keyreg)[5] : 0xFF) &
-  ((addr & 0x40) ? (*keyreg)[6] : 0xFF) &
-  ((addr & 0x80) ? (*keyreg)[7] : 0xFF);
-  return res;
+  return ((addr & 0x01) ? (*keyreg)[0] : 0xFF) &
+    ((addr & 0x02) ? (*keyreg)[1] : 0xFF) &
+    ((addr & 0x04) ? (*keyreg)[2] : 0xFF) &
+    ((addr & 0x08) ? (*keyreg)[3] : 0xFF) &
+    ((addr & 0x10) ? (*keyreg)[4] : 0xFF) &
+    ((addr & 0x20) ? (*keyreg)[5] : 0xFF) &
+    ((addr & 0x40) ? (*keyreg)[6] : 0xFF) &
+    ((addr & 0x80) ? (*keyreg)[7] : 0xFF);
+}
+
+void build_key_table(uint8_t(*table)[256], const uint8_t(*keys)[6]) {
+  uint8_t reg[8] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+  fill_registr1(&reg, keys);
+  for(int i = 0; i < sizeof(*table); ++i)
+    (*table)[i] = assemply_data(&reg, i);
 }
 
 void printbuf(const uint8_t* buf, const int size) {
@@ -202,6 +216,9 @@ int main(int ac, char* av[]) {
   fill_registr(&zx_keyreg, &keys);
   printbuf(zx_keyreg, sizeof(zx_keyreg));
   printf("0x%02X\n", assemply_data(&zx_keyreg, 0xFC));
+  build_key_table(&table, &keys);
+  printbuf(table, sizeof(table));
+
   printf("exit\n");
   return 0;
 }
