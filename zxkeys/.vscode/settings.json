@@ -1,0 +1,18 @@
+{
+  "C_Cpp.default.configurationProvider": "vector-of-bool.cmake-tools",
+  "C_Cpp.enhancedColorization": "Enabled",
+  "C_Cpp.workspaceSymbols": "All",
+  "cmake.buildToolArgs": [
+    "VERBOSE=1"
+  ],
+  "cmake.generator": "Unix Makefiles",
+  "cmake.buildDirectory" : "${workspaceRoot}/build_${buildType}",
+  "cmake.saveBeforeBuild": true,
+  "cmake.configureOnOpen": false,
+  "editor.rulers": [
+    100
+  ],
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.detectIndentation": false
+}
