@@ -1,0 +1,15 @@
+data connector
+1 RED
+2 BROUN
+3 BLACK
+4 MAGENTA
+5 GRAY
+
+address connector
+1 BLUE
+2 GREEN
+3 YELLOW
+4 RED
+5 BROUN
+6 BLUE *
+7 BROUN *
