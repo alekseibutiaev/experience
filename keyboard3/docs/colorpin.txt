@@ -9,7 +9,8 @@ address connector
 1 BLUE
 2 GREEN
 3 YELLOW
-4 RED
-5 BROUN
-6 BLUE *
-7 BROUN *
+4 ORANGE
+5 RED
+6 BROUN
+7 BLUE *
+8 BROUN *
