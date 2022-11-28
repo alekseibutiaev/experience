@@ -45,15 +45,19 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+SPI_HandleTypeDef hspi1;
+
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
-static void SystemClock_Config(void);
+void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
+static void MX_SPI1_Init(void);
+void MX_USB_HOST_Process(void);
 
 /* USER CODE BEGIN PFP */
 /* USER CODE END PFP */
@@ -93,10 +97,10 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   MX_USB_HOST_Init();
+  MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
   uart_dbg_init(&huart2);
   memset(zx_keyboards, KEYBIT_MASK, sizeof(zx_keyboards));
-  KEYDATA_PORT->ODR |= KEYBIT_MASK;
   printf("all initialized\n");
   set_keys_callback(&prepare_keys);
 #if (MEASURE_RESPONSE_TIME == 1)
@@ -116,8 +120,6 @@ int main(void)
     if(0 == (usb_ctr++ % USB_INTERVAL))
       MX_USB_HOST_Process();
 #ifndef FE_INTERRUPT
-    uint8_t addr = (uint8_t)(KEYADDR_PORT->IDR >> 8);
-    KEYDATA_PORT->ODR = (KEYDATA_PORT->ODR & ~KEYBIT_MASK) | zx_keyboards[addr];
 #endif
 #if (MEASURE_RESPONSE_TIME == 1)
     HAL_GPIO_TogglePin(USER_LED_GPIO_Port, USER_LED_Pin);
@@ -179,6 +181,44 @@ void SystemClock_Config(void)
 }
 
 /**
+  * @brief SPI1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_SPI1_Init(void)
+{
+
+  /* USER CODE BEGIN SPI1_Init 0 */
+
+  /* USER CODE END SPI1_Init 0 */
+
+  /* USER CODE BEGIN SPI1_Init 1 */
+
+  /* USER CODE END SPI1_Init 1 */
+  /* SPI1 parameter configuration*/
+  hspi1.Instance = SPI1;
+  hspi1.Init.Mode = SPI_MODE_MASTER;
+  hspi1.Init.Direction = SPI_DIRECTION_2LINES;
+  hspi1.Init.DataSize = SPI_DATASIZE_8BIT;
+  hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
+  hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
+  hspi1.Init.NSS = SPI_NSS_SOFT;
+  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_4;
+  hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
+  hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
+  hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
+  hspi1.Init.CRCPolynomial = 10;
+  if (HAL_SPI_Init(&hspi1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN SPI1_Init 2 */
+
+  /* USER CODE END SPI1_Init 2 */
+
+}
+
+/**
   * @brief USART2 Initialization Function
   * @param None
   * @retval None
@@ -221,49 +261,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitTypeDef GPIO_InitStruct = {0};
 
   /* GPIO Ports Clock Enable */
+  __HAL_RCC_GPIOD_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
-  __HAL_RCC_GPIOB_CLK_ENABLE();
   __HAL_RCC_GPIOC_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, KeyD0_Pin|KeyD1_Pin|KeyD2_Pin|KeyD3_Pin
-                          |KeyD4_Pin|KeyD5_Pin, GPIO_PIN_SET);
-
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(USER_LED_GPIO_Port, USER_LED_Pin, GPIO_PIN_RESET);
-
-  /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(USB_POWER_SWITCH_ON_GPIO_Port, USB_POWER_SWITCH_ON_Pin, GPIO_PIN_RESET);
-
-  /*Configure GPIO pins : KeyD0_Pin KeyD1_Pin KeyD2_Pin KeyD3_Pin
-                           KeyD4_Pin KeyD5_Pin */
-  GPIO_InitStruct.Pin = KeyD0_Pin|KeyD1_Pin|KeyD2_Pin|KeyD3_Pin
-                          |KeyD4_Pin|KeyD5_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : USER_LED_Pin */
-  GPIO_InitStruct.Pin = USER_LED_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(USER_LED_GPIO_Port, &GPIO_InitStruct);
-#ifdef FE_INTERRUPT
-  /*Configure GPIO pin : KeyRequest_Pin */
-  GPIO_InitStruct.Pin = KeyRequest_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
-  HAL_GPIO_Init(KeyRequest_GPIO_Port, &GPIO_InitStruct);
-#endif
-  /*Configure GPIO pins : KeyA10_Pin KeyA11_Pin KeyA12_Pin KeyA13_Pin
-                           KeyA14_Pin KeyA15_Pin KeyA8_Pin KeyA9_Pin */
-  GPIO_InitStruct.Pin = KeyA10_Pin|KeyA11_Pin|KeyA12_Pin|KeyA13_Pin
-                          |KeyA14_Pin|KeyA15_Pin|KeyA8_Pin|KeyA9_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
-  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /*Configure GPIO pin : USB_POWER_SWITCH_ON_Pin */
   GPIO_InitStruct.Pin = USB_POWER_SWITCH_ON_Pin;
@@ -277,29 +280,26 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(USB_OWER_CURRENT_GPIO_Port, &GPIO_InitStruct);
-#ifdef FE_INTERRUPT
-  /* EXTI interrupt init*/
-  HAL_NVIC_SetPriority(EXTI0_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(EXTI0_IRQn);
-#endif
+
 }
 
 /* USER CODE BEGIN 4 */
 #ifdef FE_INTERRUPT
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
-  uint8_t addr = (uint8_t)(KEYADDR_PORT->IDR >> 8);
-  KEYDATA_PORT->ODR = (KEYDATA_PORT->ODR & ~KEYBIT_MASK) | zx_keyboards[addr];
 }
 #endif
 
 #if 0
+
 int __io_putchar(int ch) {
   ITM_SendChar(ch);
   return ch;
 }
+
 int __io_getchar(void) {
   return ITM_ReceiveChar();
 }
+
 #endif
 
 /* USER CODE END 4 */

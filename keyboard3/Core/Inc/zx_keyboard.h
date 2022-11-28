@@ -8,6 +8,8 @@
 #ifndef INC_ZX_KEYBOARD_H_
 #define INC_ZX_KEYBOARD_H_
 
+#define KEYBIT_MASK 0x1F
+
 #define SYMBOL_SHIFT 232
 
 #include <custom_usbh_hid_keyboard.h>

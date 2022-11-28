@@ -78,10 +78,10 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="Src/usb_hid_callback.c|Src/syscalls.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
 						<entry excluding="STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_dma.c|STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_flash_ex.c|STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_flash.c|STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_pwr.c|STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_tim_ex.c|STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_tim.c" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="Drivers"/>
-						<entry excluding="ST/STM32_USB_Host_Library/Class/HID/Src/usbh_hid_parser.c|ST/STM32_USB_Host_Library/Class/HID/Src/usbh_hid_keybd.c|ST/STM32_USB_Host_Library/Class/HID/Src/usbh_hid_mouse.c" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="Middlewares"/>
+						<entry excluding="Src/usb_hid_callback.c|Src/syscalls.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="USB_HOST"/>
+						<entry excluding="ST/STM32_USB_Host_Library/Class/HID/Src/usbh_hid_parser.c|ST/STM32_USB_Host_Library/Class/HID/Src/usbh_hid_keybd.c|ST/STM32_USB_Host_Library/Class/HID/Src/usbh_hid_mouse.c" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="Middlewares"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -164,8 +164,8 @@
 					<sourceEntries>
 						<entry excluding="Src/gpio_ex.c|Src/retarget.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
 						<entry excluding="STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_pwr.c|STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_flash.c|STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_flash_ex.c|STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_dma.c|STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_tim_ex.c|STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_tim.c" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="Drivers"/>
-						<entry excluding="ST/STM32_USB_Host_Library/Class/HID/Src/usbh_hid_mouse.c|ST/STM32_USB_Host_Library/Class/HID/Src/usbh_hid_keybd.c|ST/STM32_USB_Host_Library/Class/HID/Src/usbh_hid_parser.c" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="Middlewares"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="USB_HOST"/>
+						<entry excluding="ST/STM32_USB_Host_Library/Class/HID/Src/usbh_hid_mouse.c|ST/STM32_USB_Host_Library/Class/HID/Src/usbh_hid_keybd.c|ST/STM32_USB_Host_Library/Class/HID/Src/usbh_hid_parser.c" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="Middlewares"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -249,10 +249,10 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="Src/usb_hid_callback.c|Src/syscalls.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
 						<entry excluding="STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_dma.c|STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_flash_ex.c|STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_flash.c|STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_pwr.c|STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_tim_ex.c|STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_tim.c" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="Drivers"/>
-						<entry excluding="ST/STM32_USB_Host_Library/Class/HID/Src/usbh_hid_parser.c|ST/STM32_USB_Host_Library/Class/HID/Src/usbh_hid_keybd.c|ST/STM32_USB_Host_Library/Class/HID/Src/usbh_hid_mouse.c" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="Middlewares"/>
+						<entry excluding="Src/usb_hid_callback.c|Src/syscalls.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="USB_HOST"/>
+						<entry excluding="ST/STM32_USB_Host_Library/Class/HID/Src/usbh_hid_parser.c|ST/STM32_USB_Host_Library/Class/HID/Src/usbh_hid_keybd.c|ST/STM32_USB_Host_Library/Class/HID/Src/usbh_hid_mouse.c" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="Middlewares"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -334,8 +334,8 @@
 					<sourceEntries>
 						<entry excluding="Src/gpio_ex.c|Src/retarget.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
 						<entry excluding="STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_pwr.c|STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_tim.c|STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_tim_ex.c|STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_flash.c|STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_flash_ex.c|STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_dma.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
-						<entry excluding="ST/STM32_USB_Host_Library/Class/HID/Src/usbh_hid_mouse.c|ST/STM32_USB_Host_Library/Class/HID/Src/usbh_hid_keybd.c|ST/STM32_USB_Host_Library/Class/HID/Src/usbh_hid_parser.c" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="Middlewares"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="USB_HOST"/>
+						<entry excluding="ST/STM32_USB_Host_Library/Class/HID/Src/usbh_hid_mouse.c|ST/STM32_USB_Host_Library/Class/HID/Src/usbh_hid_keybd.c|ST/STM32_USB_Host_Library/Class/HID/Src/usbh_hid_parser.c" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="Middlewares"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
