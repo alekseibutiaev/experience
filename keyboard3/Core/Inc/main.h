@@ -63,6 +63,10 @@ void Error_Handler(void);
 #define DEBUG_TX_GPIO_Port GPIOA
 #define DEBUG_RX_Pin GPIO_PIN_3
 #define DEBUG_RX_GPIO_Port GPIOA
+#define LOAD_Pin GPIO_PIN_4
+#define LOAD_GPIO_Port GPIOA
+#define CLEAR_Pin GPIO_PIN_6
+#define CLEAR_GPIO_Port GPIOA
 #define USB_POWER_SWITCH_ON_Pin GPIO_PIN_8
 #define USB_POWER_SWITCH_ON_GPIO_Port GPIOC
 #define USB_OWER_CURRENT_Pin GPIO_PIN_9

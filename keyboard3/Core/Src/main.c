@@ -113,6 +113,7 @@ int main(void)
   int usb_ctr = 0;
   for(;;) {
     /* USER CODE END WHILE */
+
     /* USER CODE BEGIN 3 */
 #if (MEASURE_RESPONSE_TIME == 1)
     HAL_GPIO_TogglePin(USER_LED_GPIO_Port, USER_LED_Pin);
@@ -266,7 +267,24 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOC_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOA, LOAD_Pin|CLEAR_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(USB_POWER_SWITCH_ON_GPIO_Port, USB_POWER_SWITCH_ON_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin : LOAD_Pin */
+  GPIO_InitStruct.Pin = LOAD_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+  HAL_GPIO_Init(LOAD_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : CLEAR_Pin */
+  GPIO_InitStruct.Pin = CLEAR_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(CLEAR_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : USB_POWER_SWITCH_ON_Pin */
   GPIO_InitStruct.Pin = USB_POWER_SWITCH_ON_Pin;
