@@ -9,10 +9,12 @@
 #define INC_ZX_KEYBOARD_H_
 
 #define SYMBOL_SHIFT 232
+#define REG_COUNT 8
 
 #include <custom_usbh_hid_keyboard.h>
 
 void printbuf(const uint8_t* buf, const uint32_t size);
 void prepare_keys(const key_receive_t* keys, const key_leds_t* leds);
+uint8_t assemply_data(const uint8_t(*regs)[REG_COUNT], const uint8_t addr);
 
 #endif /* INC_ZX_KEYBOARD_H_ */

@@ -60,7 +60,8 @@ static void MX_USART2_UART_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-extern uint8_t table[2][256];
+extern uint8_t table[256];
+extern uint8_t regs[8];
 extern int ts;
 extern USBH_HandleTypeDef hUsbHostFS;
 /* USER CODE END 0 */
@@ -96,8 +97,8 @@ int main(void)
   MX_USB_HOST_Init();
   /* USER CODE BEGIN 2 */
   uart_dbg_init(&huart2);
-  memset(table, KEYDATA_MASK, sizeof(table));
-  GPIOC->ODR |= KEYDATA_MASK;
+  memset(table, KEYBIT_MASK, sizeof(table));
+  GPIOC->ODR |= KEYBIT_MASK;
   printf("all initialized\n");
   set_keys_callback(&prepare_keys);
 #if (MEASURE_RESPONSE_TIME == 1)
@@ -118,7 +119,7 @@ int main(void)
       MX_USB_HOST_Process();
 #ifndef FE_INTERRUPT
     uint8_t addr = (uint8_t)(KEYADDR_PORT->IDR >> 8);
-    KEYDATA_PORT->ODR = (KEYDATA_PORT->ODR & ~KEYBIT_MASK) | table[ts][addr];
+    KEYDATA_PORT->ODR = (KEYDATA_PORT->ODR & ~KEYBIT_MASK) | table[addr];
 #endif
 #if (MEASURE_RESPONSE_TIME == 1)
     HAL_GPIO_TogglePin(USER_LED_GPIO_Port, USER_LED_Pin);
