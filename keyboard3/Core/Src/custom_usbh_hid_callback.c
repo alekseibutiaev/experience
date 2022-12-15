@@ -30,9 +30,9 @@ void USBH_HID_EventCallback(USBH_HandleTypeDef* phost) {
   }
   if(USBH_HID_GetDeviceType(phost) == HID_MOUSE) {
     pos_received_t* pr = usbh_hid_mouse(phost);
-/*
-    printf("0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X\n ",
-        pr->buf[0], pr->buf[2], pr->buf[2], pr->buf[3], pr->buf[4], pr->buf[5], pr->buf[6], pr->buf[7], pr->buf[8], pr->buf[9]);*/
+
+    printf("0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X\n",
+        pr->buf[0], pr->buf[2], pr->buf[2], pr->buf[3], pr->buf[4], pr->buf[5], pr->buf[6], pr->buf[7]);
   }
 }
 #endif

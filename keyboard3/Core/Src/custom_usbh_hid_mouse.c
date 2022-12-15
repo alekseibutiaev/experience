@@ -9,8 +9,7 @@
 #include <usbh_def.h>
 #include "custom_usbh_hid_mouse.h"
 
-pos_received_t pos;
-uint8_t rx_buf[sizeof(pos)];
+uint8_t rx_buf[sizeof(pos_received_t)];
 
 
 USBH_StatusTypeDef USBH_HID_MouseInit(USBH_HandleTypeDef* phost) {
@@ -29,13 +28,10 @@ USBH_StatusTypeDef usbh_hid_mouse_init(USBH_HandleTypeDef* phost) {
 
 
 pos_received_t* usbh_hid_mouse(USBH_HandleTypeDef* phost) {
-  pos_received_t* test = &pos;
-  HID_HandleTypeDef* h = (HID_HandleTypeDef *)phost->pActiveClass->pData;
-  if (h->length != 0U && h->length == USBH_HID_FifoRead(&h->fifo, &pos.buf, h->length)){
-    for(int i = 0; i < sizeof(pos.buf); ++i)
-      printf("0x%02X%c", pos.buf[i], (0 != (i + 1) % 16 ? ' ' : '\n' ));
-    printf("%d \n", sizeof(pos));
+  static pos_received_t pos;
+
+  HID_HandleTypeDef* h = (HID_HandleTypeDef*)phost->pActiveClass->pData;
+  if(h->length != 0U && h->length == USBH_HID_FifoRead(&h->fifo, &pos.buf, h->length))
     return &pos;
-  }
   return 0;
 }
