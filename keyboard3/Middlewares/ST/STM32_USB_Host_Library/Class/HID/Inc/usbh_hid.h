@@ -113,6 +113,7 @@ typedef enum
 }
 HID_StateTypeDef;
 
+
 typedef enum
 {
   HID_REQ_INIT = 0,
@@ -223,6 +224,7 @@ typedef struct _HID_Process
   uint32_t             timer;
   uint8_t              DataReady;
   HID_DescTypeDef      HID_Desc;
+  USBH_StatusTypeDef   class_status;
   USBH_StatusTypeDef(* Init)(USBH_HandleTypeDef *phost);
 }
 HID_HandleTypeDef;
