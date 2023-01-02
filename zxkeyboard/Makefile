@@ -1,6 +1,6 @@
 .PHONY: all build cmake clean format
 
-BUILD_DIR := build
+BUILD_DIR := build_debug
 BUILD_TYPE ?= Debug
 
 all: build

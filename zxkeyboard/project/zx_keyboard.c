@@ -4,47 +4,53 @@
  *  Created on: Nov 15, 2022
  *      Author: butiaev
  */
+#include <stdint.h>
 #include <stdio.h>
+#include "spi.h"
 #include "main.h"
 #include "zx_keyboard.h"
 
+#define KEY_ADDRESS 8
+
+//extern SPI_HandleTypeDef hspi1;
+
 typedef struct {
-  uint8_t top;
+  uint8_t treg;
   uint8_t tbit;
-  uint8_t lower;
+  uint8_t lreg;
   uint8_t lbit;
 } key_layer_t;
 
 const key_layer_t layers[256] = {
 /*00*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
 /*02*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
-/*04*/  {0xFD, 0xFE & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*A */ {0x7F, 0xEF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*B */
-/*06*/  {0xFE, 0xF7 & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*C */ {0xFD, 0xFB & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*D */
-/*08*/  {0xFB, 0xFB & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*E */ {0xFD, 0xF7 & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*F */
-/*0A*/  {0xFD, 0xEF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*G */ {0xBF, 0xEF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*H */
-/*0C*/  {0xDF, 0xFB & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*I */ {0xBF, 0xF7 & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*J */
-/*0E*/  {0xBF, 0xFB & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*K */ {0xBF, 0xFD & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*L */
-/*10*/  {0x7F, 0xFB & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*M */ {0x7F, 0xF7 & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*N */
-/*12*/  {0xDF, 0xFD & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*O */ {0xDF, 0xFE & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*P */
-/*14*/  {0xFB, 0xFE & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*Q */ {0xFB, 0xF7 & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*R */
-/*16*/  {0xFD, 0xFD & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*S */ {0xFB, 0xEF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*T */
-/*18*/  {0xDF, 0xF7 & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*U */ {0xFE, 0xEF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*V */
-/*1A*/  {0xFB, 0xFD & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*W */ {0xFE, 0xFB & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*X */
-/*1C*/  {0xDF, 0xEF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*Y */ {0xFE, 0xFD & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*Z */
-/*1E*/  {0xF7, 0xFE & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*1 */ {0xF7, 0xFD & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*2 */
-/*20*/  {0xF7, 0xFB & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*3 */ {0xF7, 0xF7 & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*4 */
-/*DC*/  {0xF7, 0xEF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*5 */ {0xEF, 0xEF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*6 */
-/*24*/  {0xEF, 0xF7 & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*7 */ {0xEF, 0xFB & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*8 */
-/*DC*/  {0xEF, 0xFD & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*9 */ {0xEF, 0xFE & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*0 */
-/*28*/  {0xBF, 0xFE & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*EN*/ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
+/*04*/  {0x06, 0xFE & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*A */ {0x00, 0xEF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*B */
+/*06*/  {0x07, 0xF7 & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*C */ {0x06, 0xFB & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*D */
+/*08*/  {0x05, 0xFB & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*E */ {0x06, 0xF7 & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*F */
+/*0A*/  {0x06, 0xEF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*G */ {0x01, 0xEF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*H */
+/*0C*/  {0x02, 0xFB & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*I */ {0x01, 0xF7 & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*J */
+/*0E*/  {0x01, 0xFB & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*K */ {0x01, 0xFD & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*L */
+/*10*/  {0x00, 0xFB & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*M */ {0x00, 0xF7 & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*N */
+/*12*/  {0x02, 0xFD & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*O */ {0x02, 0xFE & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*P */
+/*14*/  {0x05, 0xFE & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*Q */ {0x05, 0xF7 & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*R */
+/*16*/  {0x06, 0xFD & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*S */ {0x05, 0xEF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*T */
+/*18*/  {0x02, 0xF7 & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*U */ {0x07, 0xEF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*V */
+/*1A*/  {0x05, 0xFD & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*W */ {0x07, 0xFB & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*X */
+/*1C*/  {0x02, 0xEF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*Y */ {0x07, 0xFD & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*Z */
+/*1E*/  {0x04, 0xFE & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*1 */ {0x04, 0xFD & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*2 */
+/*20*/  {0x04, 0xFB & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*3 */ {0x04, 0xF7 & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*4 */
+/*DC*/  {0x04, 0xEF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*5 */ {0x03, 0xEF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*6 */
+/*24*/  {0x03, 0xF7 & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*7 */ {0x03, 0xFB & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*8 */
+/*DC*/  {0x03, 0xFD & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*9 */ {0x03, 0xFE & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*0 */
+/*28*/  {0x01, 0xFE & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*EN*/ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
 /*2A*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
-/*2C*/  {0x7F, 0xFE & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*SP*/ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
+/*2C*/  {0x00, 0xFE & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*SP*/ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
 /*2E*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
 /*30*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
 /*32*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
 /*34*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
 /*36*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
-/*38*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFE, 0xFE & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*CS*/
+/*38*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
 /*3A*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
 /*3C*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
 /*3E*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
@@ -66,7 +72,7 @@ const key_layer_t layers[256] = {
 /*5E*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
 /*60*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
 /*62*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
-/*64*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
+/*64*/  {0x07, 0xFE & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*CS*/ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
 /*66*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
 /*68*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
 /*6A*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
@@ -132,7 +138,7 @@ const key_layer_t layers[256] = {
 /*E2*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
 /*E4*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
 /*E6*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
-/*E8*/  {0x7F, 0xFD & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*SS*/ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
+/*E8*/  {0x00, 0xFD & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*SS*/ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
 /*EA*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
 /*EC*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
 /*EE*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
@@ -146,15 +152,35 @@ const key_layer_t layers[256] = {
 /*FE*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
 };
 
-uint8_t zx_keyboards[256] = {0};
+uint8_t registers[KEY_ADDRESS] = {0};
+
+static void load_impulse() {
+  HAL_GPIO_WritePin(LOAD_GPIO_Port, LOAD_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(LOAD_GPIO_Port, LOAD_Pin, GPIO_PIN_RESET);
+}
 
 void printbuf(const uint8_t* buf, const uint32_t size) {
   for(uint32_t i = 0; i < size; ++i)
     printf("0x%02X%c%c", buf[i], ' ', ((i + 1) % 16 ? ' ' : '\n'));
 }
 
+void clear() {
+  memset(registers, 0x00, sizeof(registers));
+  HAL_SPI_Transmit(&hspi1, registers, sizeof(registers), 500);
+  load_impulse();
+}
+
+void test() {
+  uint8_t c = 1;
+  for(uint8_t i = 8; i > 0 && c != 0; --i) {
+    if(c)
+      c = 0 == ++registers[i - 1];
+  }
+  HAL_SPI_Transmit(&hspi1, registers, sizeof(registers), 500);
+  load_impulse();
+}
+
 void prepare_keys(const key_receive_t* keys, const key_leds_t* leds) {
-  static key_receive_t previous = {0};
 #if 1
   printf("lc = %d,ls = %d, la = %d, lg = %d, rc = %d, rs = %d, ra = %d, rg = %d, "
     "k0 = 0x%02X, k1 = 0x%02X, k2 = 0x%02X, k3 = 0x%02X, k4 = 0x%02X, k5 = 0x%02X\n",
@@ -165,17 +191,13 @@ void prepare_keys(const key_receive_t* keys, const key_leds_t* leds) {
     (int)keys->data.keys[0], (int)keys->data.keys[1], (int)keys->data.keys[2],
     (int)keys->data.keys[3], (int)keys->data.keys[4], (int)keys->data.keys[5]);
 #endif
-  if(keys->data.mod.bits.lshift | keys->data.mod.bits.rshift)
-    zx_keyboards[layers[SYMBOL_SHIFT].top] &= layers[SYMBOL_SHIFT].tbit;
-  else
-    zx_keyboards[layers[SYMBOL_SHIFT].top] |= KEYBIT_MASK;
-  for(int i = 0; i < sizeof(keys->data.keys); ++i)
-    if(keys->data.keys[i] && 0 == memchr(previous.data.keys, keys->data.keys[i], sizeof(previous.data.keys))){
-      zx_keyboards[layers[keys->data.keys[i]].top] &= layers[keys->data.keys[i]].tbit;
-    if(previous.data.keys[i] && 0 == memchr(keys->data.keys, previous.data.keys[i], sizeof(keys->data.keys)))
-      zx_keyboards[layers[previous.data.keys[i]].top] |= KEYBIT_MASK;
+  memset(registers, 0xFF, sizeof(registers));
+  for(uint8_t i = 0; i < sizeof(keys->data.keys); ++i) {
+    const key_layer_t* l = &layers[keys->data.keys[i]];
+    if(l->treg != 0xFF)
+      registers[l->treg] &= l->lbit;
   }
-//  printbuf(zx_keyboards, sizeof(zx_keyboards));
-  memcpy(&previous, keys, sizeof(key_receive_t));
+  HAL_SPI_Transmit(&hspi1, registers, sizeof(registers), 500);
+  load_impulse();
 }
 

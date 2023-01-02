@@ -15,6 +15,8 @@
 #include <custom_usbh_hid_keyboard.h>
 
 void printbuf(const uint8_t* buf, const uint32_t size);
+void clear();
+void test();
 void prepare_keys(const key_receive_t* keys, const key_leds_t* leds);
 
 #endif /* INC_ZX_KEYBOARD_H_ */

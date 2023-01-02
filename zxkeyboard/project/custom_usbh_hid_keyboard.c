@@ -4,9 +4,9 @@
  *  Created on: Aug 18, 2022
  *      Author: butiaev
  */
-
-#include <custom_usbh_hid_keyboard.h>
+#include <stdint.h>
 #include <string.h>
+#include "custom_usbh_hid_keyboard.h"
 
 static keys_callback_t callback = 0;
 static key_receive_t keys;
@@ -19,10 +19,8 @@ USBH_StatusTypeDef USBH_HID_KeybdInit(USBH_HandleTypeDef* phost) {
 }
 
 USBH_StatusTypeDef usbh_hid_keyboard_init(USBH_HandleTypeDef* phost) {
-  uint32_t i;
   HID_HandleTypeDef* HID_Handle = (HID_HandleTypeDef*)phost->pActiveClass->pData;
-  for(i = 0; i < sizeof(receive); ++i)
-    receive[i] = 0;
+  memset(receive, 0, sizeof(receive));
   if (HID_Handle->length > sizeof(receive))
     HID_Handle->length = sizeof(receive);
   HID_Handle->pData = receive;
