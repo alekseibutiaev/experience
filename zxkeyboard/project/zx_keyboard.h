@@ -8,7 +8,7 @@
 #ifndef INC_ZX_KEYBOARD_H_
 #define INC_ZX_KEYBOARD_H_
 
-#define KEYBIT_MASK 0x1F
+#define KEYBIT_MASK 0xFF
 
 #define SYMBOL_SHIFT 232
 
