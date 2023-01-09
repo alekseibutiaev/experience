@@ -170,16 +170,6 @@ void clear() {
   load_impulse();
 }
 
-void test() {
-  uint8_t c = 1;
-  for(uint8_t i = 8; i > 0 && c != 0; --i) {
-    if(c)
-      c = 0 == ++registers[i - 1];
-  }
-  HAL_SPI_Transmit(&hspi1, registers, sizeof(registers), 500);
-  load_impulse();
-}
-
 void prepare_keys(const key_receive_t* keys, const key_leds_t* leds) {
 #if 1
   printf("lc = %d,ls = %d, la = %d, lg = %d, rc = %d, rs = %d, ra = %d, rg = %d, "
@@ -191,6 +181,7 @@ void prepare_keys(const key_receive_t* keys, const key_leds_t* leds) {
     (int)keys->data.keys[0], (int)keys->data.keys[1], (int)keys->data.keys[2],
     (int)keys->data.keys[3], (int)keys->data.keys[4], (int)keys->data.keys[5]);
 #endif
+  uint8_t registers[KEY_ADDRESS];
   memset(registers, 0xFF, sizeof(registers));
   uint8_t idx = 0;
   for(uint8_t i = 0; i < sizeof(keys->data.keys) && 0 != (idx = keys->data.keys[i]); ++i) {

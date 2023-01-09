@@ -10,6 +10,8 @@ option(DUMP_ASM "Create full assembly of final executable" OFF)
 
 # Set microcontroller information
 set(MCU_FAMILY STM32F1xx)
+set(DEVICE STM32F105RC)
+set(JLINKEXE "/opt/SEGGER/JLink/JLinkExe")
 set(CPU_PARAMETERS -mcpu=cortex-m3 -mthumb -mfloat-abi=soft)
 
 enable_language(C CXX ASM)
@@ -23,9 +25,9 @@ set(CMAKE_CXX_EXTENSIONS ON)
 ###############################################################################
 
 set(EXECUTABLE ${CMAKE_PROJECT_NAME})
-set(MCU_MODEL STM32F107xC)
+set(MCU_MODEL STM32F105xC)
 set(STARTUP_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/startup/startup_stm32f107xc.s)
-set(MCU_LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/linker/STM32F107RCTx_FLASH.ld)
+set(MCU_LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/linker/STM32F105RCTx_FLASH.ld)
 
 set(STM32CUBEMX_INCLUDE_DIRECTORIES
     ${CMAKE_CURRENT_SOURCE_DIR}/Core/Inc
@@ -73,7 +75,7 @@ target_include_directories(${EXECUTABLE} PRIVATE
 ###############################################################################
 
 target_compile_options(${EXECUTABLE} PRIVATE
-${CPU_PARAMETERS}
+    ${CPU_PARAMETERS}
     -Wall
     -fstack-usage
     -fdata-sections
@@ -107,3 +109,17 @@ if (${DUMP_ASM})
     add_custom_command(TARGET ${EXECUTABLE} POST_BUILD
         COMMAND ${CMAKE_OBJDUMP} -D $<TARGET_FILE:${EXECUTABLE}> > ${EXECUTABLE}.s)
 endif()
+
+add_custom_command(OUTPUT jlink_cmd_script
+    COMMAND echo "device ${DEVICE}" >> jlink_cmd_script
+    COMMAND echo "if swd" >> jlink_cmd_script
+    COMMAND echo "Speed 4000" >> jlink_cmd_script
+    COMMAND echo "LoadFile ${EXECUTABLE}.bin 0x0800000" >> jlink_cmd_script
+    COMMAND echo "Exit" >> jlink_cmd_script
+    VERBATIM
+)
+
+add_custom_target(jlink_upload DEPENDS jlink_cmd_script
+    COMMAND cat jlink_cmd_script
+    COMMAND ${JLINKEXE} -CommanderScript jlink_cmd_script
+)

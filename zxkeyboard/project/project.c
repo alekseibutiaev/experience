@@ -20,7 +20,6 @@ void init() {
 }
 
 void process() {
-//  test();
   static uint32_t counter = 0;
   if(0 == counter++ % USB_PERIOD)
     MX_USB_HOST_Process();
