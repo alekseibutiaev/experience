@@ -20,6 +20,7 @@
     "stdint.h": "c",
     "main.h": "c",
     "stdio.h": "c",
-    "spi.h": "c"
+    "spi.h": "c",
+    "custom_usbh_hid_keyboard.h": "c"
   }
 }

@@ -114,7 +114,7 @@ add_custom_command(OUTPUT jlink_cmd_script
     COMMAND echo "device ${DEVICE}" >> jlink_cmd_script
     COMMAND echo "if swd" >> jlink_cmd_script
     COMMAND echo "Speed 4000" >> jlink_cmd_script
-    COMMAND echo "LoadFile ${EXECUTABLE}.bin 0x0800000" >> jlink_cmd_script
+    COMMAND echo "LoadFile ${keyboard_BINARY_DIR}/${EXECUTABLE}.bin 0x0800000" >> jlink_cmd_script
     COMMAND echo "Exit" >> jlink_cmd_script
     VERBATIM
 )
