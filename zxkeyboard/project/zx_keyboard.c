@@ -21,6 +21,19 @@ typedef struct {
   uint8_t lbit;
 } key_layer_t;
 
+#if defined (DEBUG)
+#define LSB 1
+#define MSB 0
+#endif
+
+#define CSID 0x07 // CAPS_SHIFT register index
+#define CSVL 0xFE // CAPS_SHIFT register value 
+#define SSID 0x00 // SYMBOL_SHIFT register index
+#define SSVL 0xFD // SYMBOL_SHIFT register value 
+
+const key_layer_t cs = {CSID, CSVL & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK};
+const key_layer_t ss = {SSID, SSVL & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK};
+
 const key_layer_t layers[256] = {
 /*00*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
 /*02*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
@@ -43,14 +56,14 @@ const key_layer_t layers[256] = {
 /*24*/  {0x03, 0xF7 & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*7 */ {0x03, 0xFB & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*8 */
 /*DC*/  {0x03, 0xFD & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*9 */ {0x03, 0xFE & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*0 */
 /*28*/  {0x01, 0xFE & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*EN*/ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
-/*2A*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
+/*2A*/  {0x03, 0xFE & KEYBIT_MASK, CSID, CSVL & KEYBIT_MASK}, /*BS*/ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
 /*2C*/  {0x00, 0xFE & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*SP*/ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
-/*2E*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
-/*30*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
+/*2E*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0x02, 0xEF & KEYBIT_MASK, SSID, SSVL & KEYBIT_MASK}, /*[ */
+/*30*/  {0x02, 0xF7 & KEYBIT_MASK, SSID, SSVL & KEYBIT_MASK}, /*] */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
 /*32*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
 /*34*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
 /*36*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
-/*38*/  {0x00, 0xFD & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*SS*/ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
+/*38*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
 /*3A*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
 /*3C*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
 /*3E*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
@@ -59,20 +72,20 @@ const key_layer_t layers[256] = {
 /*44*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
 /*46*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
 /*48*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
-/*4A*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
+/*4A*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0x00, 0xFE & KEYBIT_MASK, CSID, CSVL & KEYBIT_MASK}, /*BR*/
 /*4C*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
-/*4E*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
-/*50*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
-/*52*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
-/*54*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
-/*56*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
-/*58*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
+/*4E*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0x03, 0xFB & KEYBIT_MASK, CSID, CSVL & KEYBIT_MASK}, /*AR*/
+/*50*/  {0x04, 0xEF & KEYBIT_MASK, CSID, CSVL & KEYBIT_MASK}, /*AL*/ {0x03, 0xEF & KEYBIT_MASK, CSID, CSVL & KEYBIT_MASK}, /*AD*/
+/*52*/  {0x03, 0xF7 & KEYBIT_MASK, CSID, CSVL & KEYBIT_MASK}, /*AU*/ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
+/*54*/  {0x07, 0xEF & KEYBIT_MASK, SSID, SSVL & KEYBIT_MASK}, /*/ */ {0x00, 0xEF & KEYBIT_MASK, SSID, SSVL & KEYBIT_MASK}, /** */
+/*56*/  {0x01, 0xF7 & KEYBIT_MASK, SSID, SSVL & KEYBIT_MASK}, /*- */ {0x01, 0xFB & KEYBIT_MASK, SSID, SSVL & KEYBIT_MASK}, /*+ */
+/*58*/  {0x01, 0xFE & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*EN*/ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
 /*5A*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
 /*5C*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
 /*5E*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
 /*60*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
 /*62*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
-/*64*/  {0x07, 0xFE & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*CS*/ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
+/*64*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
 /*66*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
 /*68*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
 /*6A*/  {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */ {0xFF, 0xFF & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*  */
@@ -159,6 +172,22 @@ static void load_impulse() {
   HAL_GPIO_WritePin(LOAD_GPIO_Port, LOAD_Pin, GPIO_PIN_RESET);
 }
 
+#if defined (DEBUG)
+const char* printbin(uint8_t lsb, char* buf, uint8_t value) {
+  sprintf(buf, "%c%c%c%c%c%c%c%c",
+    (value & (lsb ? 0x80 : 0x01) ? '1' : '0'),
+    (value & (lsb ? 0x40 : 0x02) ? '1' : '0'),
+    (value & (lsb ? 0x20 : 0x04) ? '1' : '0'),
+    (value & (lsb ? 0x10 : 0x08) ? '1' : '0'),
+    (value & (lsb ? 0x08 : 0x10) ? '1' : '0'),
+    (value & (lsb ? 0x04 : 0x20) ? '1' : '0'),
+    (value & (lsb ? 0x02 : 0x40) ? '1' : '0'),
+    (value & (lsb ? 0x01 : 0x80) ? '1' : '0')
+  );
+  return buf;
+}
+#endif
+
 void printbuf(const uint8_t* buf, const uint32_t size) {
   for(uint32_t i = 0; i < size; ++i)
     printf("0x%02X%c%c", buf[i], ' ', ((i + 1) % 16 ? ' ' : '\n'));
@@ -181,15 +210,41 @@ void prepare_keys(const key_receive_t* keys, const key_leds_t* leds) {
     (int)keys->data.keys[0], (int)keys->data.keys[1], (int)keys->data.keys[2],
     (int)keys->data.keys[3], (int)keys->data.keys[4], (int)keys->data.keys[5]);
 #endif
+// /*64*/  {0x07, 0xFE & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*CS*/
+// /*38*/  {0x00, 0xFD & KEYBIT_MASK, 0xFF, 0xFF & KEYBIT_MASK}, /*SS*/
+
+#define BITBUF 9
+#define UNPRESSED 0xFF
+  char buf[BITBUF * 2];
   uint8_t registers[KEY_ADDRESS];
-  memset(registers, 0xFF, sizeof(registers));
+  memset(registers, UNPRESSED, sizeof(registers));
   uint8_t idx = 0;
+  if(keys->data.mod.bits.lctrl || keys->data.mod.bits.rctrl)
+    registers[cs.treg] &= cs.tbit;
+  if(keys->data.mod.bits.lshift || keys->data.mod.bits.rshift)
+    registers[ss.treg] &= ss.tbit;
   for(uint8_t i = 0; i < sizeof(keys->data.keys) && 0 != (idx = keys->data.keys[i]); ++i) {
     const key_layer_t* l = &layers[idx];
-    if(l->treg != 0xFF)
+    if(l->treg != UNPRESSED)
       registers[l->treg] &= l->tbit;
+    if(l->lreg != UNPRESSED)
+      registers[l->lreg] &= l->lbit;
   }
+#if defined (DEBUG)
+  for(uint8_t i = 3; i <= 3; --i) {
+    uint8_t j = ~i & 0x07;
+    printf("A%02d=%s A%02d=%s\n", 15 - j, printbin(MSB, buf, registers[j]), 15 - i, printbin(LSB, buf + BITBUF, registers[i]));
+  }
+#endif
   HAL_SPI_Transmit(&hspi1, registers, sizeof(registers), 500);
   load_impulse();
+//--==
+#undef UNPRESSED
+#undef BITBUF
 }
+
+#if defined (DEBUG)
+#undef MSB
+#undef LSB
+#endif
 
