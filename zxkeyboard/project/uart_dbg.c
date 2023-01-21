@@ -26,25 +26,15 @@ void uart_dbg_init(UART_HandleTypeDef* huart) {
 }
 
 int _write(int fd, char* ptr, int len) {
-  if (fd == STDOUT_FILENO || fd == STDERR_FILENO) {
-    HAL_StatusTypeDef hstatus = HAL_UART_Transmit(port, (uint8_t *) ptr, len, HAL_MAX_DELAY);
-    if (hstatus == HAL_OK)
-      return len;
-    else
-      return EIO;
-  }
+  if (fd == STDOUT_FILENO || fd == STDERR_FILENO)
+    return  HAL_OK == HAL_UART_Transmit(port, (uint8_t*)ptr, len, HAL_MAX_DELAY) ? len : EIO;
   errno = EBADF;
   return -1;
 }
 
 int _read(int fd, char* ptr, int len) {
-  if (fd == STDIN_FILENO) {
-    HAL_StatusTypeDef hstatus = HAL_UART_Receive(port, (uint8_t *) ptr, 1, HAL_MAX_DELAY);
-    if (hstatus == HAL_OK)
-      return 1;
-    else
-      return EIO;
-  }
+  if (fd == STDIN_FILENO)
+    return HAL_OK == HAL_UART_Receive(port, (uint8_t*)ptr, 1, HAL_MAX_DELAY) ? 1 : EIO;
   errno = EBADF;
   return -1;
 }
