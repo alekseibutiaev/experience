@@ -7,10 +7,23 @@ set(PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/project)
 
 option(BOARD_NUCLEO "type of board" ON)
 option(DUMP_ASM "Create full assembly of final executable" OFF)
+option(MCU "MCU type F105R8, F105RB, F105RC, F107RB, F107RC. F105R8 by default" "F105R8")
 
 # Set microcontroller information
 set(MCU_FAMILY STM32F1xx)
-set(DEVICE STM32F105RC)
+set(DEVICE STM32${MCU})
+set(MCU_LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/linker/STM32${MCU}Tx_FLASH.ld)
+if (${MCU} STREQUAL "F105R8" OR ${MCU} STREQUAL "F105RB" OR ${MCU} STREQUAL "F105RC")
+  set(STARTUP_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/startup/startup_stm32f105xc.s)
+  set(MCU_MODEL STM32F105xC)
+elseif (${MCU} STREQUAL "F107RB" OR ${MCU} STREQUAL "F107RC")
+  set(STARTUP_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/startup/startup_stm32f107xc.s)
+  set(MCU_MODEL STM32F107xC)
+else()
+    message(FATAL_ERROR "uscupported MCU " ${MCU})
+endif()
+message("MCU_LINKER_SCRIPT" ${MCU_LINKER_SCRIPT})
+message("STARTUP_SCRIPT" ${STARTUP_SCRIPT})
 set(JLINKEXE "/opt/SEGGER/JLink/JLinkExe")
 set(CPU_PARAMETERS -mcpu=cortex-m3 -mthumb -mfloat-abi=soft)
 
@@ -25,9 +38,6 @@ set(CMAKE_CXX_EXTENSIONS ON)
 ###############################################################################
 
 set(EXECUTABLE ${CMAKE_PROJECT_NAME})
-set(MCU_MODEL STM32F105xC)
-set(STARTUP_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/startup/startup_stm32f107xc.s)
-set(MCU_LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/linker/STM32F105RCTx_FLASH.ld)
 
 set(STM32CUBEMX_INCLUDE_DIRECTORIES
     ${CMAKE_CURRENT_SOURCE_DIR}/Core/Inc
