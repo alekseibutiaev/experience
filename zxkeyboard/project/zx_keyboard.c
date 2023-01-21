@@ -215,7 +215,6 @@ void prepare_keys(const key_receive_t* keys, const key_leds_t* leds) {
 
 #define BITBUF 9
 #define UNPRESSED 0xFF
-  char buf[BITBUF * 2];
   uint8_t registers[KEY_ADDRESS];
   memset(registers, UNPRESSED, sizeof(registers));
   uint8_t idx = 0;
@@ -231,6 +230,7 @@ void prepare_keys(const key_receive_t* keys, const key_leds_t* leds) {
       registers[l->lreg] &= l->lbit;
   }
 #if defined (DEBUG)
+  char buf[BITBUF * 2];
   for(uint8_t i = 3; i <= 3; --i) {
     uint8_t j = ~i & 0x07;
     printf("A%02d=%s A%02d=%s\n", 15 - j, printbin(MSB, buf, registers[j]), 15 - i, printbin(LSB, buf + BITBUF, registers[i]));
