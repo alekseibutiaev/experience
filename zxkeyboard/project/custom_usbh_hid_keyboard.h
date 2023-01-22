@@ -44,33 +44,33 @@ extern "C" {
 #define KEY_X                                  0x1B
 #define KEY_Y                                  0x1C
 #define KEY_Z                                  0x1D
-#define KEY_1_EXCLAMATION_MARK                 0x1E
-#define KEY_2_AT                               0x1F
-#define KEY_3_NUMBER_SIGN                      0x20
-#define KEY_4_DOLLAR                           0x21
-#define KEY_5_PERCENT                          0x22
-#define KEY_6_CARET                            0x23
-#define KEY_7_AMPERSAND                        0x24
-#define KEY_8_ASTERISK                         0x25
-#define KEY_9_OPARENTHESIS                     0x26
-#define KEY_0_CPARENTHESIS                     0x27
+#define KEY_1_EXCLAMATION_MARK                 0x1E /* double value shift */
+#define KEY_2_AT                               0x1F /* double value shift */
+#define KEY_3_NUMBER_SIGN                      0x20 /* double value shift */
+#define KEY_4_DOLLAR                           0x21 /* double value shift */
+#define KEY_5_PERCENT                          0x22 /* double value shift */
+#define KEY_6_CARET                            0x23 /* double value shift */
+#define KEY_7_AMPERSAND                        0x24 /* double value shift */
+#define KEY_8_ASTERISK                         0x25 /* double value shift */
+#define KEY_9_OPARENTHESIS                     0x26 /* double value shift */
+#define KEY_0_CPARENTHESIS                     0x27 /* double value shift */
 #define KEY_ENTER                              0x28
 #define KEY_ESCAPE                             0x29
 #define KEY_BACKSPACE                          0x2A
 #define KEY_TAB                                0x2B
 #define KEY_SPACEBAR                           0x2C
-#define KEY_MINUS_UNDERSCORE                   0x2D
-#define KEY_EQUAL_PLUS                         0x2E
-#define KEY_OBRACKET_AND_OBRACE                0x2F
-#define KEY_CBRACKET_AND_CBRACE                0x30
-#define KEY_BACKSLASH_VERTICAL_BAR             0x31
-#define KEY_NONUS_NUMBER_SIGN_TILDE            0x32
-#define KEY_SEMICOLON_COLON                    0x33
-#define KEY_SINGLE_AND_DOUBLE_QUOTE            0x34
-#define KEY_GRAVE_ACCENT_AND_TILDE             0x35
-#define KEY_COMMA_AND_LESS                     0x36
-#define KEY_DOT_GREATER                        0x37
-#define KEY_SLASH_QUESTION                     0x38
+#define KEY_MINUS_UNDERSCORE                   0x2D /* double value shift */
+#define KEY_EQUAL_PLUS                         0x2E /* double value shift */
+#define KEY_OBRACKET_AND_OBRACE                0x2F /* double value shift */
+#define KEY_CBRACKET_AND_CBRACE                0x30 /* double value shift */
+#define KEY_BACKSLASH_VERTICAL_BAR             0x31 /* double value shift */
+#define KEY_NONUS_NUMBER_SIGN_TILDE            0x32 /* double value shift */
+#define KEY_SEMICOLON_COLON                    0x33 /* double value shift */
+#define KEY_SINGLE_AND_DOUBLE_QUOTE            0x34 /* double value shift */
+#define KEY_GRAVE_ACCENT_AND_TILDE             0x35 /* double value shift */
+#define KEY_COMMA_AND_LESS                     0x36 /* double value shift */
+#define KEY_DOT_GREATER                        0x37 /* double value shift */
+#define KEY_SLASH_QUESTION                     0x38 /* double value shift */
 #define KEY_CAPS_LOCK                          0x39
 #define KEY_F1                                 0x3A
 #define KEY_F2                                 0x3B
@@ -103,17 +103,17 @@ extern "C" {
 #define KEY_KEYPAD_MINUS                       0x56
 #define KEY_KEYPAD_PLUS                        0x57
 #define KEY_KEYPAD_ENTER                       0x58
-#define KEY_KEYPAD_1_END                       0x59
-#define KEY_KEYPAD_2_DOWN_ARROW                0x5A
-#define KEY_KEYPAD_3_PAGEDN                    0x5B
-#define KEY_KEYPAD_4_LEFT_ARROW                0x5C
+#define KEY_KEYPAD_1_END                       0x59 /* double value numlock */
+#define KEY_KEYPAD_2_DOWN_ARROW                0x5A /* double value numlock */
+#define KEY_KEYPAD_3_PAGEDN                    0x5B /* double value numlock */
+#define KEY_KEYPAD_4_LEFT_ARROW                0x5C /* double value numlock */
 #define KEY_KEYPAD_5                           0x5D
-#define KEY_KEYPAD_6_RIGHT_ARROW               0x5E
-#define KEY_KEYPAD_7_HOME                      0x5F
-#define KEY_KEYPAD_8_UP_ARROW                  0x60
-#define KEY_KEYPAD_9_PAGEUP                    0x61
-#define KEY_KEYPAD_0_INSERT                    0x62
-#define KEY_KEYPAD_DECIMAL_SEPARATOR_DELETE    0x63
+#define KEY_KEYPAD_6_RIGHT_ARROW               0x5E /* double value numlock */
+#define KEY_KEYPAD_7_HOME                      0x5F /* double value numlock */
+#define KEY_KEYPAD_8_UP_ARROW                  0x60 /* double value numlock */
+#define KEY_KEYPAD_9_PAGEUP                    0x61 /* double value numlock */
+#define KEY_KEYPAD_0_INSERT                    0x62 /* double value numlock */
+#define KEY_KEYPAD_DECIMAL_SEPARATOR_DELETE    0x63 /* double value numlock */
 #define KEY_NONUS_BACK_SLASH_VERTICAL_BAR      0x64
 #define KEY_APPLICATION                        0x65
 #define KEY_POWER                              0x66
