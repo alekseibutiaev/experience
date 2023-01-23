@@ -15,7 +15,7 @@
 #include <custom_usbh_hid_keyboard.h>
 
 #if defined (DEBUG)
-const char* printbin(uint8_t lsb, char* buf, uint8_t value);
+const char* printbin(uint8_t lsb, char* buf, uint8_t value, const char(*s)[8]);
 #endif
 void printbuf(const uint8_t* buf, const uint32_t size);
 void clear();

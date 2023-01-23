@@ -237,22 +237,23 @@ extern "C" {
 
 #define MAX_KEY 6
 
+typedef union {
+  struct {
+    uint8_t lctrl : 1;
+    uint8_t lshift : 1;
+    uint8_t lalt : 1;
+    uint8_t lgui : 1;
+    uint8_t rctrl : 1;
+    uint8_t rshift : 1;
+    uint8_t ralt : 1;
+    uint8_t rgui : 1;
+  } bits;
+  uint8_t byte;
+} key_mode_t;
 
 typedef union {
   struct {
-    union {
-      struct {
-        uint8_t lctrl : 1;
-        uint8_t lshift : 1;
-        uint8_t lalt : 1;
-        uint8_t lgui : 1;
-        uint8_t rctrl : 1;
-        uint8_t rshift : 1;
-        uint8_t ralt : 1;
-        uint8_t rgui : 1;
-      } bits;
-      uint8_t byte;
-    } mod;
+    key_mode_t mod;
     uint8_t reserv;
     uint8_t keys[MAX_KEY];
   } data;
