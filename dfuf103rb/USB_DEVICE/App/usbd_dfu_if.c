@@ -127,12 +127,14 @@ static uint16_t MEM_If_DeInit_FS(void);
 static uint16_t MEM_If_GetStatus_FS(uint32_t Add, uint8_t Cmd, uint8_t *buffer);
 
 /* USER CODE BEGIN PRIVATE_FUNCTIONS_DECLARATION */
+#ifdef UART_DEBUG
 #ifdef UART_DEBUG_BUFFER
 void printbuf(const uint8_t* buf, const uint32_t size) {
   for(uint32_t i = 0; i < size; ++i)
     printf("0x%02X%c", buf[i], ((i + 1) % 16 ? ' ' : '\n'));
 }
 #endif /*UART_DEBUG_BUFFER*/
+#endif /*UART_DEBUG*/
 
 /* USER CODE END PRIVATE_FUNCTIONS_DECLARATION */
 
@@ -244,13 +246,13 @@ uint16_t MEM_If_Write_FS(uint8_t* src, uint8_t* dst, uint32_t len)
   /* USER CODE BEGIN 3 */
 #ifdef UART_DEBUG
   printf("%s src 0x%08X, dst 0x%08X, len 0x%08X\n", __FUNCTION__, (unsigned int)src, (unsigned int)dst, (unsigned int)len);
+#ifdef UART_DEBUG_BUFFER
+  printbuf(src, len);
+#endif /*UART_DEBUG*/
 #endif /*UART_DEBUG*/
   uint32_t i = 0;
   uint32_t* _dst = (uint32_t*)dst;
   uint32_t* _src = (uint32_t*)src;
-#ifdef UART_DEBUG_BUFFER
-  printbuf(src, len);
-#endif /*UART_DEBUG*/
   for(i = 0; i < len / sizeof(uint32_t); ++i){
     /* Device voltage range supposed to be [2.7V to 3.6V], the operation will be done by byte */
     uint64_t tmp = (uint64_t)(*_src++);
