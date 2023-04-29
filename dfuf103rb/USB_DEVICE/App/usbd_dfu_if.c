@@ -120,11 +120,11 @@ extern USBD_HandleTypeDef hUsbDeviceFS;
   */
 
 static uint16_t MEM_If_Init_FS(void);
-static uint16_t MEM_If_Erase_FS(uint32_t Add);
-static uint16_t MEM_If_Write_FS(uint8_t *src, uint8_t *dest, uint32_t Len);
-static uint8_t *MEM_If_Read_FS(uint8_t *src, uint8_t *dest, uint32_t Len);
+static uint16_t MEM_If_Erase_FS(uint32_t add);
+static uint16_t MEM_If_Write_FS(uint8_t *src, uint8_t *dest, uint32_t len);
+static uint8_t *MEM_If_Read_FS(uint8_t *src, uint8_t *dest, uint32_t len);
 static uint16_t MEM_If_DeInit_FS(void);
-static uint16_t MEM_If_GetStatus_FS(uint32_t Add, uint8_t Cmd, uint8_t *buffer);
+static uint16_t MEM_If_GetStatus_FS(uint32_t add, uint8_t cmd, uint8_t *buffer);
 
 /* USER CODE BEGIN PRIVATE_FUNCTIONS_DECLARATION */
 #ifdef UART_DEBUG
@@ -207,28 +207,14 @@ uint16_t MEM_If_Erase_FS(uint32_t add)
 #endif /*UART_DEBUG*/
   uint32_t PageError = 0;
 /* Variable contains Flash operation status */
-  HAL_StatusTypeDef status;
   FLASH_EraseInitTypeDef eraseinitstruct;
 
 /* Get the number of sector to erase from 1st sector*/
-#if 0
-  uint32_t flashEnd = 0;
-#if defined(FLASH_BANK2_END)
-  flashEnd = FLASH_BANK2_END;
-#else
-  flashEnd = FLASH_BANK1_END;
-#endif
-  eraseinitstruct.TypeErase = FLASH_TYPEERASE_PAGES;
-  eraseinitstruct.PageAddress = USBD_DFU_APP_DEFAULT_ADD;
-  eraseinitstruct.NbPages = ((flashEnd - USBD_DFU_APP_DEFAULT_ADD) / FLASH_PAGE_SIZE) + 1;
-#else
   eraseinitstruct.TypeErase = FLASH_TYPEERASE_PAGES;
   eraseinitstruct.PageAddress = add;
   eraseinitstruct.NbPages = 1;
-#endif
-  status = HAL_FLASHEx_Erase(&eraseinitstruct, &PageError);
 
-  if (status != HAL_OK)
+  if (HAL_FLASHEx_Erase(&eraseinitstruct, &PageError) != HAL_OK)
     return (!USBD_OK);
   return (USBD_OK);
 /* USER CODE END 2 */
@@ -258,14 +244,14 @@ uint16_t MEM_If_Write_FS(uint8_t* src, uint8_t* dst, uint32_t len)
     uint64_t tmp = (uint64_t)(*_src++);
     if(HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, (uint32_t)_dst++, tmp) != HAL_OK)
      /* Error occurred while writing data in Flash memory */
-     return 1;
+     return (USBD_BUSY);
   }
   _dst = (uint32_t*)dst;
   _src = (uint32_t*)src;
   for(i = 0; i < len / sizeof(uint32_t); ++i)
     if(*_src++ != *_dst++)
       /* Flash content doesn't match SRAM content */
-      return 2;
+      return (USBD_FAIL);
   return (USBD_OK);
   /* USER CODE END 3 */
 }
@@ -277,7 +263,7 @@ uint16_t MEM_If_Write_FS(uint8_t* src, uint8_t* dst, uint32_t len)
   * @param  Len: Number of data to be read (in bytes).
   * @retval Pointer to the physical address where data should be read.
   */
-uint8_t *MEM_If_Read_FS(uint8_t *src, uint8_t *dest, uint32_t Len)
+uint8_t *MEM_If_Read_FS(uint8_t *src, uint8_t *dest, uint32_t len)
 {
   /* Return a valid address to avoid HardFault */
   /* USER CODE BEGIN 4 */
@@ -286,7 +272,7 @@ uint8_t *MEM_If_Read_FS(uint8_t *src, uint8_t *dest, uint32_t Len)
 #endif /*UART_DEBUG*/
   uint32_t i = 0;
   uint8_t *psrc = src;
-  for (i = 0; i < Len; i++)
+  for (i = 0; i < len; i++)
     dest[i] = *psrc++;
   return (uint8_t*)(dest);
   /* USER CODE END 4 */
@@ -299,13 +285,13 @@ uint8_t *MEM_If_Read_FS(uint8_t *src, uint8_t *dest, uint32_t Len)
   * @param  buffer: used for returning the time necessary for a program or an erase operation
   * @retval USBD_OK if operation is successful
   */
-uint16_t MEM_If_GetStatus_FS(uint32_t Add, uint8_t Cmd, uint8_t *buffer)
+uint16_t MEM_If_GetStatus_FS(uint32_t add, uint8_t cmd, uint8_t *buffer)
 {
   /* USER CODE BEGIN 5 */
 #ifdef UART_DEBUG
   printf("%s\n", __FUNCTION__);
 #endif /*UART_DEBUG*/
-  switch (Cmd) {
+  switch (cmd) {
     case DFU_MEDIA_PROGRAM: {
       buffer[1] = (uint8_t)FLASH_PROGRAM_TIME;
       buffer[2] = (uint8_t)(FLASH_PROGRAM_TIME << 8);
