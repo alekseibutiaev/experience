@@ -18,11 +18,20 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "usart.h"
 #include "usb_device.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <stdio.h>
+#include <usbd_dfu_if.h>
+#ifdef UART_DEBUG
+#include "uart_dbg.h"
+#endif /*UART_DEBUG*/
+
+#ifdef UART_DEBUG
+#endif /*UART_DEBUG*/
 
 /* USER CODE END Includes */
 
@@ -33,6 +42,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define CLOSE_INITIALIZE_GENERATION
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -82,15 +92,21 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-
+#ifndef CLOSE_INITIALIZE_GENERATION
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
-//  MX_GPIO_Init();
-//  MX_USB_DEVICE_Init();
-  /* USER CODE BEGIN 2 */
   MX_GPIO_Init();
-
+  MX_USB_DEVICE_Init();
+  MX_USART2_UART_Init();
+  /* USER CODE BEGIN 2 */
+#endif /* CLOSE_INITIALIZE_GENERATION */
+  MX_GPIO_Init();
+#ifdef UART_DEBUG
+  MX_USART2_UART_Init();
+  uart_dbg_init(&huart2);
+  printf("configuration %s\n", FLASH_DESC_STR);
+#endif /*UART_DEBUG*/
   if(HAL_GPIO_ReadPin(boot1_GPIO_Port, boot1_Pin ) == GPIO_PIN_RESET) {
   /* Test if user code is programmed starting from address 0x08008000 */
     if(((*(__IO uint32_t *) USBD_DFU_APP_DEFAULT_ADD) & 0x2FFC0000) == 0x20000000) {

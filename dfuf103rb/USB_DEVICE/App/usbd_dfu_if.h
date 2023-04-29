@@ -29,6 +29,11 @@
 #include "usbd_dfu.h"
 
 /* USER CODE BEGIN INCLUDE */
+#ifdef DEBUG
+#define FLASH_DESC_STR      "@Internal Flash   /0x08000000/48*1Ka,80*1Kg"
+#else
+#define FLASH_DESC_STR      "@Internal Flash   /0x08000000/14*1Ka,114*1Kg"
+#endif /*DEBUG*/
 
 /* USER CODE END INCLUDE */
 
