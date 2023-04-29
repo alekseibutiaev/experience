@@ -92,11 +92,11 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   uint8_t a = 0;
   for(;;) {
-    /* USER CODE END WHILE */
     HAL_GPIO_WritePin(GPIOB, led_0_Pin, a & 1 ? GPIO_PIN_RESET : GPIO_PIN_SET);
     HAL_GPIO_WritePin(GPIOB, led_1_Pin, a & 2 ? GPIO_PIN_RESET : GPIO_PIN_SET);
     HAL_Delay(500);
     ++a;
+    /* USER CODE END WHILE */
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
