@@ -61,8 +61,7 @@
   * @{
   */
 
-  #define FLASH_DESC_STR      "@Internal Flash   /0x08000000/3*16Ka,5*16Kg"
-  //#define FLASH_DESC_STR      "@Internal Flash   /0x08000000/48*1Ka,80*1Kg"
+#define FLASH_DESC_STR      "@Internal Flash   /0x08000000/48*1Ka,80*1Kg"
 
 /* USER CODE BEGIN PRIVATE_DEFINES */
 #endif /*FLASH_DESC_STR*/
@@ -120,11 +119,11 @@ extern USBD_HandleTypeDef hUsbDeviceFS;
   */
 
 static uint16_t MEM_If_Init_FS(void);
-static uint16_t MEM_If_Erase_FS(uint32_t add);
-static uint16_t MEM_If_Write_FS(uint8_t *src, uint8_t *dest, uint32_t len);
-static uint8_t *MEM_If_Read_FS(uint8_t *src, uint8_t *dest, uint32_t len);
+static uint16_t MEM_If_Erase_FS(uint32_t Add);
+static uint16_t MEM_If_Write_FS(uint8_t *src, uint8_t *dest, uint32_t Len);
+static uint8_t *MEM_If_Read_FS(uint8_t *src, uint8_t *dest, uint32_t Len);
 static uint16_t MEM_If_DeInit_FS(void);
-static uint16_t MEM_If_GetStatus_FS(uint32_t add, uint8_t cmd, uint8_t *buffer);
+static uint16_t MEM_If_GetStatus_FS(uint32_t Add, uint8_t Cmd, uint8_t *buffer);
 
 /* USER CODE BEGIN PRIVATE_FUNCTIONS_DECLARATION */
 #ifdef UART_DEBUG
@@ -199,7 +198,7 @@ uint16_t MEM_If_DeInit_FS(void)
   * @param  Add: Address of sector to be erased.
   * @retval 0 if operation is successful, MAL_FAIL else.
   */
-uint16_t MEM_If_Erase_FS(uint32_t add)
+uint16_t MEM_If_Erase_FS(uint32_t Add)
 {
   /* USER CODE BEGIN 2 */
 #ifdef UART_DEBUG
@@ -211,13 +210,13 @@ uint16_t MEM_If_Erase_FS(uint32_t add)
 
 /* Get the number of sector to erase from 1st sector*/
   eraseinitstruct.TypeErase = FLASH_TYPEERASE_PAGES;
-  eraseinitstruct.PageAddress = add;
+  eraseinitstruct.PageAddress = Add;
   eraseinitstruct.NbPages = 1;
 
   if (HAL_FLASHEx_Erase(&eraseinitstruct, &PageError) != HAL_OK)
     return (!USBD_OK);
   return (USBD_OK);
-/* USER CODE END 2 */
+  /* USER CODE END 2 */
 }
 
 /**
@@ -227,29 +226,28 @@ uint16_t MEM_If_Erase_FS(uint32_t add)
   * @param  Len: Number of data to be written (in bytes).
   * @retval USBD_OK if operation is successful, MAL_FAIL else.
   */
-uint16_t MEM_If_Write_FS(uint8_t* src, uint8_t* dst, uint32_t len)
+uint16_t MEM_If_Write_FS(uint8_t *src, uint8_t *dest, uint32_t Len)
 {
   /* USER CODE BEGIN 3 */
 #ifdef UART_DEBUG
-  printf("%s src 0x%08X, dst 0x%08X, len 0x%08X\n", __FUNCTION__, (unsigned int)src, (unsigned int)dst, (unsigned int)len);
+  printf("%s src 0x%08X, dst 0x%08X, len 0x%08X\n", __FUNCTION__,
+    (unsigned)src, (unsigned)dest, (unsigned)Len);
 #ifdef UART_DEBUG_BUFFER
   printbuf(src, len);
-#endif /*UART_DEBUG*/
+#endif /*UART_DEBUG_BUFFER*/
 #endif /*UART_DEBUG*/
   uint32_t i = 0;
-  uint32_t* _dst = (uint32_t*)dst;
+  uint32_t* _dst = (uint32_t*)dest;
   uint32_t* _src = (uint32_t*)src;
-  for(i = 0; i < len / sizeof(uint32_t); ++i){
+
+  for(i = 0; i < Len / sizeof(uint32_t); ++i) {
     /* Device voltage range supposed to be [2.7V to 3.6V], the operation will be done by byte */
-    uint64_t tmp = (uint64_t)(*_src++);
-    if(HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, (uint32_t)_dst++, tmp) != HAL_OK)
-     /* Error occurred while writing data in Flash memory */
-     return (USBD_BUSY);
+    if(HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, (uint32_t)(_dst++), (uint64_t)(*_src++)) != HAL_OK)
+      /* Error occurred while writing data in Flash memory */
+      return (USBD_BUSY);
   }
-  _dst = (uint32_t*)dst;
-  _src = (uint32_t*)src;
-  for(i = 0; i < len / sizeof(uint32_t); ++i)
-    if(*_src++ != *_dst++)
+  for(i = 0; i < Len / sizeof(uint32_t); ++i)
+    if(*--_src != *--_dst)
       /* Flash content doesn't match SRAM content */
       return (USBD_FAIL);
   return (USBD_OK);
@@ -263,17 +261,17 @@ uint16_t MEM_If_Write_FS(uint8_t* src, uint8_t* dst, uint32_t len)
   * @param  Len: Number of data to be read (in bytes).
   * @retval Pointer to the physical address where data should be read.
   */
-uint8_t *MEM_If_Read_FS(uint8_t *src, uint8_t *dest, uint32_t len)
+uint8_t *MEM_If_Read_FS(uint8_t *src, uint8_t *dest, uint32_t Len)
 {
   /* Return a valid address to avoid HardFault */
   /* USER CODE BEGIN 4 */
 #ifdef UART_DEBUG
-  printf("%s\n", __FUNCTION__);
+  printf("%s src 0x%08X, dst 0x%08X, len 0x%08X\n", __FUNCTION__,
+    (unsigned)src, (unsigned)dest, (unsigned)Len);
 #endif /*UART_DEBUG*/
-  uint32_t i = 0;
-  uint8_t *psrc = src;
-  for (i = 0; i < len; i++)
-    dest[i] = *psrc++;
+  uint32_t i;
+  for(i = 0; i < Len; i++)
+    *dest++ = *src++;
   return (uint8_t*)(dest);
   /* USER CODE END 4 */
 }
@@ -285,13 +283,13 @@ uint8_t *MEM_If_Read_FS(uint8_t *src, uint8_t *dest, uint32_t len)
   * @param  buffer: used for returning the time necessary for a program or an erase operation
   * @retval USBD_OK if operation is successful
   */
-uint16_t MEM_If_GetStatus_FS(uint32_t add, uint8_t cmd, uint8_t *buffer)
+uint16_t MEM_If_GetStatus_FS(uint32_t Add, uint8_t Cmd, uint8_t *buffer)
 {
   /* USER CODE BEGIN 5 */
 #ifdef UART_DEBUG
   printf("%s\n", __FUNCTION__);
 #endif /*UART_DEBUG*/
-  switch (cmd) {
+  switch (Cmd) {
     case DFU_MEDIA_PROGRAM: {
       buffer[1] = (uint8_t)FLASH_PROGRAM_TIME;
       buffer[2] = (uint8_t)(FLASH_PROGRAM_TIME << 8);
