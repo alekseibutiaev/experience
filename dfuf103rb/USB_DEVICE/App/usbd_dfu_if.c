@@ -202,7 +202,7 @@ uint16_t MEM_If_Erase_FS(uint32_t Add)
 {
   /* USER CODE BEGIN 2 */
 #ifdef UART_DEBUG
-  printf("%s 0x%08X\n", __FUNCTION__, (unsigned int)add);
+  printf("%s 0x%08X\n", __FUNCTION__, (unsigned int)Add);
 #endif /*UART_DEBUG*/
   uint32_t PageError = 0;
 /* Variable contains Flash operation status */
