@@ -204,14 +204,21 @@ const char* printbin(uint8_t lsb, char* buf, uint8_t value, const char(*a)[8]) {
 #endif
 
 void printbuf(const uint8_t* buf, const uint32_t size) {
-  for(uint32_t i = 0; i < size; ++i)
-    printf("0x%02X%c%c", buf[i], '_', ((i + 1) % 16 ? '_' : '\n'));
+  for(uint32_t i = 0; i < size; ++i) {
+    int a = ((i + 1) % 16 && size - i != 1);
+    printf("0x%02X%c", buf[i], (a ? ' ' : '\n'));
+  }
 }
+
+void sendbuf(const uint8_t* buf, const uint32_t size) {
+  HAL_SPI_Transmit(&hspi1, buf, size, 500);
+  load_impulse();
+}
+
 
 void clear() {
   memset(registers, 0xFF, sizeof(registers));
-  HAL_SPI_Transmit(&hspi1, registers, sizeof(registers), 500);
-  load_impulse();
+  sendbuf(registers, sizeof(registers));
 }
 
 void prepare_keys(const key_receive_t* keys, const key_leds_t* leds) {
@@ -247,7 +254,7 @@ void prepare_keys(const key_receive_t* keys, const key_leds_t* leds) {
   printf("    01234567    76543210\n");
   for(uint8_t i = 3; i <= 3; --i) {
     static const char symbol[8][8] = {
-      {'_', '_', '_', 'B', 'N', 'M', 's', 'p'},
+      {'_', '_', '_', 'B', 'N', 'M', 's', 'b'},
       {'_', '_', '_', 'H', 'J', 'K', 'L', 'e'},
       {'_', '_', '_', 'Y', 'U', 'I', 'O', 'P'},
       {'_', '_', '_', '6', '7', '8', '9', '0'},
@@ -260,10 +267,9 @@ void prepare_keys(const key_receive_t* keys, const key_leds_t* leds) {
     printf("A%02d=%s A%02d=%s\n", 15 - j, printbin(MSB, buf, registers[j], &symbol[j] ),
       15 - i, printbin(LSB, buf + BITBUF, registers[i], &symbol[i]));
   }
+  printbuf(registers, sizeof(registers));
 #endif
-  HAL_SPI_Transmit(&hspi1, registers, sizeof(registers), 500);
-  load_impulse();
-//--==
+  sendbuf(registers, sizeof(registers));
 #undef UNPRESSED
 #undef BITBUF
 }
