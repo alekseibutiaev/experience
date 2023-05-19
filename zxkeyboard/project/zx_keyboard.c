@@ -211,7 +211,7 @@ void printbuf(const uint8_t* buf, const uint32_t size) {
 }
 
 void sendbuf(const uint8_t* buf, const uint32_t size) {
-  HAL_SPI_Transmit(&hspi1, buf, size, 500);
+  HAL_SPI_Transmit(&hspi1, (uint8_t*)buf, size, 500);
   load_impulse();
 }
 

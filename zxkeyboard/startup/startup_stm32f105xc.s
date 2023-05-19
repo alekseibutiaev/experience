@@ -15,13 +15,12 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2017-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -53,13 +52,16 @@ defined in linker script */
  *          necessary set is performed, after which the application
  *          supplied main() routine is called.
  * @param  None
- * @retval None
+ * @retval : None
 */
 
   .section .text.Reset_Handler
   .weak Reset_Handler
   .type Reset_Handler, %function
 Reset_Handler:
+
+/* Call the clock system initialization function.*/
+    bl  SystemInit
 
 /* Copy the data segment initializers from flash to SRAM */
   ldr r0, =_sdata
@@ -91,8 +93,7 @@ FillZerobss:
 LoopFillZerobss:
   cmp r2, r4
   bcc FillZerobss
-/* Call the clock system intitialization function.*/
-  bl  SystemInit
+
 /* Call static constructors */
   bl __libc_init_array
 /* Call the application's entry point.*/
@@ -112,7 +113,6 @@ Default_Handler:
 Infinite_Loop:
   b Infinite_Loop
   .size Default_Handler, .-Default_Handler
-
 /******************************************************************************
 *
 * The minimal vector table for a Cortex M3.  Note that the proper constructs
@@ -120,7 +120,6 @@ Infinite_Loop:
 * 0x0000.0000.
 *
 ******************************************************************************/
-
   .section .isr_vector,"a",%progbits
   .type g_pfnVectors, %object
   .size g_pfnVectors, .-g_pfnVectors
@@ -165,7 +164,7 @@ g_pfnVectors:
   .word ADC1_2_IRQHandler
   .word CAN1_TX_IRQHandler
   .word CAN1_RX0_IRQHandler
-  .word CAN1_RX1_IRQHandler
+   .word CAN1_RX1_IRQHandler
   .word CAN1_SCE_IRQHandler
   .word EXTI9_5_IRQHandler
   .word TIM1_BRK_IRQHandler
@@ -462,4 +461,3 @@ g_pfnVectors:
   .weak OTG_FS_IRQHandler
   .thumb_set OTG_FS_IRQHandler ,Default_Handler
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

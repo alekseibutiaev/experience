@@ -457,14 +457,14 @@ static USBH_StatusTypeDef USBH_HID_Process(USBH_HandleTypeDef *phost)
 #endif
         }
       }
-      /* IN Endpoint Stalled */
+        /* IN Endpoint Stalled */
       else if (USBH_LL_GetURBState(phost, HID_Handle->InPipe) == USBH_URB_STALL) {
-        /* Issue Clear Feature on interrupt IN endpoint */
+          /* Issue Clear Feature on interrupt IN endpoint */
         if (USBH_ClrFeature(phost, HID_Handle->ep_addr) == USBH_OK) {
             /* Change state to issue next IN token */
             HID_Handle->state = HID_GET_DATA;
+          }
         }
-      }
       else if(phost->RequestState == CMD_WAIT)
         USBH_CtlReq(phost, 0, 0);
       break;
