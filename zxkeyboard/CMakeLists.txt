@@ -98,7 +98,7 @@ target_compile_options(${EXECUTABLE} PRIVATE
         -Wuseless-cast
         -Wsuggest-override>
     $<$<CONFIG:Debug>:-O0 -g3>
-    $<$<CONFIG:Release>:-Og -g0>)
+    $<$<CONFIG:Release>:-Os -g0>)
 
 target_link_options(${EXECUTABLE} PRIVATE
     -T${MCU_LINKER_SCRIPT}
