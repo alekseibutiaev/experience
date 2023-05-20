@@ -204,17 +204,14 @@ const char* printbin(uint8_t lsb, char* buf, uint8_t value, const char(*a)[8]) {
 #endif
 
 void printbuf(const uint8_t* buf, const uint32_t size) {
-  for(uint32_t i = 0; i < size; ++i) {
-    int a = ((i + 1) % 16 && size - i != 1);
-    printf("0x%02X%c", buf[i], (a ? ' ' : '\n'));
-  }
+  for(uint32_t i = 0; i < size; ++i)
+    printf("0x%02X%c", buf[i], ((i + 1) % 16 && size - i != 1 ? ' ' : '\n'));
 }
 
 void sendbuf(const uint8_t* buf, const uint32_t size) {
   HAL_SPI_Transmit(&hspi1, (uint8_t*)buf, size, 500);
   load_impulse();
 }
-
 
 void clear() {
   memset(registers, 0xFF, sizeof(registers));
