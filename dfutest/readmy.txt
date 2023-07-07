@@ -1,0 +1,8 @@
+information
+https://yeswolf.github.io/dfu/
+
+write firmware 
+dfu-util -a 0 -s 0x8003800 -D Release/dfutest.bin
+
+read firmware
+dfu-util -a 0 -s 0x8003800 -U Release/dfutest_.bin -Z 0x1C800
