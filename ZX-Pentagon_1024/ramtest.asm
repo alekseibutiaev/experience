@@ -4,7 +4,7 @@ SCREEN:   equ 0x4000
 SCREEN_SIZE:   equ 0x800*3
 ATTR:   equ 0x5800
 ATTR_SIZE:   equ 0x100*3
-BLACK_ON_WhITE: equ 0x38
+BLACK_ON_WHITE: equ 0x38
 COL_COUNT: equ 32
 COL_COUNT_MASK: equ COL_COUNT - 1
 ROWCOUNT: equ 24
@@ -15,8 +15,8 @@ BANK_COUNT: equ 0x8
 
 org START
   di
-  ld sp, 0xff00
-  ld a, BLACK_ON_WhITE
+  ld sp, 0x8000
+  ld a, BLACK_ON_WHITE
   call clear_screen
 
   xor a;
