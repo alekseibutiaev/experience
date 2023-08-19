@@ -1,6 +1,6 @@
 *.launch
-Debug*
-Release*
+*Debug*
+*Release*
 build*
 x64
 .vs
