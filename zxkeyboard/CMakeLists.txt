@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.12)
 ###############################################################################
 # Set project name and source code folder location
-project(keyboard)
+project(zxkeyboard)
 set(PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/project)
 
 option(BOARD_NUCLEO "type of board" ON)
@@ -35,6 +35,7 @@ set(CMAKE_C_EXTENSIONS ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
+#set(CMAKE_EXE_LINKER_FLAGS "--specs=aprofile-ve.specs" CACHE INTERNAL "")
 
 ###############################################################################
 
@@ -108,7 +109,8 @@ target_link_options(${EXECUTABLE} PRIVATE
     -lc
     -lm
     -Wl,--end-group
-    -Wl,--print-memory-usage)
+    -Wl,--print-memory-usage
+    )
 
 # The last command can take a couple of seconds on larger project, usefull for debugging
 add_custom_command(TARGET ${EXECUTABLE} POST_BUILD
@@ -125,7 +127,7 @@ add_custom_command(OUTPUT jlink_cmd_script
     COMMAND echo "device ${DEVICE}" >> jlink_cmd_script
     COMMAND echo "if swd" >> jlink_cmd_script
     COMMAND echo "Speed 4000" >> jlink_cmd_script
-    COMMAND echo "LoadFile ${keyboard_BINARY_DIR}/${EXECUTABLE}.bin 0x08000000" >> jlink_cmd_script
+    COMMAND echo "LoadFile ${CMAKE_BINARY_DIR}/${EXECUTABLE}.bin 0x08000000" >> jlink_cmd_script
     COMMAND echo "Exit" >> jlink_cmd_script
     VERBATIM
 )
@@ -136,6 +138,6 @@ add_custom_target(jlink_upload DEPENDS ${EXECUTABLE} jlink_cmd_script
 )
 
 add_custom_target(stlink_upload DEPENDS ${EXECUTABLE}
-    COMMAND echo "run ${ST-UTILS} write ${keyboard_BINARY_DIR}/${EXECUTABLE}.bin 0x08000000"
-    COMMAND ${ST-UTILS} write ${keyboard_BINARY_DIR}/${EXECUTABLE}.bin 0x08000000
+    COMMAND echo "run ${ST-UTILS} write ${CMAKE_BINARY_DIR}/${EXECUTABLE}.bin 0x08000000"
+    COMMAND ${ST-UTILS} write ${CMAKE_BINARY_DIR}/${EXECUTABLE}.bin 0x08000000
 )

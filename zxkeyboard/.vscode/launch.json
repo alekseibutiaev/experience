@@ -9,7 +9,7 @@
       "device": "STM32F105RC",
       "interface": "swd",
       "servertype": "jlink",
-      "runToMain": true,
+      "runToMain": true
     },
     {
       "name": "J-link Attach Keyboard",
@@ -20,31 +20,29 @@
       "device": "STM32F105RC",
       "interface": "swd",
       "servertype": "jlink",
-      "runToMain": false,
     },
     {
       "name": "st-link Lounch Keyboard",
       "cwd": "${workspaceRoot}",
       "executable": "${workspaceRoot}/build_Debug/keyboard.elf",
       "request": "launch",
-      "type": "cortex-debug",
+      "type": "cortex-arm-learning",
       "servertype": "stutil",
       "interface": "swd",
       "runToMain": false,
       "device": "STM32F107RC",
-      "xxpreLaunchCommands": ["Build all"],
+      "preLaunchTask": "CMake Build test",
+      "swoConfig": {}
     },
     {
       "name": "st-link Attach Keyboard",
       "cwd": "${workspaceRoot}",
       "executable": "${workspaceRoot}/build_Debug/keyboard.elf",
       "request": "attach",
-      "type": "cortex-debug",
+      "type": "cortex-arm-learning",
       "servertype": "stutil",
       "interface": "swd",
-      "runToMain": true,
       "device": "STM32F107RC",
-      "xxpreLaunchCommands": ["Build all"],
     }
   ]
 }

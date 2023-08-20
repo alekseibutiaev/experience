@@ -1,15 +1,16 @@
 set(CMAKE_SYSTEM_NAME Generic)
 set(CMAKE_SYSTEM_PROCESSOR arm)
 
+#set(TOOLCHAIN_PREFIX /opt/gcc-arm-none-eabi/bin/arm-none-eabi-)
 set(TOOLCHAIN_PREFIX arm-none-eabi-)
-set(FLAGS
-    "-Wl,--gc-sections -specs=nano.specs -specs=nosys.specs")
-set(CPP_FLAGS
-    "-fno-rtti -fno-exceptions -fno-threadsafe-statics")
+set(C_FLAGS "-Wl,--gc-sections")
+set(CPP_FLAGS "-fno-rtti -fno-exceptions -fno-threadsafe-statics")
+set(CMAKE_EXE_LINKER_FLAGS "--specs=nosys.specs" CACHE INTERNAL "")
 
-set(CMAKE_C_COMPILER ${TOOLCHAIN_PREFIX}gcc ${FLAGS})
+
+set(CMAKE_C_COMPILER ${TOOLCHAIN_PREFIX}gcc ${C_FLAGS})
 set(CMAKE_ASM_COMPILER ${CMAKE_C_COMPILER})
-set(CMAKE_CXX_COMPILER ${TOOLCHAIN_PREFIX}g++ ${FLAGS} ${CPP_FLAGS})
+set(CMAKE_CXX_COMPILER ${TOOLCHAIN_PREFIX}g++ ${C_FLAGS} ${CPP_FLAGS})
 set(CMAKE_OBJCOPY ${TOOLCHAIN_PREFIX}objcopy)
 set(CMAKE_SIZE ${TOOLCHAIN_PREFIX}size)
 set(CMAKE_OBJDUMP ${TOOLCHAIN_PREFIX}objdump)
