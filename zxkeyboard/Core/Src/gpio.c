@@ -7,7 +7,7 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2022 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -50,9 +50,7 @@ void MX_GPIO_Init(void)
   __HAL_RCC_GPIOC_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, LOAD_Pin, GPIO_PIN_RESET);
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, CLEAR_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(GPIOA, LOAD_Pin|CLEAR_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(USB_POWER_SWITCH_ON_GPIO_Port, USB_POWER_SWITCH_ON_Pin, GPIO_PIN_RESET);

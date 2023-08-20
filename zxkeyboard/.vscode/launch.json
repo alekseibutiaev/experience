@@ -42,7 +42,7 @@
       "type": "cortex-debug",
       "servertype": "stutil",
       "interface": "swd",
-      "runToMain": false,
+      "runToMain": true,
       "device": "STM32F107RC",
       "xxpreLaunchCommands": ["Build all"],
     }

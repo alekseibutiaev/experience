@@ -7,7 +7,7 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2022 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -57,6 +57,7 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define BOARD_TYPE NUCLEO
 #define LOAD_Pin GPIO_PIN_4
 #define LOAD_GPIO_Port GPIOA
 #define CLEAR_Pin GPIO_PIN_6
@@ -67,10 +68,10 @@ void Error_Handler(void);
   #define USB_POWER_SWITCH_ON_Pin GPIO_PIN_8
   #define USB_POWER_SWITCH_ON_GPIO_Port GPIOC
 #else
-  #define USB_OWER_CURRENT_Pin GPIO_PIN_8
-  #define USB_OWER_CURRENT_GPIO_Port GPIOC
-  #define USB_POWER_SWITCH_ON_Pin GPIO_PIN_9
-  #define USB_POWER_SWITCH_ON_GPIO_Port GPIOC
+#define USB_OWER_CURRENT_Pin GPIO_PIN_8
+#define USB_OWER_CURRENT_GPIO_Port GPIOC
+#define USB_POWER_SWITCH_ON_Pin GPIO_PIN_9
+#define USB_POWER_SWITCH_ON_GPIO_Port GPIOC
 #endif
 
 /* USER CODE BEGIN Private defines */
