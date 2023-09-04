@@ -15,9 +15,9 @@
 #include "env_configs.h"
 
 int main(int ac, char* av[]) {
-
-    std::unique_ptr<RdKafka::Conf> kafka_config = get_kafka_config();
-    std::unordered_map<std::string, std::string> auth_config = get_auth_config();
+  try {
+    std::unique_ptr<RdKafka::Conf> kafka_config = get_kafka_config_env();
+    std::unordered_map<std::string, std::string> auth_config = get_auth_config_env();
 
     int ms_timeout = 10000;
 
@@ -45,4 +45,8 @@ int main(int ac, char* av[]) {
     else {
         std::cout << "Message payload was null" << std::endl;
     }
+  }
+  catch(const std::exception& e) {
+    std::cout << e.what() << std::endl;
+  }
 }

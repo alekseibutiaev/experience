@@ -20,23 +20,22 @@
  * @brief Class to retrieve the Kafka Schema for the given Topic/Stream.
  */
 class ReadSchemaTopic {
-private:
-    std::string control_schema_name;
-    RdKafka::Conf* kafka_props;
-    std::unordered_map<std::string, std::string> auth_props;
-    std::unique_ptr<RdKafka::KafkaConsumer> get_consumer(const std::string &client_id);
-    avro::ValidSchema internal_schema(const std::string &topic);
-    std::shared_ptr<spdlog::logger> logger;
-
-
 public:
-    ReadSchemaTopic();
-    int timeout;
-    avro::ValidSchema read_schema(const std::string &topic);
-    void set_kafka_props(RdKafka::Conf* props);
-    void set_auth_props(std::unordered_map<std::string, std::string> &props);
-    std::set<std::string> get_topics();
-    //std::string resource_dir;
+  ReadSchemaTopic();
+  avro::ValidSchema read_schema(const std::string &topic);
+  void set_kafka_props(RdKafka::Conf* props);
+  void set_auth_props(std::unordered_map<std::string, std::string> &props);
+  std::set<std::string> get_topics();
+  //std::string resource_dir;
+public:
+  int timeout;
+private:
+  std::string control_schema_name;
+  RdKafka::Conf* kafka_props;
+  std::unordered_map<std::string, std::string> auth_props;
+  std::unique_ptr<RdKafka::KafkaConsumer> get_consumer(const std::string &client_id);
+  avro::ValidSchema internal_schema(const std::string &topic);
+  std::shared_ptr<spdlog::logger> logger;
 };
 
 

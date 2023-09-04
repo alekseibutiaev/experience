@@ -5,6 +5,6 @@
 #include <string>
 #include <unordered_map>
 
-std::unique_ptr<RdKafka::Conf> get_kafka_config();
+std::unique_ptr<RdKafka::Conf> get_kafka_config_env();
 
-std::unordered_map<std::string, std::string> get_auth_config();
+std::unordered_map<std::string, std::string> get_auth_config_env();

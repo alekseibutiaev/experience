@@ -45,7 +45,7 @@ int get_timeout_config() {
     struct json_object *timeout_json;
 
     std::string file_path = get_resource_path() + "consumer-properties.json";
-
+    std::cout << file_path << std::endl;
     try {
         fp = std::fopen(file_path.c_str(),"r");
         fread(buffer, 1024, 1, fp);

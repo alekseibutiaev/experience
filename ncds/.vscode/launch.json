@@ -1,0 +1,67 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "consumer_env",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build_Debug/example/consumer_env",
+      "args": [],
+      "stopAtEntry": true,
+      "cwd": "${workspaceFolder}",
+      "environment": [
+        {
+          "name": "BROKERS11",
+          "value": ""
+        },
+        {
+          "name": "SSL_CA_LOCATION",
+          "value": "/home/butiaev/NetTrader/ca-cert"
+        },
+        {
+          "name": "SSL_CERTIFICATE_LOCATION",
+          "value": "/home/butiaev/NetTrader/ca-cert/streams.pem"
+        },
+        {
+          "name": "GROUP_ID",
+          "value": "ffineu-tyapkin-TOTALVIEW"
+        },
+        {
+          "name": "AUTO_OFFSET_RESET",
+          "value": "earliest"
+        },
+        {
+          "name": "OAUTH_TOKEN_ENDPOINT_URI",
+          "value": "https://clouddataservice.auth.nasdaq.com/auth/realms/pro-realm/protocol/openid-connect/token"
+        },
+        {
+          "name": "OAUTH_CLIENT_ID",
+          "value": "ffineu-tyapkin"
+        },
+        {
+          "name": "OAUTH_CLIENT_SECRET",
+          "value": "50efe6c1-4f6c-48ef-8c9d-2925bbda5bbf"
+        },
+        {
+          "name": "TOPIC",
+          "value": "TOTALVIEW.stream"
+        },
+        {
+          "name": "NCDSRESOURCES",
+          "value": "/home/butiaev/NetTrader/resource"
+      ],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ]
+    }
+  ]
+}

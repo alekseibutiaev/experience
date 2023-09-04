@@ -21,9 +21,9 @@
 //constructor
 ReadSchemaTopic::ReadSchemaTopic()
 {
-    this->control_schema_name = "control";
-    this->logger = spdlog::get(LOGGER);
-    this->timeout = get_timeout_config();
+  control_schema_name = "control";
+  logger = spdlog::get(LOGGER);
+  timeout = get_timeout_config();
 }
 
 avro::ValidSchema ReadSchemaTopic::read_schema(const std::string &topic)

@@ -19,52 +19,46 @@
 #include "consumer/NasdaqKafkaAvroConsumer.h"
 
 // constructor
-NasdaqKafkaAvroConsumer::NasdaqKafkaAvroConsumer() {};
+NasdaqKafkaAvroConsumer::NasdaqKafkaAvroConsumer() {
+};
 
-NasdaqKafkaAvroConsumer::NasdaqKafkaAvroConsumer(RdKafka::Conf* kafka_cfg, std::unordered_map<std::string, std::string> &security_cfg) : kafka_conf(kafka_cfg) {
-    KafkaConfigLoader kafka_config_loader;
-    AuthenticationConfigLoader auth_config_loader;
+NasdaqKafkaAvroConsumer::NasdaqKafkaAvroConsumer(RdKafka::Conf* kafka_cfg,
+    std::unordered_map<std::string, std::string>& security_cfg) : kafka_conf(kafka_cfg) {
+  KafkaConfigLoader kafka_config_loader;
+  AuthenticationConfigLoader auth_config_loader;
 
-    this->logger = spdlog::get(LOGGER);
+  logger = spdlog::get(LOGGER);
 
-    // If this is not an integration test
-    if (kafka_cfg != nullptr) {
-        this->token_cb = std::make_unique<NCDSOAuthBearerTokenRefreshCb>(security_cfg);
-        std::string errstr;
-        this->kafka_conf->set("oauthbearer_token_refresh_cb", this->token_cb.get(), errstr);
-        kafka_config_loader.validate_and_add_specific_properties(kafka_cfg);
-        rd_kafka_conf_set_log_cb(kafka_cfg->c_ptr_global(), logger_cb);
-    }
-    else {
-        this->test_conf = std::unique_ptr<RdKafka::Conf>(load_kafka_config_for_ncds_test());
-        this->kafka_conf = test_conf.get();
-    }
+  // If this is not an integration test
+  if (kafka_cfg != nullptr) {
+    token_cb = std::make_unique<NCDSOAuthBearerTokenRefreshCb>(security_cfg);
+    std::string errstr;
+    kafka_conf->set("oauthbearer_token_refresh_cb", this->token_cb.get(), errstr);
+    kafka_config_loader.validate_and_add_specific_properties(kafka_cfg);
+    rd_kafka_conf_set_log_cb(kafka_cfg->c_ptr_global(), logger_cb);
+  }
+  else {
+    test_conf = std::unique_ptr<RdKafka::Conf>(load_kafka_config_for_ncds_test());
+    kafka_conf = test_conf.get();
+  }
 
-    this->read_schema_topic.set_kafka_props(this->kafka_conf);
-    this->read_schema_topic.set_auth_props(security_cfg);
-
-    this->client_id = auth_config_loader.get_client_id(security_cfg);
+  read_schema_topic.set_kafka_props(kafka_conf);
+  read_schema_topic.set_auth_props(security_cfg);
+  client_id = auth_config_loader.get_client_id(security_cfg);
 }
 
 
-std::unique_ptr<RdKafka::KafkaConsumer> NasdaqKafkaAvroConsumer::get_kafka_consumer(const std::string &topic_name)
-{
-    std::vector<RdKafka::TopicPartition *> partitions;
-    std::unique_ptr<RdKafka::TopicPartition> topic_partition = std::unique_ptr<RdKafka::TopicPartition>(RdKafka::TopicPartition::create(topic_name + ".stream", 0, RdKafka::Topic::OFFSET_END));
-    partitions.push_back(topic_partition.get());
-
-    auto kafka_consumer = NasdaqKafkaAvroConsumer::get_consumer(topic_name);
-
-    kafka_consumer->assign(partitions);
-
-    std::string auto_offset_cfg;
-    this->kafka_conf->get(KafkaConfigLoader::AUTO_OFFSET_RESET_CONFIG, auto_offset_cfg);
-
-    if (auto_offset_cfg == "earliest" || auto_offset_cfg == "smallest" || auto_offset_cfg == "beginning") {
-        seek_to_midnight_at_past_day(kafka_consumer.get(), topic_partition.get(), 0);
-    }
-
-    return kafka_consumer;
+std::unique_ptr<RdKafka::KafkaConsumer> NasdaqKafkaAvroConsumer::get_kafka_consumer(const std::string &topic_name) {
+  std::vector<RdKafka::TopicPartition *> partitions;
+  std::unique_ptr<RdKafka::TopicPartition> topic_partition = std::unique_ptr<RdKafka::TopicPartition>(RdKafka::TopicPartition::create(topic_name + ".stream", 0, RdKafka::Topic::OFFSET_END));
+  partitions.push_back(topic_partition.get());
+  auto kafka_consumer = NasdaqKafkaAvroConsumer::get_consumer(topic_name);
+  kafka_consumer->assign(partitions);
+  std::string auto_offset_cfg;
+  kafka_conf->get(KafkaConfigLoader::AUTO_OFFSET_RESET_CONFIG, auto_offset_cfg);
+  if (auto_offset_cfg == "earliest" || auto_offset_cfg == "smallest" || auto_offset_cfg == "beginning")
+    seek_to_midnight_at_past_day(kafka_consumer.get(), topic_partition.get(), 0);
+  return kafka_consumer;
 }
 
 std::unique_ptr<RdKafka::KafkaConsumer> NasdaqKafkaAvroConsumer::get_kafka_consumer(const std::string &topic_name, long timestamp)

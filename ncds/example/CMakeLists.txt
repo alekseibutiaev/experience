@@ -8,7 +8,16 @@ add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 target_include_directories(${PROJECT_NAME} PRIVATE
   ${CURL_INCLUDE_DIR}
   ${AVROCPP_INCLUDE_DIR}
+  ${RDKAFKA_INCLUDE_DIR}
+  ${RDKAFKACPP_INCLUDE_DIR}
   ../include
   ./
-  
+)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE
+  ncds
+  ${JSON-C_LIBRARY}
+  ${RDKAFKA_LIBRARIES}
+  ${RDKAFKACPP_LIBRARIES}
+  ${AVROCPP_LIBRARIES}
 )

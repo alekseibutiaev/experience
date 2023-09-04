@@ -1,50 +1,56 @@
+#include <iostream>
+#include <stdexcept>
+
+#include <utility>
+#include <algorithm>
+#include <vector>
+
 #include <librdkafka/rdkafkacpp.h>
 
 #include "env_configs.h"
 
-std::unique_ptr<RdKafka::Conf> get_kafka_config() {
-    std::string brokers;
-    if (const char* env_b = std::getenv("BROKERS")) {
-        brokers = env_b;
-    }
-    else {
-        throw std::runtime_error("Environment variable BROKERS not set");
-    }
+using param_t = std::pair<const char*, const char*>;
+using params_t = std::vector<param_t>;
 
+const params_t kafka_params = {
+  {"BROKERS", "metadata.broker.list"},
+  {"SSL_CA_LOCATION", "ssl.ca.location"},
+  {"SSL_CERTIFICATE_LOCATION", "ssl.certificate.location"},
+  {"GROUP_ID", "group.id"},
+  {"AUTO_OFFSET_RESET", "auto.offset.reset"},
+};
+
+const params_t oauth_params = {
+  {"OAUTH_TOKEN_ENDPOINT_URI", "oauth.token.endpoint.uri"},
+  {"OAUTH_CLIENT_ID", "oauth.client.id"},
+  {"OAUTH_CLIENT_SECRET", "oauth.client.secret"},
+};
+
+
+std::unique_ptr<RdKafka::Conf> get_kafka_config_env() {
+  if(std::unique_ptr<RdKafka::Conf> kafka_conf = std::unique_ptr<RdKafka::Conf>(RdKafka::Conf::create(RdKafka::Conf::CONF_GLOBAL))) {
     std::string errstr;
-
-    // Kafka Configs
-    std::unique_ptr<RdKafka::Conf> kafka_conf = std::unique_ptr<RdKafka::Conf>(RdKafka::Conf::create(RdKafka::Conf::CONF_GLOBAL));
-    kafka_conf->set("debug", "all", errstr);
-    kafka_conf->set("metadata.broker.list", brokers, errstr);
-
-    if (const char* env_ssl = std::getenv("SSL_CA_LOCATION")) {
-        kafka_conf->set("ssl.ca.location", env_ssl, errstr);
+    for(const auto& it : kafka_params) {
+      if(const char* value = std::getenv(it.first))
+        kafka_conf->set(it.second, value, errstr);
+      else
+        std::cout << "environment variable " << it.first << " not set" << std::endl;
     }
-
-    kafka_conf->set("ssl.ca.location", "ncdscert.crt", errstr);
-    kafka_conf->set("group.id", "test_group_id", errstr);
-    kafka_conf->set("auto.offset.reset", "earliest", errstr);
-
+    // Kafka Configs
+    kafka_conf->set("debug", "all", errstr);
     return kafka_conf;
+  }
+  throw(std::runtime_error("can`t create kafka config"));
 }
 
-std::unordered_map<std::string, std::string> get_auth_config() {
-    // TODO: Update the authentication configurations
-    const char* env_endpt = std::getenv("TOKEN_ENDPOINT");
-    const char* env_id = std::getenv("CLIENT_ID");
-    const char* env_secret = std::getenv("CLIENT_SECRET");
-    if (!env_endpt || !env_id || !env_secret) {
-        throw std::runtime_error("Set environment variables TOKEN_ENDPOINT, CLIENT_ID, and CLIENT_SECRET");
-    }
-    std::string token_endpoint = env_endpt;
-    std::string client_id = env_id;
-    std::string client_secret = env_secret;
-
-    std::unordered_map<std::string, std::string> auth_config = {
-            {"oauth.token.endpoint.uri", token_endpoint},
-            {"oauth.client.id", client_id},
-            {"oauth.client.secret", client_secret}};
-
-    return auth_config;
+std::unordered_map<std::string, std::string> get_auth_config_env() {
+  std::unordered_map<std::string, std::string> auth_config;
+  std::string errstr;
+  for(const auto& it : oauth_params) {
+    if(const char* value = std::getenv(it.first))
+      auth_config[it.second] = value;
+    else
+      throw(std::runtime_error(std::string("environment variable ") + it.first + " not set" ));
+  }
+  return auth_config;
 }
