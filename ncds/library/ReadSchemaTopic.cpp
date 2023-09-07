@@ -1,4 +1,6 @@
 #include <cassert>
+#include <utility>
+#include <vector>
 #include <string>
 #include <fstream>
 
@@ -8,7 +10,7 @@
 
 #include <avro/ValidSchema.hh>
 #include <avro/Compiler.hh>
-
+#include <avro/Types.hh>
 
 #include "internal/ReadSchemaTopic.h"
 #include "internal/utils/SeekToMidnight.h"
@@ -17,7 +19,30 @@
 #include "internal/utils/FindResources.h"
 #include "internal/utils/KafkaConfigLoader.h"
 #include "AvroDeserializer.h"
+#include "print_records.h"
 #include "printbuf.h"
+
+using avro_type_t = std::pair<avro::Type, std::string>;
+
+const std::vector<avro_type_t> avro_types = {
+  {avro::AVRO_STRING, "AVRO_STRING"},
+  {avro::AVRO_BYTES, "AVRO_BYTES"},
+  {avro::AVRO_INT, "AVRO_INT"},
+  {avro::AVRO_LONG, "AVRO_LONG"},
+  {avro::AVRO_FLOAT, "AVRO_FLOAT"},
+  {avro::AVRO_DOUBLE, "AVRO_DOUBLE"},
+  {avro::AVRO_BOOL, "AVRO_BOOL"},
+  {avro::AVRO_NULL, "AVRO_NULL"},
+  {avro::AVRO_RECORD, "AVRO_RECORD"},
+  {avro::AVRO_ENUM, "AVRO_ENUM"},
+  {avro::AVRO_ARRAY, "AVRO_MAP"},
+  {avro::AVRO_MAP, ""},
+  {avro::AVRO_UNION, "AVRO_UNION"},
+  {avro::AVRO_FIXED, "AVRO_FIXED"},
+  {avro::AVRO_NUM_TYPES, "AVRO_NUM_TYPES"},
+  {avro::AVRO_UNKNOWN, "AVRO_UNKNOWN"},
+
+};
 
 //constructor
 ReadSchemaTopic::ReadSchemaTopic()
@@ -65,17 +90,18 @@ avro::ValidSchema ReadSchemaTopic::read_schema(const std::string &topic)
     std::vector<avro::GenericRecord> all_records;
     while (true)
     {
-//        logger->debug( "Before consuming control topic";
         std::unique_ptr<RdKafka::Message> msg = std::unique_ptr<RdKafka::Message>(schema_consumer->consume(this->timeout));
-
-        if (msg->err() != 0)
-        {
-
+        if (msg->err() != 0) {
             logger->debug( "Error: {}", err2str(msg->err()));
             break;
         }
 
         avro::GenericRecord record = consume.deserialize_msg(*msg);
+        print_records({record});
+//        for(std::size_t idx = 0; idx < record.fieldCount(); ++idx)
+//          std::cout << avro_types[record.fieldAt(idx).type()].second << std::endl;
+
+
         if (record.hasField("name"))
         {
             avro::GenericDatum record_name = record.field("name");

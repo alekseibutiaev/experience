@@ -11,8 +11,8 @@
 #include <printbuf.h>
 #include <NCDSClient.h>
 #include <AvroDeserializer.h>
+#include <print_records.h>
 
-#include "print_records.h"
 #include "env_configs.h"
 
 int main(int ac, char* av[]) {

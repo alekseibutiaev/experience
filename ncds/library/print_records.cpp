@@ -1,6 +1,6 @@
 #include "print_records.h"
 
-void print_records(std::vector<avro::GenericRecord> &records) {
+void print_records(const std::vector<avro::GenericRecord>& records) {
   for (auto &record : records) {
     std::cout << "Message name: " << record.schema()->name().simpleName() << std::endl;
     for (size_t i = 0; i < record.fieldCount(); i++) {
