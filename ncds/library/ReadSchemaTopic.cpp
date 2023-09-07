@@ -20,7 +20,6 @@
 #include "internal/utils/KafkaConfigLoader.h"
 #include "AvroDeserializer.h"
 #include "print_records.h"
-#include "printbuf.h"
 
 using avro_type_t = std::pair<avro::Type, std::string>;
 

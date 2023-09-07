@@ -8,7 +8,6 @@
 
 #include <avro/Generic.hh>
 
-#include <printbuf.h>
 #include <NCDSClient.h>
 #include <AvroDeserializer.h>
 #include <print_records.h>
