@@ -38,17 +38,18 @@ void AuthenticationConfigLoader::add_nasdaq_specific_properties(std::unordered_m
 bool AuthenticationConfigLoader::validate_security_config(std::unordered_map<std::string, std::string> &cfg) {
   AuthenticationConfigLoader::add_nasdaq_specific_properties(cfg);
 
-  if (cfg.find(AuthenticationConfigLoader::OAUTH_TOKEN_ENDPOINT_URI) == cfg.end() || cfg[AuthenticationConfigLoader::OAUTH_TOKEN_ENDPOINT_URI].empty()) {
-      logger->warn("Authentication Setting : {} Missing", AuthenticationConfigLoader::OAUTH_TOKEN_ENDPOINT_URI);
+  if (cfg.find(AuthenticationConfigLoader::OAUTH_TOKEN_ENDPOINT_URI) == cfg.end() ||
+       cfg[AuthenticationConfigLoader::OAUTH_TOKEN_ENDPOINT_URI].empty()) {
+    logger->warn("Authentication Setting : {} Missing", AuthenticationConfigLoader::OAUTH_TOKEN_ENDPOINT_URI);
   }
   if (cfg.find(AuthenticationConfigLoader::OAUTH_CLIENT_ID)== cfg.end() || cfg[AuthenticationConfigLoader::OAUTH_CLIENT_ID].empty()) {
-      logger->warn("Authentication Setting : {} Missing", AuthenticationConfigLoader::OAUTH_CLIENT_ID);
+    logger->warn("Authentication Setting : {} Missing", AuthenticationConfigLoader::OAUTH_CLIENT_ID);
   }
   if (cfg.find(AuthenticationConfigLoader::OAUTH_CLIENT_SECRET)== cfg.end() || cfg[AuthenticationConfigLoader::OAUTH_CLIENT_SECRET].empty()) {
-      logger->warn("Authentication Setting : {} Missing",  AuthenticationConfigLoader::OAUTH_CLIENT_SECRET);
+    logger->warn("Authentication Setting : {} Missing",  AuthenticationConfigLoader::OAUTH_CLIENT_SECRET);
   }
   if (cfg.find(AuthenticationConfigLoader::OAUTH_USERNAME_CLAIM)== cfg.end() || cfg[AuthenticationConfigLoader::OAUTH_USERNAME_CLAIM].empty()) {
-      logger->warn("Authentication Setting : {} Missing",  AuthenticationConfigLoader::OAUTH_USERNAME_CLAIM);
+    logger->warn("Authentication Setting : {} Missing",  AuthenticationConfigLoader::OAUTH_USERNAME_CLAIM);
   }
   return true;
 }

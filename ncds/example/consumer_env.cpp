@@ -8,6 +8,7 @@
 
 #include <avro/Generic.hh>
 
+#include <printbuf.h>
 #include <NCDSClient.h>
 #include <AvroDeserializer.h>
 
@@ -32,13 +33,19 @@ int main(int ac, char* av[]) {
     ncds::NCDSClient ncds_client(kafka_config.get(), auth_config);
 
     std::unique_ptr<RdKafka::KafkaConsumer> kafka_consumer = ncds_client.NCDSKafkaConsumer(topic);
-    std::unique_ptr<RdKafka::Message> message = std::unique_ptr<RdKafka::Message> (kafka_consumer->consume(ms_timeout));
+    std::unique_ptr<RdKafka::Message> msg = std::unique_ptr<RdKafka::Message>(kafka_consumer->consume(ms_timeout));
 
+    if(RdKafka::ERR_NO_ERROR != msg->err())
+      std::cout << msg->errstr() << std::endl;
+
+    std::cout << std::string(static_cast<const char*>(msg->payload()), msg->len()) << std::endl;
+
+    pbuffer(msg->payload(), msg->len());
     avro::ValidSchema schema = ncds_client.get_schema(topic);
     ncds::DeserializeMsg deserializer(schema);
 
-    if (message->payload() != NULL) {
-        avro::GenericRecord record = deserializer.deserialize_msg(*message);
+    if(msg->payload() != NULL) {
+        avro::GenericRecord record = deserializer.deserialize_msg(*msg);
         std::vector<avro::GenericRecord> v = {record};
         print_records(v);
     }
@@ -46,7 +53,7 @@ int main(int ac, char* av[]) {
         std::cout << "Message payload was null" << std::endl;
     }
   }
-  catch(const std::exception& e) {
+  catch (const std::exception& e) {
     std::cout << e.what() << std::endl;
   }
 }

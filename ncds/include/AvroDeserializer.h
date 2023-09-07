@@ -7,6 +7,7 @@
  * @brief Deserializes RdKafka::Message types and returns the message as a Generic Record
  */
 namespace ncds {
+
     class DeserializeMsg {
     public:
         /**

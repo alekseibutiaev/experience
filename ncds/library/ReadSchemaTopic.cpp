@@ -17,6 +17,7 @@
 #include "internal/utils/FindResources.h"
 #include "internal/utils/KafkaConfigLoader.h"
 #include "AvroDeserializer.h"
+#include "printbuf.h"
 
 //constructor
 ReadSchemaTopic::ReadSchemaTopic()
@@ -30,8 +31,9 @@ avro::ValidSchema ReadSchemaTopic::read_schema(const std::string &topic)
 {
     //logger->debug( "Starting read_schema";
     AuthenticationConfigLoader auth_config_loader;
-    RdKafka::Conf *conf = this->kafka_props;
-    std::string group_id = "Control-" + auth_config_loader.get_client_id(this->auth_props);
+    RdKafka::Conf* conf = kafka_props;
+    std::string group_id = "Control-" + auth_config_loader.get_client_id(auth_props);
+    std::cout << group_id << std::endl;
     std::unique_ptr<RdKafka::KafkaConsumer> schema_consumer = ReadSchemaTopic::get_consumer(group_id);
     //schema_consumer->consume(0);
 
@@ -188,6 +190,7 @@ std::unique_ptr<RdKafka::KafkaConsumer> ReadSchemaTopic::get_consumer(const std:
     logger->debug( "assign error: {}", err2str(assign_error));
 
     std::unique_ptr<RdKafka::Message> msg = std::unique_ptr<RdKafka::Message>(schema_consumer->consume(0));
+    pbuffer(msg->payload(), msg->len());
     logger->debug( "consume error: {}", err2str(msg->err()));
 
     //    RdKafka::ErrorCode position_error = schema_consumer->position(partitions);

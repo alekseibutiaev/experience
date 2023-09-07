@@ -18,6 +18,7 @@ const params_t kafka_params = {
   {"SSL_CERTIFICATE_LOCATION", "ssl.certificate.location"},
   {"GROUP_ID", "group.id"},
   {"AUTO_OFFSET_RESET", "auto.offset.reset"},
+  {"BOOTSTRAP_SERVERS", "bootstrap.servers"}
 };
 
 const params_t oauth_params = {
