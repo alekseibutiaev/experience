@@ -1,6 +1,4 @@
 #include <cassert>
-#include <utility>
-#include <vector>
 #include <string>
 #include <fstream>
 
@@ -21,28 +19,6 @@
 #include "AvroDeserializer.h"
 #include "print_records.h"
 
-using avro_type_t = std::pair<avro::Type, std::string>;
-
-const std::vector<avro_type_t> avro_types = {
-  {avro::AVRO_STRING, "AVRO_STRING"},
-  {avro::AVRO_BYTES, "AVRO_BYTES"},
-  {avro::AVRO_INT, "AVRO_INT"},
-  {avro::AVRO_LONG, "AVRO_LONG"},
-  {avro::AVRO_FLOAT, "AVRO_FLOAT"},
-  {avro::AVRO_DOUBLE, "AVRO_DOUBLE"},
-  {avro::AVRO_BOOL, "AVRO_BOOL"},
-  {avro::AVRO_NULL, "AVRO_NULL"},
-  {avro::AVRO_RECORD, "AVRO_RECORD"},
-  {avro::AVRO_ENUM, "AVRO_ENUM"},
-  {avro::AVRO_ARRAY, "AVRO_MAP"},
-  {avro::AVRO_MAP, ""},
-  {avro::AVRO_UNION, "AVRO_UNION"},
-  {avro::AVRO_FIXED, "AVRO_FIXED"},
-  {avro::AVRO_NUM_TYPES, "AVRO_NUM_TYPES"},
-  {avro::AVRO_UNKNOWN, "AVRO_UNKNOWN"},
-
-};
-
 //constructor
 ReadSchemaTopic::ReadSchemaTopic()
 {
@@ -51,12 +27,12 @@ ReadSchemaTopic::ReadSchemaTopic()
   timeout = get_timeout_config();
 }
 
-avro::ValidSchema ReadSchemaTopic::read_schema(const std::string &topic)
+avro::ValidSchema ReadSchemaTopic::read_schema(const std::string& topic)
 {
     //logger->debug( "Starting read_schema";
     AuthenticationConfigLoader auth_config_loader;
     RdKafka::Conf* conf = kafka_props;
-    std::string group_id = "Control-" + auth_config_loader.get_client_id(auth_props);
+    std::string group_id = std::string("Control-") + /*auth_config_loader.get_client_id(auth_props)*/"ffineu-tyapkin-TOTALVIEW";
     std::cout << group_id << std::endl;
     std::unique_ptr<RdKafka::KafkaConsumer> schema_consumer = ReadSchemaTopic::get_consumer(group_id);
     //schema_consumer->consume(0);
@@ -96,7 +72,7 @@ avro::ValidSchema ReadSchemaTopic::read_schema(const std::string &topic)
         }
 
         avro::GenericRecord record = consume.deserialize_msg(*msg);
-        print_records({record});
+        print_records({record}, get_stream(record.field("name").value<std::string>()));
 //        for(std::size_t idx = 0; idx < record.fieldCount(); ++idx)
 //          std::cout << avro_types[record.fieldAt(idx).type()].second << std::endl;
 

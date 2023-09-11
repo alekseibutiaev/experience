@@ -45,8 +45,7 @@ int main(int ac, char* av[]) {
 
     if(msg->payload() != NULL) {
         avro::GenericRecord record = deserializer.deserialize_msg(*msg);
-        std::vector<avro::GenericRecord> v = {record};
-        print_records(v);
+        print_records({record}, get_stream(record.field("name").value<std::string>()));
     }
     else {
         std::cout << "Message payload was null" << std::endl;

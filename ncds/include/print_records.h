@@ -16,5 +16,5 @@ void pbuffer(const void* buf, const std::size_t& size);
 ostream_ptr get_stream(const std::string& name = "file_");
 
 // This implementation might need to change based on the types of data in your records
-void print_records(const std::vector<avro::GenericRecord>&records);
+void print_records(const std::vector<avro::GenericRecord>&records, ostream_ptr os);
 
