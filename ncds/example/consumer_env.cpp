@@ -22,12 +22,10 @@ int main(int ac, char* av[]) {
     int ms_timeout = 10000;
 
     std::string topic;
-    if (const char* env_t = std::getenv("TOPIC")) {
-        topic = env_t;
-    }
-    else {
-        throw std::runtime_error("Environment variable TOPIC not set");
-    }
+    if (const char* env_t = std::getenv("TOPIC"))
+      topic = env_t;
+    else
+      throw std::runtime_error("Environment variable TOPIC not set");
 
     ncds::NCDSClient ncds_client(kafka_config.get(), auth_config);
 
@@ -47,9 +45,8 @@ int main(int ac, char* av[]) {
         avro::GenericRecord record = deserializer.deserialize_msg(*msg);
         print_records({record}, get_stream(record.field("name").value<std::string>()));
     }
-    else {
+    else
         std::cout << "Message payload was null" << std::endl;
-    }
   }
   catch (const std::exception& e) {
     std::cout << e.what() << std::endl;

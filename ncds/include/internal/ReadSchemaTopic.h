@@ -34,7 +34,7 @@ private:
   RdKafka::Conf* kafka_props;
   std::unordered_map<std::string, std::string> auth_props;
   std::unique_ptr<RdKafka::KafkaConsumer> get_consumer(const std::string &client_id);
-  avro::ValidSchema internal_schema(const std::string &topic);
+  avro::ValidSchema resource_schema(const std::string &topic);
   std::shared_ptr<spdlog::logger> logger;
 };
 

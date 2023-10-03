@@ -19,8 +19,10 @@ void pbuffer(const void* buf, const std::size_t& size) {
 }
 
 ostream_ptr get_stream(const std::string& name) {
-  static std::map<std::string, std::size_t> idx;
-  return std::make_shared<std::ofstream>((name + "_idx_" + std::to_string(idx[name]++) + ".text").c_str());
+  static std::map<std::string, ostream_ptr> streams;
+  if(!streams[name])
+    streams[name] = std::make_shared<std::ofstream>(("./text/" + name + ".text").c_str());
+  return streams[name];
 }
 
 void print_records(const std::vector<avro::GenericRecord>& records, ostream_ptr os) {
