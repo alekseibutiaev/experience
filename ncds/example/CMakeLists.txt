@@ -10,6 +10,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
   ${AVROCPP_INCLUDE_DIR}
   ${RDKAFKA_INCLUDE_DIR}
   ${RDKAFKACPP_INCLUDE_DIR}
+  ${NLOHMANNJSON_ROOT}/include
   ../include
   ./
 )

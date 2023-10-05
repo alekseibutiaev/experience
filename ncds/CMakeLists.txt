@@ -1,11 +1,16 @@
 cmake_minimum_required(VERSION 3.5)
 project("ncsdexample")
+set (CMAKE_CXX_STANDARD 17)
+
 include(FindPkgConfig)
 
 option(AVROCPP_HOME "use home for avrocpp")
 option(RDKAFKA_HOME "use home for rdkafka")
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/")
+set(NLOCHMANN_MODULE_PATH "/usr/share/cmake-${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}/Modules/nlohmann_json")
+message("Modules: " ${NLOCHMANN_MODULE_PATH})
+message("VERSION: " "${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}")
 
 find_package(CURL REQUIRED)
 
@@ -14,6 +19,8 @@ find_package(RDKAFKA QUIET)
 find_package(RDKAFKACPP QUIET)
 find_package(JSON-C REQUIRED)
 find_package(SPDLOG REQUIRED)
+find_package(nlohmann_json REQUIRED CONFIG PATHS ${NLOCHMANN_MODULE_PATH})
+#find_package(nlohmann_json REQUIRED)
 
 message("AVROCPP_FOUND: " ${AVROCPP_FOUND})
 message("AVROCPP_INCLUDE_DIR: " ${AVROCPP_INCLUDE_DIR})
