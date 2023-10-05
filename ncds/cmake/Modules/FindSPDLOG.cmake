@@ -1,38 +1,34 @@
-INCLUDE( FindPackageHandleStandardArgs )
-
-# Checks an environment variable; note that the first check
-# does not require the usual CMake $-sign.
-IF(SPDLOG_DIR)
-    message("SPDLOG_DIR was defined: " ${SPDLOG_DIR})
-ENDIF()
-
-FIND_PATH(
-        SPDLOG_INCLUDE_DIR
-        spdlog/spdlog.h spdlog.h
-        HINTS
-        ${SPDLOG_DIR}/include
-)
-
-FIND_LIBRARY( SPDLOG_LIBRARY spdlog
-        HINTS ${SPDLOG_DIR}/build)
+# - Try to find the SPDLOG library 
+# Once done this will define
+#
+#  SPDLOG_FOUND - system has SPDLOG
+#  SPDLOG_INCLUDE_DIR - the SPDLOG include directory
+#  SPDLOG_LIBRARIES - Link these to use SPDLOG
 
 
-FIND_PACKAGE_HANDLE_STANDARD_ARGS( SPDLOG DEFAULT_MSG
-        SPDLOG_INCLUDE_DIR
-        SPDLOG_LIBRARY
-        )
+if(SPDLOG_INCLUDE_DIR AND SPDLOG_LIBRARIES)
+  set(SPDLOG_FOUND TRUE)
+else(SPDLOG_INCLUDE_DIR AND SPDLOG_LIBRARIES)
+  find_path(SPDLOG_INCLUDE_DIR NAMES spdlog/spdlog.h spdlog.h
+    HINTS
+      ${SPDLOG_HOME}/include
+    PATHS
+      /usr/include
+  )
 
-IF( SPDLOG_FOUND )
-    SET( SPDLOG_INCLUDE_DIRS ${SPDLOG_INCLUDE_DIR} )
-    SET( SPDLOG_LIBRARIES ${SPDLOG_LIBRARY} )
-
-    MARK_AS_ADVANCED(
-            SPDLOG_LIBRARY
-            SPDLOG_INCLUDE_DIR
-            SPDLOG_DIR
-    )
-ELSE()
-    SET( SPDLOG_DIR "" CACHE STRING
-            "An optional hint to a directory for finding `spdlog`"
-            )
-ENDIF()
+  set(SPDLOG_LIB_NAME libspdlog.a)
+  
+  find_library(SPDLOG_LIBRARY NAMES ${SPDLOG_LIB_NAME}
+    HINTS
+      ${SPDLOG_HOME}/lib
+    PATHS
+      lib
+      /usr/lib
+      /usr/lib/x86_64-linux-gnu
+      /usr/lib/i386-linux-gnu
+  )
+  set(SPDLOG_LIBRARIES ${SPDLOG_LIBRARY} CACHE STRING " Libraries needed for SPDLOG")
+  include(FindPackageHandleStandardArgs)
+  find_package_handle_standard_args(SPDLOG DEFAULT_MSG SPDLOG_INCLUDE_DIR SPDLOG_LIBRARY)
+  mark_as_advanced(SPDLOG_INCLUDE_DIR SPDLOG_LIBRARIES)
+endif(SPDLOG_INCLUDE_DIR AND SPDLOG_LIBRARIES)

@@ -172,12 +172,12 @@ std::unique_ptr<RdKafka::KafkaConsumer> ReadSchemaTopic::get_consumer(const std:
     return schema_consumer;
 }
 
-avro::ValidSchema ReadSchemaTopic::resource_schema(const std::string &topic)
-{
-    avro::ValidSchema topic_schema;
-    std::ifstream in(get_resource_path() + topic + ".avsc");
-    if(!in.good())
-      throw std::runtime_error("Could not open file: " + topic + ".avsc");
-    avro::compileJsonSchema(in, topic_schema);
-    return topic_schema;
+avro::ValidSchema ReadSchemaTopic::resource_schema(const std::string& value) {
+  avro::ValidSchema schema;
+  const auto fname = get_resource_path() + value + ".avsc";
+  std::ifstream in(fname.c_str());
+  if(!in.good())
+    throw std::runtime_error("Could not open file: " + fname);
+  avro::compileJsonSchema(in, schema);
+  return schema;
 }

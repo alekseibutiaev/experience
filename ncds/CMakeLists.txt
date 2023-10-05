@@ -6,6 +6,7 @@ include(FindPkgConfig)
 
 option(AVROCPP_HOME "use home for avrocpp")
 option(RDKAFKA_HOME "use home for rdkafka")
+option(SPDLOG_HOME "use home for spdlog")
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/")
 set(NLOCHMANN_MODULE_PATH "/usr/share/cmake-${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}/Modules/nlohmann_json")

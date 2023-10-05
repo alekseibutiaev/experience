@@ -11,6 +11,10 @@
 
 #include <avro/Generic.hh>
 
+#include <avro/ValidSchema.hh>
+#include <avro/Compiler.hh>
+
+
 #include <NCDSClient.h>
 #include <AvroDeserializer.h>
 #include <print_records.h>
@@ -34,16 +38,26 @@ private:
 void err(const std::string&) {
 
 }
+void test() {
+  std::ifstream ifs( "/home/butiaev/project/experience/ncds/ncdsresources/ControlMessageSchema.avsc");
+  if(!ifs.good())
+    return;
+  avro::ValidSchema schema;
+  std::string s;
+  avro::compileJsonSchema(ifs, schema, s);
+  return;
+}
 
 int main(int ac, char* av[]) {
   try {
+    test();
     std::ifstream ifs("config.json");
     nlohmann::json j = nlohmann::json::parse(ifs);
     std::cout << j << std::endl;
     read_json_t rj(j);
-    tmp.read_config(rj, err);
 
     kf::config_t tmp;
+    tmp.read_config(rj, err);
     std::unique_ptr<RdKafka::Conf> kafka_config = get_kafka_config_env();
     std::unordered_map<std::string, std::string> auth_config = get_auth_config_env();
 

@@ -14,6 +14,10 @@
       "cwd": "${workspaceFolder}",
       "environment": [
         {
+          "name": "LD_LIBRARY_PATH",
+          "value": "/home/butiaev/tmp/installed/lib"
+        },
+        {
           "name": "BOOTSTRAP_SERVERS",
           "value": "kafka-bootstrap.clouddataservice.nasdaq.com:9094"
         },
@@ -56,7 +60,7 @@
         },
         {
           "name": "NCDSRESOURCES",
-          "value": "/home/butiaev/NetTrader/resource/"
+          "value": "/home/butiaev/project/experience/ncds/ncdsresources/"
         }
       ],
       "externalConsole": false,
