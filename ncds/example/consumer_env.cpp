@@ -10,7 +10,6 @@
 #include <nlohmann/json.hpp>
 
 #include <avro/Generic.hh>
-
 #include <avro/ValidSchema.hh>
 #include <avro/Compiler.hh>
 
@@ -19,45 +18,11 @@
 #include <AvroDeserializer.h>
 #include <print_records.h>
 
-#include <readconfig.h>
-
 #include "env_configs.h"
 
-class read_json_t {
-public:
-  read_json_t(const nlohmann::json& json)
-    : m_json(json) {
-  }
-  kf::string_try_t operator()(const std::string& val) const {
-    return m_json.contains(val) ? kf::string_try_t(m_json[val].template get<std::string>()) : kf::string_try_t();
-  }
-private:
-  const nlohmann::json& m_json;
-};
-
-void err(const std::string&) {
-
-}
-void test() {
-  std::ifstream ifs( "/home/butiaev/project/experience/ncds/ncdsresources/ControlMessageSchema.avsc");
-  if(!ifs.good())
-    return;
-  avro::ValidSchema schema;
-  std::string s;
-  avro::compileJsonSchema(ifs, schema, s);
-  return;
-}
 
 int main(int ac, char* av[]) {
   try {
-    test();
-    std::ifstream ifs("config.json");
-    nlohmann::json j = nlohmann::json::parse(ifs);
-    std::cout << j << std::endl;
-    read_json_t rj(j);
-
-    kf::config_t tmp;
-    tmp.read_config(rj, err);
     std::unique_ptr<RdKafka::Conf> kafka_config = get_kafka_config_env();
     std::unordered_map<std::string, std::string> auth_config = get_auth_config_env();
 

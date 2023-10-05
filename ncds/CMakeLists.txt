@@ -10,6 +10,7 @@ option(SPDLOG_HOME "use home for spdlog")
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/")
 set(NLOCHMANN_MODULE_PATH "/usr/share/cmake-${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}/Modules/nlohmann_json")
+
 message("Modules: " ${NLOCHMANN_MODULE_PATH})
 message("VERSION: " "${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}")
 
@@ -37,7 +38,7 @@ message("JSON-C_LIBRARY: " ${JSON-C_LIBRARY})
 message("SPDLOG_INCLUDE_DIR: " ${SPDLOG_INCLUDE_DIR})
 message("SPDLOG_LIBRARY: " ${SPDLOG_LIBRARY})
 
-
 add_subdirectory(library)
 add_subdirectory(example)
-
+add_subdirectory(kafka)
+add_subdirectory(kafkatest)

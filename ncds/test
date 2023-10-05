@@ -1,0 +1,594 @@
+diff --git a/ncds/.vscode/cmake-variants.json b/ncds/.vscode/cmake-variants.json
+index f2e5d42..40595e8 100644
+--- a/ncds/.vscode/cmake-variants.json
++++ b/ncds/.vscode/cmake-variants.json
+@@ -8,8 +8,9 @@
+         "long": "Build with no optimizations and debugging information for ubuntu 18.04",
+         "buildType": "Debug",
+         "settings": {
+-          "AVROCPP_HOME" : "/home/butiaev/tmp/installed",
+-          "RDKAFKA_HOME" : "/opt/rdkafka_v2.2.0"
++          "AVROCPP_HOME" : "/opt/avro-cpp-1.11.2",
++          "RDKAFKA_HOME" : "/opt/rdkafka_v2.2.0",
++          "SPDLOG_HOME" : "/opt/spdlog-1.12.0"
+         }
+       },
+       "Release_ubuntu_18.04": {
+@@ -17,8 +18,9 @@
+         "long": "Build with optimizations and without debuging information for ubuntu 18.04",
+         "buildType": "Release",
+         "settings": {
+-          "AVROCPP_HOME" : "/home/butiaev/tmp/installed/",
+-          "RDKAFKA_HOME" : "/opt/rdkafka_v2.2.0"
++          "AVROCPP_HOME" : "/opt/avro-cpp-1.11.2",
++          "RDKAFKA_HOME" : "/opt/rdkafka_v2.2.0",
++          "SPDLOG_HOME" : "/opt/spdlog-1.12.0"
+         }
+       }
+     }
+diff --git a/ncds/.vscode/launch.json b/ncds/.vscode/launch.json
+index 45be62c..af7f119 100644
+--- a/ncds/.vscode/launch.json
++++ b/ncds/.vscode/launch.json
+@@ -13,6 +13,10 @@
+       "stopAtEntry": true,
+       "cwd": "${workspaceFolder}",
+       "environment": [
++        {
++          "name": "LD_LIBRARY_PATH",
++          "value": "/home/butiaev/tmp/installed/lib"
++        },
+         {
+           "name": "BOOTSTRAP_SERVERS",
+           "value": "kafka-bootstrap.clouddataservice.nasdaq.com:9094"
+@@ -56,7 +60,7 @@
+         },
+         {
+           "name": "NCDSRESOURCES",
+-          "value": "/home/butiaev/NetTrader/resource/"
++          "value": "/home/butiaev/project/experience/ncds/ncdsresources/"
+         }
+       ],
+       "externalConsole": false,
+diff --git a/ncds/CMakeLists.txt b/ncds/CMakeLists.txt
+index 878c585..4be0550 100644
+--- a/ncds/CMakeLists.txt
++++ b/ncds/CMakeLists.txt
+@@ -1,11 +1,17 @@
+ cmake_minimum_required(VERSION 3.5)
+ project("ncsdexample")
++set (CMAKE_CXX_STANDARD 17)
++
+ include(FindPkgConfig)
+ 
+ option(AVROCPP_HOME "use home for avrocpp")
+ option(RDKAFKA_HOME "use home for rdkafka")
++option(SPDLOG_HOME "use home for spdlog")
+ 
+ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/")
++set(NLOCHMANN_MODULE_PATH "/usr/share/cmake-${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}/Modules/nlohmann_json")
++message("Modules: " ${NLOCHMANN_MODULE_PATH})
++message("VERSION: " "${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}")
+ 
+ find_package(CURL REQUIRED)
+ 
+@@ -14,6 +20,8 @@ find_package(RDKAFKA QUIET)
+ find_package(RDKAFKACPP QUIET)
+ find_package(JSON-C REQUIRED)
+ find_package(SPDLOG REQUIRED)
++find_package(nlohmann_json REQUIRED CONFIG PATHS ${NLOCHMANN_MODULE_PATH})
++#find_package(nlohmann_json REQUIRED)
+ 
+ message("AVROCPP_FOUND: " ${AVROCPP_FOUND})
+ message("AVROCPP_INCLUDE_DIR: " ${AVROCPP_INCLUDE_DIR})
+diff --git a/ncds/cmake/Modules/FindSPDLOG.cmake b/ncds/cmake/Modules/FindSPDLOG.cmake
+index c66c6d4..0dde156 100644
+--- a/ncds/cmake/Modules/FindSPDLOG.cmake
++++ b/ncds/cmake/Modules/FindSPDLOG.cmake
+@@ -1,38 +1,34 @@
+-INCLUDE( FindPackageHandleStandardArgs )
++# - Try to find the SPDLOG library 
++# Once done this will define
++#
++#  SPDLOG_FOUND - system has SPDLOG
++#  SPDLOG_INCLUDE_DIR - the SPDLOG include directory
++#  SPDLOG_LIBRARIES - Link these to use SPDLOG
+ 
+-# Checks an environment variable; note that the first check
+-# does not require the usual CMake $-sign.
+-IF(SPDLOG_DIR)
+-    message("SPDLOG_DIR was defined: " ${SPDLOG_DIR})
+-ENDIF()
+ 
+-FIND_PATH(
+-        SPDLOG_INCLUDE_DIR
+-        spdlog/spdlog.h spdlog.h
+-        HINTS
+-        ${SPDLOG_DIR}/include
+-)
++if(SPDLOG_INCLUDE_DIR AND SPDLOG_LIBRARIES)
++  set(SPDLOG_FOUND TRUE)
++else(SPDLOG_INCLUDE_DIR AND SPDLOG_LIBRARIES)
++  find_path(SPDLOG_INCLUDE_DIR NAMES spdlog/spdlog.h spdlog.h
++    HINTS
++      ${SPDLOG_HOME}/include
++    PATHS
++      /usr/include
++  )
+ 
+-FIND_LIBRARY( SPDLOG_LIBRARY spdlog
+-        HINTS ${SPDLOG_DIR}/build)
+-
+-
+-FIND_PACKAGE_HANDLE_STANDARD_ARGS( SPDLOG DEFAULT_MSG
+-        SPDLOG_INCLUDE_DIR
+-        SPDLOG_LIBRARY
+-        )
+-
+-IF( SPDLOG_FOUND )
+-    SET( SPDLOG_INCLUDE_DIRS ${SPDLOG_INCLUDE_DIR} )
+-    SET( SPDLOG_LIBRARIES ${SPDLOG_LIBRARY} )
+-
+-    MARK_AS_ADVANCED(
+-            SPDLOG_LIBRARY
+-            SPDLOG_INCLUDE_DIR
+-            SPDLOG_DIR
+-    )
+-ELSE()
+-    SET( SPDLOG_DIR "" CACHE STRING
+-            "An optional hint to a directory for finding `spdlog`"
+-            )
+-ENDIF()
+\ No newline at end of file
++  set(SPDLOG_LIB_NAME libspdlog.a)
++  
++  find_library(SPDLOG_LIBRARY NAMES ${SPDLOG_LIB_NAME}
++    HINTS
++      ${SPDLOG_HOME}/lib
++    PATHS
++      lib
++      /usr/lib
++      /usr/lib/x86_64-linux-gnu
++      /usr/lib/i386-linux-gnu
++  )
++  set(SPDLOG_LIBRARIES ${SPDLOG_LIBRARY} CACHE STRING " Libraries needed for SPDLOG")
++  include(FindPackageHandleStandardArgs)
++  find_package_handle_standard_args(SPDLOG DEFAULT_MSG SPDLOG_INCLUDE_DIR SPDLOG_LIBRARY)
++  mark_as_advanced(SPDLOG_INCLUDE_DIR SPDLOG_LIBRARIES)
++endif(SPDLOG_INCLUDE_DIR AND SPDLOG_LIBRARIES)
+diff --git a/ncds/config.json b/ncds/config.json
+new file mode 100644
+index 0000000..ad55641
+--- /dev/null
++++ b/ncds/config.json
+@@ -0,0 +1,11 @@
++{
++  "test":10,
++  "val":"dkjdfk",
++  "x-client.id":"sadsad",
++  "metadata.broker.list":"sadsad",
++  "ssl.ca.location": "/home/butiaev/NetTrader/ca-cert",
++  "ssl.certificate.location":"/home/butiaev/NetTrader/ca-cert/streams.pem",
++  "group.id": "ffineu-tyapkin-TOTALVIEW",
++  "auto.offset.reset":"earliest",
++  "bootstrap.servers":"kafka-bootstrap.clouddataservice.nasdaq.com:9094"
++}
+\ No newline at end of file
+diff --git a/ncds/example/CMakeLists.txt b/ncds/example/CMakeLists.txt
+index c64498e..eea36f3 100644
+--- a/ncds/example/CMakeLists.txt
++++ b/ncds/example/CMakeLists.txt
+@@ -10,6 +10,8 @@ target_include_directories(${PROJECT_NAME} PRIVATE
+   ${AVROCPP_INCLUDE_DIR}
+   ${RDKAFKA_INCLUDE_DIR}
+   ${RDKAFKACPP_INCLUDE_DIR}
++  ${SPDLOG_INCLUDE_DIR}
++  ${NLOHMANNJSON_ROOT}/include
+   ../include
+   ./
+ )
+@@ -20,4 +22,5 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
+   ${RDKAFKA_LIBRARIES}
+   ${RDKAFKACPP_LIBRARIES}
+   ${AVROCPP_LIBRARIES}
++  ${SPDLOG_LIBRARIES}
+ )
+diff --git a/ncds/example/consumer_env.cpp b/ncds/example/consumer_env.cpp
+index 173adc9..a5387d0 100644
+--- a/ncds/example/consumer_env.cpp
++++ b/ncds/example/consumer_env.cpp
+@@ -2,20 +2,67 @@
+ // Created by Spencer Sortman on 9/23/21.
+ //
+ #include <iostream>
++#include <fstream>
+ #include <string>
+ #include <memory>
+ #include <vector>
+ 
++#include <nlohmann/json.hpp>
++
+ #include <avro/Generic.hh>
+ 
++#include <avro/ValidSchema.hh>
++#include <avro/Compiler.hh>
++
++
+ #include <NCDSClient.h>
+ #include <AvroDeserializer.h>
+ #include <print_records.h>
+ 
++#include <readconfig.h>
++
+ #include "env_configs.h"
+ 
++class read_json_t {
++public:
++  read_json_t(const nlohmann::json& json)
++    : m_json(json) {
++  }
++  kf::string_try_t operator()(const std::string& val) const {
++    return m_json.contains(val) ? kf::string_try_t(m_json[val].template get<std::string>()) : kf::string_try_t();
++  }
++private:
++  const nlohmann::json& m_json;
++};
++
++void err(const std::string&) {
++
++}
++
++avro::ValidSchema load(const std::string& file) {
++  
++  std::ifstream ifs(file.c_str());
++  if(!ifs.good())
++    throw(std::runtime_error("can`t open file: " + file));
++  avro::ValidSchema schema;
++  avro::compileJsonSchema(ifs, schema);
++  return schema;
++}
++
+ int main(int ac, char* av[]) {
+   try {
++    load("/home/butiaev/project/experience/ncds/ncdsresources/cpx.json");
++    load("/home/butiaev/project/experience/ncds/ncdsresources/imaginary.json");
++    load("/home/butiaev/project/experience/ncds/ncdsresources/ControlMessageSchema.avsc");
++#if 0
++    std::ifstream ifs("config.json");
++    nlohmann::json j = nlohmann::json::parse(ifs);
++    std::cout << j << std::endl;
++    read_json_t rj(j);
++    kf::config_t tmp;
++    tmp.read_config(rj, err);
++#endif
++#if 1
+     std::unique_ptr<RdKafka::Conf> kafka_config = get_kafka_config_env();
+     std::unordered_map<std::string, std::string> auth_config = get_auth_config_env();
+ 
+@@ -47,6 +94,7 @@ int main(int ac, char* av[]) {
+     }
+     else
+         std::cout << "Message payload was null" << std::endl;
++#endif
+   }
+   catch (const std::exception& e) {
+     std::cout << e.what() << std::endl;
+diff --git a/ncds/include/readconfig.h b/ncds/include/readconfig.h
+new file mode 100644
+index 0000000..393ea7c
+--- /dev/null
++++ b/ncds/include/readconfig.h
+@@ -0,0 +1,71 @@
++#pragma once
++
++#include <string>
++#include <memory>
++#include <vector>
++#include <functional>
++
++#include "types.h"
++
++namespace RdKafka {
++
++  class Conf;
++
++} /* namespace RdKafka */
++
++namespace kf {
++
++  enum params_t {
++    e_csv,
++    e_string,
++    e_integer,
++    e_boolean
++  };
++
++  
++
++
++
++  class config_t {
++  public:
++    using buffer_t = std::vector<unsigned char>;
++    using get_property_t = std::function<string_try_t(const std::string&)>;
++    using error_t = std::function<void(const std::string&)>;
++    using kf_cong_ptr = std::unique_ptr<RdKafka::Conf>;
++  public:
++    enum type_t {
++      e_global,
++      e_topic
++    };
++  public:
++    config_t(const config_t::type_t& value = e_global);
++    void read_config(const get_property_t& get_property, const error_t& err_notify);
++    void set(RdKafka::DeliveryReportCb* value, const error_t& err_notify);
++    void set(RdKafka::OAuthBearerTokenRefreshCb* value, const error_t& err_notify);
++    void set(RdKafka::EventCb* value, const error_t& err_notify);
++    void set(RdKafka::Conf* value, const error_t& err_notify);
++    void set(RdKafka::PartitionerCb* value, const error_t& err_notify);
++    void set(RdKafka::PartitionerKeyPointerCb* value, const error_t& err_notify);
++    void set(RdKafka::SocketCb* value, const error_t& err_notify);
++    void set(RdKafka::OpenCb* value, const error_t& err_notify);
++    void set(RdKafka::RebalanceCb* value, const error_t& err_notify);
++    void set(RdKafka::OffsetCommitCb* value, const error_t& err_notify);
++    void set(RdKafka::SslCertificateVerifyCb* value, const error_t& err_notify);
++    void set(RdKafka::CertificateType cert_type, RdKafka::CertificateEncoding cert_enc,
++      const buffer_t& value, const error_t& err_notify);
++    const RdKafka::Conf& get_config() const;
++  private:
++    using strings_t = std::vector<std::string>;
++  private:
++    kf_cong_ptr m_config;
++    const strings_t& m_param;
++  private:
++    static const strings_t glogal;
++    static const strings_t topic;
++  };
++
++//  kf_cong_ptr read_config(const get_property_t& get);
++
++
++
++} /* namespace kf */
+diff --git a/ncds/include/types.h b/ncds/include/types.h
+new file mode 100644
+index 0000000..18eb0d1
+--- /dev/null
++++ b/ncds/include/types.h
+@@ -0,0 +1,10 @@
++#pragma once
++
++#include <optional>
++#include <string>
++
++namespace kf {
++  
++  using string_try_t = std::optional<std::string>;
++
++} /* namespace kf */
+\ No newline at end of file
+diff --git a/ncds/library/CMakeLists.txt b/ncds/library/CMakeLists.txt
+index ca96de6..98e04ac 100644
+--- a/ncds/library/CMakeLists.txt
++++ b/ncds/library/CMakeLists.txt
+@@ -11,4 +11,5 @@ target_include_directories(${PROJECT_NAME} PRIVATE
+   ${AVROCPP_INCLUDE_DIR}
+   ${RDKAFKA_INCLUDE_DIR}
+   ${RDKAFKACPP_INCLUDE_DIR}
++  ${SPDLOG_INCLUDE_DIR}
+ )
+diff --git a/ncds/library/ReadSchemaTopic.cpp b/ncds/library/ReadSchemaTopic.cpp
+index c6017b0..ed4d2a5 100644
+--- a/ncds/library/ReadSchemaTopic.cpp
++++ b/ncds/library/ReadSchemaTopic.cpp
+@@ -172,12 +172,12 @@ std::unique_ptr<RdKafka::KafkaConsumer> ReadSchemaTopic::get_consumer(const std:
+     return schema_consumer;
+ }
+ 
+-avro::ValidSchema ReadSchemaTopic::resource_schema(const std::string &topic)
+-{
+-    avro::ValidSchema topic_schema;
+-    std::ifstream in(get_resource_path() + topic + ".avsc");
+-    if(!in.good())
+-      throw std::runtime_error("Could not open file: " + topic + ".avsc");
+-    avro::compileJsonSchema(in, topic_schema);
+-    return topic_schema;
++avro::ValidSchema ReadSchemaTopic::resource_schema(const std::string& value) {
++  avro::ValidSchema schema;
++  const auto fname = get_resource_path() + value + ".avsc";
++  std::ifstream in(fname.c_str());
++  if(!in.good())
++    throw std::runtime_error("Could not open file: " + fname);
++  avro::compileJsonSchema(in, schema);
++  return schema;
+ }
+diff --git a/ncds/library/readconfig.cpp b/ncds/library/readconfig.cpp
+new file mode 100644
+index 0000000..5a9f1eb
+--- /dev/null
++++ b/ncds/library/readconfig.cpp
+@@ -0,0 +1,172 @@
++#include <tuple>
++#include <utility>
++
++#include <librdkafka/rdkafkacpp.h>
++
++#include "readconfig.h"
++
++namespace {
++
++  template <typename type_t, typename tuple_t>
++  struct index_t;
++
++  template <typename type_t, typename... types_t>
++  struct index_t<type_t, std::tuple<type_t, types_t...>> {
++      static const std::size_t value = 0;
++  };
++
++  template <typename type_t, typename u_t, typename... types_t>
++  struct index_t<type_t, std::tuple<u_t, types_t...>> {
++      static const std::size_t value = 1 + index_t<type_t, std::tuple<types_t...>>::value;
++  };
++
++  static const auto names = std::make_tuple(
++    std::pair<const RdKafka::DeliveryReportCb*, std::string>(0, "dr_cb"),
++    std::pair<const RdKafka::OAuthBearerTokenRefreshCb*, std::string>(0, "oauthbearer_token_refresh_cb"),
++    std::pair<const RdKafka::EventCb*, std::string>(0, "event_cb"),
++    std::pair<const RdKafka::Conf*, std::string>(0, "default_topic_conf"),
++    std::pair<const RdKafka::PartitionerCb*, std::string>(0, "partitioner_cb"),
++    std::pair<const RdKafka::PartitionerKeyPointerCb*, std::string>(0, "partitioner_key_pointer_cb"),
++    std::pair<const RdKafka::SocketCb*, std::string>(0, "socket_cb"),
++    std::pair<const RdKafka::OpenCb*, std::string>(0, "open_cb"),
++    std::pair<const RdKafka::RebalanceCb*, std::string>(0, "rebalance_cb"),
++    std::pair<const RdKafka::OffsetCommitCb*, std::string>(0, "offset_commit_cb"),
++    std::pair<const RdKafka::SslCertificateVerifyCb*, std::string>(0, "ssl_cert_verify_cb")
++  );
++
++  template <typename param_t>
++  static const std::string& get_name(const param_t*) {
++    return std::get<std::pair<const param_t*, std::string>>(names).second;
++  }
++
++} /* namespace */
++
++namespace kf {
++
++  const config_t::strings_t config_t::glogal = {
++    "builtin.features", "client.id", "metadata.broker.list", "bootstrap.servers", "message.max.bytes",
++    "message.copy.max.bytes", "receive.message.max.bytes", "max.in.flight.requests.per.connection",
++    "max.in.flight", "metadata.request.timeout.ms", "topic.metadata.refresh.interval.ms",
++    "metadata.max.age.ms", "topic.metadata.refresh.fast.interval.ms", "topic.metadata.refresh.fast.cnt",
++    "topic.metadata.refresh.sparse", "topic.blacklist", "debug", "socket.timeout.ms",
++    "socket.blocking.max.ms", "socket.send.buffer.bytes", "socket.receive.buffer.bytes",
++    "socket.keepalive.enable", "socket.nagle.disable", "socket.max.fails", "broker.address.ttl",
++    "broker.address.family", "reconnect.backoff.jitter.ms", "statistics.interval.ms",
++    "enabled_events", "log_level", "log.queue", "log.thread.name", "log.connection.close",
++    "opaque", "default_topic_conf", "internal.termination.signal", "api.version.request",
++    "api.version.request.timeout.ms", "api.version.fallback.ms", "broker.version.fallback",
++    "security.protocol", "ssl.cipher.suites", "ssl.curves.list", "ssl.sigalgs.list",
++    "ssl.key.location", "ssl.key.password", "ssl.certificate.location", "ssl.ca.location",
++    "ssl.crl.location", "ssl.keystore.location", "ssl.keystore.password", "sasl.mechanisms",
++    "sasl.mechanism", "sasl.kerberos.service.name", "sasl.kerberos.principal",
++    "sasl.kerberos.kinit.cmd", "sasl.kerberos.keytab", "sasl.kerberos.min.time.before.relogin",
++    "sasl.username", "sasl.password", "plugin.library.paths", "group.id", "partition.assignment.strategy",
++    "session.timeout.ms", "heartbeat.interval.ms", "group.protocol.type", "coordinator.query.interval.ms",
++    "enable.auto.commit", "auto.commit.interval.ms", "enable.auto.offset.store", "queued.min.messages",
++    "queued.max.messages.kbytes", "fetch.wait.max.ms", "fetch.message.max.bytes", "max.partition.fetch.bytes",
++    "fetch.max.bytes", "fetch.min.bytes", "fetch.error.backoff.ms", "offset.store.method",
++    "enable.partition.eof", "check.crcs", "queue.buffering.max.messages", "queue.buffering.max.kbytes",
++    "queue.buffering.max.ms", "linger.ms", "message.send.max.retries", "retries", "retry.backoff.ms",
++    "queue.buffering.backpressure.threshold", "compression.codec", "compression.type", "batch.num.messages",
++    "delivery.report.only.error"
++  };
++
++  const config_t::strings_t config_t::topic = {
++    "request.required.acks", "acks", "request.timeout.ms", "message.timeout.ms", "queuing.strategy",
++    "produce.offset.report", "partitioner", "partitioner_cb", "msg_order_cmp", "opaque",
++    "compression.codec", "compression.type", "compression.level", "auto.commit.enable",
++    "enable.auto.commit", "auto.commit.interval.ms", "auto.offset.reset", "offset.store.path",
++    "offset.store.sync.interval.ms", "offset.store.method", "consume.callback.max.messages"
++  };
++
++  config_t::config_t(const config_t::type_t& value)
++      : m_config(RdKafka::Conf::create(value == e_global ? RdKafka::Conf::CONF_GLOBAL : RdKafka::Conf::CONF_TOPIC))
++      , m_param(value == e_global ? glogal : topic) {
++  }
++
++  void config_t::read_config(const get_property_t& get_property, const error_t& err_notify) {
++    std::string err;
++    for(const auto& it : m_param)
++      if(const auto& tmp = get_property(it))
++        if(RdKafka::Conf::CONF_OK != m_config->set(it, *tmp, err))
++          err_notify(err);
++  }
++
++  void config_t::set(RdKafka::DeliveryReportCb* value, const error_t& err_notify) {
++    std::string err;
++    if(RdKafka::Conf::CONF_OK != m_config->set(get_name(value), value, err));
++      err_notify(err);
++  }
++
++  void config_t::set(RdKafka::OAuthBearerTokenRefreshCb* value, const error_t& err_notify) {
++    std::string err;
++    if(RdKafka::Conf::CONF_OK != m_config->set(get_name(value), value, err));
++      err_notify(err);
++  }
++
++  void config_t::set(RdKafka::EventCb* value, const error_t& err_notify) {
++    std::string err;
++    if(RdKafka::Conf::CONF_OK != m_config->set(get_name(value), value, err));
++      err_notify(err);
++  }
++
++  void config_t::set(RdKafka::Conf* value, const error_t& err_notify) {
++    std::string err;
++    if(RdKafka::Conf::CONF_OK != m_config->set(get_name(value), value, err));
++      err_notify(err);
++  }
++
++  void config_t::set(RdKafka::PartitionerCb* value, const error_t& err_notify) {
++    std::string err;
++    if(RdKafka::Conf::CONF_OK != m_config->set(get_name(value), value, err));
++      err_notify(err);
++  }
++
++  void config_t::set(RdKafka::PartitionerKeyPointerCb* value, const error_t& err_notify) {
++    std::string err;
++    if(RdKafka::Conf::CONF_OK != m_config->set(get_name(value), value, err));
++      err_notify(err);
++  }
++
++  void config_t::set(RdKafka::SocketCb* value, const error_t& err_notify) {
++    std::string err;
++    if(RdKafka::Conf::CONF_OK != m_config->set(get_name(value), value, err));
++      err_notify(err);
++  }
++
++  void config_t::set(RdKafka::OpenCb* value, const error_t& err_notify) {
++    std::string err;
++    if(RdKafka::Conf::CONF_OK != m_config->set(get_name(value), value, err));
++      err_notify(err);
++  }
++
++  void config_t::set(RdKafka::RebalanceCb* value, const error_t& err_notify) {
++    std::string err;
++    if(RdKafka::Conf::CONF_OK != m_config->set(get_name(value), value, err));
++      err_notify(err);
++  }
++
++  void config_t::set(RdKafka::OffsetCommitCb* value, const error_t& err_notify) {
++    std::string err;
++    if(RdKafka::Conf::CONF_OK != m_config->set(get_name(value), value, err));
++      err_notify(err);
++  }
++
++  void config_t::set(RdKafka::SslCertificateVerifyCb* value, const error_t& err_notify) {
++    std::string err;
++    if(RdKafka::Conf::CONF_OK != m_config->set(get_name(value), value, err));
++      err_notify(err);
++  }
++
++  void config_t::set(RdKafka::CertificateType cert_type, RdKafka::CertificateEncoding cert_enc,
++      const config_t::buffer_t& value, const error_t& err_notify) {
++    std::string err;
++    if(RdKafka::Conf::CONF_OK != m_config->set_ssl_cert(cert_type, cert_enc, value.data(), value.size(), err));
++      err_notify(err);
++  }
++
++  const RdKafka::Conf& config_t::get_config() const {
++    return *m_config.get();
++  }
++
++} /* namespace kf */
+diff --git a/ncds/ncdsresources/logging.json b/ncds/ncdsresources/logging.json
+index d30bbb6..473d3e1 100644
+--- a/ncds/ncdsresources/logging.json
++++ b/ncds/ncdsresources/logging.json
+@@ -1,5 +1,5 @@
+ {
+   "max_size": 5242880,
+   "max_files": 3,
+-  "debug": 1
++  "debug": 0
+ }
+\ No newline at end of file

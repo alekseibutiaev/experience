@@ -2,10 +2,11 @@
   "test":10,
   "val":"dkjdfk",
   "x-client.id":"sadsad",
-  "metadata.broker.list":"sadsad",
-  "ssl.ca.location": "/home/butiaev/NetTrader/ca-cert",
-  "ssl.certificate.location":"/home/butiaev/NetTrader/ca-cert/streams.pem",
-  "group.id": "ffineu-tyapkin-TOTALVIEW",
-  "auto.offset.reset":"earliest",
-  "bootstrap.servers":"kafka-bootstrap.clouddataservice.nasdaq.com:9094"
+  "metadata.broker.list" : "sadsad",
+  "ssl.ca.location" : "/home/butiaev/NetTrader/ca-cert",
+  "ssl.certificate.location" : "/home/butiaev/NetTrader/ca-cert/streams.pem",
+  "group.id" : "ffineu-tyapkin-TOTALVIEW",
+  "auto.offset.reset" : "earliest",
+  "bootstrap.servers" : "kafka-bootstrap.clouddataservice.nasdaq.com:9094",
+  "timeout" : 30
 }

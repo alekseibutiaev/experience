@@ -77,6 +77,8 @@
     "cinttypes": "cpp",
     "typeindex": "cpp",
     "typeinfo": "cpp",
-    "charconv": "cpp"
+    "charconv": "cpp",
+    "forward_list": "cpp",
+    "valarray": "cpp"
   },
 }
