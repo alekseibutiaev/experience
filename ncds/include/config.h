@@ -37,11 +37,12 @@ namespace kf {
       const buffer_t& value, const error_t& notify);
 */
     RdKafka::Conf* get_config() const;
+    const config_t::type_t& get_type() const;
   private:
     using strings_t = std::vector<std::string>;
     using kf_cong_ptr = std::shared_ptr<RdKafka::Conf>;
   private:
-    const config_t::type_t& m_type;
+    const config_t::type_t m_type;
     kf_cong_ptr m_config;
     const strings_t& m_param;
   private:

@@ -19,6 +19,8 @@ namespace RdKafka {
   class RebalanceCb;
   class OffsetCommitCb;
   class SslCertificateVerifyCb;
+  class TopicPartition;
+  class KafkaConsumer;
 
 } /* namespace RdKafka */
 

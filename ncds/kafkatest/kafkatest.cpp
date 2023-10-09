@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <stdexcept>
+#include <thread>
 
 #include <nlohmann/json.hpp>
 
@@ -9,6 +10,7 @@
 #include <avro/Compiler.hh>
 
 #include <config.h>
+#include <consumer.h>
 
 namespace {
 
@@ -36,7 +38,7 @@ namespace {
   };
 
   void err(const std::string& value) {
-    std::cout << "configuaryion error: " << value << std::endl;
+    std::cout << "configuration error: " << value << std::endl;
   }
 
 } /* namespace */
@@ -55,8 +57,15 @@ int main(int ac, char* av[]) {
 
     kf::config_t tmp;
     tmp.read_config(rj, err);
-    kf::config_t tmp1 = tmp.clone(err);
-    std::cout << "out" << std::endl;
+
+    kf::consumer_t consumer(tmp, rj, err);
+    consumer.test();
+
+    for(;;)
+      std::this_thread::sleep_for(std::chrono::seconds(1));
+
+    return 0;
+
   }
   catch(const std::exception& e) {
     std::cout << "Error: " << e.what() << std::endl;

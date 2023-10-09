@@ -27,82 +27,76 @@ ReadSchemaTopic::ReadSchemaTopic() {
 }
 
 avro::ValidSchema ReadSchemaTopic::read_schema(const std::string& topic) {
-    //logger->debug( "Starting read_schema";
-    AuthenticationConfigLoader auth_config_loader;
-    RdKafka::Conf* conf = kafka_props;
-    const std::string group_id = std::string("Control-") + /*auth_config_loader.get_client_id(auth_props)*/"ffineu-tyapkin";//-TOTALVIEW";
-    std::cout << group_id << std::endl;
-    auto schema_consumer = ReadSchemaTopic::get_consumer(group_id);
-    //schema_consumer->consume(0);
+  //logger->debug( "Starting read_schema";
+  AuthenticationConfigLoader auth_config_loader;
+  RdKafka::Conf* conf = kafka_props;
+  const std::string group_id = std::string("Control-") + /*auth_config_loader.get_client_id(auth_props)*/"ffineu-tyapkin";//-TOTALVIEW";
+  std::cout << group_id << std::endl;
+  auto schema_consumer = ReadSchemaTopic::get_consumer(group_id);
+  //schema_consumer->consume(0);
 
-    std::vector<std::string> control_schema_topic;
-    control_schema_topic.push_back(control_schema_name);
-    schema_consumer->subscribe(control_schema_topic);
+  std::vector<std::string> control_schema_topic;
+  control_schema_topic.push_back(control_schema_name);
+  schema_consumer->subscribe(control_schema_topic);
 
-    avro::ValidSchema control_message_schema = resource_schema("ControlMessageSchema");
+  avro::ValidSchema control_message_schema = resource_schema("ControlMessageSchema");
 
-    ncds::DeserializeMsg deserialize(control_message_schema);
+  ncds::DeserializeMsg deserialize(control_message_schema);
 
-    avro::GenericRecord* latest_record;
+  avro::GenericRecord* latest_record;
 
-    avro::ValidSchema message_schema;
+  avro::ValidSchema message_schema;
 
-    bool message_schema_found = false;
+  bool message_schema_found = false;
 
-    std::vector<avro::GenericRecord> all_records;
-    while (true) {
-        std::unique_ptr<RdKafka::Message> msg = std::unique_ptr<RdKafka::Message>(schema_consumer->consume(this->timeout));
-        if (msg->err() != 0) {
-            logger->debug( "Error: {}", err2str(msg->err()));
-            break;
+  std::vector<avro::GenericRecord> all_records;
+  while (true) {
+      std::unique_ptr<RdKafka::Message> msg = std::unique_ptr<RdKafka::Message>(schema_consumer->consume(this->timeout));
+      if (msg->err() != 0) {
+          logger->debug( "Error: {}", err2str(msg->err()));
+          break;
+      }
+
+      avro::GenericRecord record = deserialize.deserialize_msg(*msg);
+      if(auto stream = get_stream(record.field("name").value<std::string>()))
+        print_records({record}, stream);
+
+      if (record.hasField("name")) {
+        avro::GenericDatum record_name = record.field("name");
+        assert(record_name.type() == avro::AVRO_STRING);
+        if(record_name.value<std::string>() == topic) {
+            if(!all_records.empty())
+                all_records.pop_back();
+            all_records.push_back(record);
         }
+      }
+  }
+  schema_consumer->close();
+  logger->debug( "Consumed all records in control topic");
+  latest_record = &all_records.back();
 
-        avro::GenericRecord record = deserialize.deserialize_msg(*msg);
-        if(auto stream = get_stream(record.field("name").value<std::string>()))
-          print_records({record}, stream);
+  if (!all_records.empty() && latest_record->hasField("schema")) {
+    avro::GenericDatum message_schema_datum = latest_record->field("schema");
+    assert(message_schema_datum.type() == avro::AVRO_STRING);
+    message_schema = avro::compileJsonSchemaFromString(message_schema_datum.value<std::string>());
+    message_schema_found = true;
+  }
 
-        if (record.hasField("name")) {
-          avro::GenericDatum record_name = record.field("name");
-          assert(record_name.type() == avro::AVRO_STRING);
-          if (record_name.value<std::string>() == topic)      {
-              if (!all_records.empty())
-                  all_records.pop_back();
-              all_records.push_back(record);
-          }
-        }
-    }
-    schema_consumer->close();
-
-    logger->debug( "Consumed all records in control topic");
-
-    latest_record = &all_records.back();
-
-    if (!all_records.empty() && latest_record->hasField("schema"))
-    {
-        avro::GenericDatum message_schema_datum = latest_record->field("schema");
-        assert(message_schema_datum.type() == avro::AVRO_STRING);
-        message_schema = avro::compileJsonSchemaFromString(message_schema_datum.value<std::string>());
-        message_schema_found = true;
-    }
-
-    if (!message_schema_found)
-    {
-//        assert(false);
-        logger->warn("WARNING: Using the Old Schema! It might not be the latest schema.");
-        message_schema = ReadSchemaTopic::resource_schema(topic);
-    }
+  if (!message_schema_found) {
+    // assert(false);
+    logger->warn("WARNING: Using the Old Schema! It might not be the latest schema.");
+    message_schema = ReadSchemaTopic::resource_schema(topic);
+  }
 
 //    logger->debug( "Json Schema: " << message_schema.toJson();
-    return message_schema;
+  return message_schema;
 }
 
-void ReadSchemaTopic::set_kafka_props(RdKafka::Conf *props)
-{
+void ReadSchemaTopic::set_kafka_props(RdKafka::Conf *props) {
     this->kafka_props = props;
 }
 
-void ReadSchemaTopic::set_auth_props(std::unordered_map<std::string, std::string> &props)
-{
+void ReadSchemaTopic::set_auth_props(std::unordered_map<std::string, std::string> &props) {
     this->auth_props = props;
 }
 

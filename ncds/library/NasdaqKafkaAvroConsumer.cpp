@@ -50,7 +50,8 @@ NasdaqKafkaAvroConsumer::NasdaqKafkaAvroConsumer(RdKafka::Conf* kafka_cfg,
 
 std::unique_ptr<RdKafka::KafkaConsumer> NasdaqKafkaAvroConsumer::get_kafka_consumer(const std::string &topic_name) {
   std::vector<RdKafka::TopicPartition *> partitions;
-  std::unique_ptr<RdKafka::TopicPartition> topic_partition = std::unique_ptr<RdKafka::TopicPartition>(RdKafka::TopicPartition::create(topic_name + ".stream", 0, RdKafka::Topic::OFFSET_END));
+  std::unique_ptr<RdKafka::TopicPartition> topic_partition =
+    std::unique_ptr<RdKafka::TopicPartition>(RdKafka::TopicPartition::create(topic_name + ".stream", 0, RdKafka::Topic::OFFSET_END));
   partitions.push_back(topic_partition.get());
   auto kafka_consumer = NasdaqKafkaAvroConsumer::get_consumer(topic_name);
   kafka_consumer->assign(partitions);
@@ -61,29 +62,22 @@ std::unique_ptr<RdKafka::KafkaConsumer> NasdaqKafkaAvroConsumer::get_kafka_consu
   return kafka_consumer;
 }
 
-std::unique_ptr<RdKafka::KafkaConsumer> NasdaqKafkaAvroConsumer::get_kafka_consumer(const std::string &topic_name, long timestamp)
-{
-    std::vector<RdKafka::TopicPartition *> partitions;
-  std::unique_ptr<RdKafka::TopicPartition> topic_partition = std::unique_ptr<RdKafka::TopicPartition>(RdKafka::TopicPartition::create(topic_name + ".stream", 0, RdKafka::Topic::OFFSET_END));
+std::unique_ptr<RdKafka::KafkaConsumer> NasdaqKafkaAvroConsumer::get_kafka_consumer(const std::string &topic_name, long timestamp) {
+  std::vector<RdKafka::TopicPartition *> partitions;
+  std::unique_ptr<RdKafka::TopicPartition> topic_partition =
+    std::unique_ptr<RdKafka::TopicPartition>(RdKafka::TopicPartition::create(topic_name + ".stream", 0, RdKafka::Topic::OFFSET_END));
   partitions.push_back(topic_partition.get());
-
   auto kafka_consumer = NasdaqKafkaAvroConsumer::get_consumer(topic_name);
-
   // seek to a specific timestamp
   topic_partition->set_offset(timestamp);
-
-    kafka_consumer->assign(partitions);
-
-    kafka_consumer->offsetsForTimes(partitions, 5000);
-
+  kafka_consumer->assign(partitions);
+  kafka_consumer->offsetsForTimes(partitions, 5000);
   kafka_consumer->seek(*(topic_partition.get()), 5000);
-
   return kafka_consumer;
 }
 
-avro::ValidSchema NasdaqKafkaAvroConsumer::get_schema(const std::string &topic)
-{
-    avro::ValidSchema kafka_schema = read_schema_topic.read_schema(topic);
+avro::ValidSchema NasdaqKafkaAvroConsumer::get_schema(const std::string &topic) {
+  avro::ValidSchema kafka_schema = read_schema_topic.read_schema(topic);
   return kafka_schema;
 }
 

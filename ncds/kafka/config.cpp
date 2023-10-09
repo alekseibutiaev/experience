@@ -56,6 +56,11 @@ namespace {
     (copy(std::get<types_t>(values), from, to, notify), ...);
   }
 
+  RdKafka::Conf::ConfType get_rdkafka_config_type(const kf::config_t::type_t& type) {
+    RdKafka::Conf::ConfType res = type == kf::config_t::e_global ? RdKafka::Conf::CONF_GLOBAL : RdKafka::Conf::CONF_TOPIC;
+    return res;
+  }
+
 } /* namespace */
 
 namespace kf {
@@ -98,7 +103,7 @@ namespace kf {
 
   config_t::config_t(const config_t::type_t& type)
       : m_type(type)
-      , m_config(RdKafka::Conf::create(type == e_global ? RdKafka::Conf::CONF_GLOBAL : RdKafka::Conf::CONF_TOPIC))
+      , m_config(RdKafka::Conf::create(get_rdkafka_config_type(m_type)))
       , m_param(type == e_global ? glogal : topic) {
   }
 
@@ -200,6 +205,10 @@ namespace kf {
 
   RdKafka::Conf* config_t::get_config() const {
     return m_config.get();
+  }
+
+  const config_t::type_t& config_t::get_type() const {
+    return m_type;
   }
 
 } /* namespace kf */

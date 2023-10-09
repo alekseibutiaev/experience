@@ -8,5 +8,10 @@
   "group.id" : "ffineu-tyapkin-TOTALVIEW",
   "auto.offset.reset" : "earliest",
   "bootstrap.servers" : "kafka-bootstrap.clouddataservice.nasdaq.com:9094",
+  "topic" : "TOTALVIEW",
+  "debug" : "all",
+  "oauth.token.endpoint.uri" : "https://clouddataservice.auth.nasdaq.com/auth/realms/pro-realm/protocol/openid-connect/token",
+  "oauth.client.id" : "ffineu-tyapkin",
+  "oauth.client.secret" : "50efe6c1-4f6c-48ef-8c9d-2925bbda5bbf",
   "timeout" : 30
 }

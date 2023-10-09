@@ -49,11 +49,11 @@ int main(int ac, char* av[]) {
     ncds::DeserializeMsg deserializer(schema);
 
     if(msg->payload() != NULL) {
-        avro::GenericRecord record = deserializer.deserialize_msg(*msg);
-        print_records({record}, get_stream(record.field("name").value<std::string>()));
+      avro::GenericRecord record = deserializer.deserialize_msg(*msg);
+      print_records({record}, get_stream(record.field("name").value<std::string>()));
     }
     else
-        std::cout << "Message payload was null" << std::endl;
+      std::cout << "Message payload was null" << std::endl;
   }
   catch (const std::exception& e) {
     std::cout << e.what() << std::endl;
