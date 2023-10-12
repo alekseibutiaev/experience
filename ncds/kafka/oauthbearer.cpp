@@ -1,6 +1,11 @@
-#include <string>
+#include <iostream>
+#include <chrono>
 #include <stdexcept>
 
+#include <nlohmann/json.hpp>
+
+
+#include "http_request.h"
 #include "oauthbearer.h"
 
 namespace {
@@ -27,7 +32,39 @@ namespace kf {
   }
 
   void oauthbearer_t::oauthbearer_token_refresh_cb(RdKafka::Handle* handle, const std::string& oauthbearer_config) {
+    try {
+//  "grant_type=client_credentials&client_id=" + client_id + "&client_secret=" + m_pass + "&getAccounts=1";
+//  "grant_type=client_credentials&client_id=" + client_id + "&client_secret=" + m_secret;
 
+
+      const std::string data = "grant_type=client_credentials&client_id=" + m_glient_id + "&client_secret=" + m_secret + "&getAccounts=1";
+      http_request_t http(m_uri);
+      http.set_headers("Content-Type: application/x-www-form-urlencoded", "charsets: utf-8", "Accept: application/json");
+      http.ssl_verify_peer(0);
+      http.ssl_verify_host(0);
+      const auto& res = http.post(data.c_str());
+      nlohmann::json j = nlohmann::json::parse(res.second);
+      std::chrono::milliseconds expires_in(j["expires_in"].template get<long>() * 1000);
+      std::string token = j["access_token"];
+      auto ts = std::chrono::time_point_cast<std::chrono::milliseconds>(
+        std::chrono::system_clock::now()) + expires_in;
+
+
+      std::string err;
+      if(RdKafka::ErrorCode::ERR_NO_ERROR != handle->oauthbearer_set_token(token, ts.time_since_epoch().count(),
+//          "ffineu-tyapkin",
+          "infrontasa-annika-norberg",
+          {/*"scope", "profile email"*/}, err )) {
+        RdKafka::ErrorCode tok_failure_err = handle->oauthbearer_set_token_failure(err);
+      }
+#if 0
+      std::cout << oauthbearer_config << std::endl << res.first << std::endl << res.second << std::endl << j  << std::endl << token << std::endl;
+#endif
+    }
+    catch(const std::exception& e) {
+
+    }
+    return;
   }
 
 } /* namespace kf */

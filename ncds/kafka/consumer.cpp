@@ -6,8 +6,12 @@
 
 #include <config.h>
 #include <consumer.h>
+#include <print_records.h>
+#include <internal/utils/SeekToMidnight.h>
+
 
 #include "oauthbearer.h"
+#include "event.h"
 
 namespace {
 
@@ -24,23 +28,40 @@ namespace kf {
   consumer_t::consumer_t(const config_t& config, const get_property_t& get_property, const error_t& notify)
       : m_config(clone_config(config, notify))
       , m_get_property(get_property)
-      , m_auth(std::make_shared<oauthbearer_t>(get_property)) {
+      , m_auth(std::make_shared<oauthbearer_t>(get_property))
+      , m_event(std::make_shared<event_t>()) {
+    config.print();
+    std::cout << "conf" << std::endl;
     m_config.set(m_auth.get(), notify);
+//    m_config.set(m_event.get(), notify);
     rd_kafka_conf_set_log_cb(m_config.get_config()->c_ptr_global(), logger);
+    m_config.print();
   }
 
   void consumer_t::test() {
     if(const auto topic = m_get_property("topic")) {
-      std::string err = *topic + ".stream";
+      std::string err;
       m_topic_partition.reset(RdKafka::TopicPartition::create(*topic + ".stream", 0, RdKafka::Topic::OFFSET_END));
       m_consumer.reset(RdKafka::KafkaConsumer::create(m_config.get_config(), err));
       m_consumer->assign({m_topic_partition.get()});
+//      m_consumer->subscribe({"TOTALVIEW.stream"});
+      std::string offset;
+      m_config.get("auto.offset.reset", offset);
+      std::cout << offset << std::endl;
+      if (offset == "earliest" || offset == "smallest" || offset == "beginning")
+        seek_to_midnight_at_past_day(m_consumer.get(), m_topic_partition.get(), 0);
 
+      for(;;) {
+        std::unique_ptr<RdKafka::Message> msg = std::unique_ptr<RdKafka::Message>(m_consumer->consume(10000));
+        pbuffer((msg->payload()), msg->len());
+      }
     }
 
   }
 
   void consumer_t::logger(const struct rd_kafka_s* rk, int level, const char* fac, const char* buf) {
+    if(level == 7)
+      return;
     std::cout << "Pounter: 0x" << std::hex << rk << std::dec << " level " << level << " " << fac <<
       " " << buf << std::endl;
   }

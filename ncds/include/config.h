@@ -36,8 +36,10 @@ namespace kf {
     void set(RdKafka::CertificateType cert_type, RdKafka::CertificateEncoding cert_enc,
       const buffer_t& value, const error_t& notify);
 */
+    void get(const std::string&, std::string& value);
     RdKafka::Conf* get_config() const;
     const config_t::type_t& get_type() const;
+    void print() const;
   private:
     using strings_t = std::vector<std::string>;
     using kf_cong_ptr = std::shared_ptr<RdKafka::Conf>;

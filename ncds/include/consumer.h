@@ -16,6 +16,7 @@ namespace kf {
     void test();
   private:
     using auth_ptr = std::shared_ptr<RdKafka::OAuthBearerTokenRefreshCb>;
+    using event_ptr = std::shared_ptr<RdKafka::EventCb>;
     using topic_partition_ptr = std::shared_ptr<RdKafka::TopicPartition>;
     using consumer_ptr = std::shared_ptr<RdKafka::KafkaConsumer>;
   private:
@@ -24,6 +25,7 @@ namespace kf {
     config_t m_config;
     const get_property_t& m_get_property;
     auth_ptr m_auth;
+    event_ptr m_event;
     topic_partition_ptr m_topic_partition;
     consumer_ptr m_consumer;
   };

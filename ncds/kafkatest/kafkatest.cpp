@@ -12,6 +12,8 @@
 #include <config.h>
 #include <consumer.h>
 
+// https://github.com/confluentinc/librdkafka/issues/2758
+
 namespace {
 
   avro::ValidSchema load(const std::string& file) {
@@ -46,9 +48,9 @@ namespace {
 int main(int ac, char* av[]) {
   try {
     std::cout << "test" << std::endl;
-    load("/home/butiaev/project/experience/ncds/ncdsresources/cpx.json");
-    load("/home/butiaev/project/experience/ncds/ncdsresources/imaginary.json");
-    load("/home/butiaev/project/experience/ncds/ncdsresources/ControlMessageSchema.avsc");
+//    load("/home/butiaev/project/experience/ncds/ncdsresources/cpx.json");
+//    load("/home/butiaev/project/experience/ncds/ncdsresources/imaginary.json");
+//    load("/home/butiaev/project/experience/ncds/ncdsresources/ControlMessageSchema.avsc");
 
     std::ifstream ifs("config.json");
     nlohmann::json j = nlohmann::json::parse(ifs);
