@@ -9,6 +9,11 @@
 #include <print_records.h>
 #include <internal/utils/SeekToMidnight.h>
 
+#include <avro/Generic.hh>
+#include <avro/Decoder.hh>
+#include <avro/Stream.hh>
+#include <avro/GenericDatum.hh>
+#include <avro/Specific.hh>
 
 #include "oauthbearer.h"
 #include "event.h"
@@ -38,7 +43,8 @@ namespace kf {
     m_config.print();
   }
 
-  void consumer_t::test() {
+  void consumer_t::test(const avro::ValidSchema& schema) {
+    static std::size_t count = 0;
     if(const auto topic = m_get_property("topic")) {
       std::string err;
       m_topic_partition.reset(RdKafka::TopicPartition::create(*topic + ".stream", 0, RdKafka::Topic::OFFSET_END));
@@ -51,9 +57,25 @@ namespace kf {
       if (offset == "earliest" || offset == "smallest" || offset == "beginning")
         seek_to_midnight_at_past_day(m_consumer.get(), m_topic_partition.get(), 0);
 
+      avro::DecoderPtr d = avro::binaryDecoder();
       for(;;) {
         std::unique_ptr<RdKafka::Message> msg = std::unique_ptr<RdKafka::Message>(m_consumer->consume(10000));
-        pbuffer((msg->payload()), msg->len());
+        if(0 >= msg->payload())
+          continue;
+        pbuffer(msg->payload(), msg->len());
+        get_stream_bin("buf_" + std::to_string(count++), std::ios_base::binary)->write(reinterpret_cast<char*>(msg->payload()), msg->len());
+/*        
+        auto in = avro::memoryInputStream(static_cast<uint8_t *>(msg->payload()), msg->len());
+        d->init(*in);
+        avro::ValidSchema sch(schema);
+        avro::GenericDatum datum(sch);
+        avro::decode(*d, datum);
+        std::cout << "Type: " << datum.type() << std::endl;
+*/
+/*
+        avro::GenericRecord r = datum.value<avro::GenericRecord>();
+        print_records({r}, std::cout);
+*/
       }
     }
 

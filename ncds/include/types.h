@@ -24,6 +24,12 @@ namespace RdKafka {
 
 } /* namespace RdKafka */
 
+namespace avro {
+
+  class ValidSchema;
+
+} /* namespace avro */
+
 namespace kf {
 
   using string_try_t = std::optional<std::string>;

@@ -48,25 +48,27 @@ namespace {
 int main(int ac, char* av[]) {
   try {
     std::cout << "test" << std::endl;
-//    load("/home/butiaev/project/experience/ncds/ncdsresources/cpx.json");
-//    load("/home/butiaev/project/experience/ncds/ncdsresources/imaginary.json");
-//    load("/home/butiaev/project/experience/ncds/ncdsresources/ControlMessageSchema.avsc");
+    load("/home/butiaev/project/experience/ncds/ncdsresources/cpx.json");
+    load("/home/butiaev/project/experience/ncds/ncdsresources/imaginary.json");
+//    avro::ValidSchema sch;
+    load("/home/butiaev/project/experience/ncds/ncdsresources/ControlMessageSchema.avsc");
+    const auto sch = load("/home/butiaev/project/experience/ncds/ncdsresources/TOTALVIEW.text");
 
+    kf::config_t tmp;
     std::ifstream ifs("config.json");
     nlohmann::json j = nlohmann::json::parse(ifs);
     std::cout << j << std::endl;
     read_json_t rj(j);
-
-    kf::config_t tmp;
     tmp.read_config(rj, err);
-
     kf::consumer_t consumer(tmp, rj, err);
-    consumer.test();
+    consumer.test(sch);
+/*
 
     for(;;)
       std::this_thread::sleep_for(std::chrono::seconds(1));
 
     return 0;
+*/
 
   }
   catch(const std::exception& e) {

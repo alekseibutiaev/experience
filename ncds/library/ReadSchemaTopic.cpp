@@ -59,7 +59,7 @@ avro::ValidSchema ReadSchemaTopic::read_schema(const std::string& topic) {
 
       avro::GenericRecord record = deserialize.deserialize_msg(*msg);
       if(auto stream = get_stream(record.field("name").value<std::string>()))
-        print_records({record}, stream);
+        print_records({record}, *stream);
 
       if (record.hasField("name")) {
         avro::GenericDatum record_name = record.field("name");

@@ -25,21 +25,26 @@ ostream_ptr get_stream(const std::string& name) {
   return streams[name];
 }
 
-void print_records(const std::vector<avro::GenericRecord>& records, ostream_ptr os) {
-  auto& outs = *os;
+ostream_ptr get_stream_bin(const std::string& name, std::ios_base::openmode mode) {
+  return std::make_shared<std::ofstream>(("./text/" + name + ".text").c_str(), mode);
+}
+
+void print_records(const std::vector<avro::GenericRecord>& records, std::ostream& os) {
+/*
   for (auto &record : records) {
-    outs << "Message name: " << record.schema()->name().simpleName() << std::endl;
+    os << "Message name: " << record.schema()->name().simpleName() << std::endl;
     for (size_t i = 0; i < record.fieldCount(); i++) {
       avro::GenericDatum datum = record.fieldAt(i);
-      outs << record.schema()->nameAt(i) << ": ";
+      os << record.schema()->nameAt(i) << ": ";
       if (datum.type() == avro::AVRO_DOUBLE)
-        outs << datum.value<double>() << std::endl;
+        os << datum.value<double>() << std::endl;
       else if (datum.type() == avro::AVRO_LONG)
-        outs << datum.value<int64_t>() << std::endl;
+        os << datum.value<int64_t>() << std::endl;
       else if (datum.type() == avro::AVRO_INT)
-        outs << datum.value<int>() << std::endl;
+        os << datum.value<int>() << std::endl;
       else if (datum.type() == avro::AVRO_STRING)
-        outs << datum.value<std::string>() << std::endl;
+        os << datum.value<std::string>() << std::endl;
     }
   }
+*/
 }

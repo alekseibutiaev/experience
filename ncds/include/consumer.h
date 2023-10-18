@@ -13,7 +13,7 @@ namespace kf {
   class consumer_t {
   public:
     consumer_t(const config_t& config, const get_property_t& get_property, const error_t& notify);
-    void test();
+    void test(const avro::ValidSchema& schema);
   private:
     using auth_ptr = std::shared_ptr<RdKafka::OAuthBearerTokenRefreshCb>;
     using event_ptr = std::shared_ptr<RdKafka::EventCb>;
