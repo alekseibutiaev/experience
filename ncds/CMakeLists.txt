@@ -15,6 +15,12 @@ message("Modules: " ${NLOCHMANN_MODULE_PATH})
 message("VERSION: " "${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}")
 
 find_package(CURL REQUIRED)
+find_package(OpenSSL REQUIRED)
+if ( OPENSSL_FOUND )
+  message(STATUS "OpenSSL Found: ${OPENSSL_VERSION}")
+  message(STATUS "OpenSSL Include: ${OPENSSL_INCLUDE_DIR}")
+  message(STATUS "OpenSSL Libraries: ${OPENSSL_LIBRARIES}")
+endif()
 
 find_package(AVROCPP QUIET)
 find_package(RDKAFKA QUIET)
@@ -39,7 +45,9 @@ message("SPDLOG_INCLUDE_DIR: " ${SPDLOG_INCLUDE_DIR})
 message("SPDLOG_LIBRARY: " ${SPDLOG_LIBRARY})
 
 add_subdirectory(library)
-add_subdirectory(example)
 add_subdirectory(kafka)
+add_subdirectory(example)
 add_subdirectory(kafkatest)
 add_subdirectory(avrotest)
+add_subdirectory(schematest)
+

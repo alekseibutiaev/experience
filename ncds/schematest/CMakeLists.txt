@@ -1,14 +1,15 @@
 file(GLOB HEADER_FILES "*.h *.hpp")
 file(GLOB SOURCE_FILES "*.cpp")
 
-project(avrotest)
+project(schematest)
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
 target_include_directories(${PROJECT_NAME} PRIVATE
   ${CURL_INCLUDE_DIR}
+  ${RDKAFKA_INCLUDE_DIR}
+  ${RDKAFKACPP_INCLUDE_DIR}
   ${AVROCPP_INCLUDE_DIR}
-  ${SPDLOG_INCLUDE_DIR}
   ${NLOHMANNJSON_ROOT}/include
   ../include
   ./
@@ -21,5 +22,5 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
   ${RDKAFKACPP_LIBRARIES}
   ${AVROCPP_LIBRARIES}
   ${SPDLOG_LIBRARIES}
-  ${OPENSSL_LIBRARIES}
+  ${CURL_LIBRARIES}
 )

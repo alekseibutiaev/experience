@@ -11,16 +11,16 @@ target_include_directories(${PROJECT_NAME} PRIVATE
   ${RDKAFKA_INCLUDE_DIR}
   ${RDKAFKACPP_INCLUDE_DIR}
   ${SPDLOG_INCLUDE_DIR}
-  ${NLOHMANNJSON_ROOT}/include
+#  ${NLOHMANNJSON_ROOT}/include
   ../include
   ./
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
   ncds
-  ${JSON-C_LIBRARY}
   ${RDKAFKA_LIBRARIES}
   ${RDKAFKACPP_LIBRARIES}
   ${AVROCPP_LIBRARIES}
   ${SPDLOG_LIBRARIES}
-)
+  ${JSON-C_LIBRARY}
+  )

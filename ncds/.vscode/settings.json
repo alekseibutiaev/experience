@@ -79,6 +79,7 @@
     "typeinfo": "cpp",
     "charconv": "cpp",
     "forward_list": "cpp",
-    "valarray": "cpp"
+    "valarray": "cpp",
+    "iomanip": "cpp"
   },
 }

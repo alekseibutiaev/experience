@@ -1,4 +1,8 @@
 #include <iostream>
+#include <fstream>
+#include <sstream>
+#include <iomanip>
+
 #include <stdexcept>
 
 #include <librdkafka/rdkafka.h>
@@ -47,10 +51,10 @@ namespace kf {
     static std::size_t count = 0;
     if(const auto topic = m_get_property("topic")) {
       std::string err;
-      m_topic_partition.reset(RdKafka::TopicPartition::create(*topic + ".stream", 0, RdKafka::Topic::OFFSET_END));
       m_consumer.reset(RdKafka::KafkaConsumer::create(m_config.get_config(), err));
+      m_topic_partition.reset(RdKafka::TopicPartition::create(*topic + ".stream", 0, RdKafka::Topic::OFFSET_END));
       m_consumer->assign({m_topic_partition.get()});
-//      m_consumer->subscribe({"TOTALVIEW.stream"});
+///      m_consumer->subscribe({"TOTALVIEW.stream", "*.stream"});
       std::string offset;
       m_config.get("auto.offset.reset", offset);
       std::cout << offset << std::endl;
@@ -58,12 +62,19 @@ namespace kf {
         seek_to_midnight_at_past_day(m_consumer.get(), m_topic_partition.get(), 0);
 
       avro::DecoderPtr d = avro::binaryDecoder();
+      std::size_t idx = 0;
       for(;;) {
         std::unique_ptr<RdKafka::Message> msg = std::unique_ptr<RdKafka::Message>(m_consumer->consume(10000));
         if(0 >= msg->payload())
           continue;
+        std::cout << msg->topic_name() << std::endl;
         pbuffer(msg->payload(), msg->len());
-        get_stream_bin("buf_" + std::to_string(count++), std::ios_base::binary)->write(reinterpret_cast<char*>(msg->payload()), msg->len());
+        std::stringstream ss;
+        ss << "./message/" << std::setfill('0') << std::setw(8) << idx++ << ".msg";
+        if(auto ofs = std::ofstream(ss.str(), std::ios_base::binary))
+          ofs.write(reinterpret_cast<const char*>(msg->payload()), msg->len());
+
+//        get_stream_bin("buf_" + std::to_string(count++), std::ios_base::binary)->write(reinterpret_cast<char*>(msg->payload()), msg->len());
 /*        
         auto in = avro::memoryInputStream(static_cast<uint8_t *>(msg->payload()), msg->len());
         d->init(*in);

@@ -1,6 +1,8 @@
 #include <cassert>
 #include <string>
 #include <fstream>
+#include <sstream>
+#include <iomanip>
 
 #include <spdlog/spdlog.h>
 
@@ -39,16 +41,16 @@ avro::ValidSchema ReadSchemaTopic::read_schema(const std::string& topic) {
   control_schema_topic.push_back(control_schema_name);
   schema_consumer->subscribe(control_schema_topic);
 
-  avro::ValidSchema control_message_schema = resource_schema("ControlMessageSchema");
+//  avro::ValidSchema control_message_schema = resource_schema("ControlMessageSchema");
 
-  ncds::DeserializeMsg deserialize(control_message_schema);
+//  ncds::DeserializeMsg deserialize(control_message_schema);
 
   avro::GenericRecord* latest_record;
 
   avro::ValidSchema message_schema;
 
   bool message_schema_found = false;
-
+  std::size_t idx = 0;
   std::vector<avro::GenericRecord> all_records;
   while (true) {
       std::unique_ptr<RdKafka::Message> msg = std::unique_ptr<RdKafka::Message>(schema_consumer->consume(this->timeout));
@@ -56,7 +58,13 @@ avro::ValidSchema ReadSchemaTopic::read_schema(const std::string& topic) {
           logger->debug( "Error: {}", err2str(msg->err()));
           break;
       }
+      pbuffer(msg->payload(), msg->len());
+      std::stringstream ss;
+      ss << "./schema/" << std::setfill('0') << std::setw(8) << idx++ << ".sch";
+      if(auto ofs = std::ofstream(ss.str(), std::ios_base::binary))
+        ofs.write(reinterpret_cast<const char*>(msg->payload()), msg->len());
 
+#if 0
       avro::GenericRecord record = deserialize.deserialize_msg(*msg);
       if(auto stream = get_stream(record.field("name").value<std::string>()))
         print_records({record}, *stream);
@@ -70,6 +78,7 @@ avro::ValidSchema ReadSchemaTopic::read_schema(const std::string& topic) {
             all_records.push_back(record);
         }
       }
+#endif
   }
   schema_consumer->close();
   logger->debug( "Consumed all records in control topic");
@@ -141,20 +150,23 @@ std::unique_ptr<RdKafka::KafkaConsumer> ReadSchemaTopic::get_consumer(const std:
     kafka_props->set("auto.offset.reset", "earliest", errstr);
     kafka_props->set("group.id", client_id, errstr);
     errstr = std::string();
-    std::unique_ptr<RdKafka::KafkaConsumer> schema_consumer(RdKafka::KafkaConsumer::create(this->kafka_props, errstr));
+    std::unique_ptr<RdKafka::KafkaConsumer> schema_consumer(
+      RdKafka::KafkaConsumer::create(this->kafka_props, errstr));
     if (!schema_consumer.get())
         throw std::runtime_error("Failed to create Control topic consumer: " + errstr);
 
     std::vector<RdKafka::TopicPartition*> partitions;
-    std::unique_ptr<RdKafka::TopicPartition> topic_partition(RdKafka::TopicPartition::create(control_schema_name, 0, RdKafka::Topic::OFFSET_BEGINNING));
+    std::unique_ptr<RdKafka::TopicPartition> topic_partition(
+      RdKafka::TopicPartition::create(control_schema_name, 0, RdKafka::Topic::OFFSET_END));
     partitions.push_back(topic_partition.get());
 
     RdKafka::ErrorCode assign_error = schema_consumer->assign(partitions);
-    logger->debug( "assign error: {}", err2str(assign_error));
+    //logger->debug( "assign error: {}", err2str(assign_error));
 
     std::unique_ptr<RdKafka::Message> msg = std::unique_ptr<RdKafka::Message>(schema_consumer->consume(0));
+    std::cout << msg->len() << std::endl;
     pbuffer(msg->payload(), msg->len());
-    logger->debug( "consume error: {}", err2str(msg->err()));
+    //logger->debug( "consume error: {}", err2str(msg->err()));
 
     //    RdKafka::ErrorCode position_error = schema_consumer->position(partitions);
     //    logger->debug( "position set offsets to: " << topic_partition->offset();
