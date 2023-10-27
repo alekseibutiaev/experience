@@ -8,7 +8,7 @@
         "long": "Build with no optimizations and debugging information for ubuntu 18.04",
         "buildType": "Debug",
         "settings": {
-          "AVROCPP_HOME" : "/opt/avro-cpp-1.11.2",
+          "AVROCPP_HOME" : "/opt/avro-cpp-1.11.2.17.d",
           "RDKAFKA_HOME" : "/opt/rdkafka_v2.2.0",
           "SPDLOG_HOME" : "/opt/spdlog-1.12.0"
         }
@@ -18,7 +18,7 @@
         "long": "Build with optimizations and without debuging information for ubuntu 18.04",
         "buildType": "Release",
         "settings": {
-          "AVROCPP_HOME" : "/opt/avro-cpp-1.11.2",
+          "AVROCPP_HOME" : "/opt/avro-cpp-1.11.2.17",
           "RDKAFKA_HOME" : "/opt/rdkafka_v2.2.0",
           "SPDLOG_HOME" : "/opt/spdlog-1.12.0"
         }

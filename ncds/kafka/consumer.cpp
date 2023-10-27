@@ -54,7 +54,7 @@ namespace kf {
       m_consumer.reset(RdKafka::KafkaConsumer::create(m_config.get_config(), err));
       m_topic_partition.reset(RdKafka::TopicPartition::create(*topic + ".stream", 0, RdKafka::Topic::OFFSET_END));
       m_consumer->assign({m_topic_partition.get()});
-///      m_consumer->subscribe({"TOTALVIEW.stream", "*.stream"});
+      m_consumer->subscribe({"TOTALVIEW.stream", "QBBO-A-BSX.stream"});
       std::string offset;
       m_config.get("auto.offset.reset", offset);
       std::cout << offset << std::endl;
@@ -70,7 +70,7 @@ namespace kf {
         std::cout << msg->topic_name() << std::endl;
         pbuffer(msg->payload(), msg->len());
         std::stringstream ss;
-        ss << "./message/" << std::setfill('0') << std::setw(8) << idx++ << ".msg";
+        ss << "./message/" << msg->topic_name() << '_' << std::setfill('0') << std::setw(8) << idx++ << ".msg";
         if(auto ofs = std::ofstream(ss.str(), std::ios_base::binary))
           ofs.write(reinterpret_cast<const char*>(msg->payload()), msg->len());
 

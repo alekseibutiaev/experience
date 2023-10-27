@@ -16,7 +16,8 @@ message("VERSION: " "${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}")
 
 find_package(CURL REQUIRED)
 find_package(OpenSSL REQUIRED)
-if ( OPENSSL_FOUND )
+
+if(OPENSSL_FOUND)
   message(STATUS "OpenSSL Found: ${OPENSSL_VERSION}")
   message(STATUS "OpenSSL Include: ${OPENSSL_INCLUDE_DIR}")
   message(STATUS "OpenSSL Libraries: ${OPENSSL_LIBRARIES}")
