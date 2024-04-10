@@ -193,7 +193,7 @@ int main(int ac, char* av[]) {
         }
         if(record.field("name").value<std::string>() == "TOTALVIEW") {
           str = record.field("schema").value<std::string>();
-          iss = std::move(std::istringstream(record.field("schema").value<std::string>()));
+          iss = std::move(std::istringstream(str));
           break;
         }
       }
