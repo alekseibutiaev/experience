@@ -9,18 +9,28 @@
   "x-auto.offset.reset" : "earliest",
   "fetch.wait.max.ms" : "500",
   "group.id" : "ffineu-tyapkin-TOTALVIEW",
+  "x-group.id" : "ffineu-tyapkin-NLSCTA",
+  "x-group.id" : "ffineu-tyapkin-NLSUTP",
   "enable.auto.commit" : "true",
   "eartbeat.interval.ms" : "30000",
   "topic" : "TOTALVIEW",
+  "x-topic" : "NLSCTA",
+  "x-topic" : "NLSUTP",
   "debug" : "all",
-  "first-bootstrap.servers" : "kafka-bootstrap.clouddataservice.nasdaq.com:9094",
-  "first-oauth.token.endpoint.uri" : "https://clouddataservice.auth.nasdaq.com/auth/realms/pro-realm/protocol/openid-connect/token",
-  "second-bootstrap.servers" : "kafka-bootstrap.us-east-2.clouddataservice.nasdaq.com:9094",
-  "second-oauth.token.endpoint.uri" : "https://auth.us-east-2.clouddataservice.nasdaq.com/auth/realms/pro-realm/protocol/openid-connect/token",
+
+  "old-bootstrap.servers" : "kafka-bootstrap.clouddataservice.nasdaq.com:9094",
+  "old-oauth.token.endpoint.uri" : "https://clouddataservice.auth.nasdaq.com/auth/realms/pro-realm/protocol/openid-connect/token",
+
+  "new-bootstrap.servers" : "kafka-bootstrap.us-east-2.clouddataservice.nasdaq.com:9094",
+  "new-oauth.token.endpoint.uri" : "https://auth.us-east-2.clouddataservice.nasdaq.com/auth/realms/pro-realm/protocol/openid-connect/token",
+
+
   "bootstrap.servers" : "kafka-bootstrap.us-east-2.clouddataservice.nasdaq.com:9094",
+
   "oauth.token.endpoint.uri" : "https://auth.us-east-2.clouddataservice.nasdaq.com/auth/realms/pro-realm/protocol/openid-connect/token",
   "oauth.client.id" : "ffineu-tyapkin",
   "oauth.client.secret" : "50efe6c1-4f6c-48ef-8c9d-2925bbda5bbf",
+
   "broker_version_fallback" : "2.3",
   "ssl.endpoint.identification.algorithm" : "none",
   "ssl.providers" : "default,legacy",
