@@ -93,9 +93,6 @@ int main(int ac, char* av[]) {
       pbuffer(msg->payload(), msg->len());
     }
 
-
-
-
   }
   catch(const std::exception& e) {
     std::cout << e.what() << std::endl;

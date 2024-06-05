@@ -29,8 +29,9 @@ ostream_ptr get_stream_bin(const std::string& name, std::ios_base::openmode mode
   return std::make_shared<std::ofstream>(("./text/" + name + ".text").c_str(), mode);
 }
 
+#if 1
 void print_records(const std::vector<avro::GenericRecord>& records, std::ostream& os) {
-/*
+
   for (auto &record : records) {
     os << "Message name: " << record.schema()->name().simpleName() << std::endl;
     for (size_t i = 0; i < record.fieldCount(); i++) {
@@ -46,5 +47,5 @@ void print_records(const std::vector<avro::GenericRecord>& records, std::ostream
         os << datum.value<std::string>() << std::endl;
     }
   }
-*/
 }
+#endif

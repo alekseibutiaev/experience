@@ -17,6 +17,8 @@
 #include <avro/Encoder.hh>
 #include <avro/Decoder.hh>
 #include <avro/Specific.hh>
+#include <avro/Types.hh>
+#include <avro/GenericDatum.hh>
 
 
 #include <print_records.h>
@@ -27,16 +29,17 @@ namespace {
   using buffer_try_t = std::optional<buffer_t>;
   using valid_schema_ptr = std::shared_ptr<avro::ValidSchema>;
 
-  valid_schema_ptr load(std::istream& is) {
+  valid_schema_ptr load_schema(std::istream& is) {
     std::string error;
     valid_schema_ptr schema = std::make_shared<valid_schema_ptr::element_type>();
-    avro::compileJsonSchema(is, *schema, error);
+    if(!avro::compileJsonSchema(is, *schema, error))
+      std::cout << error << std::endl;
     return schema;
   }
 
-  valid_schema_ptr load(const std::string& file) {
+  valid_schema_ptr load_schema(const std::string& file) {
     if(auto ifs = std::ifstream(file.c_str()))
-      return load(ifs);
+      return load_schema(ifs);
     throw(std::runtime_error("can`t open file: " + file));
   }
 
@@ -45,8 +48,14 @@ namespace {
     oss << prefix << std::setfill('0') << std::setw(8) << idx << suffix;
     const std::string& name = oss.str();
     buffer_try_t res;
-    if(auto ifs = std::ifstream(oss.str()))
-      res = buffer_t(std::istream_iterator<buffer_t::value_type>(ifs), std::istream_iterator<buffer_t::value_type>());
+    if(auto ifs = std::ifstream(oss.str(), std::ios::binary)) {
+      ifs.seekg(0, std::ios_base::end);
+      std::size_t s = ifs.tellg();
+      ifs.seekg(0, std::ios_base::beg);
+      auto buf = buffer_t(s);
+      ifs.read(reinterpret_cast<char*>(buf.data()), s);
+      res = buf;
+    }
     return res;
   }
 
@@ -54,12 +63,8 @@ namespace {
     if(!buf)
       return;
     // show buffer
-    pbuffer(buf->data(), buf->size());
     try {
-      // create ctream for read schema
-      auto iss = std::istringstream(str);
-      // 
-      if(const auto& schema = load(iss)) {
+      if(const auto& schema = load_schema(str)) {
         const auto leaves = schema->root()->leaves();
         const auto type = schema->root()->type();
         // show schema
@@ -75,12 +80,20 @@ namespace {
         valid_schema_ptr lschema = std::make_shared<valid_schema_ptr::element_type>(schema->root()->leafAt(leaf_idx));
         // show leaf schema
         std::cout << lschema->toJson() << std::endl;
+        const avro::NodePtr& np = lschema->root();
+        std::cout << np->type() << std::endl;
+        std::cout << np->name().fullname() << std::endl;
+        std::cout << np->name().ns() << std::endl;
+        std::cout << np->name().simpleName() << std::endl;
+        std::cout << np->leaves() << std::endl;
+
         const avro::GenericRecord gr(lschema->root());
         const std::size_t fcount = gr.fieldCount();
-        std::cout << fcount << std::endl;
+        std::cout << "field count: " << fcount << std::endl;
+        pbuffer(buf->data(), buf->size());
         for(std::size_t fidx = 0; fidx < fcount; ++fidx) {
           const auto gd = gr.fieldAt(fidx);
-          std::cout << fidx << " " <<  gd.type() << " [";
+          std::cout << fidx << " name: " << np->nameAt(fidx) << " " <<  gd.type() << " [";
           switch(gd.type()) {
             case avro::AVRO_STRING : {  /*!< String */
               std::cout << decoder->decodeString();
@@ -151,97 +164,34 @@ namespace {
     }
   }
 
-
 } /* namespace */
 
 int main(int ac, char* av[]) {
   try {
+//    evidence("./schema/TOTALVIEW.json", load("/mnt/data/butiaev/TOTALVIEW/TOTALVIEW.stream_", 1, ".msg"));
     std::cout << "test " << __cplusplus << std::endl;
-    valid_schema_ptr totalview;
-
-    auto schema = load("./ncdsresources/ControlMessageSchema.avsc");
-//    auto schema = load("./schema/QBBO-A-BSX.json");
-
+    valid_schema_ptr schema = load_schema("./schema/TOTALVIEW.json");
+    const auto leaves = schema->root()->leaves();
+    const auto type = schema->root()->type();
+    std::cout << avro::toString(type) << " " << leaves << std::endl;
     std::cout << avro::toString(schema->root()->type()) << " " << schema->root()->leaves() << std::endl;
-
     std::cout << schema->toJson() << std::endl;
+    std::size_t idx = 1;
+    while(buffer_try_t buf = load("/mnt/data/butiaev/TOTALVIEW/TOTALVIEW.stream_", idx++, ".msg")) {
+      // show schema
+      pbuffer(buf->data(), buf->size());
+      auto data = std::make_shared<avro::GenericDatum>(*schema);
+      auto in = avro::memoryInputStream(buf->data(), buf->size());
+      auto decoder = avro::binaryDecoder();
+      decoder->init(*in);
+      avro::decode(*decoder, *data);
+      std::cout << data->type() << std::endl;
+      auto r = data->value<avro::GenericRecord>();
 
-    std::size_t idx = 540;
-    buffer_t::value_type max = 0;
-    std::istringstream iss;
-    std::string str;
-    while(auto buf = load("./schema/", idx++, ".sch")) {
-      try {
-        pbuffer(buf->data(), buf->size());
-        auto data = std::make_shared<avro::GenericDatum>(*schema);
-        auto in = avro::memoryInputStream(buf->data(), buf->size());
-        auto decoder = avro::binaryDecoder();
-        decoder->init(*in);
-        avro::decode(*decoder, *data);
-        const avro::GenericRecord& record = data->value<avro::GenericRecord>();
-        for (size_t i = 0; i < record.fieldCount(); i++) {
-          avro::GenericDatum datum = record.fieldAt(i);
-          std::cout << record.schema()->nameAt(i) << ": ";
-          if (datum.type() == avro::AVRO_DOUBLE)
-            std::cout << datum.value<double>() << std::endl;
-          else if (datum.type() == avro::AVRO_LONG)
-            std::cout << datum.value<int64_t>() << std::endl;
-          else if (datum.type() == avro::AVRO_INT)
-            std::cout << datum.value<int>() << std::endl;
-          else if (datum.type() == avro::AVRO_STRING)
-            std::cout << datum.value<std::string>() << std::endl;
-        }
-        if(record.field("name").value<std::string>() == "TOTALVIEW") {
-          str = record.field("schema").value<std::string>();
-          iss = std::move(std::istringstream(str));
-          break;
-        }
-      }
-      catch(const std::exception& e) {
-        std::cout << e.what() << std::endl;
-      }
+  //    std::vector<avro::GenericRecord> records;
+  //    records.push_back(*data);
+      print_records({r}, std::cout);
     }
-    evidence(str, load("/mnt/data1/butiaev/TOTALVIEW_1/TOTALVIEW.stream_", 0, ".msg"));
-#if 0
-    std::cout << iss.str() << std::endl;
-    if(auto twschema = load(iss)) {
-      std::size_t idx = 0;
-      std::cout << avro::toString(twschema->root()->type()) << " " << twschema->root()->leaves() << std::endl;
-      std::cout << twschema->toJson() << std::endl;
-      while(auto buf = load("/mnt/data1/butiaev/TOTALVIEW_1/TOTALVIEW.stream_", idx++, ".msg")) {
-        try {
-          pbuffer(buf->data(), buf->size());
-          auto data = std::make_shared<avro::GenericDatum>(*twschema);
-          auto in = avro::memoryInputStream(buf->data(), buf->size());
-          auto decoder = avro::binaryDecoder();
-          decoder->init(*in);
-          avro::decode(*decoder, *data);
-          const avro::GenericRecord& record = data->value<avro::GenericRecord>();
-          for (size_t i = 0; i < record.fieldCount(); i++) {
-            avro::GenericDatum datum = record.fieldAt(i);
-            std::cout << record.schema()->nameAt(i) << ": ";
-            if (datum.type() == avro::AVRO_DOUBLE)
-              std::cout << datum.value<double>() << std::endl;
-            else if (datum.type() == avro::AVRO_LONG)
-              std::cout << datum.value<int64_t>() << std::endl;
-            else if (datum.type() == avro::AVRO_INT)
-              std::cout << datum.value<int>() << std::endl;
-            else if (datum.type() == avro::AVRO_STRING)
-              std::cout << datum.value<std::string>() << std::endl;
-          }
-          std::cout << std::endl;
-        }
-        catch(const std::exception& e) {
-          std::cout << e.what() << std::endl;
-        }
-      }
-
-    }
-    while(1)
-      std::this_thread::sleep_for(std::chrono::seconds(1));
-    std::cout << idx << " " << std::hex << static_cast<int>(max) << std::endl;
-#endif
-    return 0;
   }
   catch(const std::exception& e) {
     std::cout << e.what() << std::endl;
