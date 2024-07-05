@@ -20,7 +20,7 @@ namespace ncds {
   class NCDSClient {
   private:
     NasdaqKafkaAvroConsumer nasdaq_kafka_avro_consumer;
-    std::shared_ptr<spdlog::logger> logger;
+    //std::shared_ptr<spdlog::logger> logger;
     int timeout;
   public:
     NCDSClient(RdKafka::Conf *kafka_cfg, std::unordered_map<std::string, std::string> &security_cfg);

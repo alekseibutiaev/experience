@@ -31,7 +31,6 @@ private:
     RdKafka::Conf* kafka_conf;
     std::unique_ptr<NCDSOAuthBearerTokenRefreshCb> token_cb;
     std::unique_ptr<RdKafka::Conf> test_conf;
-    std::shared_ptr<spdlog::logger> logger;
 
     static void logger_cb (const rd_kafka_t *rk, int level, const char *fac, const char *buf);
 

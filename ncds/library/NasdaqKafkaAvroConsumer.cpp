@@ -27,8 +27,6 @@ NasdaqKafkaAvroConsumer::NasdaqKafkaAvroConsumer(RdKafka::Conf* kafka_cfg,
   KafkaConfigLoader kafka_config_loader;
   AuthenticationConfigLoader auth_config_loader;
 
-  logger = spdlog::get(LOGGER);
-
   // If this is not an integration test
   if (kafka_cfg != nullptr) {
     token_cb = std::make_unique<NCDSOAuthBearerTokenRefreshCb>(security_cfg);
@@ -103,9 +101,11 @@ std::set<std::string> NasdaqKafkaAvroConsumer::get_topics() {
 
 void NasdaqKafkaAvroConsumer::logger_cb(const rd_kafka_t *rk, int level,
     const char *fac, const char *buf) {
-  std::stringstream ss;
-  ss << "RDKAFKA-" << level << "-" << fac << ": " << rd_kafka_name(rk) <<  ": " << buf;
+  //std::stringstream ss;
+  std::cout << "RDKAFKA-" << level << "-" << fac << ": " << rd_kafka_name(rk) <<  ": " << buf << std::endl;
+/*
   auto logger = spdlog::get(LOGGER);
   logger->debug("RDKAFKA-{}-{}: {}: {}", level, fac, rd_kafka_name(rk), buf);
+*/
 }
 

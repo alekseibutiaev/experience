@@ -20,8 +20,6 @@
 #include <avro/Types.hh>
 #include <avro/GenericDatum.hh>
 
-
-
 namespace {
 
   using buffer_t = std::vector<unsigned char>;
@@ -90,111 +88,6 @@ namespace {
     }
   }
 
-  void evidence(const std::string& str, const buffer_try_t& buf) {
-    if(!buf)
-      return;
-    // show buffer
-    try {
-      if(const auto& schema = load_schema(str)) {
-        const auto leaves = schema->root()->leaves();
-        const auto type = schema->root()->type();
-        // show schema
-        std::cout << avro::toString(type) << " " << leaves << std::endl;
-        std::cout << schema->toJson() << std::endl;
-        auto in = avro::memoryInputStream(buf->data(), buf->size());
-        auto decoder = avro::binaryDecoder();
-        decoder->init(*in);
-        // first bite is int. this is leaf number of schema.
-        const auto leaf_idx = decoder->decodeUnionIndex();
-        std::cout << "use leaf " << leaf_idx << std::endl;
-        // select leaf
-        valid_schema_ptr lschema = std::make_shared<valid_schema_ptr::element_type>(schema->root()->leafAt(leaf_idx));
-        // show leaf schema
-        std::cout << lschema->toJson() << std::endl;
-        const avro::NodePtr& np = lschema->root();
-        std::cout << np->type() << std::endl;
-        std::cout << np->name().fullname() << std::endl;
-        std::cout << np->name().ns() << std::endl;
-        std::cout << np->name().simpleName() << std::endl;
-        std::cout << np->leaves() << std::endl;
-
-        const avro::GenericRecord gr(lschema->root());
-        const std::size_t fcount = gr.fieldCount();
-        std::cout << "field count: " << fcount << std::endl;
-        pbuffer(buf->data(), buf->size());
-        for(std::size_t fidx = 0; fidx < fcount; ++fidx) {
-          const auto gd = gr.fieldAt(fidx);
-          std::cout << fidx << " name: " << np->nameAt(fidx) << " " <<  gd.type() << " [";
-          switch(gd.type()) {
-            case avro::AVRO_STRING : {  /*!< String */
-              std::cout << decoder->decodeString();
-              break;
-            }
-            case avro::AVRO_BYTES : {  /*!< Sequence of variable length bytes data */
-              const auto& bytes = decoder->decodeBytes();
-              for( const auto& b : bytes)
-                std::cout << b;
-              break;
-            }
-            case avro::AVRO_INT : {  /*!< 32-bit integer */
-              std::cout << decoder->decodeInt();
-              break;
-            }
-            case avro::AVRO_LONG : {  /*!< 64-bit integer */
-              std::cout << decoder->decodeLong();
-              break;
-            }
-            case avro::AVRO_FLOAT : {  /*!< Floating point number */
-              std::cout << decoder->decodeFloat();
-              break;
-            }
-            case avro::AVRO_DOUBLE : {  /*!< Double precision floating point number */
-              std::cout << decoder->decodeDouble();
-              break;
-            }
-            case avro::AVRO_BOOL : {  /*!< Boolean value */
-              std::cout << decoder->decodeBool();
-              break;
-            }
-            case avro::AVRO_NULL : {  /*!< Null */
-              std::cout << "NULL" /*decoder->decodeNull()*/;
-              break;
-            }
-            case avro::AVRO_RECORD : {  /*!< Record, a sequence of fields */
-              //std::cout << decoder->
-              break;
-            }
-            case avro::AVRO_ENUM : {  /*!< Enumeration */
-              std::cout << decoder->decodeEnum();
-              break;
-            }
-            case avro::AVRO_ARRAY : {  /*!< Homogeneous array of some specific type */
-              break;
-            }
-            case avro::AVRO_MAP : {  /*!< Homogeneous map from string to some specific type */
-              break;
-            }
-            case avro::AVRO_UNION : {  /*!< Union of one or more types */
-              break;
-            }
-            case avro::AVRO_FIXED : {  /*!< Fixed number of bytes */
-              break;
-            }
-            case avro::AVRO_NUM_TYPES : {  /*!< Marker */
-              break;
-            }
-            case avro::AVRO_UNKNOWN : {  /*!< Used internally. */
-            }
-          }
-          std::cout << "]" << std::endl;
-        }
-      }
-    }
-    catch(const std::exception& e) {
-      std::cout << std::endl << "exception " << e.what() << std::endl;
-    }
-  }
-
 } /* namespace */
 
 #if 0
@@ -224,9 +117,6 @@ int main(int ac, char* av[]) {
       avro::decode(*decoder, *data);
       std::cout << data->type() << std::endl;
       auto r = data->value<avro::GenericRecord>();
-
-  //    std::vector<avro::GenericRecord> records;
-  //    records.push_back(*data);
       print_records({r}, std::cout);
     }
     std::cout << "tested: " << idx << " records" << std::endl;

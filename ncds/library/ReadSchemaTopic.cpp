@@ -110,9 +110,10 @@ void ReadSchemaTopic::set_auth_props(std::unordered_map<std::string, std::string
 }
 
 std::set<std::string> ReadSchemaTopic::get_topics() {
+    std::size_t idx = 0;
     std::set<std::string> topics;
     AuthenticationConfigLoader auth_config_loader;
-    std::string group_id = "Control-" + auth_config_loader.get_client_id(this->auth_props);
+    std::string group_id = /*Control-" +*/ auth_config_loader.get_client_id(this->auth_props);
     auto schema_consumer = ReadSchemaTopic::get_consumer(group_id);
 
     std::vector<std::string> control_topic;
@@ -126,12 +127,19 @@ std::set<std::string> ReadSchemaTopic::get_topics() {
     while (true) {
       auto msg = std::unique_ptr<RdKafka::Message>(schema_consumer->consume(this->timeout));
       if (msg->err() != 0) {
-        logger->debug( "No messages found, breaking out of while loop");
+        std::cout << "No messages found, breaking out of while loop" << std::endl;
         // break if there is any error code returned
         break;
       }
-
-      logger->debug( "About to deserialize control msg");
+#if 0
+    std::ostringstream oss;
+    oss << "schema/schema_" << std::setw(8) << std::setfill('0') << idx++ << ".sch";
+    const std::string name = oss.str();
+    std::ofstream ofs(name, std::ios_base::out | std::ios_base::binary);
+    if(ofs.good())
+      ofs.write(static_cast<const char*>(msg->payload()), msg->len());
+#else
+      std::cout <<  "About to deserialize control msg" << std::endl;
       avro::GenericRecord record = consume.deserialize_msg(*msg);
       if (record.hasField("name")) {
         avro::GenericDatum record_name = record.field("name");
@@ -139,6 +147,7 @@ std::set<std::string> ReadSchemaTopic::get_topics() {
         std::string topic_name = record_name.value<std::string>();
         topics.insert(topic_name);
       }
+#endif
     }
 
     schema_consumer->close();
@@ -166,13 +175,13 @@ std::unique_ptr<RdKafka::KafkaConsumer> ReadSchemaTopic::get_consumer(const std:
     std::unique_ptr<RdKafka::Message> msg = std::unique_ptr<RdKafka::Message>(schema_consumer->consume(0));
     std::cout << msg->len() << std::endl;
     pbuffer(msg->payload(), msg->len());
-    //logger->debug( "consume error: {}", err2str(msg->err()));
+    std::cout << "consume error: " << err2str(msg->err()) << std::endl;
 
     //    RdKafka::ErrorCode position_error = schema_consumer->position(partitions);
     //    logger->debug( "position set offsets to: " << topic_partition->offset();
     //    logger->debug( "POSITION ERROR IS: " << err2str(position_error);
 
-    logger->debug( "seeking to midnight");
+    std::cout << "seeking to midnight" << std::endl;
     seek_to_midnight_at_past_day(schema_consumer.get(), topic_partition.get(), 7);
 
     return schema_consumer;

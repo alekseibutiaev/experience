@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <vector>
 
 #include <types.h>
 
@@ -27,6 +28,7 @@ namespace kf {
     auth_ptr m_auth;
     event_ptr m_event;
     topic_partition_ptr m_topic_partition;
+    std::vector<topic_partition_ptr> m_topic_partitions;
     consumer_ptr m_consumer;
   };
 

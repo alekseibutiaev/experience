@@ -1,7 +1,7 @@
 file(GLOB HEADER_FILES "*.h *.hpp")
 file(GLOB SOURCE_FILES "*.cpp")
 
-project(consumer_env)
+project(consumer)
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
@@ -17,10 +17,10 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
-  ncds
+  ${CURL_LIBRARIES}
+  kafka
+  ${JSON-C_LIBRARY}
   ${RDKAFKA_LIBRARIES}
   ${RDKAFKACPP_LIBRARIES}
   ${AVROCPP_LIBRARIES}
-  ${SPDLOG_LIBRARIES}
-  ${JSON-C_LIBRARY}
-  )
+)

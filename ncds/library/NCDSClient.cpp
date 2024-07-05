@@ -8,7 +8,6 @@
 #include <avro/ValidSchema.hh>
 #include <avro/Generic.hh>
 
-#include <spdlog/sinks/rotating_file_sink.h>
 #include <spdlog/spdlog.h>
 
 #include "consumer/NasdaqKafkaAvroConsumer.h"
@@ -29,18 +28,18 @@ namespace ncds {
     try {
       int max_size = config_map["max_size"];
       int max_files = config_map["max_files"];
-
-      this->logger = spdlog::rotating_logger_mt("logger", "logfile", max_size, max_files);
-      int debug = config_map["debug"];
-      if (debug) {
-          logger->set_level(spdlog::level::debug);
-      } else {
-          logger->set_level(spdlog::level::info);
-      }
-      logger->debug("Making NCDS Client ...");
+  
+//      this->logger = spdlog::rotating_logger_mt("logger", "logfile", max_size, max_files);
+//      int debug = config_map["debug"];
+//      if (debug) {
+//          logger->set_level(spdlog::level::debug);
+//      } else {
+//          logger->set_level(spdlog::level::info);
+//      }
+      std::cout << "Making NCDS Client ..." << std::endl;
     }
     catch (spdlog::spdlog_ex) {
-      this->logger = spdlog::get(LOGGER);
+//      this->logger = spdlog::get(LOGGER);
     }
 
     this->nasdaq_kafka_avro_consumer = NasdaqKafkaAvroConsumer(kafka_cfg, security_cfg);
@@ -48,7 +47,7 @@ namespace ncds {
     try {
       AuthenticationConfigLoader auth_config_loader = AuthenticationConfigLoader();
       if (!security_cfg.empty()) {
-        logger->debug("security cfg not empty ...");
+        std::cout << "security cfg not empty ..." << std::endl;
         if (auth_config_loader.validate_security_config(security_cfg)) {
             this->nasdaq_kafka_avro_consumer = NasdaqKafkaAvroConsumer(kafka_cfg, security_cfg);
         }
@@ -84,9 +83,9 @@ namespace ncds {
     int ms = this->timeout; //milliseconds
     std::unique_ptr<RdKafka::KafkaConsumer> kafka_consumer = NCDSClient::NCDSKafkaConsumer(topic_name);
 
-    logger->debug("created kafka consumer");
+    std::cout << "created kafka consumer" << std::endl;
     std::vector<avro::GenericRecord> messages;
-    logger->debug("created message vector");
+    std::cout << "created message vector" << std::endl;
 
     for (int i = 0; i < num_messages; i++) {
       std::unique_ptr<RdKafka::Message> message = std::unique_ptr<RdKafka::Message>(kafka_consumer->consume(ms));
@@ -98,7 +97,7 @@ namespace ncds {
       DeserializeMsg consume(schema);
       avro::GenericRecord msg = consume.deserialize_msg(*message);
 
-      logger->debug("consumed message");
+      std::cout << "consumed message" << std::endl;
       messages.push_back(msg);
     }
 

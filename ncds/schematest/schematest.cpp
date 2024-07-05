@@ -17,6 +17,8 @@
 #include <print_records.h>
 
 
+#include "NCDSClient.h"
+
 #include <config.h>
 
 namespace {
@@ -52,8 +54,26 @@ namespace {
 } /* namespace */
 
 int main(int ac, char* av[]) {
+  std::cout << __cplusplus << std::endl;
   try {
-    const auto schema = load("./ncdsresources/ControlMessageSchema.avsc");
+
+#if 0
+    kf::config_t tmp;
+    std::ifstream ifs("config.json");
+    nlohmann::json j = nlohmann::json::parse(ifs);
+    std::cout << j << std::endl;
+    read_json_t rj(j);
+    tmp.read_config(rj, err);
+    std::unordered_map<std::string, std::string> auth = {
+      { "oauth.token.endpoint.uri", "https://clouddataservice.auth.nasdaq.com/auth/realms/pro-realm/protocol/openid-connect/token"},
+      { "oauth.client.id", "ffineu-tyapkin"},
+      { "oauth.client.secret", "50efe6c1-4f6c-48ef-8c9d-2925bbda5bbf"}
+    };
+    auto cl = ncds::NCDSClient(tmp.get_config(), auth);
+    const auto list = cl.list_topics_for_the_client();
+
+#else
+    const auto schema = load("./resources/ControlMessageSchema.avsc");
 
     kf::config_t tmp;
     std::ifstream ifs("config.json");
@@ -65,8 +85,6 @@ int main(int ac, char* av[]) {
     std::string error;
 
     auto conf = tmp.get_config();
-    conf->set("auto.offset.reset", "earliest", error);
-    conf->set("group.id", "Control-ffineu-tyapkin", error);
 
     std::unique_ptr<RdKafka::KafkaConsumer> consumer(RdKafka::KafkaConsumer::create(tmp.get_config(), error));
     if(!consumer)
@@ -92,7 +110,7 @@ int main(int ac, char* av[]) {
       std::cout << "size: " << msg->len() << std::endl; 
       pbuffer(msg->payload(), msg->len());
     }
-
+#endif
   }
   catch(const std::exception& e) {
     std::cout << e.what() << std::endl;

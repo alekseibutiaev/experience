@@ -10,7 +10,7 @@
 
 #include <config.h>
 #include <consumer.h>
-#include <print_records.h>
+//#include <print_records.h>
 #include <internal/utils/SeekToMidnight.h>
 
 #include <avro/Generic.hh>
@@ -30,6 +30,40 @@ namespace {
     return config.clone(notify);
   }
 
+  void pbuffer(const void* buf, const std::size_t& size) {
+    char hex[128] = {0};
+    char ch[17] = {0};
+    for(std::size_t i = 0; i < size; ++i) {
+      sprintf(&hex[(i % 16) * 5], "0x%02X ", reinterpret_cast<const unsigned char*>(buf)[i]);
+      sprintf(&ch[(i % 16)], "%c", std::isprint(reinterpret_cast<const unsigned char*>(buf)[i]) ?
+        reinterpret_cast<const unsigned char*>(buf)[i] : '.');
+      if(0 == (i + 1) % 16)
+        std::cout << hex << ch << std::endl;
+    }
+    if(size % 16)
+      std::cout << hex << ch << std::endl;
+  }
+
+
+  void print_records(const std::vector<avro::GenericRecord>& records, std::ostream& os) {
+    for (auto &record : records) {
+      os << "Message name: " << record.schema()->name().simpleName() << std::endl;
+      for (size_t i = 0; i < record.fieldCount(); i++) {
+        avro::GenericDatum datum = record.fieldAt(i);
+        os << record.schema()->nameAt(i) << ": ";
+        if (datum.type() == avro::AVRO_DOUBLE)
+          os << datum.value<double>() << std::endl;
+        else if (datum.type() == avro::AVRO_LONG)
+          os << datum.value<int64_t>() << std::endl;
+        else if (datum.type() == avro::AVRO_INT)
+          os << datum.value<int>() << std::endl;
+        else if (datum.type() == avro::AVRO_STRING)
+          os << datum.value<std::string>() << std::endl;
+      }
+    }
+  }
+
+
 } /* namespace */
 
 namespace kf {
@@ -47,21 +81,28 @@ namespace kf {
     m_config.print();
   }
 
+  const std::string topics[] = {"TOTALVIEW.stream"/*, "QBBO-A-BSX.stream", "NLSCTA.stream"*/};
+
   void consumer_t::test(const avro::ValidSchema& schema) {
     static std::size_t count = 0;
     if(const auto topic = m_get_property("topic")) {
       std::string err;
       m_consumer.reset(RdKafka::KafkaConsumer::create(m_config.get_config(), err));
-      m_topic_partition.reset(RdKafka::TopicPartition::create(*topic + ".stream", 0, RdKafka::Topic::OFFSET_END));
-      m_consumer->assign({m_topic_partition.get()});
-      m_consumer->subscribe({"TOTALVIEW.stream", "QBBO-A-BSX.stream"});
+      std::vector<RdKafka::TopicPartition*> part;
+      for(const auto& it : topics) {
+        part.push_back(RdKafka::TopicPartition::create(it, 0, RdKafka::Topic::OFFSET_END));
+        m_topic_partitions.push_back(topic_partition_ptr(part.back()));
+      }
+      m_consumer->assign(part);
       std::string offset;
       m_config.get("auto.offset.reset", offset);
       std::cout << offset << std::endl;
-      if (offset == "earliest" || offset == "smallest" || offset == "beginning")
-        seek_to_midnight_at_past_day(m_consumer.get(), m_topic_partition.get(), 0);
+      if (offset == "earliest" || offset == "smallest" || offset == "beginning") {
+        for(auto& it : m_topic_partitions)
+          seek_to_midnight_at_past_day(m_consumer.get(), it.get(), 0);
+      }
 
-      avro::DecoderPtr d = avro::binaryDecoder();
+      avro::DecoderPtr decoder = avro::binaryDecoder();
       std::size_t idx = 0;
       for(;;) {
         std::unique_ptr<RdKafka::Message> msg = std::unique_ptr<RdKafka::Message>(m_consumer->consume(10000));
@@ -69,11 +110,20 @@ namespace kf {
           continue;
         std::cout << msg->topic_name() << std::endl;
         pbuffer(msg->payload(), msg->len());
+        auto data = std::make_shared<avro::GenericDatum>(schema);
+        auto in = avro::memoryInputStream(reinterpret_cast<const uint8_t*>(msg->payload()), msg->len());
+        decoder->init(*in);
+        avro::decode(*decoder, *data);
+        auto r = data->value<avro::GenericRecord>();
+        print_records({r}, std::cout);
+
+
+#if 0
         std::stringstream ss;
         ss << "./message/" << msg->topic_name() << '_' << std::setfill('0') << std::setw(8) << idx++ << ".msg";
         if(auto ofs = std::ofstream(ss.str(), std::ios_base::binary))
           ofs.write(reinterpret_cast<const char*>(msg->payload()), msg->len());
-
+#endif
 //        get_stream_bin("buf_" + std::to_string(count++), std::ios_base::binary)->write(reinterpret_cast<char*>(msg->payload()), msg->len());
 /*        
         auto in = avro::memoryInputStream(static_cast<uint8_t *>(msg->payload()), msg->len());
@@ -89,7 +139,9 @@ namespace kf {
 */
       }
     }
-
+    else {
+      std::cout << "topic unuavaqilable: " << std::endl;
+    }
   }
 
   void consumer_t::logger(const struct rd_kafka_s* rk, int level, const char* fac, const char* buf) {

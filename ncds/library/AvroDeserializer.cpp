@@ -1,4 +1,5 @@
 #include <memory>
+#include <fstream>
 #include <cassert>
 
 #include <avro/Generic.hh>
@@ -29,7 +30,7 @@ avro::GenericRecord AvroDeserializer::decode(const uint8_t* data, size_t len) {
 
   avro::decode(*d, datum);
 
-  assert(datum.type() == avro::AVRO_RECORD);
+  //assert(datum.type() == avro::AVRO_RECORD);
   avro::GenericRecord r = datum.value<avro::GenericRecord>();
   return r;
 }
@@ -44,12 +45,14 @@ namespace ncds {
   }
 
   avro::GenericRecord DeserializeMsg::deserialize_msg(RdKafka::Message& msg) {
+    static int i = 0;
     if (msg.err() != RdKafka::ERR_NO_ERROR)
       throw std::runtime_error("There was an error deserializing the message: " + msg.errstr());
 
     uint8_t *data = static_cast<uint8_t *>(msg.payload());
     size_t len = msg.len();
-
+    std::ofstream os("schema/schema." + std::to_string(i++));
+    os.write((char*)data, len);
     pbuffer(data, len);
     (*get_stream()) << std::string(static_cast<const char*>(msg.payload()), msg.len()) << std::endl;
     AvroDeserializer deserializer(schema);
