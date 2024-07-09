@@ -53,7 +53,7 @@ namespace ncds {
     size_t len = msg.len();
     std::ofstream os("schema/schema." + std::to_string(i++));
     os.write((char*)data, len);
-    pbuffer(data, len);
+    pbuffer(data, len, std::cout);
     (*get_stream()) << std::string(static_cast<const char*>(msg.payload()), msg.len()) << std::endl;
     AvroDeserializer deserializer(schema);
 

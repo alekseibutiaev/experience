@@ -88,6 +88,7 @@ namespace {
     }
 
     void operator()(const std::string& topic, const void* buf, const std::size_t size) const {
+      std::cout << topic << std::endl;
       pbuffer(buf, size);
       auto in = avro::memoryInputStream(reinterpret_cast<const uint8_t*>(buf), size);
       m_decoder->init(*in);
@@ -111,7 +112,8 @@ int main(int ac, char* av[]) {
     const auto sch = load("/home/butiaev/project/experience/ncds/ncdsresources/imaginary.json");
     const auto sch = load("/home/butiaev/project/experience/ncds/ncdsresources/ControlMessageSchema.avsc");
 */
-    const auto sch = load("/home/butiaev/project/experience/ncds/resources/TOTALVIEW.json");
+//    const auto sch = load("/home/butiaev/project/experience/ncds/resources/TOTALVIEW.json");
+    const auto sch = load("/home/butiaev/project/experience/ncds/resources/ControlMessageSchema.avsc");
     const std::vector<std::string> topics = {"TOTALVIEW.stream"/*, "QBBO-A-BSX.stream", "NLSCTA.stream"*/};
 
 
@@ -124,7 +126,9 @@ int main(int ac, char* av[]) {
     read_json_t rj(j);
     tmp.read_config(rj, err);
     kf::consumer_t consumer(tmp, rj, err);
-    consumer.consume(topics, decoder);
+    //consumer.consume(topics, decoder);
+    consumer.control(decoder);
+
 /**/
 
     for(;;)

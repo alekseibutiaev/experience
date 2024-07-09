@@ -12,6 +12,7 @@
 #include <consumer.h>
 #include <internal/utils/SeekToMidnight.h>
 
+#include "print_records.h"
 #include "oauthbearer.h"
 #include "event.h"
 
@@ -42,32 +43,46 @@ namespace kf {
 
 
   void consumer_t::consume(strings_t topics, const process_f& process) {
-    static std::size_t count = 0;
-    if(const auto topic = m_get_property("topic")) {
-      std::string err;
-      m_consumer.reset(RdKafka::KafkaConsumer::create(m_config.get_config(), err));
-      std::vector<RdKafka::TopicPartition*> part;
-      for(const auto& it : topics) {
-        part.push_back(RdKafka::TopicPartition::create(it, 0, RdKafka::Topic::OFFSET_END));
-        m_topic_partitions.push_back(topic_partition_ptr(part.back()));
-      }
-      m_consumer->assign(part);
-      std::string offset;
-      m_config.get("auto.offset.reset", offset);
-      std::cout << offset << std::endl;
-      if (offset == "earliest" || offset == "smallest" || offset == "beginning") {
-        for(auto& it : m_topic_partitions)
-          seek_to_midnight_at_past_day(m_consumer.get(), it.get(), 0);
-      }
-      for(;;) {
-        std::unique_ptr<RdKafka::Message> msg = std::unique_ptr<RdKafka::Message>(m_consumer->consume(10000));
-        if(0 >= msg->payload())
-          continue;
-        process(msg->topic_name(), msg->payload(), msg->len());
-      }
+    std::string err;
+    m_consumer.reset(RdKafka::KafkaConsumer::create(m_config.get_config(), err));
+    std::vector<RdKafka::TopicPartition*> partitions;
+    for(const auto& it : topics) {
+      partitions.push_back(RdKafka::TopicPartition::create(it, 0, RdKafka::Topic::OFFSET_END));
+      m_topic_partitions.push_back(topic_partition_ptr(partitions.back()));
     }
-    else {
-      std::cout << "topic unuavaqilable: " << std::endl;
+    m_consumer->assign(partitions);
+
+    std::string offset;
+    m_config.get("auto.offset.reset", offset);
+    std::cout << offset << std::endl;
+
+    if (offset == "earliest" || offset == "smallest" || offset == "beginning") {
+      for(auto& it : m_topic_partitions)
+        seek_to_midnight_at_past_day(m_consumer.get(), it.get(), 0);
+    }
+
+    for(;;) {
+      std::unique_ptr<RdKafka::Message> msg = std::unique_ptr<RdKafka::Message>(m_consumer->consume(10000));
+      if(0 >= msg->payload())
+        continue;
+      process(msg->topic_name(), msg->payload(), msg->len());
+    }
+  }
+
+
+  void consumer_t::control(const process_f& process) {
+    std::string err;
+    m_control.reset(RdKafka::KafkaConsumer::create(m_config.get_config(), err));
+    std::vector<RdKafka::TopicPartition*> partitions;
+    std::unique_ptr<RdKafka::TopicPartition> prt(RdKafka::TopicPartition::create("control", 0, RdKafka::Topic::OFFSET_END));
+    partitions.push_back(prt.get());
+    seek_to_midnight_at_past_day(m_control.get(), prt.get(), 1);
+    m_control->assign(partitions);
+    for(;;) {
+      std::unique_ptr<RdKafka::Message> msg = std::unique_ptr<RdKafka::Message>(m_control->consume(10000));
+      if(0 >= msg->payload())
+        continue;
+      process(msg->topic_name(), msg->payload(), msg->len());
     }
   }
 

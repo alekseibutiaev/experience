@@ -58,7 +58,7 @@ avro::ValidSchema ReadSchemaTopic::read_schema(const std::string& topic) {
           logger->debug( "Error: {}", err2str(msg->err()));
           break;
       }
-      pbuffer(msg->payload(), msg->len());
+      pbuffer(msg->payload(), msg->len(), std::cout);
       std::stringstream ss;
       ss << "./schema/" << std::setfill('0') << std::setw(8) << idx++ << ".sch";
       if(auto ofs = std::ofstream(ss.str(), std::ios_base::binary))
@@ -120,9 +120,10 @@ std::set<std::string> ReadSchemaTopic::get_topics() {
     control_topic.push_back(control_schema_name);
     schema_consumer->subscribe(control_topic);
 
+#if 0
     avro::ValidSchema control_message_schema = resource_schema("ControlMessageSchema");
-
     ncds::DeserializeMsg consume(control_message_schema);
+#endif
 
     while (true) {
       auto msg = std::unique_ptr<RdKafka::Message>(schema_consumer->consume(this->timeout));
@@ -131,9 +132,11 @@ std::set<std::string> ReadSchemaTopic::get_topics() {
         // break if there is any error code returned
         break;
       }
-#if 0
+#if 1
+    pbuffer(msg->payload(), msg->len(), std::cout);
+
     std::ostringstream oss;
-    oss << "schema/schema_" << std::setw(8) << std::setfill('0') << idx++ << ".sch";
+    oss << "/mnt/data/butiaev/SCHEMATIC/schema_" << msg->topic_name() << '_' << std::setw(8) << std::setfill('0') << idx++ << ".sch";
     const std::string name = oss.str();
     std::ofstream ofs(name, std::ios_base::out | std::ios_base::binary);
     if(ofs.good())
@@ -159,6 +162,9 @@ std::unique_ptr<RdKafka::KafkaConsumer> ReadSchemaTopic::get_consumer(const std:
     kafka_props->set("auto.offset.reset", "earliest", errstr);
     kafka_props->set("group.id", client_id, errstr);
     errstr = std::string();
+    std::cout << std::endl;
+    printcfg(*kafka_props->dump(), std::cout);
+    std::cout << std::endl;
     std::unique_ptr<RdKafka::KafkaConsumer> schema_consumer(
       RdKafka::KafkaConsumer::create(this->kafka_props, errstr));
     if (!schema_consumer.get())
@@ -174,7 +180,7 @@ std::unique_ptr<RdKafka::KafkaConsumer> ReadSchemaTopic::get_consumer(const std:
 
     std::unique_ptr<RdKafka::Message> msg = std::unique_ptr<RdKafka::Message>(schema_consumer->consume(0));
     std::cout << msg->len() << std::endl;
-    pbuffer(msg->payload(), msg->len());
+    pbuffer(msg->payload(), msg->len(), std::cout);
     std::cout << "consume error: " << err2str(msg->err()) << std::endl;
 
     //    RdKafka::ErrorCode position_error = schema_consumer->position(partitions);
@@ -182,7 +188,7 @@ std::unique_ptr<RdKafka::KafkaConsumer> ReadSchemaTopic::get_consumer(const std:
     //    logger->debug( "POSITION ERROR IS: " << err2str(position_error);
 
     std::cout << "seeking to midnight" << std::endl;
-    seek_to_midnight_at_past_day(schema_consumer.get(), topic_partition.get(), 7);
+    seek_to_midnight_at_past_day(schema_consumer.get(), topic_partition.get(), 0);
 
     return schema_consumer;
 }

@@ -27,7 +27,6 @@ const params_t oauth_params = {
   {"OAUTH_CLIENT_SECRET", "oauth.client.secret"},
 };
 
-
 std::unique_ptr<RdKafka::Conf> get_kafka_config_env() {
   if(std::unique_ptr<RdKafka::Conf> kafka_conf = std::unique_ptr<RdKafka::Conf>(RdKafka::Conf::create(RdKafka::Conf::CONF_GLOBAL))) {
     std::string errstr;

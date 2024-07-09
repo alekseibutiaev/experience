@@ -20,6 +20,7 @@ namespace kf {
   public:
     consumer_t(const config_t& config, const get_property_t& get_property, const error_t& notify);
     void consume(const strings_t topics, const process_f& process);
+    void control(const process_f& process);
   private:
     using auth_ptr = std::shared_ptr<RdKafka::OAuthBearerTokenRefreshCb>;
     using event_ptr = std::shared_ptr<RdKafka::EventCb>;
@@ -34,6 +35,7 @@ namespace kf {
     event_ptr m_event;
     std::vector<topic_partition_ptr> m_topic_partitions;
     consumer_ptr m_consumer;
+    consumer_ptr m_control;
   };
 
 } /* namespace kf */

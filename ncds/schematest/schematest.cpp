@@ -57,7 +57,7 @@ int main(int ac, char* av[]) {
   std::cout << __cplusplus << std::endl;
   try {
 
-#if 0
+#if 1
     kf::config_t tmp;
     std::ifstream ifs("config.json");
     nlohmann::json j = nlohmann::json::parse(ifs);

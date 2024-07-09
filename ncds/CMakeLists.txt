@@ -50,5 +50,5 @@ add_subdirectory(kafka)
 #add_subdirectory(consumer)
 add_subdirectory(kafkatest)
 add_subdirectory(avrotest)
-#add_subdirectory(schematest)
+add_subdirectory(schematest)
 

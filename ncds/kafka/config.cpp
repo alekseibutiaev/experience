@@ -231,7 +231,6 @@ namespace kf {
     int idx = 0;
     for(const auto& it : *m_config->dump())
       std::cout << it << (idx++ % 2 == 0 ?  '=' : '\n');
-
   }
 
 } /* namespace kf */

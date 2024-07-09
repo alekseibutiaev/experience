@@ -135,11 +135,11 @@
           "value": ""
         },
         {
-          "name": "SSL_CA_LOCATION",
+          "name": "1SSL_CA_LOCATION",
           "value": "/home/butiaev/NetTrader/ca-cert"
         },
         {
-          "name": "SSL_CERTIFICATE_LOCATION",
+          "name": "1SSL_CERTIFICATE_LOCATION",
           "value": "/home/butiaev/NetTrader/ca-cert/streams.pem"
         },
         {

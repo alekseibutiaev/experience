@@ -4,7 +4,13 @@
 
 #include "print_records.h"
 
-void pbuffer(const void* buf, const std::size_t& size) {
+void printcfg(const std::list<std::string>& value, std::ostream& os) {
+  int idx = 0;
+  for(const auto& it : value)
+    os << it << (idx++ % 2 == 0 ?  '=' : '\n');
+}
+
+void pbuffer(const void* buf, const std::size_t& size, std::ostream& os) {
   char hex[128] = {0};
   char ch[17] = {0};
   for(std::size_t i = 0; i < size; ++i) {
@@ -12,10 +18,10 @@ void pbuffer(const void* buf, const std::size_t& size) {
     sprintf(&ch[(i % 16)], "%c", std::isprint(reinterpret_cast<const unsigned char*>(buf)[i]) ?
       reinterpret_cast<const unsigned char*>(buf)[i] : '.');
     if(0 == (i + 1) % 16)
-      std::cout << hex << ch << std::endl;
+      os << hex << ch << std::endl;
   }
   if(size % 16)
-    std::cout << hex << ch << std::endl;
+    os << hex << ch << std::endl;
 }
 
 ostream_ptr get_stream(const std::string& name) {

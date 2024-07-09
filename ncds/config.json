@@ -1,9 +1,9 @@
 {
-  "enable.ssl.certificate.verification" : "false",
+  "enable.ssl.certificate.verification" : "true",
   "security.protocol" : "SASL_SSL",
   "sasl.mechanisms" : "OAUTHBEARER",
   "x-ssl.ca.location" : "/home/butiaev/NetTrader/ca-cert",
-  "ssl.certificate.location" : "/home/butiaev/NetTrader/ca-cert/streams.pem",
+  "x-ssl.certificate.location" : "/home/butiaev/NetTrader/ca-cert/streams.pem",
   "x-ssl.certificate.location" : "/home/butiaev/NetTrader/ca-cert",
   "auto.offset.reset" : "earliest",
   "x-auto.offset.reset" : "earliest",

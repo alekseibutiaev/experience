@@ -6,12 +6,15 @@
 #include <memory>
 #include <iosfwd>
 #include <vector>
+#include <list>
 
 #include <avro/GenericDatum.hh>
 
 using ostream_ptr = std::shared_ptr<std::ostream>;
 
-void pbuffer(const void* buf, const std::size_t& size);
+void printcfg(const std::list<std::string>& value, std::ostream& os);
+
+void pbuffer(const void* buf, const std::size_t& size, std::ostream& os);
 
 ostream_ptr get_stream(const std::string& name = "file_");
 
