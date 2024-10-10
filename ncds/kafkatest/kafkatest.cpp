@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <stdexcept>
 #include <thread>
 
@@ -35,7 +36,7 @@ namespace {
 
   void print_records(const std::vector<avro::GenericRecord>& records, std::ostream& os) {
     for (auto &record : records) {
-      os << "Message name: " << record.schema()->name().simpleName() << ' ';
+      os << "Message: " << record.schema()->name().simpleName() << ' ';
       for (size_t i = 0; i < record.fieldCount(); i++) {
         avro::GenericDatum datum = record.fieldAt(i);
         os << record.schema()->nameAt(i) << ": ";
@@ -52,13 +53,17 @@ namespace {
     }
   }
 
+  avro::ValidSchema load(std::istream& is) {
+    avro::ValidSchema schema;
+    avro::compileJsonSchema(is, schema);
+    return schema;
+  }
+
   avro::ValidSchema load(const std::string& file) {
     std::ifstream ifs(file.c_str());
     if(!ifs.good())
       throw(std::runtime_error("can`t open file: " + file));
-    avro::ValidSchema schema;
-    avro::compileJsonSchema(ifs, schema);
-    return schema;
+    return load(ifs);
   }
 
   class read_json_t {
@@ -89,12 +94,14 @@ namespace {
 
     void operator()(const std::string& topic, const void* buf, const std::size_t size) const {
       std::cout << topic << std::endl;
+#if 0
       pbuffer(buf, size);
       auto in = avro::memoryInputStream(reinterpret_cast<const uint8_t*>(buf), size);
       m_decoder->init(*in);
       avro::decode(*m_decoder, *m_datum);
       auto r = m_datum->value<avro::GenericRecord>();
       print_records({r}, std::cout);
+#endif
     }
   private:
     avro::DecoderPtr m_decoder;
@@ -102,7 +109,69 @@ namespace {
     std::shared_ptr<avro::GenericDatum> m_datum;    
   };
 
+  class decode_ex_t {
+  public:
+    decode_ex_t()
+      : m_decoder(avro::binaryDecoder())
+      , m_control_schema(load("/home/butiaev/project/experience/ncds/resources/ControlMessageSchema.avsc"))
+      , m_datum_schema(std::make_shared<avro::GenericDatum>(m_control_schema)) {
+    }
+    void operator()(const std::string& topic, const void* buf, const std::size_t size) const {
+      std::cout << topic << std::endl;
+      if("control" == topic)
+        const_cast<decode_ex_t&>(*this).update_control(buf, size);
+      else {
+        auto it = m_schemas.find(topic.substr(0, topic.find(".stream")));
+        if(it != m_schemas.end())
+          decode_message(std::make_shared<avro::GenericDatum>(it->second), buf, size);
+        else
+          std::cout << "has not schema for [" + topic + "] topic"  << std::endl;      }
+        
+    }
+  private:
+//    using key_schema_t = std::pair<std::string, std::time_t>;
+    using key_schema_t = std::string;
+    using map_schemas_t = std::map<key_schema_t, avro::ValidSchema>;
+  private:
+    void decode_message(std::shared_ptr<avro::GenericDatum> datum, const void* buf,
+        const std::size_t size) const {
+      auto in = avro::memoryInputStream(reinterpret_cast<const uint8_t*>(buf), size);
+      m_decoder->init(*in);
+      avro::decode(*m_decoder, *datum);
+      auto record = datum->value<avro::GenericRecord>();
+      print_records({record}, std::cout);
+    }
+    void update_control(const void* buf, const std::size_t size) {
+      auto in = avro::memoryInputStream(reinterpret_cast<const uint8_t*>(buf), size);
+      m_decoder->init(*in);
+      avro::decode(*m_decoder, *m_datum_schema);
+      auto record = m_datum_schema->value<avro::GenericRecord>();
+      std::string name;
+      std::string schema;
+      for (size_t i = 0; i < record.fieldCount(); i++) {
+        if(name.empty() && "name" == record.schema()->nameAt(i))
+          name = record.fieldAt(i).value<std::string>();
+        else if(schema.empty() && "schema" == record.schema()->nameAt(i))
+          schema = record.fieldAt(i).value<std::string>();
+      }
+      if(!name.empty() && !schema.empty()) {
+        std::istringstream iss(schema);
+        m_schemas[name] = load(iss);
+      }
+    }
+  private:
+    avro::DecoderPtr m_decoder;
+    const avro::ValidSchema m_control_schema;
+    std::shared_ptr<avro::GenericDatum> m_datum_schema;
+    map_schemas_t m_schemas;
+
+
+  };
+
 } /* namespace */
+
+#define STREAM 1
+
 
 int main(int ac, char* av[]) {
   try {
@@ -112,22 +181,30 @@ int main(int ac, char* av[]) {
     const auto sch = load("/home/butiaev/project/experience/ncds/ncdsresources/imaginary.json");
     const auto sch = load("/home/butiaev/project/experience/ncds/ncdsresources/ControlMessageSchema.avsc");
 */
-//    const auto sch = load("/home/butiaev/project/experience/ncds/resources/TOTALVIEW.json");
+
+#if STREAM == 1
+    const auto sch = load("/home/butiaev/project/experience/ncds/resources/TOTALVIEW.json");
+    const std::vector<std::string> topics = {"control", "TOTALVIEW.stream", "QBBO-A-BSX.stream", "NLSCTA.stream"};
+#else 
     const auto sch = load("/home/butiaev/project/experience/ncds/resources/ControlMessageSchema.avsc");
-    const std::vector<std::string> topics = {"TOTALVIEW.stream"/*, "QBBO-A-BSX.stream", "NLSCTA.stream"*/};
+#endif
 
 
 
     kf::config_t tmp;
-    decode_t decoder(sch);
+    //decode_t decoder(sch);
+    decode_ex_t decoder;
     std::ifstream ifs("config.json");
     nlohmann::json j = nlohmann::json::parse(ifs);
     std::cout << j << std::endl;
     read_json_t rj(j);
     tmp.read_config(rj, err);
     kf::consumer_t consumer(tmp, rj, err);
-    //consumer.consume(topics, decoder);
+#if STREAM == 1
+    consumer.consume(topics, decoder);
+#else
     consumer.control(decoder);
+#endif
 
 /**/
 
