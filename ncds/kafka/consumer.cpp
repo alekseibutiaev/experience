@@ -62,7 +62,7 @@ namespace kf {
     }
 
     for(;;) {
-      std::unique_ptr<RdKafka::Message> msg = std::unique_ptr<RdKafka::Message>(m_consumer->consume(10000));
+      std::unique_ptr<RdKafka::Message> msg = std::unique_ptr<RdKafka::Message>(m_consumer->consume(10));
       if(0 >= msg->payload())
         continue;
       process(msg->topic_name(), msg->payload(), msg->len());
