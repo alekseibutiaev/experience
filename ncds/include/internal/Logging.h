@@ -23,7 +23,8 @@ static std::unordered_map<std::string, int> get_logger_configs() {
 
     try {
         fp = std::fopen(file_path.c_str(), "r");
-        fread(buffer, 1024, 1, fp);
+        std::size_t err = fread(buffer, 1024, 1, fp);
+        (void)err;
         fclose(fp);
     }
     catch (std::exception &e) {
