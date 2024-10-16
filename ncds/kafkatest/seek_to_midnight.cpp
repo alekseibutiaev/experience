@@ -2,11 +2,9 @@
 #include <memory>
 #include <chrono>
 
-#include <spdlog/spdlog.h>
-
 #include <librdkafka/rdkafkacpp.h>
 
-#include "internal/utils/SeekToMidnight.h"
+#include "seek_to_midnight.h"
 
 int get_timestamp_at_midnight(int num_days_ago) {
   const auto now = std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::system_clock::now()).time_since_epoch();

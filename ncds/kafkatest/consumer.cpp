@@ -10,7 +10,7 @@
 
 #include <config.h>
 #include <consumer.h>
-#include <internal/utils/SeekToMidnight.h>
+#include "seek_to_midnight.h"
 
 #include "print_records.h"
 #include "oauthbearer.h"

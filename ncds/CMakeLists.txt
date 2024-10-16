@@ -4,6 +4,9 @@ project("ncsdexample")
 
 set(CXX_FLAGS_COMMON "-std=c++17")
 
+set(CXX_FLAGS_DEBUG "-O0 -g3")
+set(CXX_FLAGS_RELEASE "-O3 -g0")
+
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CXX_FLAGS_COMMON} ${CXX_FLAGS_DEBUG}")
 set(CMAKE_CXX_FLAGS_RELEASE "${CXX_FLAGS_COMMON} ${CXX_FLAGS_RELEASE}")
@@ -51,8 +54,8 @@ message("RDKAFKACPP_LIBRARIES: " ${RDKAFKACPP_LIBRARIES})
 message("JSON-C_INCLUDE_DIRS: " ${JSON-C_INCLUDE_DIRN})
 message("JSON-C_LIBRARIES: " ${JSON-C_LIBRARIESN})
 
-add_subdirectory(library)
-add_subdirectory(kafka)
+#add_subdirectory(library)
+#add_subdirectory(kafka)
 add_subdirectory(avrotest)
 add_subdirectory(kafkatest)
 
