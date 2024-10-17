@@ -38,9 +38,9 @@ namespace tools {
   }
 
   void print_records(const std::vector<avro::GenericRecord>& records, std::ostream& os) {
-    for (auto &record : records) {
+    for(auto &record : records) {
       os << "Message: " << record.schema()->name().simpleName() << ' ';
-      for (size_t i = 0; i < record.fieldCount(); i++) {
+      for(size_t i = 0; i < record.fieldCount(); i++) {
         avro::GenericDatum datum = record.fieldAt(i);
         os << record.schema()->nameAt(i) << ": ";
         if (datum.type() == avro::AVRO_DOUBLE)
