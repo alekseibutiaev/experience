@@ -34,7 +34,6 @@ namespace kf {
     event_ptr m_event;
     std::vector<topic_partition_ptr> m_topic_partitions;
     consumer_ptr m_consumer;
-    consumer_ptr m_control;
   };
 
 } /* namespace kf */

@@ -1,5 +1,9 @@
+#pragma once
+
 #include <list>
-#include "curlinit.h"
+#include <string>
+
+#include <curl/curl.h>
 
 namespace kf {
 
@@ -22,14 +26,16 @@ namespace kf {
       append_headers(std::forward<TT>(headers)...);
       curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, m_headers);
     }
-
+  private:
+    class curl_init_t {
+      public:
+      curl_init_t();
+      ~curl_init_t();
+    };
   private:
     void append_header(const char *header);
-
     void append_header(const std::string &header);
-
     void append_headers() const;
-
     template <typename T>
     void append_header(const std::list<T> &items) {
       for (auto item: items)
@@ -44,7 +50,7 @@ namespace kf {
   private:
     static size_t callback(char *ptr, size_t sz, size_t nmemb, std::string *s);
   private:
-//    curl_init_t m_init;
+    curl_init_t m_init;
     CURL* m_curl;
     curl_slist* m_headers = 0;
   };

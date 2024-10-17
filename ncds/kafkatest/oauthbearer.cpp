@@ -4,7 +4,6 @@
 
 #include <nlohmann/json.hpp>
 
-
 #include "http_request.h"
 #include "oauthbearer.h"
 
@@ -44,19 +43,14 @@ namespace kf {
       std::string token = j["access_token"];
       auto ts = std::chrono::time_point_cast<std::chrono::milliseconds>(
         std::chrono::system_clock::now()) + expires_in;
-
       std::string err;
-      if(RdKafka::ErrorCode::ERR_NO_ERROR != handle->oauthbearer_set_token(token, ts.time_since_epoch().count(),
-//          "ffineu-tyapkin",
-          "infrontasa-annika-norberg",
-          {/*"scope", "profile email"*/}, err )) {
+      if(RdKafka::ErrorCode::ERR_NO_ERROR != handle->oauthbearer_set_token(token,
+          ts.time_since_epoch().count(), "infrontasa-annika-norberg", {}, err )) {
         RdKafka::ErrorCode tok_failure_err = handle->oauthbearer_set_token_failure(err);
       }
     }
     catch(const std::exception& e) {
-
     }
-    return;
   }
 
 } /* namespace kf */

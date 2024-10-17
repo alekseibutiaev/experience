@@ -16,7 +16,6 @@ namespace kf {
     const std::string m_glient_id;
     const std::string m_secret;
     const get_property_t m_get_property;
-
   };
   
 } /* namespace kf */

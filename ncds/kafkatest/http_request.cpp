@@ -2,6 +2,14 @@
 
 namespace kf {
 
+  http_request_t::curl_init_t::curl_init_t() {
+    curl_global_init(CURL_GLOBAL_ALL);
+  }
+
+  http_request_t::curl_init_t::~curl_init_t() {
+    curl_global_cleanup();
+  } 
+
   http_request_t::http_request_t(const std::string& url, long timeout) :
     m_headers(0) {
     m_curl = curl_easy_init();
@@ -51,7 +59,5 @@ namespace kf {
     s->insert(s->end(), ptr, ptr + n);
     return n;
   }
-
-
 
 } /* namespace kf */
