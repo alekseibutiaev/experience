@@ -7,13 +7,6 @@
 
 #include <nlohmann/json.hpp>
 
-#include <avro/Generic.hh>
-#include <avro/ValidSchema.hh>
-#include <avro/Decoder.hh>
-#include <avro/Stream.hh>
-#include <avro/Compiler.hh>
-#include <avro/Specific.hh>
-
 #include "config.h"
 #include "avro_decode.h"
 #include "consumer.h"
