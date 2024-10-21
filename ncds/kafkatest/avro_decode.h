@@ -12,10 +12,6 @@
 #include <avro/ValidSchema.hh>
 #include <avro/GenericDatum.hh>
 
-namespace avro {
-
-} /* namespace avro */
-
 namespace kf {
 
   class avro_decode_t {
@@ -36,8 +32,6 @@ namespace kf {
   public:
     avro_decode_t(delegate_t& delegate, const std::string& ctrl_schema);
     void operator()(const std::string& topic, const void* buf, const std::size_t size) const;
-    static avro::ValidSchema load_schema(std::istream& is);
-    static avro::ValidSchema load_schema(const std::string& file);
   public:
     const static std::string control;
   private:
@@ -48,6 +42,9 @@ namespace kf {
         const void* buf, const std::size_t size) const;
     void update_control(const void* buf, const std::size_t size) const;
     void read_fields(const std::string& topic, const std::vector<avro::GenericRecord>& records) const;
+  private:
+    static avro::ValidSchema load_schema(std::istream& is);
+    static avro::ValidSchema load_schema(const std::string& file);
   private:
     delegate_t& m_delegate;
     avro::DecoderPtr m_decoder;

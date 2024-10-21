@@ -12,7 +12,6 @@
 
 #include <config.h>
 #include <consumer.h>
-//#include "seek_to_midnight.h"
 
 #include "tools.h"
 #include "oauthbearer.h"

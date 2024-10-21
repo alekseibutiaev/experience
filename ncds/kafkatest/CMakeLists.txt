@@ -18,7 +18,6 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 target_link_libraries(${PROJECT_NAME} PRIVATE
   ${JSON-C_LIBRARY}
   ${CURL_LIBRARIES}
-#  kafka
   ${RDKAFKA_LIBRARIES}
   ${RDKAFKACPP_LIBRARIES}
   ${AVROCPP_LIBRARIES}
