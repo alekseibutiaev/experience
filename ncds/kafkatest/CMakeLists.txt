@@ -3,6 +3,8 @@ file(GLOB SOURCE_FILES "*.cpp")
 
 project(kafkatest)
 
+add_definitions(-D__USE_POSIX)
+
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
 target_include_directories(${PROJECT_NAME} PRIVATE

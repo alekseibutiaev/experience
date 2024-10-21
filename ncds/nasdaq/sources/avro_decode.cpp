@@ -62,6 +62,7 @@ namespace kf {
             schema = record.fieldAt(i).value<std::string>();
         }
         if(!name.empty() && !schema.empty()) {
+          m_delegate.schema(name, schema);
           std::istringstream iss(schema);
           m_schemas[name] = load_schema(iss);
           std::cout << "schema for: " << name << " topic" << std::endl;
@@ -121,6 +122,9 @@ namespace kf {
 
   void avro_decode_t::operator()(const std::string& topic, const void* buf, const std::size_t size) const {
     (*m_impl)(topic, buf, size);
+  }
+
+  void avro_decode_t::delegate_t::schema(const std::string& name, const std::string& schema) {
   }
 
 } /* namespace kf */

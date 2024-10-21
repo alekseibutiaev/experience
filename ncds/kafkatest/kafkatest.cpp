@@ -1,3 +1,5 @@
+
+#include <time.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -9,7 +11,7 @@
 
 #include <config.h>
 #include <avro_decode.h>
-#include "consumer.h"
+#include <consumer.h>
 
 // https://github.com/confluentinc/librdkafka/issues/2758
 
@@ -32,7 +34,38 @@ namespace {
     std::cout << "configuration error: " << value << std::endl;
   }
 
+  union tracking_id_t {
+    struct {
+      long ts : 48;
+      short ctr : 16;
+    } data;
+    long _long;
+  };
+
+  std::string get_time(const long ntime) {
+    static const char* gmt = "GMT";
+    static std::time_t midnight = 0;
+    if(!midnight) {
+      struct tm time;
+      std::time_t t = std::time(0);
+      localtime_r(&t, &time);
+      time.tm_sec = time.tm_min = time.tm_hour = time.tm_gmtoff = 0;
+      time.tm_zone = gmt;
+      midnight = mktime(&time);
+      std::time_t t1 = t - t % 86400;
+
+      return std::string();
+    }
+    return std::string();
+  }
+
+  std::ostream& operator<< (std::ostream& os, const tracking_id_t val) {
+    os << " ( ctr: " << val.data.ctr << ", ts: " << get_time(val.data.ts) <<  " )";
+  }
+
   class deletate_t : public kf::avro_decode_t::delegate_t {
+  private:
+
   private:
     void begin_msg(const std::string& topic, const std::string& msg) override {
       std::cout << "topic: " << topic << ", message: " << msg;
@@ -50,7 +83,14 @@ namespace {
       std::cout << ", " << field << ": " << data;
     }
     void data(const std::string& field, const long& data) override  {
-      std::cout << ", " << field << ": " << data;
+      std::cout << ", " << field << ": ";
+      if("uniqueTimestamp" == field || "trackingID" == field) {
+        tracking_id_t val;
+        val._long = data;
+        std::cout << val;
+      }
+      else
+        std::cout << data;
     }
     void data(const std::string& field, const float& data) override  {
       std::cout << ", " << field << ": " << data;
@@ -61,6 +101,11 @@ namespace {
     void data(const std::string& field, const bool& data) override  {
       std::cout << " " << field << ": " << data;
     }
+#if 0
+    void schema(const std::string& name, const std::string& schema) {
+      std::cout << name << ' ' << schema;
+    }
+#endif
   };
 
 } /* namespace */

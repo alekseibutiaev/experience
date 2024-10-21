@@ -25,6 +25,7 @@ namespace kf {
       virtual void data(const std::string& field, const float& data) = 0;
       virtual void data(const std::string& field, const double& data) = 0;
       virtual void data(const std::string& field, const bool& data) = 0;
+      virtual void schema(const std::string& name, const std::string& schema);
     };
   public:
     avro_decode_t(delegate_t& delegate, const std::string& ctrl_schema);
