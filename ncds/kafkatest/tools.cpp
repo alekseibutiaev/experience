@@ -2,6 +2,8 @@
 #include <iostream>
 #include <fstream>
 
+#include <avro/GenericDatum.hh>
+
 #include "tools.h"
 
 namespace tools {
@@ -37,23 +39,21 @@ namespace tools {
       os << hex << ch << std::endl;
   }
 
-  void print_records(const std::vector<avro::GenericRecord>& records, std::ostream& os) {
-    for(auto &record : records) {
-      os << "Message: " << record.schema()->name().simpleName() << ' ';
-      for(size_t i = 0; i < record.fieldCount(); i++) {
-        avro::GenericDatum datum = record.fieldAt(i);
-        os << record.schema()->nameAt(i) << ": ";
-        if (datum.type() == avro::AVRO_DOUBLE)
-          os << datum.value<double>() << ' ';
-        else if (datum.type() == avro::AVRO_LONG)
-          os << datum.value<int64_t>() << ' ';
-        else if (datum.type() == avro::AVRO_INT)
-          os << datum.value<int>() << ' ';
-        else if (datum.type() == avro::AVRO_STRING)
-          os << datum.value<std::string>() << ' ';
-      }
-      os << std::endl;
+  void print_records(const std::shared_ptr<avro::GenericRecord>& record, std::ostream& os) {
+    os << "Message: " << record->schema()->name().simpleName() << ' ';
+    for(size_t i = 0; i < record->fieldCount(); i++) {
+      avro::GenericDatum datum = record->fieldAt(i);
+      os << record->schema()->nameAt(i) << ": ";
+      if (datum.type() == avro::AVRO_DOUBLE)
+        os << datum.value<double>() << ' ';
+      else if (datum.type() == avro::AVRO_LONG)
+        os << datum.value<int64_t>() << ' ';
+      else if (datum.type() == avro::AVRO_INT)
+        os << datum.value<int>() << ' ';
+      else if (datum.type() == avro::AVRO_STRING)
+        os << datum.value<std::string>() << ' ';
     }
+    os << std::endl;
   }
 
 } /* namespace tools */

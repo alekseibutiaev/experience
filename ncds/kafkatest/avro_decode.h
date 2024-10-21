@@ -1,18 +1,15 @@
 #pragma once
 
-#include <map>
 #include <memory>
-#include <iosfwd>
 #include <string>
-#include <vector>
-#include <functional>
-
-
-#include <avro/Decoder.hh>
-#include <avro/ValidSchema.hh>
-#include <avro/GenericDatum.hh>
 
 namespace kf {
+
+  namespace details {
+
+    class avro_decode_t;
+
+  } /* namespace details */
 
   class avro_decode_t {
   public:
@@ -35,22 +32,9 @@ namespace kf {
   public:
     const static std::string control;
   private:
-    using key_schema_t = std::string;
-    using map_schemas_t = std::map<key_schema_t, avro::ValidSchema>;
+    using avro_decode_ptr = std::shared_ptr<details::avro_decode_t>;
   private:
-    void decode_message(const std::string& topic, std::shared_ptr<avro::GenericDatum> datum,
-        const void* buf, const std::size_t size) const;
-    void update_control(const void* buf, const std::size_t size) const;
-    void read_fields(const std::string& topic, const std::shared_ptr<avro::GenericRecord>& records) const;
-  private:
-    static avro::ValidSchema load_schema(std::istream& is);
-    static avro::ValidSchema load_schema(const std::string& file);
-  private:
-    delegate_t& m_delegate;
-    avro::DecoderPtr m_decoder;
-    const avro::ValidSchema m_control_schema;
-    std::shared_ptr<avro::GenericDatum> m_datum_schema;
-    mutable map_schemas_t m_schemas;
+    avro_decode_ptr m_impl;
   };
 
 } /* namespace kf */
