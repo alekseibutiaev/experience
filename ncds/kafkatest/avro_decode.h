@@ -41,7 +41,7 @@ namespace kf {
     void decode_message(const std::string& topic, std::shared_ptr<avro::GenericDatum> datum,
         const void* buf, const std::size_t size) const;
     void update_control(const void* buf, const std::size_t size) const;
-    void read_fields(const std::string& topic, const std::vector<avro::GenericRecord>& records) const;
+    void read_fields(const std::string& topic, const std::shared_ptr<avro::GenericRecord>& records) const;
   private:
     static avro::ValidSchema load_schema(std::istream& is);
     static avro::ValidSchema load_schema(const std::string& file);

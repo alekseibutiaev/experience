@@ -40,7 +40,8 @@ namespace kf {
     auto in = avro::memoryInputStream(reinterpret_cast<const uint8_t*>(buf), size);
     m_decoder->init(*in);
     avro::decode(*m_decoder, *datum);
-    auto record = datum->value<avro::GenericRecord>();
+    auto record = std::make_shared<avro::GenericRecord>(datum->value<avro::GenericRecord>());
+//    auto record = datum->value<avro::GenericRecord>();
 #if 1
     read_fields(topic, {record});
 #else    
@@ -69,28 +70,28 @@ namespace kf {
     }
   }
 
-  void avro_decode_t::read_fields(const std::string& topic, const std::vector<avro::GenericRecord>& records) const {
-    for(auto& record : records) {
-      m_delegate.begin_msg(topic, record.schema()->name().simpleName());
-      for(size_t i = 0; i < record.fieldCount(); i++) {
-        avro::GenericDatum datum = record.fieldAt(i);
+  void avro_decode_t::read_fields(const std::string& topic, const std::shared_ptr<avro::GenericRecord>& record) const {
+//    for(auto& record : records) {
+      m_delegate.begin_msg(topic, record->schema()->name().simpleName());
+      for(size_t i = 0; i < record->fieldCount(); i++) {
+        avro::GenericDatum datum = record->fieldAt(i);
         if(avro::AVRO_STRING == datum.type())
-          m_delegate.data(record.schema()->nameAt(i), datum.value<std::string>());
+          m_delegate.data(record->schema()->nameAt(i), datum.value<std::string>());
         else if(avro::AVRO_BYTES == datum.type())
-          m_delegate.data(record.schema()->nameAt(i), datum.value<unsigned char>());
+          m_delegate.data(record->schema()->nameAt(i), datum.value<unsigned char>());
         else if(avro::AVRO_INT == datum.type())
-          m_delegate.data(record.schema()->nameAt(i), datum.value<int>());
+          m_delegate.data(record->schema()->nameAt(i), datum.value<int>());
         else if(avro::AVRO_LONG == datum.type())
-          m_delegate.data(record.schema()->nameAt(i), datum.value<long>());
+          m_delegate.data(record->schema()->nameAt(i), datum.value<long>());
         else if(avro::AVRO_FLOAT == datum.type())
-          m_delegate.data(record.schema()->nameAt(i), datum.value<float>());
+          m_delegate.data(record->schema()->nameAt(i), datum.value<float>());
         else if(avro::AVRO_DOUBLE == datum.type())
-          m_delegate.data(record.schema()->nameAt(i), datum.value<double>());
+          m_delegate.data(record->schema()->nameAt(i), datum.value<double>());
         else if(avro::AVRO_BOOL == datum.type())
-          m_delegate.data(record.schema()->nameAt(i), datum.value<bool>());
+          m_delegate.data(record->schema()->nameAt(i), datum.value<bool>());
       }
       m_delegate.end_msg();
-    }
+//    }
   }
 
 
