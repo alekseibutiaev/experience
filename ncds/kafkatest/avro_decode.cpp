@@ -25,8 +25,8 @@ namespace kf {
       avro_decode_t(kf::avro_decode_t::delegate_t& delegate, const std::string& ctrl_schema)
       : m_delegate(delegate)
       , m_decoder(avro::binaryDecoder())
-      , m_control_schema(load_schema(ctrl_schema))
-      , m_datum_schema(std::make_shared<avro::GenericDatum>(m_control_schema)) {
+      , m_schema_control(load_schema(ctrl_schema))
+      , m_schema_datum(std::make_shared<avro::GenericDatum>(m_schema_control)) {
       }
       void operator()(const std::string& topic, const void* buf, const std::size_t size) const {
         if(kf::avro_decode_t::control == topic)
@@ -46,18 +46,13 @@ namespace kf {
         m_decoder->init(*in);
         avro::decode(*m_decoder, *datum);
         auto record = std::make_shared<avro::GenericRecord>(datum->value<avro::GenericRecord>());
-#if 1
         read_fields(topic, record);
-#else    
-        std::cout << topic << ' ';
-        tools::print_records(record, std::cout);
-#endif
       }
       void update_control(const void* buf, const std::size_t size) const {
         auto in = avro::memoryInputStream(reinterpret_cast<const uint8_t*>(buf), size);
         m_decoder->init(*in);
-        avro::decode(*m_decoder, *m_datum_schema);
-        auto record = m_datum_schema->value<avro::GenericRecord>();
+        avro::decode(*m_decoder, *m_schema_datum);
+        auto record = m_schema_datum->value<avro::GenericRecord>();
         std::string name;
         std::string schema;
         for (size_t i = 0; i < record.fieldCount(); i++) {
@@ -94,8 +89,7 @@ namespace kf {
         m_delegate.end_msg();
       }
     private:
-      using key_schema_t = std::string;
-      using map_schemas_t = std::map<key_schema_t, avro::ValidSchema>;
+      using map_schemas_t = std::map<std::string, avro::ValidSchema>;
     private:
       static avro::ValidSchema load_schema(std::istream& is) {
         avro::ValidSchema schema;
@@ -111,8 +105,8 @@ namespace kf {
     private:
       kf::avro_decode_t::delegate_t& m_delegate;
       avro::DecoderPtr m_decoder;
-      const avro::ValidSchema m_control_schema;
-      std::shared_ptr<avro::GenericDatum> m_datum_schema;
+      const avro::ValidSchema m_schema_control;
+      std::shared_ptr<avro::GenericDatum> m_schema_datum;
       mutable map_schemas_t m_schemas;
     };
 
