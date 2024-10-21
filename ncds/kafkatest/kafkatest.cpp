@@ -7,10 +7,9 @@
 
 #include <nlohmann/json.hpp>
 
-#include "config.h"
-#include "avro_decode.h"
+#include <config.h>
+#include <avro_decode.h>
 #include "consumer.h"
-#include "tools.h"
 
 // https://github.com/confluentinc/librdkafka/issues/2758
 

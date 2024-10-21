@@ -55,7 +55,7 @@ message("JSON-C_INCLUDE_DIRS: " ${JSON-C_INCLUDE_DIRN})
 message("JSON-C_LIBRARIES: " ${JSON-C_LIBRARIESN})
 
 #add_subdirectory(library)
-#add_subdirectory(kafka)
+add_subdirectory(nasdaq)
 add_subdirectory(avrotest)
 add_subdirectory(kafkatest)
 

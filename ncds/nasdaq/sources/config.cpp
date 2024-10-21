@@ -4,7 +4,7 @@
 
 #include <librdkafka/rdkafkacpp.h>
 
-#include "config.h"
+#include <config.h>
 
 namespace {
 

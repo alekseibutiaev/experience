@@ -52,8 +52,4 @@ namespace kf {
     static const strings_t topic;
   };
 
-//  kf_cong_ptr read_config(const get_property_t& get);
-
-
-
 } /* namespace kf */
