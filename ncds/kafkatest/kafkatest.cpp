@@ -9,6 +9,8 @@
 
 #include <nlohmann/json.hpp>
 
+#include <librdkafka/rdkafkacpp.h>
+
 #include <config.h>
 #include <avro_decode.h>
 #include <consumer.h>
@@ -60,52 +62,122 @@ namespace {
   }
 
   std::ostream& operator<< (std::ostream& os, const tracking_id_t val) {
-    os << " ( ctr: " << val.data.ctr << ", ts: " << get_time(val.data.ts) <<  " )";
+    // (ctr: 0, ts: 59996231542528 sec: 59996 mil: 59996231 mic: 59996231542)
+    auto mic = val.data.ts / 1000;
+    auto mil = mic / 1000;
+    auto sec = mil / 1000;
+    os << " ( ctr: " << val.data.ctr << ", ts: " << val.data.ts <<
+      " sec: " << sec << " mil: " << mil << " mic: " << mic <<  " )";
   }
 
   class deletate_t : public kf::avro_decode_t::delegate_t {
+  public:
+    deletate_t(const bool enable = true)
+        : m_enable(enable) {
+    }
   private:
-
+    using msg_fields_t = std::map<std::string, kf::avro_decode_t::delegate_t::fields_t>;
+    using stream_msg_t = std::map<std::string, msg_fields_t>;
   private:
-    void begin_msg(const std::string& topic, const std::string& msg) override {
-      std::cout << "topic: " << topic << ", message: " << msg;
+    void table(const std::string& stream, const std::string& msg,
+        const kf::avro_decode_t::delegate_t::fields_t& fields) override {
+      std::cout << "stream: " << stream << ", msg: " << msg << " [";
+      for(std::size_t i = 0; i < fields.size(); ++i)
+        std::cout << (i == 0 ? "" : ", ") << fields[ i ];
+      std::cout << ']' << std::endl;
+      m_stream_msg[stream][msg] = fields;
+    }
+    void message(const kf::avro_decode_t& decoder, const std::string& stream, const std::string& msg,
+        const kf::avro_decode_t::record_ptr record) override {
+      const auto& filelds = get_fields(stream, msg);
+      if(filelds.empty()) {
+        std::cout << "unsuported message stream: " << stream << " message: " << msg << std::endl;
+        return;
+      }
+      begin_msg(stream, msg);
+      for(std::size_t i = 0; i < filelds.size(); ++i)
+        decoder.get_field(record, i);
+      end_msg();
+    }
+    void begin_msg(const std::string& stream, const std::string& msg) override {
+      if(m_enable)
+        std::cout << "stream: " << stream << ", message: " << msg;
     }
     void end_msg() override {
-      std::cout << std::endl;
+      if(m_enable) std::cout << std::endl;
     }
     void data(const std::string& field, const std::string& data) override {
-      std::cout << ", " << field << ": " << data;
+      if(m_enable) std::cout << ", " << field << ": " << data;
     }
     void data(const std::string& field, const unsigned char& data) override  {
-      std::cout << ", " << field << ": " << data;
+      if(m_enable) std::cout << ", " << field << ": " << data;
     }
     void data(const std::string& field, const int& data) override  {
-      std::cout << ", " << field << ": " << data;
+      if(m_enable) std::cout << ", " << field << ": " << data;
     }
     void data(const std::string& field, const long& data) override  {
-      std::cout << ", " << field << ": ";
+      if(m_enable) std::cout << ", " << field << ": ";
       if("uniqueTimestamp" == field || "trackingID" == field) {
         tracking_id_t val;
         val._long = data;
-        std::cout << val;
+        if(m_enable) std::cout << val;
       }
       else
-        std::cout << data;
+        /*std::cout << data*/;
     }
     void data(const std::string& field, const float& data) override  {
-      std::cout << ", " << field << ": " << data;
+      if(m_enable) std::cout << ", " << field << ": " << data;
     }
     void data(const std::string& field, const double& data) override  {
-      std::cout << ", " << field << ": " << data;
+      if(m_enable) std::cout << ", " << field << ": " << data;
     }
     void data(const std::string& field, const bool& data) override  {
-      std::cout << " " << field << ": " << data;
+      if(m_enable) std::cout << " " << field << ": " << data;
     }
-#if 0
-    void schema(const std::string& name, const std::string& schema) {
-      std::cout << name << ' ' << schema;
+    const kf::avro_decode_t::delegate_t::fields_t& get_fields(const std::string& stream, const std::string& msg) const {
+      static const kf::avro_decode_t::delegate_t::fields_t empty;
+      auto it1 = m_stream_msg.find(stream);
+      if(it1 == m_stream_msg.end())
+        return empty;
+      auto it2 = it1->second.find(msg);
+      if(it2 == it1->second.end())
+        return empty;
+      return it2->second;
     }
-#endif
+  private:
+    const bool m_enable;
+    stream_msg_t m_stream_msg;
+
+  };
+
+  class rebalance_cb_t : public RdKafka::RebalanceCb {
+  public:
+    rebalance_cb_t() {}
+    void rebalance_cb (RdKafka::KafkaConsumer *consumer, RdKafka::ErrorCode err,
+        std::vector<RdKafka::TopicPartition*>&partitions) {
+      std::cout << "rebalance_cb" << std::endl;
+      return;
+    }
+  };
+
+  class offset_commit_cb_t : public RdKafka::OffsetCommitCb {
+  public:
+    offset_commit_cb_t(rebalance_cb_t& rbc)
+      : m_rbc(rbc) {
+    }
+    void offset_commit_cb(RdKafka::ErrorCode err, std::vector<RdKafka::TopicPartition *>& offsets) override {
+      std::cout << RdKafka::err2str(err) << std::endl;
+      for(auto offset : offsets) {
+        std::cout << " \"topic\": \"" << offset->topic() << "\", " <<
+          " partition: " << offset->partition() << " offset: " << offset->offset() <<
+          " error: " << (offset->err() ? RdKafka::err2str(offset->err()) : "") << std::endl;
+//          offset->set_offset(startOffset);
+      }
+
+      return;
+    }
+  private:
+    rebalance_cb_t& m_rbc;
   };
 
 } /* namespace */
@@ -119,14 +191,19 @@ int main(int ac, char* av[]) {
     std::vector<std::string> topics = {kf::avro_decode_t::control};
     topics.insert(topics.end(), j["topics"].begin(), j["topics"].end());
 
-    deletate_t d;
+    rebalance_cb_t rdb;
+    offset_commit_cb_t occb(rdb);
+
+    deletate_t d(true);
 
     read_json_t rj(j);
     kf::config_t cnf;
     cnf.read_config(rj, err);
+    cnf.set(&rdb, err);
+    cnf.set(&occb, err);
     kf::consumer_t consumer(cnf, rj, err);
     const std::string cms = j["control_message_schema"];
-    kf::avro_decode_t decode(d, cms);
+    kf::avro_decode_t decode(d/*, cms*/);
     consumer.consume(topics, decode);
     for(;;)
       std::this_thread::sleep_for(std::chrono::seconds(1));

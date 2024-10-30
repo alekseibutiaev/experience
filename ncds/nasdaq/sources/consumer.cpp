@@ -31,8 +31,8 @@ namespace {
     return res;
   }
 
-  void seek_to_midnight_at_past_day(RdKafka::KafkaConsumer *kafka_consumer,
-      RdKafka::TopicPartition *topic_partition, int num_days_ago) {
+  void seek_to_midnight_at_past_day(RdKafka::KafkaConsumer* kafka_consumer,
+      RdKafka::TopicPartition* topic_partition, int num_days_ago) {
     std::vector<RdKafka::TopicPartition*> partitions;
     topic_partition->set_offset(get_timestamp_at_midnight(num_days_ago));
     partitions.push_back(topic_partition);
