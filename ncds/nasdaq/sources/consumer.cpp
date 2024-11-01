@@ -51,14 +51,14 @@ namespace {
 
 namespace kf {
 
-  consumer_t::consumer_t(const config_t& config, const get_property_t& get_property, const error_t& notify)
-      : m_config(clone_config(config, notify))
+  consumer_t::consumer_t(const config_t& config, const get_property_t& get_property, const error_t& err)
+      : m_config(clone_config(config, err))
       , m_get_property(get_property)
       , m_auth(std::make_shared<oauthbearer_t>(get_property))
       , m_event(std::make_shared<event_t>()) {
     config.print();
     std::cout << "conf" << std::endl;
-    m_config.set(m_auth.get(), notify);
+    m_config.set(m_auth.get(), err);
 //    m_config.set(m_event.get(), notify);
     rd_kafka_conf_set_log_cb(m_config.get_config()->c_ptr_global(), logger);
     m_config.print();

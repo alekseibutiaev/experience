@@ -39,7 +39,7 @@ namespace tools {
       os << hex << ch << std::endl;
   }
 
-  void print_records(const std::shared_ptr<avro::GenericRecord>& record, std::ostream& os) {
+  void print_records(const kf::record_ptr& record, std::ostream& os) {
     os << "Message: " << record->schema()->name().simpleName() << ' ';
     for(size_t i = 0; i < record->fieldCount(); i++) {
       avro::GenericDatum datum = record->fieldAt(i);

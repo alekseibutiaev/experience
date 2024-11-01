@@ -32,10 +32,6 @@ namespace {
     const nlohmann::json& m_json;
   };
 
-  void err(const std::string& value) {
-    std::cout << "configuration error: " << value << std::endl;
-  }
-
   union tracking_id_t {
     struct {
       long ts : 48;
@@ -70,7 +66,7 @@ namespace {
       " sec: " << sec << " mil: " << mil << " mic: " << mic <<  " )";
   }
 
-  class deletate_t : public kf::avro_decode_t::delegate_t {
+  class deletate_t : public kf::avro_decode_t::delegate_t, public kf::error_t {
   public:
     deletate_t(const bool enable = true)
         : m_enable(enable) {
@@ -88,7 +84,7 @@ namespace {
       m_stream_msg[stream][msg] = fields;
     }
     void message(const kf::avro_decode_t& decoder, const std::string& stream, const std::string& msg,
-        const kf::avro_decode_t::record_ptr record) override {
+        const kf::record_ptr record) override {
       const auto& filelds = get_fields(stream, msg);
       if(filelds.empty()) {
         std::cout << "unsuported message stream: " << stream << " message: " << msg << std::endl;
@@ -99,11 +95,21 @@ namespace {
         decoder.get_field(record, i);
       end_msg();
     }
-    void begin_msg(const std::string& stream, const std::string& msg) override {
-      if(m_enable)
-        std::cout << "stream: " << stream << ", message: " << msg;
+
+    bool save(const std::string& stream, const std::string& schema) {
+      std::cout << std::string("write file:") + "./schema/" + stream + ".sch" << std::endl;
+      return write("./schema/" + stream + ".sch", schema);
     }
-    void end_msg() override {
+
+    std::string load(const std::string& stream) {
+      std::cout << std::string("read file: ") + "./schema/" + stream + ".sch" << std::endl;
+      return read("./schema/" + stream + ".sch");
+    }
+
+    void begin_msg(const std::string& stream, const std::string& msg) {
+      if(m_enable) std::cout << "stream: " << stream << ", message: " << msg;
+    }
+    void end_msg() {
       if(m_enable) std::cout << std::endl;
     }
     void data(const std::string& field, const std::string& data) override {
@@ -145,9 +151,21 @@ namespace {
       return it2->second;
     }
   private:
+    void debug(const std::string& msg) const {
+      std::cout << msg << std::endl;
+    }
+    void info(const std::string& msg) const  {
+      std::cout << msg << std::endl;
+    }
+    void warning(const std::string& msg) const  {
+      std::cout << msg << std::endl;
+    }
+    void error(const std::string& msg) const  {
+      std::cout << msg << std::endl;
+    }
+  private:
     const bool m_enable;
     stream_msg_t m_stream_msg;
-
   };
 
   class rebalance_cb_t : public RdKafka::RebalanceCb {
@@ -198,12 +216,11 @@ int main(int ac, char* av[]) {
 
     read_json_t rj(j);
     kf::config_t cnf;
-    cnf.read_config(rj, err);
-    cnf.set(&rdb, err);
-    cnf.set(&occb, err);
-    kf::consumer_t consumer(cnf, rj, err);
-    const std::string cms = j["control_message_schema"];
-    kf::avro_decode_t decode(d/*, cms*/);
+    cnf.read_config(rj, d);
+    cnf.set(&rdb, d);
+    cnf.set(&occb, d);
+    kf::consumer_t consumer(cnf, rj, d);
+    kf::avro_decode_t decode(d, d/*, j["control_message_schema"]*/);
     consumer.consume(topics, decode);
     for(;;)
       std::this_thread::sleep_for(std::chrono::seconds(1));

@@ -7,13 +7,7 @@
 #include <iosfwd>
 #include <list>
 
-namespace avro {
-
-  class GenericRecord;
-
-} /* namespace avro */
-
-#include <avro/GenericDatum.hh>
+#include "types.h"
 
 namespace tools {
 
@@ -28,6 +22,6 @@ namespace tools {
   void pbuffer(const void* buf, const std::size_t& size, std::ostream& os);
 
   // This implementation might need to change based on the types of data in your records
-  void print_records(const std::shared_ptr<avro::GenericRecord>&record, std::ostream& os);
+  void print_records(const kf::record_ptr& record, std::ostream& os);
 
 } /* namespace tools */

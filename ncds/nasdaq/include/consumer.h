@@ -6,6 +6,7 @@
 #include <functional>
 
 #include <types.h>
+#include <error.h>
 
 struct rd_kafka_s;
 
@@ -18,7 +19,7 @@ namespace kf {
     using process_f = std::function<void(const std::string&, const void*, const std::size_t)>;
     using strings_t = std::vector<std::string>;
   public:
-    consumer_t(const config_t& config, const get_property_t& get_property, const error_t& notify);
+    consumer_t(const config_t& config, const get_property_t& get_property, const error_t& err);
     void consume(const strings_t topics, const process_f& process);
   private:
     using auth_ptr = std::shared_ptr<RdKafka::OAuthBearerTokenRefreshCb>;

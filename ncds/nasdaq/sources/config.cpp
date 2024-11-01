@@ -4,6 +4,7 @@
 
 #include <librdkafka/rdkafkacpp.h>
 
+#include <error.h>
 #include <config.h>
 
 namespace {
@@ -44,17 +45,17 @@ namespace {
 
   template<typename first_t, typename second_t>
   void copy(const std::pair<first_t, second_t>& param, const RdKafka::Conf& from, RdKafka::Conf& to,
-      const kf::error_t& notify) {
+      const kf::error_t& error) {
     std::string err;
     first_t ptr;
     if(RdKafka::Conf::CONF_OK != from.get(ptr) || RdKafka::Conf::CONF_OK != to.set(param.second, ptr, err))
-      notify(err);
+      error.error(err);
   }
 
   template <typename... types_t>
   void copy(const std::tuple<types_t...>& values, const RdKafka::Conf& from, RdKafka::Conf& to,
-      const kf::error_t& notify) {
-    (copy(std::get<types_t>(values), from, to, notify), ...);
+      const kf::error_t& error) {
+    (copy(std::get<types_t>(values), from, to, error), ...);
   }
 
   RdKafka::Conf::ConfType get_rdkafka_config_type(const kf::config_t::type_t& type) {
@@ -117,7 +118,7 @@ namespace kf {
       , m_param(type == e_global ? glogal : topic) {
   }
 
-  config_t config_t::clone(const error_t& notify) const {
+  config_t config_t::clone(const error_t& error) const {
     std::string err;
     std::string tmp;
     config_t res(m_type);
@@ -125,93 +126,93 @@ namespace kf {
       if(RdKafka::Conf::CONF_OK == m_config->get(it, tmp))
         res.m_config->set(it, tmp, err);
       else
-        notify(err);
-    copy(calbacks, *m_config, *res.m_config, notify);
+        error.error(err);
+    copy(calbacks, *m_config, *res.m_config, error);
     return res;
   }
 
-  void config_t::read_config(const get_property_t& get_property, const error_t& notify) {
+  void config_t::read_config(const get_property_t& get_property, const error_t& error) {
     std::string err;
     for(const auto& it : m_param)
       if(const auto& tmp = get_property(it))
         if(RdKafka::Conf::CONF_OK != m_config->set(it, *tmp, err))
-          notify(err);
+          error.error(err);
   }
 
-  void config_t::set(RdKafka::DeliveryReportCb* value, const error_t& notify) {
+  void config_t::set(RdKafka::DeliveryReportCb* value, const error_t& error) {
     std::string err;
     if(RdKafka::Conf::CONF_OK != m_config->set(get_name(value), value, err))
-      notify(err);
+      error.error(err);
   }
 
-  void config_t::set(RdKafka::OAuthBearerTokenRefreshCb* value, const error_t& notify) {
+  void config_t::set(RdKafka::OAuthBearerTokenRefreshCb* value, const error_t& error) {
     std::string err;
     const auto& f = get_name(value);
     if(RdKafka::Conf::CONF_OK != m_config->set(f, value, err))
-      notify(err);
+      error.error(err);
   }
 
-  void config_t::set(RdKafka::EventCb* value, const error_t& notify) {
+  void config_t::set(RdKafka::EventCb* value, const error_t& error) {
     std::string err;
     const auto& f = get_name(value);
     if(RdKafka::Conf::CONF_OK != m_config->set(f, value, err))
-      notify(err);
+      error.error(err);
   }
 
-  void config_t::set(RdKafka::Conf* value, const error_t& notify) {
+  void config_t::set(RdKafka::Conf* value, const error_t& error) {
     std::string err;
     if(RdKafka::Conf::CONF_OK != m_config->set(get_name(value), value, err))
-      notify(err);
+      error.error(err);
   }
 
-  void config_t::set(RdKafka::PartitionerCb* value, const error_t& notify) {
+  void config_t::set(RdKafka::PartitionerCb* value, const error_t& error) {
     std::string err;
     if(RdKafka::Conf::CONF_OK != m_config->set(get_name(value), value, err))
-      notify(err);
+      error.error(err);
   }
 
-  void config_t::set(RdKafka::PartitionerKeyPointerCb* value, const error_t& notify) {
+  void config_t::set(RdKafka::PartitionerKeyPointerCb* value, const error_t& error) {
     std::string err;
     if(RdKafka::Conf::CONF_OK != m_config->set(get_name(value), value, err))
-      notify(err);
+      error.error(err);
   }
 
-  void config_t::set(RdKafka::SocketCb* value, const error_t& notify) {
+  void config_t::set(RdKafka::SocketCb* value, const error_t& error) {
     std::string err;
     if(RdKafka::Conf::CONF_OK != m_config->set(get_name(value), value, err))
-      notify(err);
+      error.error(err);
   }
 
-  void config_t::set(RdKafka::OpenCb* value, const error_t& notify) {
+  void config_t::set(RdKafka::OpenCb* value, const error_t& error) {
     std::string err;
     if(RdKafka::Conf::CONF_OK != m_config->set(get_name(value), value, err))
-      notify(err);
+      error.error(err);
   }
 
-  void config_t::set(RdKafka::RebalanceCb* value, const error_t& notify) {
+  void config_t::set(RdKafka::RebalanceCb* value, const error_t& error) {
     std::string err;
     if(RdKafka::Conf::CONF_OK != m_config->set(get_name(value), value, err))
-      notify(err);
+      error.error(err);
   }
 
-  void config_t::set(RdKafka::OffsetCommitCb* value, const error_t& notify) {
+  void config_t::set(RdKafka::OffsetCommitCb* value, const error_t& error) {
     std::string err;
     if(RdKafka::Conf::CONF_OK != m_config->set(get_name(value), value, err))
-      notify(err);
+      error.error(err);
   }
 
-  void config_t::set(RdKafka::SslCertificateVerifyCb* value, const error_t& notify) {
+  void config_t::set(RdKafka::SslCertificateVerifyCb* value, const error_t& error) {
     std::string err;
     if(RdKafka::Conf::CONF_OK != m_config->set(get_name(value), value, err))
-      notify(err);
+      error.error(err);
   }
 
 #if 0
   void config_t::set(RdKafka::CertificateType cert_type, RdKafka::CertificateEncoding cert_enc,
-      const config_t::buffer_t& value, const error_t& notify) {
+      const config_t::buffer_t& value, const error_t& error) {
     std::string err;
     if(RdKafka::Conf::CONF_OK != m_config->set_ssl_cert(cert_type, cert_enc, value.data(), value.size(), err));
-      notify(err);
+      error.error(err);
   }
 #endif
 
