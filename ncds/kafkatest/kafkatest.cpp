@@ -152,16 +152,16 @@ namespace {
     }
   private:
     void debug(const std::string& msg) const {
-      std::cout << msg << std::endl;
+      std::cout << "DEBUG: " << msg << std::endl;
     }
     void info(const std::string& msg) const  {
-      std::cout << msg << std::endl;
+      std::cout << "INFO: " << msg << std::endl;
     }
     void warning(const std::string& msg) const  {
-      std::cout << msg << std::endl;
+      std::cout << "WAGNING: " << msg << std::endl;
     }
     void error(const std::string& msg) const  {
-      std::cout << msg << std::endl;
+      std::cout << "ERROR: " << msg << std::endl;
     }
   private:
     const bool m_enable;

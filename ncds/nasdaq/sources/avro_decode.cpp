@@ -93,32 +93,32 @@ namespace kf {
     private:
       void decode_message(const std::string& stream, datum_ptr datum, const void* buf,
           const std::size_t size) const {
-        auto in = avro::memoryInputStream(reinterpret_cast<const uint8_t*>(buf), size);
-        m_decoder->init(*in);
-        avro::decode(*m_decoder, *datum);
-        auto record = std::make_shared<record_ptr::element_type>(datum->value<record_ptr::element_type>());
+        auto record = get_record(datum, buf, size);
         m_delegate.message(m_owner, stream, record->schema()->name().simpleName(), record);
       }
       void read_control(const void* buf, const std::size_t size) const {
         try {
-          auto in = avro::memoryInputStream(reinterpret_cast<const uint8_t*>(buf), size);
-          m_decoder->init(*in);
-          avro::decode(*m_decoder, *m_schema_datum);
-          auto record = m_schema_datum->value<record_ptr::element_type>();
-          std::string stream;
-          std::string schema;
-          for (size_t i = 0; i < record.fieldCount(); i++) {
-            if(stream.empty() && "name" == record.schema()->nameAt(i))
-              stream = record.fieldAt(i).value<std::string>();
-            else if(schema.empty() && "schema" == record.schema()->nameAt(i))
-              schema = record.fieldAt(i).value<std::string>();
+          std::pair<const char*, std::string> fields[] = {{"referenceDate", ""}, {"name",""}, {"schema",""}};
+          auto record = get_record(m_schema_datum, buf, size);
+          for (size_t i = 0; i < record->fieldCount(); i++) {
+            for(auto& field : fields)
+              if(field.second.empty() && field.first == record->schema()->nameAt(i))
+                field.second = record->fieldAt(i).value<std::string>();  
           }
-          update_control(stream, schema);
+          update_control(fields[1].second, fields[2].second);
         }
         catch(const std::exception& e) {
           m_err.error(__FILE_STR__ + e.what());
         }
       }
+
+      const record_ptr get_record(const datum_ptr& datum, const void* buf, const std::size_t size) const {
+        auto in = avro::memoryInputStream(reinterpret_cast<const uint8_t*>(buf), size);
+        m_decoder->init(*in);
+        avro::decode(*m_decoder, *datum);
+        return std::make_shared<record_ptr::element_type>(datum->value<record_ptr::element_type>());
+      }
+
       avro_decode_t::datum_ptr get_datum(const std::string& stream) const {
         for(;;){
           auto it = m_schemas.find(stream);
