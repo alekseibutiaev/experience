@@ -1,13 +1,10 @@
 #pragma once
 
 #include <map>
+#include <memory>
 #include <string>
 #include <optional>
 #include <functional>
-
-#define __FILE_STR__ [](){ \
-  return (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__) + std::string(":") + std::to_string(__LINE__) + " ";\
-}()
 
 namespace RdKafka {
 

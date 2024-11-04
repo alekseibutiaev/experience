@@ -4,8 +4,9 @@
 
 #include <librdkafka/rdkafkacpp.h>
 
-#include <error.h>
-#include <config.h>
+#include "error.h"
+#include "location.h"
+#include "config.h"
 
 namespace {
 
@@ -59,8 +60,7 @@ namespace {
   }
 
   RdKafka::Conf::ConfType get_rdkafka_config_type(const kf::config_t::type_t& type) {
-    RdKafka::Conf::ConfType res = type == kf::config_t::e_global ? RdKafka::Conf::CONF_GLOBAL : RdKafka::Conf::CONF_TOPIC;
-    return res;
+    return type == kf::config_t::e_global ? RdKafka::Conf::CONF_GLOBAL : RdKafka::Conf::CONF_TOPIC;
   }
 
 } /* namespace */
@@ -154,14 +154,13 @@ namespace kf {
 
   void config_t::set(RdKafka::EventCb* value, const error_t& error) {
     std::string err;
-    const auto& f = get_name(value);
-    if(RdKafka::Conf::CONF_OK != m_config->set(f, value, err))
+    if(RdKafka::Conf::CONF_OK != m_config->set(get_name(value), value, err))
       error.error(err);
   }
 
-  void config_t::set(RdKafka::Conf* value, const error_t& error) {
+  void config_t::set(const std::string& name, RdKafka::Conf* value, const error_t& error) {
     std::string err;
-    if(RdKafka::Conf::CONF_OK != m_config->set(get_name(value), value, err))
+    if(RdKafka::Conf::CONF_OK != m_config->set(name, value, err))
       error.error(err);
   }
 
@@ -205,6 +204,73 @@ namespace kf {
     std::string err;
     if(RdKafka::Conf::CONF_OK != m_config->set(get_name(value), value, err))
       error.error(err);
+  }
+
+  void config_t::set(RdKafka::ConsumeCb* value, const error_t& error) {
+    std::string err;
+    if(RdKafka::Conf::CONF_OK != m_config->set("consume_cb", value, err))
+      error.error(err);
+  }
+
+  RdKafka::DeliveryReportCb* config_t::get(RdKafka::DeliveryReportCb* value, const error_t& error) {
+    RdKafka::DeliveryReportCb* tmp;
+    if(RdKafka::Conf::CONF_OK != m_config->get(tmp))
+      error.info("prarameter: " + get_name(value) + ", is not set." + __FILE_STR__);
+    return tmp;
+  }
+  RdKafka::OAuthBearerTokenRefreshCb* config_t::get(RdKafka::OAuthBearerTokenRefreshCb* value, const error_t& error) {
+    RdKafka::OAuthBearerTokenRefreshCb* tmp;
+    if(RdKafka::Conf::CONF_OK != m_config->get(tmp))
+      error.info("prarameter: " + get_name(value) + ", is not set." + __FILE_STR__);
+    return tmp;
+  }
+  RdKafka::EventCb* config_t::get(RdKafka::EventCb* value, const error_t& error) {
+    RdKafka::EventCb* tmp;
+    if(RdKafka::Conf::CONF_OK != m_config->get(tmp))
+      error.info("prarameter: " + get_name(value) + ", is not set." + __FILE_STR__);
+    return tmp;
+  }
+  RdKafka::PartitionerCb* config_t::get(RdKafka::PartitionerCb* value, const error_t& error) {
+    RdKafka::PartitionerCb* tmp;
+    if(RdKafka::Conf::CONF_OK != m_config->get(tmp))
+      error.info("prarameter: " + get_name(value) + ", is not set." + __FILE_STR__);
+    return tmp;
+  }
+  RdKafka::PartitionerKeyPointerCb* config_t::get(RdKafka::PartitionerKeyPointerCb* value, const error_t& error) {
+    RdKafka::PartitionerKeyPointerCb* tmp;
+    if(RdKafka::Conf::CONF_OK != m_config->get(tmp))
+      error.info("prarameter: " + get_name(value) + ", is not set." + __FILE_STR__);
+    return tmp;
+  }
+  RdKafka::SocketCb* config_t::get(RdKafka::SocketCb* value, const error_t& error) {
+    RdKafka::SocketCb* tmp;
+    if(RdKafka::Conf::CONF_OK != m_config->get(tmp))
+      error.info("prarameter: " + get_name(value) + ", is not set." + __FILE_STR__);
+    return tmp;
+  }
+  RdKafka::OpenCb* config_t::get(RdKafka::OpenCb* value, const error_t& error) {
+    RdKafka::OpenCb* tmp;
+    if(RdKafka::Conf::CONF_OK != m_config->get(tmp))
+      error.info("prarameter: " + get_name(value) + ", is not set." + __FILE_STR__);
+    return tmp;
+  }
+  RdKafka::RebalanceCb* config_t::get(RdKafka::RebalanceCb* value, const error_t& error) {
+    RdKafka::RebalanceCb* tmp;
+    if(RdKafka::Conf::CONF_OK != m_config->get(tmp))
+      error.info("prarameter: " + get_name(value) + ", is not set." + __FILE_STR__);
+    return tmp;
+  }
+  RdKafka::OffsetCommitCb* config_t::get(RdKafka::OffsetCommitCb* value, const error_t& error) {
+    RdKafka::OffsetCommitCb* tmp;
+    if(RdKafka::Conf::CONF_OK != m_config->get(tmp))
+      error.info("prarameter: " + get_name(value) + ", is not set." + __FILE_STR__);
+    return tmp;
+  }
+  RdKafka::SslCertificateVerifyCb* config_t::get(RdKafka::SslCertificateVerifyCb* value, const error_t& error) {
+    RdKafka::SslCertificateVerifyCb* tmp;
+    if(RdKafka::Conf::CONF_OK != m_config->get(tmp))
+      error.info("prarameter: " + get_name(value) + ", is not set." + __FILE_STR__);
+    return tmp;
   }
 
 #if 0

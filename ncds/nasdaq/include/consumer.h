@@ -6,12 +6,13 @@
 #include <functional>
 
 #include <types.h>
-#include <error.h>
 
 struct rd_kafka_s;
 
 namespace kf {
 
+  class error_t;
+  class event_t;
   class config_t;
 
   class consumer_t {
@@ -23,14 +24,13 @@ namespace kf {
     void consume(const strings_t topics, const process_f& process);
   private:
     using auth_ptr = std::shared_ptr<RdKafka::OAuthBearerTokenRefreshCb>;
-    using event_ptr = std::shared_ptr<RdKafka::EventCb>;
+    using event_ptr = std::shared_ptr<event_t>;
     using topic_partition_ptr = std::shared_ptr<RdKafka::TopicPartition>;
     using consumer_ptr = std::shared_ptr<RdKafka::KafkaConsumer>;
   private:
-    static void logger(const struct rd_kafka_s* rk, int level, const char* fac, const char* buf);
-  private:
     config_t m_config;
     const get_property_t& m_get_property;
+    const error_t& m_error;
     auth_ptr m_auth;
     event_ptr m_event;
     std::vector<topic_partition_ptr> m_topic_partitions;

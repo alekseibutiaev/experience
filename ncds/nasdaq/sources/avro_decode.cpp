@@ -14,6 +14,7 @@
 
 #include "types.h"
 #include "tools.h"
+#include "location.h"
 
 #include "avro_decode.h"
 

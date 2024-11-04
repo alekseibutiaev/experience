@@ -9,7 +9,7 @@
         "buildType": "Debug",
         "settings": {
           "AVROCPP_HOME" : "/opt/avro-cpp-1.11.2.17.d",
-          "RDKAFKA_HOME" : "/opt/rdkafka_v2.2.0.17",
+          "RDKAFKA_HOME" : "/opt/librdkafka-2.6.0.dbg"
         }
       },
       "Release_ubuntu_18.04": {
@@ -18,7 +18,7 @@
         "buildType": "Release",
         "settings": {
           "AVROCPP_HOME" : "/opt/avro-cpp-1.11.2.17",
-          "RDKAFKA_HOME" : "/opt/rdkafka_v2.2.0.17",
+          "RDKAFKA_HOME" : "/opt/librdkafka-2.6.0"
         }
       }
     }

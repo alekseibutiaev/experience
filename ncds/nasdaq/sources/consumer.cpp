@@ -14,7 +14,9 @@
 #include <consumer.h>
 
 #include "tools.h"
+#include "error.h"
 #include "oauthbearer.h"
+
 #include "event.h"
 
 namespace {
@@ -46,21 +48,25 @@ namespace {
     int64_t partition_offset = topic_partition->offset();
   }
 
+  void update_logger(kf::config_t& config, kf::event_t* event, const kf::error_t& error) {
+    if(RdKafka::EventCb* current = config.get(static_cast<RdKafka::EventCb*>(0), error))
+      event->set_next(current);
+    config.set(event, error);
+  }
 
 } /* namespace */
 
 namespace kf {
 
-  consumer_t::consumer_t(const config_t& config, const get_property_t& get_property, const error_t& err)
-      : m_config(clone_config(config, err))
+  consumer_t::consumer_t(const config_t& config, const get_property_t& get_property, const error_t& error)
+      : m_config(clone_config(config, error))
       , m_get_property(get_property)
+      , m_error(error)
       , m_auth(std::make_shared<oauthbearer_t>(get_property))
-      , m_event(std::make_shared<event_t>()) {
-    config.print();
-    std::cout << "conf" << std::endl;
-    m_config.set(m_auth.get(), err);
-//    m_config.set(m_event.get(), notify);
-    rd_kafka_conf_set_log_cb(m_config.get_config()->c_ptr_global(), logger);
+      , m_event(std::make_shared<event_t>(error)) {
+
+    update_logger(m_config, m_event.get(), m_error);
+    m_config.set(m_auth.get(), m_error);
     m_config.print();
   }
 
@@ -90,13 +96,6 @@ namespace kf {
         continue;
       process(msg->topic_name(), msg->payload(), msg->len());
     }
-  }
-
-  void consumer_t::logger(const struct rd_kafka_s* rk, int level, const char* fac, const char* buf) {
-    if(level == 7)
-      return;
-    std::cout << "Pounter: 0x" << std::hex << rk << std::dec << " level " << level << " " << fac <<
-      " " << buf << std::endl;
   }
 
 } /* namespace kf */

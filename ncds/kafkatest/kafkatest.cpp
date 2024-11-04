@@ -198,6 +198,16 @@ namespace {
     rebalance_cb_t& m_rbc;
   };
 
+
+  class event_cb_t : public RdKafka::EventCb {
+  public:
+    event_cb_t() = default;
+  private:
+    void event_cb(RdKafka::Event &event) override {
+
+    }
+  };
+
 } /* namespace */
 
 int main(int ac, char* av[]) {
@@ -211,6 +221,7 @@ int main(int ac, char* av[]) {
 
     rebalance_cb_t rdb;
     offset_commit_cb_t occb(rdb);
+    event_cb_t event;
 
     deletate_t d(true);
 
@@ -219,6 +230,8 @@ int main(int ac, char* av[]) {
     cnf.read_config(rj, d);
     cnf.set(&rdb, d);
     cnf.set(&occb, d);
+    cnf.set(&event, d);
+
     kf::consumer_t consumer(cnf, rj, d);
     kf::avro_decode_t decode(d, d/*, j["control_message_schema"]*/);
     consumer.consume(topics, decode);

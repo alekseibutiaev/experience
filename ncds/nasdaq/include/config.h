@@ -21,22 +21,39 @@ namespace kf {
     };
   public:
     config_t(const config_t::type_t& type = e_global);
-    config_t clone(const error_t& err) const;
-    void read_config(const get_property_t& get_property, const error_t& err);
-    void set(RdKafka::DeliveryReportCb* value, const error_t& err);
-    void set(RdKafka::OAuthBearerTokenRefreshCb* value, const error_t& err);
-    void set(RdKafka::EventCb* value, const error_t& err);
-    void set(RdKafka::Conf* value, const error_t& err);
-    void set(RdKafka::PartitionerCb* value, const error_t& err);
-    void set(RdKafka::PartitionerKeyPointerCb* value, const error_t& err);
-    void set(RdKafka::SocketCb* value, const error_t& err);
-    void set(RdKafka::OpenCb* value, const error_t& err);
-    void set(RdKafka::RebalanceCb* value, const error_t& err);
-    void set(RdKafka::OffsetCommitCb* value, const error_t& err);
-    void set(RdKafka::SslCertificateVerifyCb* value, const error_t& err);
+    config_t clone(const error_t& error) const;
+    void read_config(const get_property_t& get_property, const error_t& error);
+
+    void set(const std::string& name, RdKafka::Conf* value, const error_t& error);
+    void set(RdKafka::ConsumeCb* value, const error_t& error);
+
+
+    void set(RdKafka::DeliveryReportCb* value, const error_t& erroror);
+    void set(RdKafka::OAuthBearerTokenRefreshCb* value, const error_t& error);
+    void set(RdKafka::EventCb* value, const error_t& error);
+    void set(RdKafka::PartitionerCb* value, const error_t& error);
+    void set(RdKafka::PartitionerKeyPointerCb* value, const error_t& error);
+    void set(RdKafka::SocketCb* value, const error_t& error);
+    void set(RdKafka::OpenCb* value, const error_t& error);
+    void set(RdKafka::RebalanceCb* value, const error_t& error);
+    void set(RdKafka::OffsetCommitCb* value, const error_t& error);
+    void set(RdKafka::SslCertificateVerifyCb* value, const error_t& error);
+
+    RdKafka::DeliveryReportCb* get(RdKafka::DeliveryReportCb* value, const error_t& error);
+    RdKafka::OAuthBearerTokenRefreshCb* get(RdKafka::OAuthBearerTokenRefreshCb* value, const error_t& error);
+    RdKafka::EventCb* get(RdKafka::EventCb* value, const error_t& error);
+//    RdKafka::Conf* get(RdKafka::Conf* value, const error_t& error);
+    RdKafka::PartitionerCb* get(RdKafka::PartitionerCb* value, const error_t& error);
+    RdKafka::PartitionerKeyPointerCb* get(RdKafka::PartitionerKeyPointerCb* value, const error_t& error);
+    RdKafka::SocketCb* get(RdKafka::SocketCb* value, const error_t& error);
+    RdKafka::OpenCb* get(RdKafka::OpenCb* value, const error_t& error);
+    RdKafka::RebalanceCb* get(RdKafka::RebalanceCb* value, const error_t& error);
+    RdKafka::OffsetCommitCb* get(RdKafka::OffsetCommitCb* value, const error_t& error);
+    RdKafka::SslCertificateVerifyCb* get(RdKafka::SslCertificateVerifyCb* value, const error_t& error);
+    
 /*
     void set(RdKafka::CertificateType cert_type, RdKafka::CertificateEncoding cert_enc,
-      const buffer_t& value, const error_t& err);
+      const buffer_t& value, const error_t& error);
 */
     void get(const std::string&, std::string& value);
     RdKafka::Conf* get_config() const;
