@@ -1,8 +1,10 @@
 
-#include <time.h>
+#include <ctime>
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <chrono>
+#include <iomanip>
 #include <thread>
 #include <stdexcept>
 #include <functional>
@@ -107,38 +109,41 @@ namespace {
     }
 
     void begin_msg(const std::string& stream, const std::string& msg) {
-      if(m_enable) std::cout << "stream: " << stream << ", message: " << msg;
+      if(m_enable) {
+        m_oss = std::move(std::ostringstream());
+        m_oss << time_print() << " stream: " << stream << ", message: " << msg;
+      }
     }
     void end_msg() {
-      if(m_enable) std::cout << std::endl;
+      if(m_enable) std::cout << m_oss.str() << std::endl;
     }
     void data(const std::string& field, const std::string& data) override {
-      if(m_enable) std::cout << ", " << field << ": " << data;
+      if(m_enable) m_oss << ", " << field << ": " << data;
     }
     void data(const std::string& field, const unsigned char& data) override  {
-      if(m_enable) std::cout << ", " << field << ": " << data;
+      if(m_enable) m_oss << ", " << field << ": " << data;
     }
     void data(const std::string& field, const int& data) override  {
-      if(m_enable) std::cout << ", " << field << ": " << data;
+      if(m_enable) m_oss << ", " << field << ": " << data;
     }
     void data(const std::string& field, const long& data) override  {
-      if(m_enable) std::cout << ", " << field << ": ";
-      if("uniqueTimestamp" == field || "trackingID" == field) {
+      if(m_enable) m_oss << ", " << field << ": ";
+      if(("uniqueTimestamp" == field || "trackingID" == field) && m_enable) {
         tracking_id_t val;
         val._long = data;
-        if(m_enable) std::cout << val;
+        m_oss << time_print(static_cast<std::time_t>(val.data.ts / 1000000000));
       }
       else
         /*std::cout << data*/;
     }
     void data(const std::string& field, const float& data) override  {
-      if(m_enable) std::cout << ", " << field << ": " << data;
+      if(m_enable) m_oss << ", " << field << ": " << data;
     }
     void data(const std::string& field, const double& data) override  {
-      if(m_enable) std::cout << ", " << field << ": " << data;
+      if(m_enable) m_oss << ", " << field << ": " << data;
     }
     void data(const std::string& field, const bool& data) override  {
-      if(m_enable) std::cout << " " << field << ": " << data;
+      if(m_enable) m_oss << " " << field << ": " << data;
     }
     const kf::avro_decode_t::delegate_t::fields_t& get_fields(const std::string& stream, const std::string& msg) const {
       static const kf::avro_decode_t::delegate_t::fields_t empty;
@@ -151,20 +156,32 @@ namespace {
       return it2->second;
     }
   private:
+    std::string time_print(const std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now())) const {
+      std::ostringstream oss;
+      std::tm time;
+      localtime_r(&now, &time);
+      if(86400 < now)
+        oss << std::put_time(&time, "%Y-%m-%d %H:%M:%S");
+      else
+        oss << std::put_time(&time, "%H:%M:%S");
+      return oss.str();
+    }
+
     void debug(const std::string& msg) const {
-      std::cout << "DEBUG: " << msg << std::endl;
+      std::cout << time_print() << " DEBUG: " << msg << std::endl;
     }
     void info(const std::string& msg) const  {
-      std::cout << "INFO: " << msg << std::endl;
+      std::cout << time_print() << " INFO: " << msg << std::endl;
     }
     void warning(const std::string& msg) const  {
-      std::cout << "WAGNING: " << msg << std::endl;
+      std::cout << time_print() << " WAGNING: " << msg << std::endl;
     }
     void error(const std::string& msg) const  {
-      std::cout << "ERROR: " << msg << std::endl;
+      std::cout << time_print() << " ERROR: " << msg << std::endl;
     }
   private:
     const bool m_enable;
+    std::ostringstream m_oss;
     stream_msg_t m_stream_msg;
   };
 
