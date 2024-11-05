@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.5)
 project("ncsdexample")
 #set (CMAKE_CXX_STANDARD 17)
 
-set(CXX_FLAGS_COMMON "-std=c++17")
+set(CXX_FLAGS_COMMON "-std=c++17  -Wall -Werror")
 
 set(CXX_FLAGS_DEBUG "-O0 -g3")
 set(CXX_FLAGS_RELEASE "-O3 -g0")

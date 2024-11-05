@@ -46,7 +46,7 @@ namespace kf {
       std::string err;
       if(RdKafka::ErrorCode::ERR_NO_ERROR != handle->oauthbearer_set_token(token,
           ts.time_since_epoch().count(), "infrontasa-annika-norberg", {}, err )) {
-        RdKafka::ErrorCode tok_failure_err = handle->oauthbearer_set_token_failure(err);
+        /*RdKafka::ErrorCode tok_failure_err = */handle->oauthbearer_set_token_failure(err);
       }
     }
     catch(const std::exception& e) {

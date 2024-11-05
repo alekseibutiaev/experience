@@ -42,6 +42,7 @@ namespace {
     long _long;
   };
 
+#if 0
   std::string get_time(const long ntime) {
     static const char* gmt = "GMT";
     static std::time_t midnight = 0;
@@ -67,6 +68,7 @@ namespace {
     os << " ( ctr: " << val.data.ctr << ", ts: " << val.data.ts <<
       " sec: " << sec << " mil: " << mil << " mic: " << mic <<  " )";
   }
+#endif
 
   class deletate_t : public kf::avro_decode_t::delegate_t, public kf::error_t {
   public:
@@ -92,8 +94,11 @@ namespace {
         std::cout << "unsuported message stream: " << stream << " message: " << msg << std::endl;
         return;
       }
+      const std::size_t count = filelds.size();
+      if((m_tmp = "SeqOrderCancelMessage" == msg))
+        std::cout << msg << std::endl;
       begin_msg(stream, msg);
-      for(std::size_t i = 0; i < filelds.size(); ++i)
+      for(std::size_t i = 0; i < count; ++i)
         decoder.get_field(record, i);
       end_msg();
     }
@@ -134,7 +139,7 @@ namespace {
         m_oss << time_print(static_cast<std::time_t>(val.data.ts / 1000000000));
       }
       else
-        /*std::cout << data*/;
+        m_oss << data;
     }
     void data(const std::string& field, const float& data) override  {
       if(m_enable) m_oss << ", " << field << ": " << data;
@@ -183,6 +188,7 @@ namespace {
     const bool m_enable;
     std::ostringstream m_oss;
     stream_msg_t m_stream_msg;
+    bool m_tmp;
   };
 
   class rebalance_cb_t : public RdKafka::RebalanceCb {
@@ -215,16 +221,6 @@ namespace {
     rebalance_cb_t& m_rbc;
   };
 
-
-  class event_cb_t : public RdKafka::EventCb {
-  public:
-    event_cb_t() = default;
-  private:
-    void event_cb(RdKafka::Event &event) override {
-
-    }
-  };
-
 } /* namespace */
 
 int main(int ac, char* av[]) {
@@ -238,7 +234,6 @@ int main(int ac, char* av[]) {
 
     rebalance_cb_t rdb;
     offset_commit_cb_t occb(rdb);
-    event_cb_t event;
 
     deletate_t d(true);
 
@@ -247,7 +242,6 @@ int main(int ac, char* av[]) {
     cnf.read_config(rj, d);
     cnf.set(&rdb, d);
     cnf.set(&occb, d);
-    cnf.set(&event, d);
 
     kf::consumer_t consumer(cnf, rj, d);
     kf::avro_decode_t decode(d, d/*, j["control_message_schema"]*/);

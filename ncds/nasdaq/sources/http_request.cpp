@@ -38,7 +38,7 @@ namespace kf {
     if(!msg.empty())
       curl_easy_setopt(m_curl, CURLOPT_POSTFIELDS, msg.c_str());
     curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, &res.second);
-    const auto r = curl_easy_perform(m_curl);
+    /*const auto r = */curl_easy_perform(m_curl);
     curl_easy_getinfo(m_curl, CURLINFO_RESPONSE_CODE, &res.first);
     return res;
   }

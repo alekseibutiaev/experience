@@ -45,7 +45,7 @@ namespace {
       topic_partition->set_offset(RdKafka::Topic::OFFSET_BEGINNING);
       kafka_consumer->seek(*topic_partition, 10000);
     }
-    int64_t partition_offset = topic_partition->offset();
+    /*int64_t partition_offset = */topic_partition->offset();
   }
 
   void update_logger(kf::config_t& config, kf::event_t* event, const kf::error_t& error) {

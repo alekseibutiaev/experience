@@ -87,7 +87,7 @@ namespace kf {
           m_delegate.data(name, datum.value<double>());
         else if(avro::AVRO_BOOL == type)
           m_delegate.data(name, datum.value<bool>());
-      }
+              }
     private:
       using map_schemas_t = std::map<std::string, avro::ValidSchema>;
       using datum_ptr = std::shared_ptr<avro::GenericDatum>;
