@@ -7,12 +7,12 @@
 
 #include <avro/Decoder.hh>
 #include <avro/ValidSchema.hh>
-#include <avro/GenericDatum.hh>
 #include <avro/Compiler.hh>
 #include <avro/Specific.hh>
 #include <avro/Generic.hh>
 
 #include "types.h"
+#include "record.h"
 #include "tools.h"
 #include "location.h"
 

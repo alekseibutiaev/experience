@@ -2,8 +2,8 @@
 #include <iostream>
 #include <fstream>
 
-#include <avro/GenericDatum.hh>
 
+#include "record.h"
 #include "tools.h"
 
 namespace tools {
