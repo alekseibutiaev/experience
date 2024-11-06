@@ -10,13 +10,8 @@
   "x-auto.offset.reset" : "earliest",
   "fetch.wait.max.ms" : "500",
   "group.id" : "ffineu-tyapkin",
-  "x-group.id" : "ffineu-tyapkin-TOTALVIEW",
-  "x-group.id" : "ffineu-tyapkin-NLSCTA",
-  "x-group.id" : "ffineu-tyapkin-NLSUTP",
   "enable.auto.commit" : "true",
   "eartbeat.interval.ms" : "30000",
-  "x-topic" : "CONTROL",
-  "topic" : "TOTALVIEW",
   "topics" : ["TOTALVIEW.stream", "NFN.stream"],
   "x-topics" : ["BENZINGA.stream", "BXF-COCO.stream", "BXF-TRADE-OUTLINE-CDC.stream", "CHIX-BASIC.stream", "CQT-CTA-A-V2.stream", "CQT-CTA-A-V3.stream",
               "CQT-CTA-B-V2.stream", "CQT-CTA-B-V3.stream", "CQT-DELAYED-CTA-A-V2.stream", "CQT-DELAYED-CTA-A-V3.stream", "CQT-DELAYED-CTA-B-V2.stream",
@@ -59,16 +54,15 @@
               "QBBO-B-CORE-V2.stream", "QBBO-B-PSX.stream", "QBBO-B-PSX-V2.stream", "QBBO-C-BSX.stream", "QBBO-C-BX-V2.stream", "QBBO-C-CORE-DELAYED.stream",
               "QBBO-C-CORE.stream", "QBBO-C-CORE-V2-DELAYED.stream", "QBBO-C-CORE-V2.stream", "QBBO-C-PSX.stream", "QBBO-C-PSX-V2.stream",
               "TOTALVIEW-BSX.stream", "TOTALVIEW-PSX.stream", "TOTALVIEW.stream", "UTPBIN-UF30.stream"],
-  "x-topic" : "NLSCTA",
-  "x-topic" : "NLSUTP",
-  "debug" : "all",
+  "debug" : "topic,metadata,feature",
+  "x-debug" : "generic,broker,topic,metadata,feature,queue,msg,protocol,cgrp,security,fetch,interceptor,plugin,consumer,admin,all",
+  "log_level" : 3,
 
   "old-bootstrap.servers" : "kafka-bootstrap.clouddataservice.nasdaq.com:9094",
   "old-oauth.token.endpoint.uri" : "https://clouddataservice.auth.nasdaq.com/auth/realms/pro-realm/protocol/openid-connect/token",
 
   "new-bootstrap.servers" : "kafka-bootstrap.us-east-2.clouddataservice.nasdaq.com:9094",
   "new-oauth.token.endpoint.uri" : "https://auth.us-east-2.clouddataservice.nasdaq.com/auth/realms/pro-realm/protocol/openid-connect/token",
-
 
   "bootstrap.servers" : "kafka-bootstrap.clouddataservice.nasdaq.com:9094",
   "oauth.token.endpoint.uri" : "https://clouddataservice.auth.nasdaq.com/auth/realms/pro-realm/protocol/openid-connect/token",
@@ -82,5 +76,4 @@
   "timeout" : 30,
   "x-fetch.message.max.bytes" : 2048,
   "batch.num.messages" : 1
-
 }

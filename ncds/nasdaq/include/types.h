@@ -4,6 +4,7 @@
 #include <memory>
 #include <string>
 #include <optional>
+#include <chrono>
 #include <functional>
 
 namespace RdKafka {
@@ -22,6 +23,7 @@ namespace RdKafka {
   class SslCertificateVerifyCb;
   class TopicPartition;
   class KafkaConsumer;
+  class Message;
 
 } /* namespace RdKafka */
 
@@ -34,10 +36,10 @@ namespace avro {
 namespace kf {
 
   using record_ptr = std::shared_ptr<avro::GenericRecord>;
-
-  using string_try_t = std::optional<std::string>;
   using parameters_t = std::map<std::string, std::string>;
-
+  using clock_t = std::chrono::high_resolution_clock;
+  using time_point_t = clock_t::time_point;
+  using string_try_t = std::optional<std::string>;
   using get_property_t = std::function<string_try_t(const std::string&)>;
 
 } /* namespace kf */

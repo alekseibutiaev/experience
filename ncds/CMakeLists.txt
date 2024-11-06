@@ -4,9 +4,15 @@ project("ncsdexample")
 
 set(CXX_FLAGS_COMMON "-std=c++17  -Wall -Werror")
 
+set(CMAKE_THREAD_LIBS_INIT "-lpthread")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pthread")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
+set(CMAKE_HAVE_THREADS_LIBRARY 1)
+set(CMAKE_USE_PTHREADS_INIT 1)
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+
 set(CXX_FLAGS_DEBUG "-O0 -g3")
 set(CXX_FLAGS_RELEASE "-O3 -g0")
-
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CXX_FLAGS_COMMON} ${CXX_FLAGS_DEBUG}")
 set(CMAKE_CXX_FLAGS_RELEASE "${CXX_FLAGS_COMMON} ${CXX_FLAGS_RELEASE}")
@@ -23,6 +29,7 @@ set(NLOCHMANN_MODULE_PATH "/usr/share/cmake-${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR
 message("Modules: " ${NLOCHMANN_MODULE_PATH})
 message("VERSION: " "${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}")
 
+find_package(Threads REQUIRED)
 find_package(CURL REQUIRED)
 find_package(OpenSSL REQUIRED)
 
@@ -37,7 +44,6 @@ find_package(RDKAFKA QUIET)
 find_package(RDKAFKACPP QUIET)
 find_package(JSON-C REQUIRED)
 find_package(nlohmann_json REQUIRED CONFIG PATHS ${NLOCHMANN_MODULE_PATH})
-#find_package(nlohmann_json REQUIRED)
 
 set(JSON-C_INCLUDE_DIRSN ${JSON-C_INCLUDE_DIRS})
 set(JSON-C_LIBRARIESN ${JSON-C_LIBRARIES})

@@ -282,8 +282,15 @@ namespace kf {
   }
 #endif
 
-  void config_t::get(const std::string& name, std::string& value) {
-    if(RdKafka::Conf::CONF_OK != m_config->get(name, value)) {}
+  void config_t::set(const std::string& name, const std::string& value, const error_t& error) {
+    std::string err;
+    if(RdKafka::Conf::CONF_OK != m_config->set(name, value, err))
+      error.error(err + __FILE_STR__);
+  }
+
+  void config_t::get(const std::string& name, std::string& value, const error_t& error) {
+    if(RdKafka::Conf::CONF_OK != m_config->get(name, value))
+      error.error("prarameter: " + name + ", is not set." + __FILE_STR__);
   }
 
   RdKafka::Conf* config_t::get_config() const {

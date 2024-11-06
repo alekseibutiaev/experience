@@ -1,11 +1,12 @@
-
 #include <ctime>
-#include <iostream>
+#include <chrono>
+#include <thread>
+#include <string>
+#include <cstring>
 #include <fstream>
 #include <sstream>
-#include <chrono>
 #include <iomanip>
-#include <thread>
+#include <iostream>
 #include <stdexcept>
 #include <functional>
 
@@ -87,17 +88,15 @@ namespace {
       std::cout << ']' << std::endl;
       m_stream_msg[stream][msg] = fields;
     }
-    void message(const kf::avro_decode_t& decoder, const std::string& stream, const std::string& msg,
-        const kf::record_ptr record) override {
+    void message(const kf::avro_decode_t& decoder, const kf::time_point_t& tp,
+        const std::string& stream, const std::string& msg, const kf::record_ptr record) override {
       const auto& filelds = get_fields(stream, msg);
       if(filelds.empty()) {
         std::cout << "unsuported message stream: " << stream << " message: " << msg << std::endl;
         return;
       }
       const std::size_t count = filelds.size();
-      if((m_tmp = "SeqOrderCancelMessage" == msg))
-        std::cout << msg << std::endl;
-      begin_msg(stream, msg);
+      begin_msg(tp, stream, msg);
       for(std::size_t i = 0; i < count; ++i)
         decoder.get_field(record, i);
       end_msg();
@@ -113,10 +112,10 @@ namespace {
       return read("./schema/" + stream + ".sch");
     }
 
-    void begin_msg(const std::string& stream, const std::string& msg) {
+    void begin_msg(const kf::time_point_t& tp, const std::string& stream, const std::string& msg) {
       if(m_enable) {
         m_oss = std::move(std::ostringstream());
-        m_oss << time_print() << " stream: " << stream << ", message: " << msg;
+        m_oss << time_print() << ", in " << time_print(tp) << ", stream: " << stream << ", message: " << msg;
       }
     }
     void end_msg() {
@@ -136,7 +135,7 @@ namespace {
       if(("uniqueTimestamp" == field || "trackingID" == field) && m_enable) {
         tracking_id_t val;
         val._long = data;
-        m_oss << time_print(static_cast<std::time_t>(val.data.ts / 1000000000));
+        m_oss << time_print(kf::clock_t::time_point(kf::clock_t::duration(val.data.ts)));
       }
       else
         m_oss << data;
@@ -161,17 +160,16 @@ namespace {
       return it2->second;
     }
   private:
-    std::string time_print(const std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now())) const {
+    std::string time_print(const kf::clock_t::time_point now = kf::clock_t::now()) const {
+      static const char* format[] = {"%H:%M:%S", "%Y-%m-%d %H:%M:%S"};
+      const auto frac = (std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()) % std::chrono::seconds(1)).count();
+      const auto _now = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
       std::ostringstream oss;
       std::tm time;
-      localtime_r(&now, &time);
-      if(86400 < now)
-        oss << std::put_time(&time, "%Y-%m-%d %H:%M:%S");
-      else
-        oss << std::put_time(&time, "%H:%M:%S");
+      localtime_r(&_now, &time);
+      oss << std::put_time(&time, format[86400 < _now]) << '.' << frac;
       return oss.str();
     }
-
     void debug(const std::string& msg) const {
       std::cout << time_print() << " DEBUG: " << msg << std::endl;
     }
@@ -245,9 +243,14 @@ int main(int ac, char* av[]) {
 
     kf::consumer_t consumer(cnf, rj, d);
     kf::avro_decode_t decode(d, d/*, j["control_message_schema"]*/);
-    consumer.consume(topics, decode);
-    for(;;)
+    consumer.start(topics, decode);
+    for(std::size_t i = 0; i < 60;
+#if 0
+     ++i
+#endif
+    )
       std::this_thread::sleep_for(std::chrono::seconds(1));
+    consumer.stop();
     return 0;
   }
   catch(const std::exception& e) {

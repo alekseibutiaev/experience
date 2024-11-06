@@ -4,8 +4,6 @@
 
 #include <librdkafka/rdkafkacpp.h>
 
-// #include "error.h"
-
 namespace kf {
 
   class error_t;

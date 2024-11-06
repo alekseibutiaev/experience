@@ -1,11 +1,11 @@
-#include <iostream>
+
+#include <chrono>
 #include <fstream>
 #include <sstream>
 #include <iomanip>
-#include <chrono>
-
-
+#include <iostream>
 #include <stdexcept>
+#include <functional>
 
 #include <librdkafka/rdkafka.h>
 #include <librdkafka/rdkafkacpp.h>
@@ -15,6 +15,7 @@
 
 #include "tools.h"
 #include "error.h"
+#include "location.h"
 #include "oauthbearer.h"
 
 #include "event.h"
@@ -70,8 +71,9 @@ namespace kf {
     m_config.print();
   }
 
-
-  void consumer_t::consume(strings_t topics, const process_f& process) {
+  void consumer_t::start(const strings_t& topics, const process_t& process) {
+    if(m_consumer_tread.joinable())
+      return;
     std::string err;
     m_consumer.reset(RdKafka::KafkaConsumer::create(m_config.get_config(), err));
     std::vector<RdKafka::TopicPartition*> partitions;
@@ -82,7 +84,7 @@ namespace kf {
     m_consumer->assign(partitions);
 
     std::string offset;
-    m_config.get("auto.offset.reset", offset);
+    m_config.get("auto.offset.reset", offset, m_error);
     std::cout << offset << std::endl;
 
     if (offset == "earliest" || offset == "smallest" || offset == "beginning") {
@@ -90,12 +92,65 @@ namespace kf {
         seek_to_midnight_at_past_day(m_consumer.get(), it.get(), 0);
     }
 
-    for(;;) {
-      std::unique_ptr<RdKafka::Message> msg = std::unique_ptr<RdKafka::Message>(m_consumer->consume(10));
-      if(0 >= msg->payload())
-        continue;
-      process(msg->topic_name(), msg->payload(), msg->len());
+    m_start = true;
+    m_consumer_tread = std::thread(&consumer_t::consumer_process, this, std::ref(process));
+  }
+
+  void consumer_t::stop() {
+    if(m_consumer_tread.joinable()) {
+      m_start = false;
+      m_consumer_tread.join();
+      m_consumer->close();
     }
+  }
+
+  void consumer_t::consumer_process(const process_t& process) {
+    try {
+      std::thread queue_tread = std::thread(&consumer_t::queue_process, this);
+      for(;m_start;) {
+        msg_ptr msg(m_consumer->consume(10));
+        if(0 >= msg->payload())
+          continue;
+        queue_element_t el = std::bind(&consumer_t::msg_process, this, std::ref(process), clock_t::now(), msg);
+        std::unique_lock _(m_queue_mutex);
+        m_queue.push(el);
+        m_queue_cv.notify_one();
+        //process(msg->topic_name(), clock_t::now(), msg->payload(), msg->len());
+      }
+      if(queue_tread.joinable()) {
+        m_queue_cv.notify_one();
+        queue_tread.join();
+      }
+    }
+    catch(const std::exception& e) {
+      m_error.error(e.what() + __FILE_STR__);
+    }
+  }
+
+  void consumer_t::queue_process() {
+    try {
+      for(;m_start;) {
+        queue_element_t element;
+        {
+          std::unique_lock _(m_queue_mutex);
+          m_queue_cv.wait(_, [this](){return !m_start || !m_queue.empty();});
+          if(m_start && !m_queue.empty()) {
+            element = m_queue.front();
+            m_queue.pop();
+          }
+        }
+        if(element)
+          element();
+      }
+      return;
+    }
+    catch(const std::exception& e) {
+      m_error.error(e.what() + __FILE_STR__);
+    }
+  }
+
+  void consumer_t::msg_process(const process_t& process, const time_point_t tp, const msg_ptr msg) {
+    process(tp, msg->topic_name(), msg->payload(), msg->len());
   }
 
 } /* namespace kf */

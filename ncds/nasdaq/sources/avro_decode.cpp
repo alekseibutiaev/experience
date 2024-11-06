@@ -57,13 +57,14 @@ namespace kf {
           , m_schema_datum(std::make_shared<datum_ptr::element_type>(m_schema_control)) {
         read_tables(kf::avro_decode_t::control, m_schema_control.root());
       }
-      void operator()(std::string stream, const void* buf, const std::size_t size) const {
+      void operator()(const time_point_t& tp, std::string stream, const void* buf,
+          const std::size_t size) const {
         try {
           stream = stream.substr(0, stream.find(".stream"));
           if(kf::avro_decode_t::control == stream)
             read_control(buf, size);
           else
-            decode_message(stream, get_datum(stream), buf, size);
+            decode_message(tp, stream, get_datum(stream), buf, size);
         }
         catch(const std::exception& e) {
           m_err.error(e.what());
@@ -87,15 +88,15 @@ namespace kf {
           m_delegate.data(name, datum.value<double>());
         else if(avro::AVRO_BOOL == type)
           m_delegate.data(name, datum.value<bool>());
-              }
+      }
     private:
       using map_schemas_t = std::map<std::string, avro::ValidSchema>;
       using datum_ptr = std::shared_ptr<avro::GenericDatum>;
     private:
-      void decode_message(const std::string& stream, datum_ptr datum, const void* buf,
-          const std::size_t size) const {
+      void decode_message(const time_point_t& tp, const std::string& stream, datum_ptr datum,
+          const void* buf, const std::size_t size) const {
         auto record = get_record(datum, buf, size);
-        m_delegate.message(m_owner, stream, record->schema()->name().simpleName(), record);
+        m_delegate.message(m_owner, tp, stream, record->schema()->name().simpleName(), record);
       }
       void read_control(const void* buf, const std::size_t size) const {
         try {
@@ -208,8 +209,8 @@ namespace kf {
       , m_impl(std::make_shared<details::avro_decode_t>(*this, delegate, err, ctrl_schema)) {
   }
 
-  void avro_decode_t::operator()(const std::string& stream, const void* buf, const std::size_t size) const {
-    (*m_impl)(stream, buf, size);
+  void avro_decode_t::operator()(const time_point_t& tp, const std::string& stream, const void* buf, const std::size_t size) const {
+    (*m_impl)(tp, stream, buf, size);
   }
 
   void avro_decode_t::get_field(const record_ptr& record, const std::size_t& idx) const {
