@@ -7,7 +7,7 @@
 
 #include "types.h"
 
-namespace kf {
+namespace nasdaq {
 
   class error_t;
 
@@ -58,14 +58,14 @@ namespace kf {
     void print() const;
   private:
     using strings_t = std::vector<std::string>;
-    using kf_cong_ptr = std::shared_ptr<RdKafka::Conf>;
+    using cong_ptr = std::shared_ptr<RdKafka::Conf>;
   private:
     const config_t::type_t m_type;
-    kf_cong_ptr m_config;
+    cong_ptr m_config;
     const strings_t& m_param;
   private:
     static const strings_t glogal;
     static const strings_t topic;
   };
 
-} /* namespace kf */
+} /* namespace nasdaq */

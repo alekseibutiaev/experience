@@ -4,7 +4,7 @@
 
 #include "event.h"
 
-namespace kf {
+namespace nasdaq {
 
   event_t::event_t(const error_t& error)
       : m_error(error)
@@ -23,5 +23,5 @@ namespace kf {
       m_next->event_cb(event);
   }
 
-} /* namespace kf */
+} /* namespace nasdaq */
 

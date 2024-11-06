@@ -32,7 +32,7 @@ namespace avro {
 
 } /* namespace avro */
 
-namespace kf {
+namespace nasdaq {
 
   using record_ptr = std::shared_ptr<avro::GenericRecord>;
   using parameters_t = std::map<std::string, std::string>;
@@ -41,4 +41,4 @@ namespace kf {
   using string_try_t = std::optional<std::string>;
   using get_property_t = std::function<string_try_t(const std::string&)>;
 
-} /* namespace kf */
+} /* namespace nasdaq */

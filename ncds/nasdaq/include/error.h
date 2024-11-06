@@ -3,7 +3,7 @@
 #include <string>
 
 
-namespace kf {
+namespace nasdaq {
 
   class error_t {
   public:
@@ -14,4 +14,4 @@ namespace kf {
     virtual void error(const std::string& msg) const = 0;
   };
 
-} /* namespace kf */
+} /* namespace nasdaq */

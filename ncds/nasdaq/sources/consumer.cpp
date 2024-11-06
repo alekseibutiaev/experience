@@ -25,8 +25,8 @@
 
 namespace {
 
-  kf::config_t clone_config(const kf::config_t& config, const kf::error_t& notify) {
-    if(kf::config_t::e_global != config.get_type())
+  nasdaq::config_t clone_config(const nasdaq::config_t& config, const nasdaq::error_t& notify) {
+    if(nasdaq::config_t::e_global != config.get_type())
       throw(std::runtime_error("config is not a global"));
     return config.clone(notify);
   }
@@ -52,7 +52,7 @@ namespace {
     /*int64_t partition_offset = */topic_partition->offset();
   }
 
-  void update_logger(kf::config_t& config, kf::event_t* event, const kf::error_t& error) {
+  void update_logger(nasdaq::config_t& config, nasdaq::event_t* event, const nasdaq::error_t& error) {
     if(RdKafka::EventCb* current = config.get(static_cast<RdKafka::EventCb*>(0), error))
       event->set_next(current);
     config.set(event, error);
@@ -60,7 +60,7 @@ namespace {
 
 } /* namespace */
 
-namespace kf {
+namespace nasdaq {
 
   class msg_t : public RdKafka::Message {
   };
@@ -170,4 +170,4 @@ namespace kf {
     process(tp, msg->topic_name(), msg->payload(), msg->len());
   }
 
-} /* namespace kf */
+} /* namespace nasdaq */

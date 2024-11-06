@@ -4,7 +4,7 @@
 
 #include <types.h>
 
-namespace kf {
+namespace nasdaq {
 
   class oauthbearer_t : public RdKafka::OAuthBearerTokenRefreshCb {
   public:
@@ -18,4 +18,4 @@ namespace kf {
     const get_property_t m_get_property;
   };
   
-} /* namespace kf */
+} /* namespace nasdaq */

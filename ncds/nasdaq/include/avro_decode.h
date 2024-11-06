@@ -7,7 +7,7 @@
 #include "types.h"
 #include "error.h"
 
-namespace kf {
+namespace nasdaq {
 
   namespace details {
 
@@ -51,4 +51,4 @@ namespace kf {
     avro_decode_ptr m_impl;
   };
 
-} /* namespace kf */
+} /* namespace nasdaq */

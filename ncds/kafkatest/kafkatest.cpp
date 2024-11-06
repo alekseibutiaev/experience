@@ -27,9 +27,9 @@ namespace {
     read_json_t(const nlohmann::json& json)
       : m_json(json) {
     }
-    kf::string_try_t operator()(const std::string& val) const {
+    nasdaq::string_try_t operator()(const std::string& val) const {
       return  m_json.contains(val) ? m_json[val].is_string() ?
-        kf::string_try_t(m_json[val]) : m_json[val].dump() : kf::string_try_t();
+        nasdaq::string_try_t(m_json[val]) : m_json[val].dump() : nasdaq::string_try_t();
     }
   private:
     const nlohmann::json& m_json;
@@ -71,25 +71,25 @@ namespace {
   }
 #endif
 
-  class deletate_t : public kf::avro_decode_t::delegate_t, public kf::error_t {
+  class deletate_t : public nasdaq::avro_decode_t::delegate_t, public nasdaq::error_t {
   public:
     deletate_t(const bool enable = true)
         : m_enable(enable) {
     }
   private:
-    using msg_fields_t = std::map<std::string, kf::avro_decode_t::delegate_t::fields_t>;
+    using msg_fields_t = std::map<std::string, nasdaq::avro_decode_t::delegate_t::fields_t>;
     using stream_msg_t = std::map<std::string, msg_fields_t>;
   private:
     void table(const std::string& stream, const std::string& msg,
-        const kf::avro_decode_t::delegate_t::fields_t& fields) override {
+        const nasdaq::avro_decode_t::delegate_t::fields_t& fields) override {
       std::cout << "stream: " << stream << ", msg: " << msg << " [";
       for(std::size_t i = 0; i < fields.size(); ++i)
         std::cout << (i == 0 ? "" : ", ") << fields[ i ];
       std::cout << ']' << std::endl;
       m_stream_msg[stream][msg] = fields;
     }
-    void message(const kf::avro_decode_t& decoder, const kf::time_point_t& tp,
-        const std::string& stream, const std::string& msg, const kf::record_ptr record) override {
+    void message(const nasdaq::avro_decode_t& decoder, const nasdaq::time_point_t& tp,
+        const std::string& stream, const std::string& msg, const nasdaq::record_ptr record) override {
       const auto& filelds = get_fields(stream, msg);
       if(filelds.empty()) {
         std::cout << "unsuported message stream: " << stream << " message: " << msg << std::endl;
@@ -112,7 +112,7 @@ namespace {
       return read("./schema/" + stream + ".sch");
     }
 
-    void begin_msg(const kf::time_point_t& tp, const std::string& stream, const std::string& msg) {
+    void begin_msg(const nasdaq::time_point_t& tp, const std::string& stream, const std::string& msg) {
       if(m_enable) {
         m_oss = std::move(std::ostringstream());
         m_oss << time_print() << ", in " << time_print(tp) << ", stream: " << stream << ", message: " << msg;
@@ -135,7 +135,7 @@ namespace {
       if(("uniqueTimestamp" == field || "trackingID" == field) && m_enable) {
         tracking_id_t val;
         val._long = data;
-        m_oss << time_print(kf::clock_t::time_point(kf::clock_t::duration(val.data.ts)));
+        m_oss << time_print(nasdaq::clock_t::time_point(nasdaq::clock_t::duration(val.data.ts)));
       }
       else
         m_oss << data;
@@ -149,8 +149,8 @@ namespace {
     void data(const std::string& field, const bool& data) override  {
       if(m_enable) m_oss << " " << field << ": " << data;
     }
-    const kf::avro_decode_t::delegate_t::fields_t& get_fields(const std::string& stream, const std::string& msg) const {
-      static const kf::avro_decode_t::delegate_t::fields_t empty;
+    const nasdaq::avro_decode_t::delegate_t::fields_t& get_fields(const std::string& stream, const std::string& msg) const {
+      static const nasdaq::avro_decode_t::delegate_t::fields_t empty;
       auto it1 = m_stream_msg.find(stream);
       if(it1 == m_stream_msg.end())
         return empty;
@@ -160,7 +160,7 @@ namespace {
       return it2->second;
     }
   private:
-    std::string time_print(const kf::clock_t::time_point now = kf::clock_t::now()) const {
+    std::string time_print(const nasdaq::clock_t::time_point now = nasdaq::clock_t::now()) const {
       static const char* format[] = {"%H:%M:%S", "%Y-%m-%d %H:%M:%S"};
       const auto frac = (std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()) % std::chrono::seconds(1)).count();
       const auto _now = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
@@ -228,7 +228,7 @@ int main(int ac, char* av[]) {
     std::ifstream ifs("config.json");
     nlohmann::json j = nlohmann::json::parse(ifs);
     std::cout << j << std::endl;
-    std::vector<std::string> topics = {kf::avro_decode_t::control};
+    std::vector<std::string> topics = {nasdaq::avro_decode_t::control};
     topics.insert(topics.end(), j["topics"].begin(), j["topics"].end());
 
     rebalance_cb_t rdb;
@@ -236,13 +236,13 @@ int main(int ac, char* av[]) {
     deletate_t d(true);
 
     read_json_t rj(j);
-    kf::config_t cnf;
+    nasdaq::config_t cnf;
     cnf.read_config(rj, d);
     cnf.set(&rdb, d);
     cnf.set(&occb, d);
 
-    kf::consumer_t consumer(cnf, rj, d);
-    kf::avro_decode_t decode(d, d/*, j["control_message_schema"]*/);
+    nasdaq::consumer_t consumer(cnf, rj, d);
+    nasdaq::avro_decode_t decode(d, d/*, j["control_message_schema"]*/);
     consumer.start(topics, decode);
     for(std::size_t i = 0; i < 60;
 #if 0

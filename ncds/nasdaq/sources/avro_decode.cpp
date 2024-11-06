@@ -27,27 +27,27 @@ namespace avro {
 
 namespace {
 
-  kf::avro_decode_t::delegate_t::fields_t get_fields(const avro::NodePtr& node) {
+  nasdaq::avro_decode_t::delegate_t::fields_t get_fields(const avro::NodePtr& node) {
     try {
-      kf::avro_decode_t::delegate_t::fields_t res;
+      nasdaq::avro_decode_t::delegate_t::fields_t res;
       for(std::size_t i = 0; i < node->names(); ++i)
         res.push_back(node->nameAt(i));
       return res;
     }
     catch(...) {
-      return kf::avro_decode_t::delegate_t::fields_t();
+      return nasdaq::avro_decode_t::delegate_t::fields_t();
     }
   }
 
 } /* namespace */
 
-namespace kf {
+namespace nasdaq {
 
   namespace details {
 
     class avro_decode_t {
     public:
-      avro_decode_t(const kf::avro_decode_t& owner, kf::avro_decode_t::delegate_t& delegate,
+      avro_decode_t(const nasdaq::avro_decode_t& owner, nasdaq::avro_decode_t::delegate_t& delegate,
         const error_t& err, const std::string& ctrl_schema)
           : m_owner(owner)
           , m_delegate(delegate)
@@ -55,13 +55,13 @@ namespace kf {
           , m_decoder(avro::binaryDecoder())
           , m_schema_control(load_schema(ctrl_schema))
           , m_schema_datum(std::make_shared<datum_ptr::element_type>(m_schema_control)) {
-        read_tables(kf::avro_decode_t::control, m_schema_control.root());
+        read_tables(nasdaq::avro_decode_t::control, m_schema_control.root());
       }
       void operator()(const time_point_t& tp, std::string stream, const void* buf,
           const std::size_t size) const {
         try {
           stream = stream.substr(0, stream.find(".stream"));
-          if(kf::avro_decode_t::control == stream)
+          if(nasdaq::avro_decode_t::control == stream)
             read_control(buf, size);
           else
             decode_message(tp, stream, get_datum(stream), buf, size);
@@ -70,7 +70,7 @@ namespace kf {
           m_err.error(e.what());
         }
       }
-      void get_field(const kf::record_ptr& record, const std::size_t& idx) const {
+      void get_field(const nasdaq::record_ptr& record, const std::size_t& idx) const {
         const auto& name = record->schema()->nameAt(idx);
         auto datum = record->fieldAt(idx);
         const auto type = datum.type();
@@ -177,8 +177,8 @@ namespace kf {
     private:
       static const std::string control_message_schema;
     private:
-      const kf::avro_decode_t& m_owner;
-      kf::avro_decode_t::delegate_t& m_delegate;
+      const nasdaq::avro_decode_t& m_owner;
+      nasdaq::avro_decode_t::delegate_t& m_delegate;
       const error_t& m_err;
       avro::DecoderPtr m_decoder;
       const avro::ValidSchema m_schema_control;
@@ -238,4 +238,4 @@ namespace kf {
 #endif
   }
 
-} /* namespace kf */
+} /* namespace nasdaq */

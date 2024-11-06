@@ -5,7 +5,7 @@
 
 #include <curl/curl.h>
 
-namespace kf {
+namespace nasdaq {
 
   class http_request_t {
   public:

@@ -7,7 +7,7 @@
 
 #include "types.h"
 
-namespace kf {
+namespace nasdaq {
 
   class msg_t;
   class error_t;
@@ -45,4 +45,4 @@ namespace kf {
     std::thread m_consumer_tread;
   };
 
-} /* namespace kf */
+} /* namespace nasdaq */

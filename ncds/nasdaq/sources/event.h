@@ -4,7 +4,7 @@
 
 #include <librdkafka/rdkafkacpp.h>
 
-namespace kf {
+namespace nasdaq {
 
   class error_t;
 
@@ -21,4 +21,4 @@ namespace kf {
     RdKafka::EventCb* m_next;
   };
 
-} /* namespace kf */
+} /* namespace nasdaq */

@@ -1,6 +1,6 @@
 #include "http_request.h"
 
-namespace kf {
+namespace nasdaq {
 
   http_request_t::curl_init_t::curl_init_t() {
     curl_global_init(CURL_GLOBAL_ALL);
@@ -60,4 +60,4 @@ namespace kf {
     return n;
   }
 
-} /* namespace kf */
+} /* namespace nasdaq */
