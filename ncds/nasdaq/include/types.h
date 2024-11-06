@@ -1,10 +1,10 @@
 #pragma once
 
 #include <map>
+#include <chrono>
 #include <memory>
 #include <string>
 #include <optional>
-#include <chrono>
 #include <functional>
 
 namespace RdKafka {
@@ -23,7 +23,6 @@ namespace RdKafka {
   class SslCertificateVerifyCb;
   class TopicPartition;
   class KafkaConsumer;
-  class Message;
 
 } /* namespace RdKafka */
 

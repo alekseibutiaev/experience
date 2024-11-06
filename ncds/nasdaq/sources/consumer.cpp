@@ -1,4 +1,5 @@
 
+#include <mutex>
 #include <chrono>
 #include <fstream>
 #include <sstream>
@@ -6,19 +7,21 @@
 #include <iostream>
 #include <stdexcept>
 #include <functional>
+#include <condition_variable>
 
 #include <librdkafka/rdkafka.h>
 #include <librdkafka/rdkafkacpp.h>
 
-#include <config.h>
-#include <consumer.h>
-
+#include "config.h"
 #include "tools.h"
 #include "error.h"
+#include "event.h"
 #include "location.h"
 #include "oauthbearer.h"
+#include "cache_queue.hpp"
 
-#include "event.h"
+#include "consumer.h"
+
 
 namespace {
 
@@ -59,12 +62,26 @@ namespace {
 
 namespace kf {
 
+  class msg_t : public RdKafka::Message {
+  };
+
+  class queue_control_t {
+  public:
+    using queue_element_t = std::function<void()>;
+    using queue_t = tools::cache_queue_t<queue_element_t>;
+  public:
+    queue_t m_queue;
+    std::mutex m_mutex;
+    std::condition_variable m_cv;    
+  };
+
   consumer_t::consumer_t(const config_t& config, const get_property_t& get_property, const error_t& error)
       : m_config(clone_config(config, error))
       , m_get_property(get_property)
       , m_error(error)
       , m_auth(std::make_shared<oauthbearer_t>(get_property))
-      , m_event(std::make_shared<event_t>(error)) {
+      , m_event(std::make_shared<event_t>(error))
+      , m_start(false) {
 
     update_logger(m_config, m_event.get(), m_error);
     m_config.set(m_auth.get(), m_error);
@@ -106,20 +123,21 @@ namespace kf {
 
   void consumer_t::consumer_process(const process_t& process) {
     try {
-      std::thread queue_tread = std::thread(&consumer_t::queue_process, this);
+      queue_control_t qc;
+      std::thread tread = std::thread(&consumer_t::queue_process, this, std::ref(qc));
       for(;m_start;) {
-        msg_ptr msg(m_consumer->consume(10));
+        msg_ptr msg(static_cast<msg_t*>(m_consumer->consume(10)));
         if(0 >= msg->payload())
           continue;
-        queue_element_t el = std::bind(&consumer_t::msg_process, this, std::ref(process), clock_t::now(), msg);
-        std::unique_lock _(m_queue_mutex);
-        m_queue.push(el);
-        m_queue_cv.notify_one();
-        //process(msg->topic_name(), clock_t::now(), msg->payload(), msg->len());
+        queue_control_t::queue_element_t el = std::bind(&consumer_t::msg_process, this,
+          std::ref(process), clock_t::now(), msg);
+        std::unique_lock _(qc.m_mutex);
+        qc.m_queue.push(el);
+        qc.m_cv.notify_one();
       }
-      if(queue_tread.joinable()) {
-        m_queue_cv.notify_one();
-        queue_tread.join();
+      if(tread.joinable()) {
+        qc.m_cv.notify_one();
+        tread.join();
       }
     }
     catch(const std::exception& e) {
@@ -127,22 +145,21 @@ namespace kf {
     }
   }
 
-  void consumer_t::queue_process() {
+  void consumer_t::queue_process(queue_control_t& value) {
     try {
       for(;m_start;) {
-        queue_element_t element;
+        queue_control_t::queue_element_t element;
         {
-          std::unique_lock _(m_queue_mutex);
-          m_queue_cv.wait(_, [this](){return !m_start || !m_queue.empty();});
-          if(m_start && !m_queue.empty()) {
-            element = m_queue.front();
-            m_queue.pop();
+          std::unique_lock _(value.m_mutex);
+          value.m_cv.wait(_, [this, &value](){return !m_start || !value.m_queue.empty();});
+          if(m_start && !value.m_queue.empty()) {
+            element = value.m_queue.front();
+            value.m_queue.pop();
           }
         }
         if(element)
           element();
       }
-      return;
     }
     catch(const std::exception& e) {
       m_error.error(e.what() + __FILE_STR__);

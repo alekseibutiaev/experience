@@ -222,6 +222,7 @@ namespace {
 } /* namespace */
 
 int main(int ac, char* av[]) {
+  int res = 0;
   try {
     std::cout << "test" << std::endl;
     std::ifstream ifs("config.json");
@@ -232,7 +233,6 @@ int main(int ac, char* av[]) {
 
     rebalance_cb_t rdb;
     offset_commit_cb_t occb(rdb);
-
     deletate_t d(true);
 
     read_json_t rj(j);
@@ -246,15 +246,17 @@ int main(int ac, char* av[]) {
     consumer.start(topics, decode);
     for(std::size_t i = 0; i < 60;
 #if 0
-     ++i
+      ++i
 #endif
     )
       std::this_thread::sleep_for(std::chrono::seconds(1));
     consumer.stop();
-    return 0;
   }
   catch(const std::exception& e) {
     std::cout << "Error: " << e.what() << std::endl;
+    res = 1;
   }
-  return 0;
+
+  std::cout << "leave programm!! result: " << res << std::endl;
+  return res;
 }
