@@ -62,9 +62,6 @@ namespace {
 
 namespace nasdaq {
 
-  class msg_t : public RdKafka::Message {
-  };
-
   class queue_control_t {
   public:
     using queue_element_t = std::function<void()>;
@@ -82,7 +79,6 @@ namespace nasdaq {
       , m_auth(std::make_shared<oauthbearer_t>(get_property))
       , m_event(std::make_shared<event_t>(error))
       , m_start(false) {
-
     update_logger(m_config, m_event.get(), m_error);
     m_config.set(m_auth.get(), m_error);
     m_config.print();
@@ -104,10 +100,9 @@ namespace nasdaq {
     m_config.get("auto.offset.reset", offset, m_error);
     std::cout << offset << std::endl;
 
-    if (offset == "earliest" || offset == "smallest" || offset == "beginning") {
+    if (offset == "earliest" || offset == "smallest" || offset == "beginning")
       for(auto& it : m_topic_partitions)
         seek_to_midnight_at_past_day(m_consumer.get(), it.get(), 0);
-    }
 
     m_start = true;
     m_consumer_tread = std::thread(&consumer_t::consumer_process, this, std::ref(process));
@@ -126,7 +121,7 @@ namespace nasdaq {
       queue_control_t qc;
       std::thread tread = std::thread(&consumer_t::queue_process, this, std::ref(qc));
       for(;m_start;) {
-        msg_ptr msg(static_cast<msg_t*>(m_consumer->consume(10)));
+        msg_ptr msg(m_consumer->consume(1000));
         if(0 >= msg->payload())
           continue;
         queue_control_t::queue_element_t el = std::bind(&consumer_t::msg_process, this,

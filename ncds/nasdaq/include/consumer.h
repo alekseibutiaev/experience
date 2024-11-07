@@ -9,7 +9,6 @@
 
 namespace nasdaq {
 
-  class msg_t;
   class error_t;
   class event_t;
   class config_t;
@@ -28,7 +27,7 @@ namespace nasdaq {
     using topic_partition_ptr = std::shared_ptr<RdKafka::TopicPartition>;
     using consumer_ptr = std::shared_ptr<RdKafka::KafkaConsumer>;
     using event_ptr = std::shared_ptr<event_t>;
-    using msg_ptr = std::shared_ptr<msg_t>;
+    using msg_ptr = std::shared_ptr<RdKafka::Message>;
   private:
     void consumer_process(const process_t& process);
     void queue_process(queue_control_t& value);

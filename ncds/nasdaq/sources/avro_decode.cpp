@@ -6,13 +6,13 @@
 #include <stdexcept>
 
 #include <avro/Decoder.hh>
-#include <avro/ValidSchema.hh>
+#include <avro/Generic.hh>
 #include <avro/Compiler.hh>
 #include <avro/Specific.hh>
-#include <avro/Generic.hh>
+#include <avro/ValidSchema.hh>
+#include <avro/GenericDatum.hh>
 
 #include "types.h"
-#include "record.h"
 #include "tools.h"
 #include "location.h"
 
@@ -118,8 +118,7 @@ namespace nasdaq {
         auto in = avro::memoryInputStream(reinterpret_cast<const uint8_t*>(buf), size);
         m_decoder->init(*in);
         avro::decode(*m_decoder, *datum);
-        return std::static_pointer_cast<record_ptr::element_type>(
-          std::make_shared<avro::GenericRecord>(datum->value<avro::GenericRecord>()));
+        return std::make_shared<avro::GenericRecord>(datum->value<avro::GenericRecord>());
       }
 
       avro_decode_t::datum_ptr get_datum(const std::string& stream) const {

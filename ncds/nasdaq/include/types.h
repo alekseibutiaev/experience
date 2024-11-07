@@ -21,16 +21,22 @@ namespace RdKafka {
   class RebalanceCb;
   class OffsetCommitCb;
   class SslCertificateVerifyCb;
+
   class TopicPartition;
   class KafkaConsumer;
+  class Message;
 
 } /* namespace RdKafka */
 
+namespace avro {
+
+  class GenericRecord;
+
+} /* namespace avro */
+
 namespace nasdaq {
 
-  class record_t;
-
-  using record_ptr = std::shared_ptr<record_t>;
+  using record_ptr = std::shared_ptr<avro::GenericRecord>;
   using parameters_t = std::map<std::string, std::string>;
   using clock_t = std::chrono::high_resolution_clock;
   using time_point_t = clock_t::time_point;
