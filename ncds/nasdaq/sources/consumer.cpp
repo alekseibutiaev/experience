@@ -125,7 +125,7 @@ namespace nasdaq {
       std::thread tread = std::thread(&consumer_t::queue_process, this, std::ref(qc));
       for(;m_start;) {
         msg_ptr msg(m_consumer->consume(1000));
-        if(0 >= msg->payload())
+        if(!msg->payload())
           continue;
         queue_control_t::queue_element_t el = std::bind(&consumer_t::msg_process, this,
           std::ref(process), clock_t::now(), msg);
