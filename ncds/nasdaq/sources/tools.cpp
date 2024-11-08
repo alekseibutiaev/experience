@@ -20,7 +20,7 @@ namespace tools {
   }
 
   void printcfg(const std::list<std::string>& value, std::ostream& os) {
-    int idx = 0;
+    std::size_t idx = 0;
     for(const auto& it : value)
       os << it << (idx++ % 2 == 0 ?  '=' : '\n');
   }

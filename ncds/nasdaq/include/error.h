@@ -2,7 +2,6 @@
 
 #include <string>
 
-
 namespace nasdaq {
 
   class error_t {

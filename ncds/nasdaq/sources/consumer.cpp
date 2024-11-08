@@ -88,24 +88,27 @@ namespace nasdaq {
     if(m_consumer_tread.joinable())
       return;
     std::string err;
-    m_consumer.reset(RdKafka::KafkaConsumer::create(m_config.get_config(), err));
-    std::vector<RdKafka::TopicPartition*> partitions;
-    for(const auto& it : topics) {
-      partitions.push_back(RdKafka::TopicPartition::create(it, 0, RdKafka::Topic::OFFSET_END));
-      m_topic_partitions.push_back(topic_partition_ptr(partitions.back()));
+    if(m_consumer = consumer_ptr(RdKafka::KafkaConsumer::create(m_config.get_config(), err))) {
+      std::vector<RdKafka::TopicPartition*> partitions;
+      for(const auto& it : topics) {
+        partitions.push_back(RdKafka::TopicPartition::create(it, 0, RdKafka::Topic::OFFSET_END));
+        m_topic_partitions.push_back(topic_partition_ptr(partitions.back()));
+      }
+      m_consumer->assign(partitions);
+
+      std::string offset;
+      m_config.get("auto.offset.reset", offset, m_error);
+      std::cout << offset << std::endl;
+
+      if (offset == "earliest" || offset == "smallest" || offset == "beginning")
+        for(auto& it : m_topic_partitions)
+          seek_to_midnight_at_past_day(m_consumer.get(), it.get(), 0);
+
+      m_start = true;
+      m_consumer_tread = std::thread(&consumer_t::consumer_process, this, std::ref(process));
     }
-    m_consumer->assign(partitions);
-
-    std::string offset;
-    m_config.get("auto.offset.reset", offset, m_error);
-    std::cout << offset << std::endl;
-
-    if (offset == "earliest" || offset == "smallest" || offset == "beginning")
-      for(auto& it : m_topic_partitions)
-        seek_to_midnight_at_past_day(m_consumer.get(), it.get(), 0);
-
-    m_start = true;
-    m_consumer_tread = std::thread(&consumer_t::consumer_process, this, std::ref(process));
+    else
+      m_error.error(err + __FILE_STR__);
   }
 
   void consumer_t::stop() {
