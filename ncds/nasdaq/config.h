@@ -21,6 +21,7 @@ namespace nasdaq {
     };
   public:
     config_t(const config_t::type_t& type = e_global);
+    config_t(const get_property_t& get_property, const error_t& error, const config_t::type_t& type = e_global);
     config_t clone(const error_t& error) const;
     void read_config(const get_property_t& get_property, const error_t& error);
 

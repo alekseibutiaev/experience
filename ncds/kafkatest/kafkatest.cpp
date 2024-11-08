@@ -43,34 +43,6 @@ namespace {
     long _long;
   };
 
-#if 0
-  std::string get_time(const long ntime) {
-    static const char* gmt = "GMT";
-    static std::time_t midnight = 0;
-    if(!midnight) {
-      struct tm time;
-      std::time_t t = std::time(0);
-      localtime_r(&t, &time);
-      time.tm_sec = time.tm_min = time.tm_hour = time.tm_gmtoff = 0;
-      time.tm_zone = gmt;
-      midnight = mktime(&time);
-      std::time_t t1 = t - t % 86400;
-
-      return std::string();
-    }
-    return std::string();
-  }
-
-  std::ostream& operator<< (std::ostream& os, const tracking_id_t val) {
-    // (ctr: 0, ts: 59996231542528 sec: 59996 mil: 59996231 mic: 59996231542)
-    auto mic = val.data.ts / 1000;
-    auto mil = mic / 1000;
-    auto sec = mil / 1000;
-    os << " ( ctr: " << val.data.ctr << ", ts: " << val.data.ts <<
-      " sec: " << sec << " mil: " << mil << " mic: " << mic <<  " )";
-  }
-#endif
-
   class deletate_t : public nasdaq::avro_decode_t::delegate_t, public nasdaq::error_t {
   public:
     deletate_t(const bool enable = true)
@@ -236,7 +208,7 @@ int main(int ac, char* av[]) {
     deletate_t d(true);
 
     read_json_t rj(j);
-    nasdaq::config_t cnf;
+    nasdaq::config_t cnf(rj, d);
     cnf.read_config(rj, d);
     cnf.set(&rdb, d);
     cnf.set(&occb, d);

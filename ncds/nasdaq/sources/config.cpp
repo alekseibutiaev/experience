@@ -118,6 +118,12 @@ namespace nasdaq {
       , m_param(type == e_global ? glogal : topic) {
   }
 
+  config_t::config_t(const get_property_t& get_property, const error_t& error,
+        const config_t::type_t& type)
+      : config_t(type) {
+    read_config(get_property, error);
+  }
+
   config_t config_t::clone(const error_t& error) const {
     std::string err;
     std::string tmp;
