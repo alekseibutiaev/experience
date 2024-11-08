@@ -1,4 +1,4 @@
-file(GLOB HEADER_FILES "include/*.h *.hpp")
+file(GLOB HEADER_FILES "./*.h *.hpp")
 file(GLOB SOURCE_FILES "sources/*.cpp")
 
 project(nasdaq)
