@@ -73,22 +73,22 @@ namespace nasdaq {
   };
 
   consumer_t::consumer_t(const config_t& config, const get_property_t& get_property, const error_t& error)
-      : m_config(clone_config(config, error))
+      : m_config(std::make_shared<config_prt::element_type>(clone_config(config, error)))
       , m_get_property(get_property)
       , m_error(error)
       , m_auth(std::make_shared<oauthbearer_t>(get_property))
       , m_event(std::make_shared<event_t>(error))
       , m_start(false) {
-    update_logger(m_config, m_event.get(), m_error);
-    m_config.set(m_auth.get(), m_error);
-    m_config.print();
+    update_logger(*m_config, m_event.get(), m_error);
+    m_config->set(m_auth.get(), m_error);
+    m_config->print();
   }
 
   void consumer_t::start(const strings_t& topics, const process_t& process) {
     if(m_consumer_tread.joinable())
       return;
     std::string err;
-    if(m_consumer = consumer_ptr(RdKafka::KafkaConsumer::create(m_config.get_config(), err))) {
+    if(m_consumer = consumer_ptr(RdKafka::KafkaConsumer::create(m_config->get_config(), err))) {
       std::vector<RdKafka::TopicPartition*> partitions;
       for(const auto& it : topics) {
         partitions.push_back(RdKafka::TopicPartition::create(it, 0, RdKafka::Topic::OFFSET_END));
@@ -97,7 +97,7 @@ namespace nasdaq {
       m_consumer->assign(partitions);
 
       std::string offset;
-      m_config.get("auto.offset.reset", offset, m_error);
+      m_config->get("auto.offset.reset", offset, m_error);
       std::cout << offset << std::endl;
 
       if (offset == "earliest" || offset == "smallest" || offset == "beginning")
