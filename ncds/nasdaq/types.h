@@ -21,6 +21,7 @@ namespace RdKafka {
   class RebalanceCb;
   class OffsetCommitCb;
   class SslCertificateVerifyCb;
+  class ConsumeCb;
 
   class TopicPartition;
   class KafkaConsumer;
