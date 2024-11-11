@@ -1,7 +1,13 @@
+#include <stdio.h>
+
+#include <cctype>
+#include <cstring>
+
 #include <tuple>
 #include <iostream>
 #include <utility>
 
+#include <librdkafka/rdkafka.h>
 #include <librdkafka/rdkafkacpp.h>
 
 #include "error.h"
@@ -67,55 +73,11 @@ namespace {
 
 namespace nasdaq {
 
-  const config_t::strings_t config_t::glogal = {
-    "builtin.features", "client.id", "metadata.broker.list", "bootstrap.servers", "message.max.bytes",
-    "message.copy.max.bytes", "receive.message.max.bytes", "max.in.flight.requests.per.connection",
-    "max.in.flight", "metadata.request.timeout.ms", "topic.metadata.refresh.interval.ms",
-    "metadata.max.age.ms", "topic.metadata.refresh.fast.interval.ms", "topic.metadata.refresh.fast.cnt",
-    "topic.metadata.refresh.sparse", "topic.blacklist", "debug", "socket.timeout.ms",
-    "socket.blocking.max.ms", "socket.send.buffer.bytes", "socket.receive.buffer.bytes",
-    "socket.keepalive.enable", "socket.nagle.disable", "socket.max.fails", "broker.address.ttl",
-    "broker.address.family", "reconnect.backoff.jitter.ms", "statistics.interval.ms",
-    "enabled_events", "log_level", "log.queue", "log.thread.name", "log.connection.close",
-    "opaque", "default_topic_conf", "internal.termination.signal", "api.version.request",
-    "api.version.request.timeout.ms", "api.version.fallback.ms", "broker.version.fallback",
-    "security.protocol", "ssl.cipher.suites", "ssl.curves.list", "ssl.sigalgs.list",
-    "ssl.key.location", "ssl.key.password", "ssl.certificate.location", "ssl.ca.location",
-    "ssl.crl.location", "ssl.keystore.location", "ssl.keystore.password", "sasl.mechanisms",
-    "sasl.mechanism", "sasl.kerberos.service.name", "sasl.kerberos.principal",
-    "sasl.kerberos.kinit.cmd", "sasl.kerberos.keytab", "sasl.kerberos.min.time.before.relogin",
-    "sasl.username", "sasl.password", "plugin.library.paths", "group.id", "partition.assignment.strategy",
-    "session.timeout.ms", "heartbeat.interval.ms", "group.protocol.type", "coordinator.query.interval.ms",
-    "enable.auto.commit", "auto.commit.interval.ms", "enable.auto.offset.store", "queued.min.messages",
-    "queued.max.messages.kbytes", "fetch.wait.max.ms", "fetch.message.max.bytes", "max.partition.fetch.bytes",
-    "fetch.max.bytes", "fetch.min.bytes", "fetch.error.backoff.ms", "offset.store.method",
-    "enable.partition.eof", "check.crcs", "queue.buffering.max.messages", "queue.buffering.max.kbytes",
-    "queue.buffering.max.ms", "linger.ms", "message.send.max.retries", "retries", "retry.backoff.ms",
-    "queue.buffering.backpressure.threshold", "compression.codec", "compression.type", "batch.num.messages",
-    "delivery.report.only.error", "ssl.endpoint.identification.algorithm", "ssl.providers",
-
-
-//******************
-
-    "request.required.acks", "acks", "request.timeout.ms", "message.timeout.ms", "queuing.strategy",
-    "produce.offset.report", "partitioner", "partitioner_cb", "msg_order_cmp", "opaque",
-    "compression.codec", "compression.type", "compression.level", "auto.commit.enable",
-    "enable.auto.commit", "auto.commit.interval.ms", "auto.offset.reset", "offset.store.path",
-    "offset.store.sync.interval.ms", "offset.store.method", "consume.callback.max.messages"
-  };
-
-  const config_t::strings_t config_t::topic = {
-    "request.required.acks", "acks", "request.timeout.ms", "message.timeout.ms", "queuing.strategy",
-    "produce.offset.report", "partitioner", "partitioner_cb", "msg_order_cmp", "opaque",
-    "compression.codec", "compression.type", "compression.level", "auto.commit.enable",
-    "enable.auto.commit", "auto.commit.interval.ms", "auto.offset.reset", "offset.store.path",
-    "offset.store.sync.interval.ms", "offset.store.method", "consume.callback.max.messages"
-  };
+  const config_t::strings_t config_t::param = config_t::available_parameters();
 
   config_t::config_t(const config_t::type_t& type)
       : m_type(type)
-      , m_config(RdKafka::Conf::create(get_rdkafka_config_type(m_type)))
-      , m_param(type == e_global ? glogal : topic) {
+      , m_config(RdKafka::Conf::create(get_rdkafka_config_type(m_type))) {
   }
 
   config_t::config_t(const get_property_t& get_property, const error_t& error,
@@ -128,7 +90,7 @@ namespace nasdaq {
     std::string err;
     std::string tmp;
     config_t res(m_type);
-    for(const std::string& it : m_param)
+    for(const std::string& it : param)
       if(RdKafka::Conf::CONF_OK == m_config->get(it, tmp))
         res.m_config->set(it, tmp, err);
       else
@@ -139,7 +101,7 @@ namespace nasdaq {
 
   void config_t::read_config(const get_property_t& get_property, const error_t& error) {
     std::string err;
-    for(const auto& it : m_param)
+    for(const auto& it : param)
       if(const auto& tmp = get_property(it))
         if(RdKafka::Conf::CONF_OK != m_config->set(it, *tmp, err))
           error.error(err);
@@ -279,15 +241,6 @@ namespace nasdaq {
     return tmp;
   }
 
-#if 0
-  void config_t::set(RdKafka::CertificateType cert_type, RdKafka::CertificateEncoding cert_enc,
-      const config_t::buffer_t& value, const error_t& error) {
-    std::string err;
-    if(RdKafka::Conf::CONF_OK != m_config->set_ssl_cert(cert_type, cert_enc, value.data(), value.size(), err));
-      error.error(err);
-  }
-#endif
-
   void config_t::set(const std::string& name, const std::string& value, const error_t& error) {
     std::string err;
     if(RdKafka::Conf::CONF_OK != m_config->set(name, value, err))
@@ -311,6 +264,23 @@ namespace nasdaq {
     int idx = 0;
     for(const auto& it : *m_config->dump())
       std::cout << it << (idx++ % 2 == 0 ?  '=' : '\n');
+  }
+
+  config_t::strings_t config_t::available_parameters() {
+    config_t::strings_t res;
+    char* buf;
+    size_t len;
+    if(auto stream = open_memstream(&buf, &len)) {
+      rd_kafka_conf_properties_show(stream);
+      fflush (stream);
+      char* tmp = 0;
+      while(0 < getline(&tmp, &len, stream))
+        if(0 != std::islower(*tmp))
+          res.push_back(std::string(tmp, std::strchr(tmp, ' ')));
+      fclose(stream);
+      free(buf);
+    }
+    return res;
   }
 
 } /* namespace nasdaq */

@@ -61,12 +61,12 @@ namespace nasdaq {
     using strings_t = std::vector<std::string>;
     using cong_ptr = std::shared_ptr<RdKafka::Conf>;
   private:
+    static config_t::strings_t available_parameters();
+  private:
     const config_t::type_t m_type;
     cong_ptr m_config;
-    const strings_t& m_param;
   private:
-    static const strings_t glogal;
-    static const strings_t topic;
+    static const strings_t param;
   };
 
 } /* namespace nasdaq */
