@@ -133,13 +133,14 @@ namespace {
     }
   private:
     std::string time_print(const nasdaq::clock_t::time_point now = nasdaq::clock_t::now()) const {
-      static const char* format[] = {"%H:%M:%S", "%Y-%m-%d %H:%M:%S"};
+      static const char* format[] = {"%H:%M:%S", "%Y%m%d %H:%M:%S"};
       const auto frac = (std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()) % std::chrono::seconds(1)).count();
       const auto _now = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
       std::ostringstream oss;
       std::tm time;
       localtime_r(&_now, &time);
-      oss << std::put_time(&time, format[86400 < _now]) << '.' << frac;
+      oss << std::put_time(&time, format[86400 < _now]) << '.'<< std::left <<
+        std::setw(6) << std::setfill('0') << frac;
       return oss.str();
     }
     void debug(const std::string& msg) const {

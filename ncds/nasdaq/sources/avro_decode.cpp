@@ -57,7 +57,7 @@ namespace nasdaq {
           , m_schema_datum(std::make_shared<datum_ptr::element_type>(m_schema_control)) {
         read_tables(nasdaq::avro_decode_t::control, m_schema_control.root());
       }
-      void operator()(const time_point_t& tp, std::string stream, const void* buf,
+            void operator()(const time_point_t& tp, std::string stream, const void* buf,
           const std::size_t size) const {
         try {
           stream = stream.substr(0, stream.find(".stream"));
@@ -206,7 +206,7 @@ namespace nasdaq {
 
   avro_decode_t::avro_decode_t(delegate_t& delegate, const error_t& err, const std::string& ctrl_schema)
       : m_err(err)
-      , m_impl(std::make_shared<details::avro_decode_t>(*this, delegate, err, ctrl_schema)) {
+      , m_impl(std::make_shared<details::avro_decode_t>(*this, delegate, m_err, ctrl_schema)) {
   }
 
   void avro_decode_t::operator()(const time_point_t& tp, const std::string& stream, const void* buf, const std::size_t size) const {
@@ -231,11 +231,6 @@ namespace nasdaq {
     if(res)
       ofs << schema;
     return res;
-#if 0
-    }
-    else
-      m_err.warning(__FILE_STR__ + "can`t open file: " + file);
-#endif
   }
 
 } /* namespace nasdaq */

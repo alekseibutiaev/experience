@@ -1,5 +1,6 @@
 
 #include <mutex>
+#include <list>
 #include <chrono>
 #include <fstream>
 #include <sstream>
@@ -65,7 +66,7 @@ namespace nasdaq {
   class queue_control_t {
   public:
     using queue_element_t = std::function<void()>;
-    using queue_t = tools::cache_queue_t<queue_element_t>;
+    using queue_t = std::list<queue_element_t>;
   public:
     queue_t m_queue;
     std::mutex m_mutex;
@@ -81,12 +82,12 @@ namespace nasdaq {
       , m_start(false) {
     update_logger(*m_config, m_event.get(), m_error);
     m_config->set(m_auth.get(), m_error);
-    m_config->print();
   }
 
   void consumer_t::start(const strings_t& topics, const process_t& process) {
     if(m_consumer_tread.joinable())
       return;
+    m_process = process;
     std::string err;
     if(m_consumer = consumer_ptr(RdKafka::KafkaConsumer::create(m_config->get_config(), err))) {
       std::vector<RdKafka::TopicPartition*> partitions;
@@ -105,7 +106,7 @@ namespace nasdaq {
           seek_to_midnight_at_past_day(m_consumer.get(), it.get(), 0);
 
       m_start = true;
-      m_consumer_tread = std::thread(&consumer_t::consumer_process, this, std::ref(process));
+      m_consumer_tread = std::thread(&consumer_t::consumer_process, this);
     }
     else
       m_error.error(err + __FILE_STR__);
@@ -119,7 +120,7 @@ namespace nasdaq {
     }
   }
 
-  void consumer_t::consumer_process(const process_t& process) {
+  void consumer_t::consumer_process() {
     try {
       queue_control_t qc;
       std::thread tread = std::thread(&consumer_t::queue_process, this, std::ref(qc));
@@ -127,10 +128,9 @@ namespace nasdaq {
         msg_ptr msg(m_consumer->consume(1000));
         if(!msg->payload())
           continue;
-        queue_control_t::queue_element_t el = std::bind(&consumer_t::msg_process, this,
-          std::ref(process), clock_t::now(), msg);
+        auto func = std::bind(&consumer_t::msg_process, this, clock_t::now(), msg);
         std::unique_lock _(qc.m_mutex);
-        qc.m_queue.push(el);
+        qc.m_queue.emplace_back(std::move(func));
         qc.m_cv.notify_one();
       }
       if(tread.joinable()) {
@@ -146,17 +146,20 @@ namespace nasdaq {
   void consumer_t::queue_process(queue_control_t& value) {
     try {
       for(;m_start;) {
-        queue_control_t::queue_element_t element;
+        queue_control_t::queue_t queue;
         {
           std::unique_lock _(value.m_mutex);
           value.m_cv.wait(_, [this, &value](){return !m_start || !value.m_queue.empty();});
           if(m_start && !value.m_queue.empty()) {
-            element = value.m_queue.front();
-            value.m_queue.pop();
+            queue.swap(value.m_queue);
           }
         }
-        if(element)
+        std::size_t count = 0;
+        for(const auto& element : queue){
           element();
+          ++count;
+        }
+        m_error.info("quieue count!!!!!!! " + std::to_string(count));
       }
     }
     catch(const std::exception& e) {
@@ -164,8 +167,8 @@ namespace nasdaq {
     }
   }
 
-  void consumer_t::msg_process(const process_t& process, const time_point_t tp, const msg_ptr msg) {
-    process(tp, msg->topic_name(), msg->payload(), msg->len());
+  void consumer_t::msg_process(const time_point_t ts, const msg_ptr msg) {
+    m_process(ts, msg->topic_name(), msg->payload(), msg->len());
   }
 
 } /* namespace nasdaq */
