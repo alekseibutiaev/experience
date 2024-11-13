@@ -150,9 +150,8 @@ namespace nasdaq {
         {
           std::unique_lock _(value.m_mutex);
           value.m_cv.wait(_, [this, &value](){return !m_start || !value.m_queue.empty();});
-          if(m_start && !value.m_queue.empty()) {
-            queue.swap(value.m_queue);
-          }
+          if(m_start && !value.m_queue.empty())
+            queue = std::move(value.m_queue);
         }
         std::size_t count = 0;
         for(const auto& element : queue){

@@ -18,10 +18,10 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
+  nasdaq_static
   ${JSON-C_LIBRARY}
   ${CURL_LIBRARIES}
   ${RDKAFKA_LIBRARIES}
   ${RDKAFKACPP_LIBRARIES}
   ${AVROCPP_LIBRARIES}
-  nasdaq
 )

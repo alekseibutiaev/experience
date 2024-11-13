@@ -46,7 +46,9 @@ namespace {
   class deletate_t : public nasdaq::avro_decode_t::delegate_t, public nasdaq::error_t {
   public:
     deletate_t(const bool enable = true)
-        : m_enable(enable) {
+        : m_enable(enable)
+        , m_accum(0)
+        , m_count(0) {
     }
   private:
     using msg_fields_t = std::map<std::string, nasdaq::avro_decode_t::delegate_t::fields_t>;
@@ -60,15 +62,21 @@ namespace {
       std::cout << ']' << std::endl;
       m_stream_msg[stream][msg] = fields;
     }
-    void message(const nasdaq::avro_decode_t& decoder, const nasdaq::time_point_t& tp,
+    void message(const nasdaq::avro_decode_t& decoder, const nasdaq::time_point_t& ts,
         const std::string& stream, const std::string& msg, const nasdaq::record_ptr record) override {
       const auto& filelds = get_fields(stream, msg);
       if(filelds.empty()) {
         std::cout << "unsuported message stream: " << stream << " message: " << msg << std::endl;
         return;
       }
+      auto delay = std::chrono::duration_cast<std::chrono::milliseconds>(nasdaq::clock_t::now() - ts).count();
+      m_accum += delay;
+      if(0 == ++m_count % 1000 ) {
+        std::cout << "averege delay: " << m_accum / 1000 << std::endl;
+        m_accum = 0;
+      }
       const std::size_t count = filelds.size();
-      begin_msg(tp, stream, msg);
+      begin_msg(ts, stream, msg);
       for(std::size_t i = 0; i < count; ++i)
         decoder.get_field(record, i);
       end_msg();
@@ -157,6 +165,8 @@ namespace {
     }
   private:
     const bool m_enable;
+    std::size_t m_accum;
+    std::size_t m_count;
     std::ostringstream m_oss;
     stream_msg_t m_stream_msg;
     bool m_tmp;
@@ -206,7 +216,7 @@ int main(int ac, char* av[]) {
 
     rebalance_cb_t rdb;
     offset_commit_cb_t occb(rdb);
-    deletate_t d(true);
+    deletate_t d(false);
 
     read_json_t rj(j);
     nasdaq::config_t cnf(rj, d);

@@ -3,9 +3,7 @@ file(GLOB SOURCE_FILES "sources/*.cpp")
 
 project(nasdaq)
 
-add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES})
-
-target_include_directories(${PROJECT_NAME} PRIVATE
+include_directories(
   ${CURL_INCLUDE_DIR}
   ${AVROCPP_INCLUDE_DIR}
   ${RDKAFKA_INCLUDE_DIR}
@@ -15,10 +13,4 @@ target_include_directories(${PROJECT_NAME} PRIVATE
   ./
 )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE
-  ${JSON-C_LIBRARY}
-  ${CURL_LIBRARIES}
-  ${RDKAFKA_LIBRARIES}
-  ${RDKAFKACPP_LIBRARIES}
-  ${AVROCPP_LIBRARIES}
-)
+add_library(${PROJECT_NAME}_static STATIC ${SOURCE_FILES})
