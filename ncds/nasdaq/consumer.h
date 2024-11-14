@@ -31,8 +31,7 @@ namespace nasdaq {
     using msg_ptr = std::shared_ptr<RdKafka::Message>;
   private:
     void consumer_process();
-    void queue_process(queue_control_t& value);
-    void msg_process(const time_point_t, const msg_ptr);
+    //void queue_process(queue_control_t& value);
   private:
     config_prt m_config;
     const get_property_t& m_get_property;

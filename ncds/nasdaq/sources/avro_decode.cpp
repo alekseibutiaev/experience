@@ -4,6 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
+#include <shared_mutex>
 
 #include <avro/Decoder.hh>
 #include <avro/Generic.hh>
@@ -27,7 +28,7 @@ namespace avro {
 
 namespace {
 
-  nasdaq::avro_decode_t::delegate_t::fields_t get_fields(const avro::NodePtr& node) {
+  nasdaq::avro_decode_t::delegate_t::fields_t get_fields(const avro::NodePtr node) {
     try {
       nasdaq::avro_decode_t::delegate_t::fields_t res;
       for(std::size_t i = 0; i < node->names(); ++i)
@@ -57,7 +58,7 @@ namespace nasdaq {
           , m_schema_datum(std::make_shared<datum_ptr::element_type>(m_schema_control)) {
         read_tables(nasdaq::avro_decode_t::control, m_schema_control.root());
       }
-            void operator()(const time_point_t& tp, std::string stream, const void* buf,
+      void operator()(const time_point_t& tp, std::string stream, const void* buf,
           const std::size_t size) const {
         try {
           stream = stream.substr(0, stream.find(".stream"));
@@ -116,13 +117,15 @@ namespace nasdaq {
 
       const record_ptr get_record(const datum_ptr& datum, const void* buf, const std::size_t size) const {
         auto in = avro::memoryInputStream(reinterpret_cast<const uint8_t*>(buf), size);
-        m_decoder->init(*in);
-        avro::decode(*m_decoder, *datum);
+        avro::DecoderPtr decoder(avro::binaryDecoder());
+        decoder->init(*in);
+        avro::decode(*decoder, *datum);
         return std::make_shared<avro::GenericRecord>(datum->value<avro::GenericRecord>());
       }
 
       avro_decode_t::datum_ptr get_datum(const std::string& stream) const {
         for(;;){
+          std::shared_lock _(m_lock_schemas);
           auto it = m_schemas.find(stream);
           if(it != m_schemas.end())
             return std::make_shared<avro_decode_t::datum_ptr::element_type>(it->second);
@@ -147,7 +150,7 @@ namespace nasdaq {
           m_err.error(  e.what());
         }
       }
-      void read_tables(const std::string& stream, const avro::NodePtr& node) const {
+      void read_tables(const std::string& stream, const avro::NodePtr node) const {
         try {
           if(avro::AVRO_UNION == node->type())
             for(std::size_t i = 0; i < node->leaves(); ++i)
@@ -183,6 +186,7 @@ namespace nasdaq {
       avro::DecoderPtr m_decoder;
       const avro::ValidSchema m_schema_control;
       datum_ptr m_schema_datum;
+      mutable std::shared_mutex m_lock_schemas;
       mutable map_schemas_t m_schemas;
     };
 

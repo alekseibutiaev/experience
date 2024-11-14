@@ -5,7 +5,7 @@
 namespace tools {
 
   template< typename type_t >
-  class cache_queue_t {
+  class cache_queue {
 
   public:
 

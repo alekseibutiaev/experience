@@ -20,6 +20,7 @@
 #include "location.h"
 #include "oauthbearer.h"
 #include "cache_queue.hpp"
+#include "thread_pool.hpp"
 
 #include "consumer.h"
 
@@ -122,27 +123,43 @@ namespace nasdaq {
 
   void consumer_t::consumer_process() {
     try {
-      queue_control_t qc;
-      std::thread tread = std::thread(&consumer_t::queue_process, this, std::ref(qc));
+      //queue_control_t qc;
+      tools::thread_pool_t<128> tp;
+      tp.start();
+//      std::thread tread = std::thread(&consumer_t::queue_process, this, std::ref(qc));
       for(;m_start;) {
         msg_ptr msg(m_consumer->consume(1000));
         if(!msg->payload())
           continue;
-        auto func = std::bind(&consumer_t::msg_process, this, clock_t::now(), msg);
-        std::unique_lock _(qc.m_mutex);
-        qc.m_queue.emplace_back(std::move(func));
+#if 1
+        tp.execute([this, msg, ts = clock_t::now()](){
+            m_process(ts, msg->topic_name(), msg->payload(), msg->len());
+          });
+#else
+        auto func = [this, msg, ts = clock_t::now()](){
+            m_process(ts, msg->topic_name(), msg->payload(), msg->len());
+          };
+        {
+          std::lock_guard _(qc.m_mutex);
+          qc.m_queue.emplace_back(std::move(func));
+        }
         qc.m_cv.notify_one();
+#endif
       }
+      tp.stop();
+#if 0
       if(tread.joinable()) {
         qc.m_cv.notify_one();
         tread.join();
       }
+#endif
     }
     catch(const std::exception& e) {
       m_error.error(e.what() + __FILE_STR__);
     }
   }
 
+#if 0
   void consumer_t::queue_process(queue_control_t& value) {
     try {
       for(;m_start;) {
@@ -165,9 +182,6 @@ namespace nasdaq {
       m_error.error(e.what() + __FILE_STR__);
     }
   }
-
-  void consumer_t::msg_process(const time_point_t ts, const msg_ptr msg) {
-    m_process(ts, msg->topic_name(), msg->payload(), msg->len());
-  }
+#endif
 
 } /* namespace nasdaq */

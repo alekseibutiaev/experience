@@ -1,4 +1,6 @@
 #include <ctime>
+
+#include <mutex>
 #include <chrono>
 #include <thread>
 #include <string>
@@ -9,6 +11,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <functional>
+#include <shared_mutex>
 
 #include <nlohmann/json.hpp>
 
@@ -17,6 +20,7 @@
 #include <config.h>
 #include <avro_decode.h>
 #include <consumer.h>
+#include <location.h>
 
 // https://github.com/confluentinc/librdkafka/issues/2758
 
@@ -56,11 +60,19 @@ namespace {
   private:
     void table(const std::string& stream, const std::string& msg,
         const nasdaq::avro_decode_t::delegate_t::fields_t& fields) override {
-      std::cout << "stream: " << stream << ", msg: " << msg << " [";
+      std::ostringstream oss;
+      oss << "stream: " << stream << ", msg: " << msg << " [";
       for(std::size_t i = 0; i < fields.size(); ++i)
-        std::cout << (i == 0 ? "" : ", ") << fields[ i ];
-      std::cout << ']' << std::endl;
-      m_stream_msg[stream][msg] = fields;
+        oss << (i == 0 ? "" : ", ") << fields[ i ];
+      oss << ']' << std::endl;
+      {
+        std::lock_guard _(m_out);
+        std::cout << oss.str();
+      }
+      {
+        std::unique_lock _(m_lock_stream_msg);
+        m_stream_msg[stream][msg] = fields;
+      }
     }
     void message(const nasdaq::avro_decode_t& decoder, const nasdaq::time_point_t& ts,
         const std::string& stream, const std::string& msg, const nasdaq::record_ptr record) override {
@@ -69,11 +81,13 @@ namespace {
         std::cout << "unsuported message stream: " << stream << " message: " << msg << std::endl;
         return;
       }
-      auto delay = std::chrono::duration_cast<std::chrono::milliseconds>(nasdaq::clock_t::now() - ts).count();
-      m_accum += delay;
-      if(0 == ++m_count % 1000 ) {
-        std::cout << "averege delay: " << m_accum / 1000 << std::endl;
-        m_accum = 0;
+      {
+        auto delay = std::chrono::duration_cast<std::chrono::microseconds>(nasdaq::clock_t::now() - ts).count();
+        m_accum += delay;
+        if(0 == ++m_count % 1000 ) {
+          info("averege delay: " + std::to_string(m_accum / 1000) + " microseconds" + __FILE_STR__);
+          m_accum = 0;
+        }
       }
       const std::size_t count = filelds.size();
       begin_msg(ts, stream, msg);
@@ -99,7 +113,10 @@ namespace {
       }
     }
     void end_msg() {
-      if(m_enable) std::cout << m_oss.str() << std::endl;
+      if(m_enable) {
+        std::lock_guard _(m_out);
+        std::cout << m_oss.str() << std::endl;
+      }
     }
     void data(const std::string& field, const std::string& data) override {
       if(m_enable) m_oss << ", " << field << ": " << data;
@@ -129,8 +146,10 @@ namespace {
     void data(const std::string& field, const bool& data) override  {
       if(m_enable) m_oss << " " << field << ": " << data;
     }
-    const nasdaq::avro_decode_t::delegate_t::fields_t& get_fields(const std::string& stream, const std::string& msg) const {
+    const nasdaq::avro_decode_t::delegate_t::fields_t& get_fields(const std::string& stream,
+        const std::string& msg) const {
       static const nasdaq::avro_decode_t::delegate_t::fields_t empty;
+      std::shared_lock _(m_lock_stream_msg);
       auto it1 = m_stream_msg.find(stream);
       if(it1 == m_stream_msg.end())
         return empty;
@@ -152,25 +171,34 @@ namespace {
       return oss.str();
     }
     void debug(const std::string& msg) const {
+      std::lock_guard _(m_out);
       std::cout << time_print() << " DEBUG: " << msg << std::endl;
     }
     void info(const std::string& msg) const  {
+      std::lock_guard _(m_out);
       std::cout << time_print() << " INFO: " << msg << std::endl;
     }
     void warning(const std::string& msg) const  {
+      std::lock_guard _(m_out);
       std::cout << time_print() << " WAGNING: " << msg << std::endl;
     }
     void error(const std::string& msg) const  {
+      std::lock_guard _(m_out);
       std::cout << time_print() << " ERROR: " << msg << std::endl;
     }
   private:
     const bool m_enable;
     std::size_t m_accum;
     std::size_t m_count;
-    std::ostringstream m_oss;
+    mutable std::mutex m_out;
+    mutable std::shared_mutex m_lock_stream_msg;
     stream_msg_t m_stream_msg;
     bool m_tmp;
+  private:
+    static thread_local std::ostringstream m_oss;
   };
+
+  thread_local std::ostringstream deletate_t::m_oss;
 
   class rebalance_cb_t : public RdKafka::RebalanceCb {
   public:
