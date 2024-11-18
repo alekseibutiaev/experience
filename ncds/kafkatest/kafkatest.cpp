@@ -17,10 +17,11 @@
 
 #include <librdkafka/rdkafkacpp.h>
 
-#include <config.h>
-#include <avro_decode.h>
-#include <consumer.h>
-#include <location.h>
+#include "../nasdaq/thread_pool.hpp"
+#include "../nasdaq/config.h"
+#include "../nasdaq/avro_decode.h"
+#include "../nasdaq/consumer.h"
+#include "../nasdaq/location.h"
 
 // https://github.com/confluentinc/librdkafka/issues/2758
 
@@ -57,6 +58,7 @@ namespace {
   private:
     using msg_fields_t = std::map<std::string, nasdaq::avro_decode_t::delegate_t::fields_t>;
     using stream_msg_t = std::map<std::string, msg_fields_t>;
+    using oss_thread_t = std::map<std::thread::id, std::ostringstream>;
   private:
     void table(const std::string& stream, const std::string& msg,
         const nasdaq::avro_decode_t::delegate_t::fields_t& fields) override {
@@ -64,15 +66,10 @@ namespace {
       oss << "stream: " << stream << ", msg: " << msg << " [";
       for(std::size_t i = 0; i < fields.size(); ++i)
         oss << (i == 0 ? "" : ", ") << fields[ i ];
-      oss << ']' << std::endl;
-      {
-        std::lock_guard _(m_out);
-        std::cout << oss.str();
-      }
-      {
-        std::unique_lock _(m_lock_stream_msg);
-        m_stream_msg[stream][msg] = fields;
-      }
+      oss << ']' << __FILE_STR__ << std::endl;
+      info(oss.str());
+      std::unique_lock _(m_lock_stream_msg);
+      m_stream_msg[stream][msg] = fields;
     }
     void message(const nasdaq::avro_decode_t& decoder, const nasdaq::time_point_t& ts,
         const std::string& stream, const std::string& msg, const nasdaq::record_ptr record) override {
@@ -81,19 +78,12 @@ namespace {
         std::cout << "unsuported message stream: " << stream << " message: " << msg << std::endl;
         return;
       }
-      {
-        auto delay = std::chrono::duration_cast<std::chrono::microseconds>(nasdaq::clock_t::now() - ts).count();
-        m_accum += delay;
-        if(0 == ++m_count % 1000 ) {
-          info("averege delay: " + std::to_string(m_accum / 1000) + " microseconds" + __FILE_STR__);
-          m_accum = 0;
-        }
-      }
       const std::size_t count = filelds.size();
       begin_msg(ts, stream, msg);
       for(std::size_t i = 0; i < count; ++i)
         decoder.get_field(record, i);
       end_msg();
+      show_delay(ts);
     }
 
     bool save(const std::string& stream, const std::string& schema) {
@@ -107,44 +97,58 @@ namespace {
     }
 
     void begin_msg(const nasdaq::time_point_t& tp, const std::string& stream, const std::string& msg) {
-      if(m_enable) {
-        m_oss = std::move(std::ostringstream());
-        m_oss << time_print() << ", in " << time_print(tp) << ", stream: " << stream << ", message: " << msg;
-      }
+      if(m_enable)
+        [this]() -> std::ostream& {std::unique_lock _(m_lock_oss_thread); return (m_oss_thread[std::this_thread::get_id()]
+          = std::move(std::ostringstream()));}() << time_print() << ", in " << time_print(tp) <<
+          ", stream: " << stream << ", message: " << msg;
     }
     void end_msg() {
-      if(m_enable) {
-        std::lock_guard _(m_out);
-        std::cout << m_oss.str() << std::endl;
-      }
+      if(m_enable)
+        [this]{std::shared_lock _(m_lock_oss_thread); info(static_cast<std::ostringstream&>(m_oss_thread[std::this_thread::get_id()] <<
+            __FILE_STR__ << std::endl).str());}();
     }
     void data(const std::string& field, const std::string& data) override {
-      if(m_enable) m_oss << ", " << field << ": " << data;
+      if(m_enable)
+        [this]() -> std::ostream& {std::shared_lock _(m_lock_oss_thread); return m_oss_thread[std::this_thread::get_id()];}() <<
+          ", " << field << ": " << data;
     }
     void data(const std::string& field, const unsigned char& data) override  {
-      if(m_enable) m_oss << ", " << field << ": " << data;
+      if(m_enable)
+        [this]() -> std::ostream& {std::shared_lock _(m_lock_oss_thread); return m_oss_thread[std::this_thread::get_id()];}() <<
+          ", " << field << ": " << data;
     }
     void data(const std::string& field, const int& data) override  {
-      if(m_enable) m_oss << ", " << field << ": " << data;
+      if(m_enable)
+        [this]() -> std::ostream& {std::shared_lock _(m_lock_oss_thread); return m_oss_thread[std::this_thread::get_id()];}() <<
+          ", " << field << ": " << data;
     }
-    void data(const std::string& field, const long& data) override  {
-      if(m_enable) m_oss << ", " << field << ": ";
-      if(("uniqueTimestamp" == field || "trackingID" == field) && m_enable) {
-        tracking_id_t val;
-        val._long = data;
-        m_oss << time_print(nasdaq::clock_t::time_point(nasdaq::clock_t::duration(val.data.ts)));
+    void data(const std::string& field, const long& data) override {
+      if(m_enable) {
+        std::ostream& os = [this]() -> std::ostream& {std::shared_lock _(m_lock_oss_thread); return m_oss_thread[std::this_thread::get_id()];}();
+        os << ", " << field << ": ";
+        if("uniqueTimestamp" == field || "trackingID" == field) {
+          tracking_id_t val;
+          val._long = data;
+          os << time_print(nasdaq::clock_t::time_point(nasdaq::clock_t::duration(val.data.ts)));
+        }
+        else
+          os << data;
       }
-      else
-        m_oss << data;
     }
     void data(const std::string& field, const float& data) override  {
-      if(m_enable) m_oss << ", " << field << ": " << data;
+      if(m_enable)
+        [this]() -> std::ostream& {std::shared_lock _(m_lock_oss_thread); return m_oss_thread[std::this_thread::get_id()];}() <<
+          ", " << field << ": " << data;
     }
     void data(const std::string& field, const double& data) override  {
-      if(m_enable) m_oss << ", " << field << ": " << data;
+      if(m_enable)
+        [this]() -> std::ostream& {std::shared_lock _(m_lock_oss_thread); return m_oss_thread[std::this_thread::get_id()];}() <<
+          ", " << field << ": " << data;
     }
     void data(const std::string& field, const bool& data) override  {
-      if(m_enable) m_oss << " " << field << ": " << data;
+      if(m_enable)
+        [this]() -> std::ostream& {std::shared_lock _(m_lock_oss_thread); return m_oss_thread[std::this_thread::get_id()];}() <<
+          ", " << field << ": " << data;
     }
     const nasdaq::avro_decode_t::delegate_t::fields_t& get_fields(const std::string& stream,
         const std::string& msg) const {
@@ -170,35 +174,40 @@ namespace {
         std::setw(6) << std::setfill('0') << frac;
       return oss.str();
     }
+    void show_delay(const nasdaq::time_point_t& ts) {
+      m_accum += std::chrono::duration_cast<std::chrono::microseconds>(nasdaq::clock_t::now() - ts).count();
+      if(0 == ++m_count % 1000 ) {
+        info("averege delay: " + std::to_string(m_accum / 1000) + " microseconds" + __FILE_STR__);
+        m_accum = 0;
+      }
+    }
     void debug(const std::string& msg) const {
-      std::lock_guard _(m_out);
+      std::lock_guard _(m_lock_cout);
       std::cout << time_print() << " DEBUG: " << msg << std::endl;
     }
     void info(const std::string& msg) const  {
-      std::lock_guard _(m_out);
+      std::lock_guard _(m_lock_cout);
       std::cout << time_print() << " INFO: " << msg << std::endl;
     }
     void warning(const std::string& msg) const  {
-      std::lock_guard _(m_out);
+      std::lock_guard _(m_lock_cout);
       std::cout << time_print() << " WAGNING: " << msg << std::endl;
     }
     void error(const std::string& msg) const  {
-      std::lock_guard _(m_out);
+      std::lock_guard _(m_lock_cout);
       std::cout << time_print() << " ERROR: " << msg << std::endl;
     }
   private:
     const bool m_enable;
     std::size_t m_accum;
     std::size_t m_count;
-    mutable std::mutex m_out;
+    mutable std::mutex m_lock_cout;
     mutable std::shared_mutex m_lock_stream_msg;
     stream_msg_t m_stream_msg;
+    mutable std::shared_mutex m_lock_oss_thread;
+    oss_thread_t m_oss_thread;
     bool m_tmp;
-  private:
-    static thread_local std::ostringstream m_oss;
   };
-
-  thread_local std::ostringstream deletate_t::m_oss;
 
   class rebalance_cb_t : public RdKafka::RebalanceCb {
   public:
@@ -242,19 +251,26 @@ int main(int ac, char* av[]) {
     std::vector<std::string> topics = {nasdaq::avro_decode_t::control};
     topics.insert(topics.end(), j["topics"].begin(), j["topics"].end());
 
+    
+    
     rebalance_cb_t rdb;
     offset_commit_cb_t occb(rdb);
-    deletate_t d(false);
+    deletate_t delegate(false);
 
     read_json_t rj(j);
-    nasdaq::config_t cnf(rj, d);
-    cnf.read_config(rj, d);
-    cnf.set(&rdb, d);
-    cnf.set(&occb, d);
+    nasdaq::config_t cnf(rj, delegate);
+    cnf.read_config(rj, delegate);
+    cnf.set(&rdb, delegate);
+    cnf.set(&occb, delegate);
 
-    nasdaq::consumer_t consumer(cnf, rj, d);
-    nasdaq::avro_decode_t decode(d, d/*, j["control_message_schema"]*/);
-    consumer.start(topics, decode);
+    nasdaq::avro_decode_t decode(delegate, delegate);
+    tools::thread_pool_t<128> tread_pool;
+    nasdaq::consumer_t::executer_t executer = [&tread_pool](std::function<void()> value) {
+      tread_pool.execute(std::move(value));
+    };
+    nasdaq::consumer_t consumer(cnf, rj, executer, decode, delegate);
+    tread_pool.start();
+    consumer.start(topics);
     for(std::size_t i = 0; i < 60;
 #if 0
       ++i
@@ -262,12 +278,12 @@ int main(int ac, char* av[]) {
     )
       std::this_thread::sleep_for(std::chrono::seconds(1));
     consumer.stop();
+    tread_pool.stop();
   }
   catch(const std::exception& e) {
     std::cout << "Error: " << e.what() << std::endl;
     res = 1;
   }
-
   std::cout << "leave programm!! result: " << res << std::endl;
   return res;
 }

@@ -19,8 +19,6 @@
 #include "event.h"
 #include "location.h"
 #include "oauthbearer.h"
-#include "cache_queue.hpp"
-#include "thread_pool.hpp"
 
 #include "consumer.h"
 
@@ -74,21 +72,23 @@ namespace nasdaq {
     std::condition_variable m_cv;    
   };
 
-  consumer_t::consumer_t(const config_t& config, const get_property_t& get_property, const error_t& error)
-      : m_config(std::make_shared<config_prt::element_type>(clone_config(config, error)))
+  consumer_t::consumer_t(const config_t& config, const get_property_t& get_property,
+      const executer_t& executer, const process_t& process, const error_t& error)
+      : m_error(error)
+      , m_config(std::make_shared<config_prt::element_type>(clone_config(config, m_error)))
       , m_get_property(get_property)
-      , m_error(error)
-      , m_auth(std::make_shared<oauthbearer_t>(get_property))
-      , m_event(std::make_shared<event_t>(error))
+      , m_executer(executer)
+      , m_process(process)
+      , m_auth(std::make_shared<oauthbearer_t>(m_get_property))
+      , m_event(std::make_shared<event_t>(m_error))
       , m_start(false) {
     update_logger(*m_config, m_event.get(), m_error);
     m_config->set(m_auth.get(), m_error);
   }
 
-  void consumer_t::start(const strings_t& topics, const process_t& process) {
+  void consumer_t::start(const strings_t& topics) {
     if(m_consumer_tread.joinable())
       return;
-    m_process = process;
     std::string err;
     if(m_consumer = consumer_ptr(RdKafka::KafkaConsumer::create(m_config->get_config(), err))) {
       std::vector<RdKafka::TopicPartition*> partitions;
@@ -123,65 +123,17 @@ namespace nasdaq {
 
   void consumer_t::consumer_process() {
     try {
-      //queue_control_t qc;
-      tools::thread_pool_t<128> tp;
-      tp.start();
-//      std::thread tread = std::thread(&consumer_t::queue_process, this, std::ref(qc));
       for(;m_start;) {
         msg_ptr msg(m_consumer->consume(1000));
         if(!msg->payload())
           continue;
-#if 1
-        tp.execute([this, msg, ts = clock_t::now()](){
-            m_process(ts, msg->topic_name(), msg->payload(), msg->len());
-          });
-#else
-        auto func = [this, msg, ts = clock_t::now()](){
-            m_process(ts, msg->topic_name(), msg->payload(), msg->len());
-          };
-        {
-          std::lock_guard _(qc.m_mutex);
-          qc.m_queue.emplace_back(std::move(func));
-        }
-        qc.m_cv.notify_one();
-#endif
-      }
-      tp.stop();
-#if 0
-      if(tread.joinable()) {
-        qc.m_cv.notify_one();
-        tread.join();
-      }
-#endif
-    }
-    catch(const std::exception& e) {
-      m_error.error(e.what() + __FILE_STR__);
-    }
-  }
-
-#if 0
-  void consumer_t::queue_process(queue_control_t& value) {
-    try {
-      for(;m_start;) {
-        queue_control_t::queue_t queue;
-        {
-          std::unique_lock _(value.m_mutex);
-          value.m_cv.wait(_, [this, &value](){return !m_start || !value.m_queue.empty();});
-          if(m_start && !value.m_queue.empty())
-            queue = std::move(value.m_queue);
-        }
-        std::size_t count = 0;
-        for(const auto& element : queue){
-          element();
-          ++count;
-        }
-        m_error.info("quieue count!!!!!!! " + std::to_string(count));
+        m_executer([this, msg, ts = clock_t::now()](){
+            m_process(ts, msg->topic_name(), msg->payload(), msg->len());});
       }
     }
     catch(const std::exception& e) {
       m_error.error(e.what() + __FILE_STR__);
     }
   }
-#endif
 
 } /* namespace nasdaq */
