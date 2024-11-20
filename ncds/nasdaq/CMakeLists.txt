@@ -13,4 +13,6 @@ include_directories(
   ./
 )
 
+#add_compile_options(-Wignored-qualifiers)
+
 add_library(${PROJECT_NAME}_static STATIC ${SOURCE_FILES})

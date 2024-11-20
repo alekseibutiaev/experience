@@ -22,6 +22,6 @@ namespace tools {
   void pbuffer(const void* buf, const std::size_t& size, std::ostream& os);
 
   // This implementation might need to change based on the types of data in your records
-  void print_records(const nasdaq::record_ptr& record, std::ostream& os);
+  void print_records(const nasdaq::record_t& record, std::ostream& os);
 
 } /* namespace tools */

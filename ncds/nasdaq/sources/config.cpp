@@ -87,21 +87,23 @@ namespace nasdaq {
   }
 
   config_t config_t::clone(const error_t& error) const {
-    std::string err;
-    std::string tmp;
     config_t res(m_type);
-    for(const std::string& it : param)
-      if(RdKafka::Conf::CONF_OK == m_config->get(it, tmp))
-        res.m_config->set(it, tmp, err);
-      else
-        error.error(err);
+    for(const std::string& it : param) {
+      std::string err;
+      std::string value;
+      if(RdKafka::Conf::CONF_OK == m_config->get(it, value))
+        res.m_config->set(it, value, err);
+      else if(std::string::npos == it.find("_cb"))
+        error.error("parameter: [" + it + "] value: [" + value + "] error: [" + err + "] " + __FILE_STR__);
+    }
     copy(calbacks, *m_config, *res.m_config, error);
     return res;
   }
 
   void config_t::read_config(const get_property_t& get_property, const error_t& error) {
+    const auto& p = param;
     std::string err;
-    for(const auto& it : param)
+    for(const auto& it : p/*aram*/)
       if(const auto& tmp = get_property(it))
         if(RdKafka::Conf::CONF_OK != m_config->set(it, *tmp, err))
           error.error(err);

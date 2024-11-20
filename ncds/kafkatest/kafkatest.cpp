@@ -72,7 +72,7 @@ namespace {
       m_stream_msg[stream][msg] = fields;
     }
     void message(const nasdaq::avro_decode_t& decoder, const nasdaq::time_point_t& ts,
-        const std::string& stream, const std::string& msg, const nasdaq::record_ptr record) override {
+        const std::string& stream, const std::string& msg, const nasdaq::record_t record) override {
       const auto& filelds = get_fields(stream, msg);
       if(filelds.empty()) {
         std::cout << "unsuported message stream: " << stream << " message: " << msg << std::endl;
@@ -229,11 +229,9 @@ namespace {
       for(auto offset : offsets) {
         std::cout << " \"topic\": \"" << offset->topic() << "\", " <<
           " partition: " << offset->partition() << " offset: " << offset->offset() <<
-          " error: " << (offset->err() ? RdKafka::err2str(offset->err()) : "") << std::endl;
+          (offset->err() ? " error: " + RdKafka::err2str(offset->err()) : "") << std::endl;
 //          offset->set_offset(startOffset);
       }
-
-      return;
     }
   private:
     rebalance_cb_t& m_rbc;
@@ -251,8 +249,6 @@ int main(int ac, char* av[]) {
     std::vector<std::string> topics = {nasdaq::avro_decode_t::control};
     topics.insert(topics.end(), j["topics"].begin(), j["topics"].end());
 
-    
-    
     rebalance_cb_t rdb;
     offset_commit_cb_t occb(rdb);
     deletate_t delegate(false);
@@ -265,10 +261,10 @@ int main(int ac, char* av[]) {
 
     nasdaq::avro_decode_t decode(delegate, delegate);
     tools::thread_pool_t<128> tread_pool;
-    nasdaq::consumer_t::executer_t executer = [&tread_pool](std::function<void()> value) {
+    nasdaq::consumer_t::execute_t execute = [&tread_pool](std::function<void()> value) {
       tread_pool.execute(std::move(value));
     };
-    nasdaq::consumer_t consumer(cnf, rj, executer, decode, delegate);
+    nasdaq::consumer_t consumer(cnf, rj, execute, decode, delegate);
     tread_pool.start();
     consumer.start(topics);
     for(std::size_t i = 0; i < 60;

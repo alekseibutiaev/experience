@@ -39,11 +39,11 @@ namespace tools {
       os << hex << ch << std::endl;
   }
 
-  void print_records(const nasdaq::record_ptr& record, std::ostream& os) {
-    os << "Message: " << record->schema()->name().simpleName() << ' ';
-    for(size_t i = 0; i < record->fieldCount(); i++) {
-      avro::GenericDatum datum = record->fieldAt(i);
-      os << record->schema()->nameAt(i) << ": ";
+  void print_records(const nasdaq::record_t& record, std::ostream& os) {
+    os << "Message: " << record.first->schema()->name().simpleName() << ' ';
+    for(size_t i = 0; i < record.first->fieldCount(); i++) {
+      avro::GenericDatum datum = record.first->fieldAt(i);
+      os << record.first->schema()->nameAt(i) << ": ";
       if (datum.type() == avro::AVRO_DOUBLE)
         os << datum.value<double>() << ' ';
       else if (datum.type() == avro::AVRO_LONG)

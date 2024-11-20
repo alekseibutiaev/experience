@@ -73,11 +73,11 @@ namespace nasdaq {
   };
 
   consumer_t::consumer_t(const config_t& config, const get_property_t& get_property,
-      const executer_t& executer, const process_t& process, const error_t& error)
+      const execute_t& execute, const process_t& process, const error_t& error)
       : m_error(error)
       , m_config(std::make_shared<config_prt::element_type>(clone_config(config, m_error)))
       , m_get_property(get_property)
-      , m_executer(executer)
+      , m_execute(execute)
       , m_process(process)
       , m_auth(std::make_shared<oauthbearer_t>(m_get_property))
       , m_event(std::make_shared<event_t>(m_error))
@@ -127,7 +127,7 @@ namespace nasdaq {
         msg_ptr msg(m_consumer->consume(1000));
         if(!msg->payload())
           continue;
-        m_executer([this, msg, ts = clock_t::now()](){
+        m_execute([this, msg, ts = clock_t::now()](){
             m_process(ts, msg->topic_name(), msg->payload(), msg->len());});
       }
     }

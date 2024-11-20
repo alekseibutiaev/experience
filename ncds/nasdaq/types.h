@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <utility>
 #include <chrono>
 #include <memory>
 #include <string>
@@ -32,12 +33,14 @@ namespace RdKafka {
 namespace avro {
 
   class GenericRecord;
+  class Decoder;
 
 } /* namespace avro */
 
 namespace nasdaq {
 
-  using record_ptr = std::shared_ptr<avro::GenericRecord>;
+// std::shared_ptr<avro::Decoder>
+  using record_t = std::pair<std::shared_ptr<avro::GenericRecord>, std::shared_ptr<avro::Decoder>>;
   using parameters_t = std::map<std::string, std::string>;
   using clock_t = std::chrono::high_resolution_clock;
   using time_point_t = clock_t::time_point;
