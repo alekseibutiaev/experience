@@ -55,8 +55,8 @@ namespace nasdaq {
           , m_delegate(delegate)
           , m_err(err)
           , m_schema_control(load_schema(ctrl_schema))
-          , m_schema_datum(std::make_shared<datum_ptr::element_type>(m_schema_control)) {
-        read_tables(nasdaq::avro_decode_t::control, m_schema_control.root());
+          , m_schema_datum(std::make_shared<datum_ptr::element_type>(*m_schema_control)) {
+        read_tables(nasdaq::avro_decode_t::control, m_schema_control->root());
       }
       void operator()(const time_point_t& tp, std::string stream, const void* buf,
           const std::size_t size) const {
@@ -91,7 +91,8 @@ namespace nasdaq {
           m_delegate.data(name, datum.value<bool>());
       }
     private:
-      using map_schemas_t = std::map<std::string, avro::ValidSchema>;
+      using schema_ptr = std::shared_ptr<avro::ValidSchema>;
+      using map_schemas_t = std::map<std::string, schema_ptr>;
       using datum_ptr = std::shared_ptr<avro::GenericDatum>;
     private:
       void decode_message(const time_point_t& tp, const std::string& stream, datum_ptr datum,
@@ -123,7 +124,6 @@ namespace nasdaq {
           m_err.error(__FILE_STR__ + e.what());
         }
       }
-
       record_t get_record(const datum_ptr& datum, const void* buf, const std::size_t size) const {
         auto in = avro::memoryInputStream(reinterpret_cast<const uint8_t*>(buf), size);
         avro::DecoderPtr decoder(avro::binaryDecoder());
@@ -131,14 +131,13 @@ namespace nasdaq {
         avro::decode(*decoder, *datum);
         return {std::make_shared<avro::GenericRecord>(datum->value<avro::GenericRecord>()), decoder};
       }
-
       avro_decode_t::datum_ptr get_datum(const std::string& stream) const {
         for(;;){
           {
             std::shared_lock _(m_lock_schemas);
             auto it = m_schemas.find(stream);
             if(it != m_schemas.end())
-              return std::make_shared<avro_decode_t::datum_ptr::element_type>(it->second);
+              return std::make_shared<avro_decode_t::datum_ptr::element_type>(*it->second);
           }
           const auto& schema = m_delegate.load(stream);
           if(schema.empty())
@@ -149,9 +148,9 @@ namespace nasdaq {
       void update_control(const std::string& stream, const std::string& schema, const bool save = true) const {
         try {
           if(!stream.empty() && !schema.empty()) {
-            const auto sch = add_schema(stream, schema);
-            read_tables(stream, sch.root());
-            if(save && !m_delegate.save(stream, sch.toJson()))
+            const auto& sch = add_schema(stream, schema);
+            read_tables(stream, sch->root());
+            if(save && !m_delegate.save(stream, sch->toJson()))
               m_err.warning(__FILE_STR__ + "can`t open schema for stream: " + stream);
           }
         }
@@ -170,26 +169,25 @@ namespace nasdaq {
         catch(...) {
         }
       }
-      avro_decode_t::map_schemas_t::mapped_type& add_schema(const std::string& stream, const std::string& schema) const {
+      schema_ptr add_schema(const std::string& stream, const std::string& schema) const {
         std::istringstream iss(schema);
         std::unique_lock _(m_lock_schemas);
         return m_schemas[stream] = avro_decode_t::load_schema(iss);
       }
     private:
-      static avro::ValidSchema load_schema(std::istream& is) {
-        avro::ValidSchema schema;
-        avro::compileJsonSchema(is, schema);
+      static schema_ptr load_schema(std::istream& is) {
+        schema_ptr schema = std::make_shared<schema_ptr::element_type>();
+        avro::compileJsonSchema(is, *schema);
         return schema;
       }
-      static avro::ValidSchema load_schema(const std::string& file) {
-        if(file.empty()) {
-          std::istringstream iss(control_message_schema);
-          return load_schema(iss);
-        }
-        std::ifstream ifs(file.c_str());
-        if(!ifs.good())
-          throw(std::runtime_error("can`t open file: " + file));
-        return load_schema(ifs);
+      static schema_ptr load_schema(const std::string& file) {
+        std::shared_ptr<std::istream> is(file.empty() ?
+          static_cast<std::istream*>(new std::istringstream(control_message_schema)) :
+          static_cast<std::istream*>(new std::ifstream(file.c_str())));
+        if(static_cast<bool>(*is))
+          return load_schema(*is);
+        throw(std::runtime_error((file.empty() ? std::string("can`t load schema from loal data") :
+          "can`t open file: " + file) + __FILE_STR__));
       }
     private:
       static const std::string control_message_schema;
@@ -198,7 +196,7 @@ namespace nasdaq {
       nasdaq::avro_decode_t::delegate_t& m_delegate;
       const error_t& m_err;
       mutable std::mutex m_lock_schema_control;
-      const avro::ValidSchema m_schema_control;
+      const schema_ptr m_schema_control;
       mutable std::mutex m_lock_schema_datum;
       datum_ptr m_schema_datum;
       mutable std::shared_mutex m_lock_schemas;

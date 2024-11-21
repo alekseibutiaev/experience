@@ -39,7 +39,6 @@ namespace avro {
 
 namespace nasdaq {
 
-// std::shared_ptr<avro::Decoder>
   using record_t = std::pair<std::shared_ptr<avro::GenericRecord>, std::shared_ptr<avro::Decoder>>;
   using parameters_t = std::map<std::string, std::string>;
   using clock_t = std::chrono::high_resolution_clock;
