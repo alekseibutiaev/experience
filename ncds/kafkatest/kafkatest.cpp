@@ -17,11 +17,11 @@
 
 #include <librdkafka/rdkafkacpp.h>
 
-#include "../nasdaq/thread_pool.hpp"
-#include "../nasdaq/config.h"
-#include "../nasdaq/avro_decode.h"
-#include "../nasdaq/consumer.h"
-#include "../nasdaq/location.h"
+#include <thread_pool.hpp>
+#include <accessor/config.h>
+#include <accessor/avro_decode.h>
+#include <accessor/consumer.h>
+#include <location.h>
 
 // https://github.com/confluentinc/librdkafka/issues/2758
 
@@ -48,7 +48,7 @@ namespace {
     long _long;
   };
 
-  class deletate_t : public nasdaq::avro_decode_t::delegate_t, public nasdaq::error_t {
+  class deletate_t : public nasdaq::acc::avro_decode_t::delegate_t, public nasdaq::acc::error_t {
   public:
     deletate_t(const bool enable = true)
         : m_enable(enable)
@@ -56,12 +56,12 @@ namespace {
         , m_count(0) {
     }
   private:
-    using msg_fields_t = std::map<std::string, nasdaq::avro_decode_t::delegate_t::fields_t>;
+    using msg_fields_t = std::map<std::string, nasdaq::acc::avro_decode_t::delegate_t::fields_t>;
     using stream_msg_t = std::map<std::string, msg_fields_t>;
     using oss_thread_t = std::map<std::thread::id, std::ostringstream>;
   private:
     void table(const std::string& stream, const std::string& msg,
-        const nasdaq::avro_decode_t::delegate_t::fields_t& fields) override {
+        const nasdaq::acc::avro_decode_t::delegate_t::fields_t& fields) override {
       std::ostringstream oss;
       oss << "stream: " << stream << ", msg: " << msg << " [";
       for(std::size_t i = 0; i < fields.size(); ++i)
@@ -71,8 +71,8 @@ namespace {
       std::unique_lock _(m_lock_stream_msg);
       m_stream_msg[stream][msg] = fields;
     }
-    void message(const nasdaq::avro_decode_t& decoder, const nasdaq::time_point_t& ts,
-        const std::string& stream, const std::string& msg, const nasdaq::record_t record) override {
+    void message(const nasdaq::acc::avro_decode_t& decoder, const nasdaq::time_point_t& ts,
+        const std::string& stream, const std::string& msg, const nasdaq::acc::record_t record) override {
       const auto& filelds = get_fields(stream, msg);
       if(filelds.empty()) {
         std::cout << "unsuported message stream: " << stream << " message: " << msg << std::endl;
@@ -150,9 +150,9 @@ namespace {
         [this]() -> std::ostream& {std::shared_lock _(m_lock_oss_thread); return m_oss_thread[std::this_thread::get_id()];}() <<
           ", " << field << ": " << data;
     }
-    const nasdaq::avro_decode_t::delegate_t::fields_t& get_fields(const std::string& stream,
+    const nasdaq::acc::avro_decode_t::delegate_t::fields_t& get_fields(const std::string& stream,
         const std::string& msg) const {
-      static const nasdaq::avro_decode_t::delegate_t::fields_t empty;
+      static const nasdaq::acc::avro_decode_t::delegate_t::fields_t empty;
       std::shared_lock _(m_lock_stream_msg);
       auto it1 = m_stream_msg.find(stream);
       if(it1 == m_stream_msg.end())
@@ -246,25 +246,25 @@ int main(int ac, char* av[]) {
     std::ifstream ifs("config.json");
     nlohmann::json j = nlohmann::json::parse(ifs);
     std::cout << j << std::endl;
-    std::vector<std::string> topics = {nasdaq::avro_decode_t::control};
+    std::vector<std::string> topics = {nasdaq::acc::avro_decode_t::control};
     topics.insert(topics.end(), j["topics"].begin(), j["topics"].end());
 
     rebalance_cb_t rdb;
     offset_commit_cb_t occb(rdb);
-    deletate_t delegate(false);
+    deletate_t delegate(true);
 
     read_json_t rj(j);
-    nasdaq::config_t cnf(rj, delegate);
+    nasdaq::acc::config_t cnf(rj, delegate);
     cnf.read_config(rj, delegate);
     cnf.set(&rdb, delegate);
     cnf.set(&occb, delegate);
 
-    nasdaq::avro_decode_t decode(delegate, delegate);
+    nasdaq::acc::avro_decode_t decode(delegate, delegate);
     tools::thread_pool_t<128> tread_pool;
-    nasdaq::consumer_t::execute_t execute = [&tread_pool](std::function<void()> value) {
+    nasdaq::acc::consumer_t::execute_t execute = [&tread_pool](std::function<void()> value) {
       tread_pool.execute(std::move(value));
     };
-    nasdaq::consumer_t consumer(cnf, rj, execute, decode, delegate);
+    nasdaq::acc::consumer_t consumer(cnf, rj, execute, decode, delegate);
     tread_pool.start();
     consumer.start(topics);
     for(std::size_t i = 0; i < 60;

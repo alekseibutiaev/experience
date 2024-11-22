@@ -39,6 +39,9 @@ if(OPENSSL_FOUND)
   message(STATUS "OpenSSL Libraries: ${OPENSSL_LIBRARIES}")
 endif()
 
+set(Boost_USE_STATIC_LIBS ON)
+find_package(Boost 1.65 REQUIRED COMPONENTS system program_options unit_test_framework)
+
 find_package(AVROCPP QUIET)
 find_package(RDKAFKA QUIET)
 find_package(RDKAFKACPP QUIET)
@@ -47,6 +50,10 @@ find_package(nlohmann_json REQUIRED CONFIG PATHS ${NLOCHMANN_MODULE_PATH})
 
 set(JSON-C_INCLUDE_DIRSN ${JSON-C_INCLUDE_DIRS})
 set(JSON-C_LIBRARIESN ${JSON-C_LIBRARIES})
+
+message("Boost_VERSION: " ${Boost_VERSION})
+message("Boost_INCLUDE_DIRS: " ${Boost_INCLUDE_DIRS})
+message("Boost_LIBRARY_DIRS: " ${Boost_LIBRARY_DIRS})
 
 message("AVROCPP_FOUND: " ${AVROCPP_FOUND})
 message("AVROCPP_INCLUDE_DIR: " ${AVROCPP_INCLUDE_DIR})
@@ -60,8 +67,6 @@ message("RDKAFKACPP_LIBRARIES: " ${RDKAFKACPP_LIBRARIES})
 message("JSON-C_INCLUDE_DIRS: " ${JSON-C_INCLUDE_DIRN})
 message("JSON-C_LIBRARIES: " ${JSON-C_LIBRARIESN})
 
-#add_subdirectory(library)
 add_subdirectory(nasdaq)
 add_subdirectory(avrotest)
 add_subdirectory(kafkatest)
-

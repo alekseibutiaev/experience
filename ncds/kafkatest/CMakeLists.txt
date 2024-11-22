@@ -14,10 +14,11 @@ target_include_directories(${PROJECT_NAME} PRIVATE
   ${RDKAFKACPP_INCLUDE_DIR}
   ${SPDLOG_INCLUDE_DIR}
   ${NLOHMANNJSON_ROOT}/include
+  ../nasdaq
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
-  nasdaq_static
+  accessor_static
   ${JSON-C_LIBRARY}
   ${CURL_LIBRARIES}
   ${RDKAFKA_LIBRARIES}
