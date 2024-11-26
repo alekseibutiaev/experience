@@ -48,6 +48,11 @@ namespace {
     long _long;
   };
 
+  class my_data_t : public nasdaq::user_data_t {
+  public:
+    std::ostringstream m_oss;
+  };
+
   class deletate_t : public nasdaq::acc::avro_decode_t::delegate_t, public nasdaq::acc::error_t {
   public:
     deletate_t(const bool enable = true)
@@ -78,11 +83,12 @@ namespace {
         std::cout << "unsuported message stream: " << stream << " message: " << msg << std::endl;
         return;
       }
+      my_data_t data;
       const std::size_t count = filelds.size();
-      begin_msg(ts, stream, msg);
+      begin_msg(ts, stream, msg, data);
       for(std::size_t i = 0; i < count; ++i)
-        decoder.get_field(record, i);
-      end_msg();
+        decoder.get_field(record, i, data);
+      end_msg(data);
       show_delay(ts);
     }
 
@@ -96,59 +102,52 @@ namespace {
       return read("./schema/" + stream + ".sch");
     }
 
-    void begin_msg(const nasdaq::time_point_t& tp, const std::string& stream, const std::string& msg) {
+    void begin_msg(const nasdaq::time_point_t& tp, const std::string& stream, const std::string& msg, my_data_t& data) {
       if(m_enable)
-        [this]() -> std::ostream& {std::unique_lock _(m_lock_oss_thread); return (m_oss_thread[std::this_thread::get_id()]
-          = std::move(std::ostringstream()));}() << time_print() << ", in " << time_print(tp) <<
-          ", stream: " << stream << ", message: " << msg;
+        data.m_oss << time_print() << ", in " << time_print(tp) << ", stream: " << stream << ", message: " << msg;
     }
-    void end_msg() {
-      if(m_enable)
-        [this]{std::shared_lock _(m_lock_oss_thread); info(static_cast<std::ostringstream&>(m_oss_thread[std::this_thread::get_id()] <<
-            __FILE_STR__ << std::endl).str());}();
-    }
-    void data(const std::string& field, const std::string& data) override {
-      if(m_enable)
-        [this]() -> std::ostream& {std::shared_lock _(m_lock_oss_thread); return m_oss_thread[std::this_thread::get_id()];}() <<
-          ", " << field << ": " << data;
-    }
-    void data(const std::string& field, const unsigned char& data) override  {
-      if(m_enable)
-        [this]() -> std::ostream& {std::shared_lock _(m_lock_oss_thread); return m_oss_thread[std::this_thread::get_id()];}() <<
-          ", " << field << ": " << data;
-    }
-    void data(const std::string& field, const int& data) override  {
-      if(m_enable)
-        [this]() -> std::ostream& {std::shared_lock _(m_lock_oss_thread); return m_oss_thread[std::this_thread::get_id()];}() <<
-          ", " << field << ": " << data;
-    }
-    void data(const std::string& field, const long& data) override {
+    void end_msg(my_data_t& data) {
       if(m_enable) {
-        std::ostream& os = [this]() -> std::ostream& {std::shared_lock _(m_lock_oss_thread); return m_oss_thread[std::this_thread::get_id()];}();
+        data.m_oss <<__FILE_STR__ << std::endl;
+        info(data.m_oss.str());
+      }
+    }
+    void data(const std::string& field, const std::string& value, nasdaq::user_data_t& data) override {
+      if(m_enable)
+        static_cast<my_data_t&>(data).m_oss << ", " << field << ": " << value;
+    }
+    void data(const std::string& field, const unsigned char& value, nasdaq::user_data_t& data) override  {
+      if(m_enable)
+        static_cast<my_data_t&>(data).m_oss << ", " << field << ": " << value;
+    }
+    void data(const std::string& field, const int& value, nasdaq::user_data_t& data) override  {
+      if(m_enable)
+        static_cast<my_data_t&>(data).m_oss << ", " << field << ": " << value;
+    }
+    void data(const std::string& field, const long& value, nasdaq::user_data_t& data) override {
+      if(m_enable) {
+        std::ostream& os = static_cast<my_data_t&>(data).m_oss;
         os << ", " << field << ": ";
         if("uniqueTimestamp" == field || "trackingID" == field) {
           tracking_id_t val;
-          val._long = data;
+          val._long = value;
           os << time_print(nasdaq::clock_t::time_point(nasdaq::clock_t::duration(val.data.ts)));
         }
         else
-          os << data;
+          os << value;
       }
     }
-    void data(const std::string& field, const float& data) override  {
+    void data(const std::string& field, const float& value, nasdaq::user_data_t& data) override  {
       if(m_enable)
-        [this]() -> std::ostream& {std::shared_lock _(m_lock_oss_thread); return m_oss_thread[std::this_thread::get_id()];}() <<
-          ", " << field << ": " << data;
+        static_cast<my_data_t&>(data).m_oss << ", " << field << ": " << value;
     }
-    void data(const std::string& field, const double& data) override  {
+    void data(const std::string& field, const double& value, nasdaq::user_data_t& data) override  {
       if(m_enable)
-        [this]() -> std::ostream& {std::shared_lock _(m_lock_oss_thread); return m_oss_thread[std::this_thread::get_id()];}() <<
-          ", " << field << ": " << data;
+        static_cast<my_data_t&>(data).m_oss << ", " << field << ": " << value;
     }
-    void data(const std::string& field, const bool& data) override  {
+    void data(const std::string& field, const bool& value, nasdaq::user_data_t& data) override {
       if(m_enable)
-        [this]() -> std::ostream& {std::shared_lock _(m_lock_oss_thread); return m_oss_thread[std::this_thread::get_id()];}() <<
-          ", " << field << ": " << data;
+        static_cast<my_data_t&>(data).m_oss << ", " << field << ": " << value;
     }
     const nasdaq::acc::avro_decode_t::delegate_t::fields_t& get_fields(const std::string& stream,
         const std::string& msg) const {

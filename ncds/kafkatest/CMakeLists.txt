@@ -1,4 +1,4 @@
-file(GLOB HEADER_FILES "*.h *.hpp")
+file(GLOB HEADER_FILES "*.h" "*.hpp")
 file(GLOB SOURCE_FILES "*.cpp")
 
 project(kafkatest)
@@ -18,7 +18,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
-  accessor_static
+  nasdaq_static
   ${JSON-C_LIBRARY}
   ${CURL_LIBRARIES}
   ${RDKAFKA_LIBRARIES}

@@ -74,24 +74,24 @@ namespace nasdaq {
             m_err.error(e.what());
           }
         }
-        void get_field(const nasdaq::acc::record_t& record, const std::size_t& idx) const {
+        void get_field(const nasdaq::acc::record_t& record, const std::size_t& idx, user_data_t& data) const {
           const auto& name = record.first->schema()->nameAt(idx);
           auto datum = record.first->fieldAt(idx);
           const auto type = datum.type();
           if(avro::AVRO_STRING == type)
-            m_delegate.data(name, datum.value<std::string>());
+            m_delegate.data(name, datum.value<std::string>(), data);
           else if(avro::AVRO_BYTES == type)
-            m_delegate.data(name, datum.value<unsigned char>());
+            m_delegate.data(name, datum.value<unsigned char>(), data);
           else if(avro::AVRO_INT == type)
-            m_delegate.data(name, datum.value<int>());
+            m_delegate.data(name, datum.value<int>(), data);
           else if(avro::AVRO_LONG == type)
-            m_delegate.data(name, datum.value<long>());
+            m_delegate.data(name, datum.value<long>(), data);
           else if(avro::AVRO_FLOAT == type)
-            m_delegate.data(name, datum.value<float>());
+            m_delegate.data(name, datum.value<float>(), data);
           else if(avro::AVRO_DOUBLE == type)
-            m_delegate.data(name, datum.value<double>());
+            m_delegate.data(name, datum.value<double>(), data);
           else if(avro::AVRO_BOOL == type)
-            m_delegate.data(name, datum.value<bool>());
+            m_delegate.data(name, datum.value<bool>(), data);
         }
       private:
         using schema_ptr = std::shared_ptr<avro::ValidSchema>;
@@ -233,8 +233,8 @@ namespace nasdaq {
       (*m_impl)(tp, stream, buf, size);
     }
 
-    void avro_decode_t::get_field(const record_t& record, const std::size_t& idx) const {
-      m_impl->get_field(record, idx);
+    void avro_decode_t::get_field(const record_t& record, const std::size_t& idx, user_data_t& data) const {
+      m_impl->get_field(record, idx, data);
     }
 
     std::string avro_decode_t::delegate_t::read(const std::string& file) {

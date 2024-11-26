@@ -1,3 +1,23 @@
-add_subdirectory(accessor)
-add_subdirectory(dom)
+file(GLOB HEADER_FILES "*.h" "*.hpp" "dom/*.h" "dom/*.hpp" "accessor/*.h" "accessor/*.hpp")
+file(GLOB SOURCE_FILES "dom/sources/*.cpp" "accessor/sources/*.cpp")
 
+message("HEADER_FILES: " ${HEADER_FILES})
+message("SOURCE_FILES: " ${SOURCE_FILES})
+
+project(nasdaq)
+
+include_directories(
+  ${CURL_INCLUDE_DIR}
+  ${AVROCPP_INCLUDE_DIR}
+  ${RDKAFKA_INCLUDE_DIR}
+  ${RDKAFKACPP_INCLUDE_DIR}
+  ${SPDLOG_INCLUDE_DIR}
+  ${NLOHMANNJSON_ROOT}/include
+  ${CMAKE_CURRENT_SOURCE_DIR}/accessor
+  ${CMAKE_CURRENT_SOURCE_DIR}/dom
+  ./
+)
+
+add_library(${PROJECT_NAME}_static STATIC ${SOURCE_FILES})
+
+add_subdirectory(dom/test)

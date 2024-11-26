@@ -29,13 +29,13 @@ namespace nasdaq {
             const std::string& msg, const record_t record) = 0;
         virtual bool save(const std::string& stream, const std::string& schema) = 0;
         virtual std::string load(const std::string& stream) = 0;
-        virtual void data(const std::string& field, const std::string& data) = 0;
-        virtual void data(const std::string& field, const unsigned char& data) = 0;
-        virtual void data(const std::string& field, const int& data) = 0;
-        virtual void data(const std::string& field, const long& data) = 0;
-        virtual void data(const std::string& field, const float& data) = 0;
-        virtual void data(const std::string& field, const double& data) = 0;
-        virtual void data(const std::string& field, const bool& data) = 0;
+        virtual void data(const std::string& field, const std::string& value, user_data_t& data) = 0;
+        virtual void data(const std::string& field, const unsigned char& value, user_data_t& data) = 0;
+        virtual void data(const std::string& field, const int& value, user_data_t& data) = 0;
+        virtual void data(const std::string& field, const long& value, user_data_t& data) = 0;
+        virtual void data(const std::string& field, const float& value, user_data_t& data) = 0;
+        virtual void data(const std::string& field, const double& value, user_data_t& data) = 0;
+        virtual void data(const std::string& field, const bool& value, user_data_t& data) = 0;
       protected:
         std::string read(const std::string& file);
         bool write(const std::string& file, const std::string& schema);
@@ -43,7 +43,7 @@ namespace nasdaq {
     public:
       avro_decode_t(delegate_t& delegate, const error_t& err, const std::string& ctrl_schema = std::string());
       void operator()(const time_point_t& tp, const std::string& stream, const void* buf, const std::size_t size) const;
-      void get_field(const record_t& record, const std::size_t& idx) const;
+      void get_field(const record_t& record, const std::size_t& idx, user_data_t& data) const;
     public:
       const static std::string control;
     private:
