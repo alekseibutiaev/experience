@@ -21,13 +21,6 @@
 
 #include "avro_decode.h"
 
-namespace avro {
-
-  class GenericDatum;
-  class ValidSchema;
-
-} /* namespace avro */
-
 namespace {
 
   nasdaq::acc::avro_decode_t::delegate_t::fields_t get_fields(const avro::NodePtr node) {
@@ -75,7 +68,8 @@ namespace nasdaq {
           }
         }
         void get_field(const nasdaq::acc::record_t& record, const std::size_t& idx, user_data_t& data) const {
-          using function_t = void(avro_decode_t::*)(const avro::Type&, const std::string&, const avro::GenericDatum&, user_data_t&) const;
+          using function_t = void(avro_decode_t::*)(const avro::Type&, const std::string&,
+              const avro::GenericDatum&, user_data_t&) const;
           static const function_t function[avro::AVRO_SYMBOLIC] = {
             &avro_decode_t::get_field<std::string>, &avro_decode_t::get_field<unsigned char>,
             &avro_decode_t::get_field<int>, &avro_decode_t::get_field<long>,
