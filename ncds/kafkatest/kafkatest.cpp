@@ -114,7 +114,7 @@ namespace {
     }
     void data(const std::string& field, const std::string& value, nasdaq::user_data_t& data) override {
       if(m_enable)
-        static_cast<my_data_t&>(data).m_oss << ", " << field << ": " << value;
+        static_cast<my_data_t&>(data).m_oss << ", " << field << ": [" << value << ']';
     }
     void data(const std::string& field, const unsigned char& value, nasdaq::user_data_t& data) override  {
       if(m_enable)

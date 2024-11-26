@@ -75,23 +75,28 @@ namespace nasdaq {
           }
         }
         void get_field(const nasdaq::acc::record_t& record, const std::size_t& idx, user_data_t& data) const {
-          const auto& name = record.first->schema()->nameAt(idx);
+          using function_t = void(avro_decode_t::*)(const avro::Type&, const std::string&, const avro::GenericDatum&, user_data_t&) const;
+          static const function_t function[avro::AVRO_SYMBOLIC] = {
+            &avro_decode_t::get_field<std::string>, &avro_decode_t::get_field<unsigned char>,
+            &avro_decode_t::get_field<int>, &avro_decode_t::get_field<long>,
+            &avro_decode_t::get_field<float>, &avro_decode_t::get_field<double>,
+            &avro_decode_t::get_field<bool>, &avro_decode_t::get_field_unsuported,
+            &avro_decode_t::get_field_unsuported, &avro_decode_t::get_field_unsuported,
+            &avro_decode_t::get_field_unsuported, &avro_decode_t::get_field_unsuported,
+            &avro_decode_t::get_field_unsuported, &avro_decode_t::get_field_unsuported
+          };
           auto datum = record.first->fieldAt(idx);
-          const auto type = datum.type();
-          if(avro::AVRO_STRING == type)
-            m_delegate.data(name, datum.value<std::string>(), data);
-          else if(avro::AVRO_BYTES == type)
-            m_delegate.data(name, datum.value<unsigned char>(), data);
-          else if(avro::AVRO_INT == type)
-            m_delegate.data(name, datum.value<int>(), data);
-          else if(avro::AVRO_LONG == type)
-            m_delegate.data(name, datum.value<long>(), data);
-          else if(avro::AVRO_FLOAT == type)
-            m_delegate.data(name, datum.value<float>(), data);
-          else if(avro::AVRO_DOUBLE == type)
-            m_delegate.data(name, datum.value<double>(), data);
-          else if(avro::AVRO_BOOL == type)
-            m_delegate.data(name, datum.value<bool>(), data);
+          auto type = datum.type();
+          (this->*function[type])(type, record.first->schema()->nameAt(idx), datum, data);
+        }
+        template<typename type_t>
+        void get_field(const avro::Type&, const std::string& name, const avro::GenericDatum& datum,
+            user_data_t& data) const {
+          m_delegate.data(name, datum.value<type_t>(), data);
+        }
+        void get_field_unsuported(const avro::Type& type, const std::string&,
+            const avro::GenericDatum&, user_data_t&) const {
+          m_err.warning("unsuported type: " + avro::toString(type) + __FILE_STR__);
         }
       private:
         using schema_ptr = std::shared_ptr<avro::ValidSchema>;
