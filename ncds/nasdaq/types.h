@@ -3,9 +3,12 @@
 #include <string>
 #include <chrono>
 #include <iosfwd>
+#include <vector>
 #include <iomanip>
 #include <variant>
 #include <optional>
+#include <functional>
+
 
 namespace std {
 
@@ -56,10 +59,6 @@ namespace nasdaq {
     virtual ~user_data_t() = default;
   };
 
-  using clock_t = std::chrono::high_resolution_clock;
-  using time_point_t = clock_t::time_point;
-  using string_try_t = std::optional<std::string>;
-
   enum value_types {
     e_boolean,
     e_bytes,
@@ -71,6 +70,11 @@ namespace nasdaq {
     e_count
   };
 
+  using clock_t = std::chrono::high_resolution_clock;
+  using time_point_t = clock_t::time_point;
+  using string_try_t = std::optional<std::string>;
+  using get_property_t = std::function<string_try_t(const std::string&)>;
   using value_t = std::variant<bool, unsigned char, int, long, double, time_point_t, std::string>;
+  using values_t = std::vector<value_t>;
 
 } /* namespace nasdaq */

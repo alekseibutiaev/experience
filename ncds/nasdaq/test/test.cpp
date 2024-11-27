@@ -7,7 +7,7 @@
 #define protected public
 #define private public
 
-#include "../dom_types.h"
+#include "dom/dom_types.h"
 #include "../location.h"
 
 BOOST_AUTO_TEST_SUITE(static_test)

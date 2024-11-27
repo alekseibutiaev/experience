@@ -1,13 +1,5 @@
 #pragma once
 
-#include <map>
-#include <chrono>
-#include <memory>
-#include <string>
-#include <utility>
-#include <optional>
-#include <functional>
-
 #include "../types.h"
 
 namespace RdKafka {
@@ -32,20 +24,9 @@ namespace RdKafka {
 
 } /* namespace RdKafka */
 
-namespace avro {
-
-  class GenericRecord;
-  class Decoder;
-
-} /* namespace avro */
-
 namespace nasdaq {
 
   namespace acc {
-
-    using record_t = std::pair<std::shared_ptr<avro::GenericRecord>, std::shared_ptr<avro::Decoder>>;
-    using parameters_t = std::map<std::string, std::string>;
-    using get_property_t = std::function<string_try_t(const std::string&)>;
 
   } /* namespace acc */
 

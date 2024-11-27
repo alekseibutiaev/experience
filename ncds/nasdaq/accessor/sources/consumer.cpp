@@ -25,7 +25,7 @@
 
 namespace {
 
-  nasdaq::acc::config_t clone_config(const nasdaq::acc::config_t& config, const nasdaq::acc::error_t& notify) {
+  nasdaq::acc::config_t clone_config(const nasdaq::acc::config_t& config, const nasdaq::error_t& notify) {
     if(nasdaq::acc::config_t::e_global != config.get_type())
       throw(std::runtime_error("config is not a global"));
     return config.clone(notify);
@@ -53,7 +53,7 @@ namespace {
   }
 
   void update_logger(nasdaq::acc::config_t& config, nasdaq::acc::event_t* event,
-      const nasdaq::acc::error_t& error) {
+      const nasdaq::error_t& error) {
     if(RdKafka::EventCb* current = config.get(static_cast<RdKafka::EventCb*>(0), error))
       event->set_next(current);
     config.set(event, error);

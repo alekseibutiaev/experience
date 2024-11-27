@@ -9,9 +9,10 @@
 
 namespace nasdaq {
 
+  class error_t;
+
   namespace acc {
 
-    class error_t;
     class event_t;
     class config_t;
     class queue_control_t;

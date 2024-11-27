@@ -8,6 +8,7 @@
 #include <list>
 
 #include "acc_types.h"
+#include "avro_decode.h"
 
 namespace tools {
 
@@ -22,6 +23,6 @@ namespace tools {
   void pbuffer(const void* buf, const std::size_t& size, std::ostream& os);
 
   // This implementation might need to change based on the types of data in your records
-  void print_records(const nasdaq::acc::record_t& record, std::ostream& os);
+  void print_records(const nasdaq::acc::avro_record_t& record, std::ostream& os);
 
 } /* namespace tools */

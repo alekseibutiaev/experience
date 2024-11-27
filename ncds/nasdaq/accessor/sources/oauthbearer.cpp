@@ -13,7 +13,7 @@ namespace {
   const std::string param_glient_id = "oauth.client.id";
   const std::string param_secret = "oauth.client.secret";
 
-  nasdaq::string_try_t get_param(const nasdaq::acc::get_property_t& get_property, const std::string& name) {
+  nasdaq::string_try_t get_param(const nasdaq::get_property_t& get_property, const std::string& name) {
     if(const auto tmp = get_property(name))
       return tmp;
     throw(std::runtime_error("parametrs: " + name + " is not availavle"));

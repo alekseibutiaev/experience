@@ -6,9 +6,9 @@
 
 namespace nasdaq {
 
-  namespace acc {
+  class error_t;
 
-    class error_t;
+  namespace acc {
 
     class event_t : public RdKafka::EventCb {
     public:

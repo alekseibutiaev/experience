@@ -53,7 +53,7 @@ namespace {
     std::ostringstream m_oss;
   };
 
-  class deletate_t : public nasdaq::acc::avro_decode_t::delegate_t, public nasdaq::acc::error_t {
+  class deletate_t : public nasdaq::acc::avro_decode_t::delegate_t, public nasdaq::error_t {
   public:
     deletate_t(const bool enable = true)
         : m_enable(enable)
@@ -77,7 +77,7 @@ namespace {
       m_stream_msg[stream][msg] = fields;
     }
     void record(const nasdaq::acc::avro_decode_t& decoder, const nasdaq::time_point_t& ts,
-        const std::string& stream, const std::string& msg, const nasdaq::acc::record_t record) override {
+        const std::string& stream, const std::string& msg, const nasdaq::acc::avro_record_t record) override {
       const auto& filelds = get_fields(stream, msg);
       if(filelds.empty()) {
         std::cout << "unsuported message stream: " << stream << " message: " << msg << std::endl;

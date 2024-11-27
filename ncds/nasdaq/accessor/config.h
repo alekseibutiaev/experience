@@ -9,9 +9,9 @@
 
 namespace nasdaq {
 
-  namespace acc {
+  class error_t;
 
-    class error_t;
+  namespace acc {
 
     class config_t {
     public:

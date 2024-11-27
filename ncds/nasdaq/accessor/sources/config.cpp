@@ -52,7 +52,7 @@ namespace {
 
   template<typename first_t, typename second_t>
   void copy(const std::pair<first_t, second_t>& param, const RdKafka::Conf& from, RdKafka::Conf& to,
-      const nasdaq::acc::error_t& error) {
+      const nasdaq::error_t& error) {
     std::string err;
     first_t ptr;
     if(RdKafka::Conf::CONF_OK != from.get(ptr) || RdKafka::Conf::CONF_OK != to.set(param.second, ptr, err))
@@ -61,7 +61,7 @@ namespace {
 
   template <typename... types_t>
   void copy(const std::tuple<types_t...>& values, const RdKafka::Conf& from, RdKafka::Conf& to,
-      const nasdaq::acc::error_t& error) {
+      const nasdaq::error_t& error) {
     (copy(std::get<types_t>(values), from, to, error), ...);
   }
 

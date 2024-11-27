@@ -68,7 +68,7 @@ namespace nasdaq {
             m_err.error(e.what());
           }
         }
-        void get_field(const nasdaq::acc::record_t& record, const std::size_t& idx, user_data_t& data) const {
+        void get_field(const nasdaq::acc::avro_record_t& record, const std::size_t& idx, user_data_t& data) const {
           using signature_t = void(avro_decode_t::*)(const avro::Type&, const std::string&,
               const avro::GenericDatum&, user_data_t&) const;
           static const std::array<signature_t, avro::AVRO_SYMBOLIC> functions = {
@@ -111,7 +111,7 @@ namespace nasdaq {
         void read_control(const void* buf, const std::size_t size) const {
           try {
             std::pair<const char*, std::string> fields[] = {{"referenceDate", ""}, {"name",""}, {"schema",""}};
-            record_t record;
+            avro_record_t record;
             {
               std::unique_lock _(m_lock_schema_datum);
               record = get_record(m_schema_datum, buf, size);
@@ -127,7 +127,7 @@ namespace nasdaq {
             m_err.error(__FILE_STR__ + e.what());
           }
         }
-        record_t get_record(const datum_ptr& datum, const void* buf, const std::size_t size) const {
+        avro_record_t get_record(const datum_ptr& datum, const void* buf, const std::size_t size) const {
           auto in = avro::memoryInputStream(reinterpret_cast<const uint8_t*>(buf), size);
           avro::DecoderPtr decoder(avro::binaryDecoder());
           decoder->init(*in);
@@ -233,7 +233,7 @@ namespace nasdaq {
       (*m_impl)(tp, stream, buf, size);
     }
 
-    void avro_decode_t::get_field(const record_t& record, const std::size_t& idx, user_data_t& data) const {
+    void avro_decode_t::get_field(const avro_record_t& record, const std::size_t& idx, user_data_t& data) const {
       m_impl->get_field(record, idx, data);
     }
 
