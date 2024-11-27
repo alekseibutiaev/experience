@@ -25,7 +25,7 @@ namespace nasdaq {
       public:
         virtual ~delegate_t() = default;
         virtual void table(const std::string& stream, const std::string& msg, const fields_t& fields) = 0;
-        virtual void message(const avro_decode_t& decoder, const time_point_t& tp, const std::string& stream,
+        virtual void record(const avro_decode_t& decoder, const time_point_t& tp, const std::string& stream,
             const std::string& msg, const record_t record) = 0;
         virtual bool save(const std::string& stream, const std::string& schema) = 0;
         virtual std::string load(const std::string& stream) = 0;

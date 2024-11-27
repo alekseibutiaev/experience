@@ -102,7 +102,7 @@ namespace nasdaq {
             const void* buf, const std::size_t size) const {
           try {
             auto record = get_record(datum, buf, size);
-            m_delegate.message(m_owner, tp, stream, record.first->schema()->name().simpleName(), record);
+            m_delegate.record(m_owner, tp, stream, record.first->schema()->name().simpleName(), record);
           }
           catch(const std::exception& e) {
             m_err.error(e.what() + __FILE_STR__);

@@ -76,7 +76,7 @@ namespace {
       std::unique_lock _(m_lock_stream_msg);
       m_stream_msg[stream][msg] = fields;
     }
-    void message(const nasdaq::acc::avro_decode_t& decoder, const nasdaq::time_point_t& ts,
+    void record(const nasdaq::acc::avro_decode_t& decoder, const nasdaq::time_point_t& ts,
         const std::string& stream, const std::string& msg, const nasdaq::acc::record_t record) override {
       const auto& filelds = get_fields(stream, msg);
       if(filelds.empty()) {
