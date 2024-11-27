@@ -1,6 +1,7 @@
 
 #include <map>
 #include <mutex>
+#include <array>
 #include <string>
 #include <fstream>
 #include <sstream>
@@ -68,9 +69,9 @@ namespace nasdaq {
           }
         }
         void get_field(const nasdaq::acc::record_t& record, const std::size_t& idx, user_data_t& data) const {
-          using function_t = void(avro_decode_t::*)(const avro::Type&, const std::string&,
+          using signature_t = void(avro_decode_t::*)(const avro::Type&, const std::string&,
               const avro::GenericDatum&, user_data_t&) const;
-          static const function_t function[avro::AVRO_SYMBOLIC] = {
+          static const std::array<signature_t, avro::AVRO_SYMBOLIC> functions = {
             &avro_decode_t::get_field<std::string>, &avro_decode_t::get_field<unsigned char>,
             &avro_decode_t::get_field<int>, &avro_decode_t::get_field<long>,
             &avro_decode_t::get_field<float>, &avro_decode_t::get_field<double>,
@@ -81,7 +82,7 @@ namespace nasdaq {
           };
           auto datum = record.first->fieldAt(idx);
           auto type = datum.type();
-          (this->*function[type])(type, record.first->schema()->nameAt(idx), datum, data);
+          (this->*functions[type])(type, record.first->schema()->nameAt(idx), datum, data);
         }
         template<typename type_t>
         void get_field(const avro::Type&, const std::string& name, const avro::GenericDatum& datum,
