@@ -1,13 +1,16 @@
 
+#include <limits>
+#include <string>
 #include <iostream>
 
-#define BOOST_TEST_MODULE stoporder_test
+#define BOOST_TEST_MODULE dom_test
 #include <boost/test/unit_test.hpp>
 
 #define protected public
 #define private public
 
 #include "dom/dom_types.h"
+#include "../error.h"
 #include "../location.h"
 
 BOOST_AUTO_TEST_SUITE(static_test)
@@ -90,6 +93,43 @@ BOOST_AUTO_TEST_CASE(value_t_test) {
   BOOST_REQUIRE_EQUAL(std::get<nasdaq::e_string>(value), STRING);
   BOOST_REQUIRE_THROW(std::get<nasdaq::e_boolean>(value), std::bad_variant_access);
   BOOST_REQUIRE_THROW(std::get<bool>(value), std::bad_variant_access);
+
+}
+
+BOOST_AUTO_TEST_CASE(record_t_test) {
+
+#if 0
+
+  struct error_t : public nasdaq::error_t {
+    void debug(const std::string& msg) const { m_msg = msg; }
+    void info(const std::string& msg) const { m_msg = msg; }
+    void warning(const std::string& msg) const { m_msg = msg; }
+    void error(const std::string& msg) const { m_msg = msg; }
+    mutable std::string m_msg;
+  };
+
+  BOOST_REQUIRE_NO_THROW({
+    error_t error;
+    nasdaq::record_t r([v = std::string("4")](const std::string&){return nasdaq::string_try_t(v);}, error);
+    BOOST_REQUIRE_EQUAL(nasdaq::record_t::m_idx_type, 4);
+    BOOST_TEST_REQUIRE(error.m_msg.empty());
+    nasdaq::record_t::m_idx_type = std::numeric_limits<std::size_t>::max();
+  });
+  BOOST_REQUIRE_NO_THROW({
+    error_t error;
+    nasdaq::record_t r([v = std::string("5 ")](const std::string&){return nasdaq::string_try_t(v);}, error);
+    BOOST_REQUIRE_EQUAL(nasdaq::record_t::m_idx_type, 5);
+    BOOST_TEST_REQUIRE(error.m_msg.empty());
+    nasdaq::record_t::m_idx_type = std::numeric_limits<std::size_t>::max();
+  });
+  BOOST_REQUIRE_NO_THROW({
+    error_t error;
+    nasdaq::record_t r([v = std::string("X ")](const std::string&){return nasdaq::string_try_t(v);}, error);
+    BOOST_REQUIRE_EQUAL(nasdaq::record_t::m_idx_type, 2);
+    BOOST_TEST_REQUIRE(!error.m_msg.empty());
+    nasdaq::record_t::m_idx_type = std::numeric_limits<std::size_t>::max();
+  });
+#endif
 
 }
 

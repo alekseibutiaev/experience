@@ -54,11 +54,6 @@ namespace std {
 
 namespace nasdaq {
 
-  class user_data_t {
-  public:
-    virtual ~user_data_t() = default;
-  };
-
   enum value_types {
     e_boolean,
     e_bytes,

@@ -9,6 +9,9 @@
 namespace {
 
   std::size_t get_idx_type(const nasdaq::get_property_t& get_property, const nasdaq::error_t& error) {
+    static const nasdaq::stream_idx_t default_idx = {
+      {"TOTALVIEW.stream", 2}
+    };
     static const std::string param_name = "record/idx_type";
     static const std::string default_idx = "2";
     for(std::string value = get_property(param_name).value_or(default_idx);;value = default_idx)
@@ -24,17 +27,20 @@ namespace {
 
 }; /* namespace */
 
-
 namespace nasdaq {
 
-  std::size_t record_t::m_idx_type = std::numeric_limits<std::size_t>::max();
+  std::size_t record_t::m_tipe_record_idx;
 
   record_t::record_t(const get_property_t& get_property, const error_t& error)
       : m_error(error)
       , m_get_property(get_property) {
     if(std::numeric_limits<std::size_t>::max() == m_idx_type)
       m_idx_type = get_idx_type(m_get_property, m_error);
-
   }
+
+  record_ptr record_t::get_record(const get_property_t& get_property, const std::string& stream, const error_t& err) {
+    return record_ptr();
+  }
+
 
 } /* namespace nasdaq */

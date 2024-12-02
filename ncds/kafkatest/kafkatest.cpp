@@ -22,6 +22,7 @@
 #include <accessor/avro_decode.h>
 #include <accessor/consumer.h>
 #include <location.h>
+#include <record.h>
 
 // https://github.com/confluentinc/librdkafka/issues/2758
 
@@ -48,12 +49,76 @@ namespace {
     long _long;
   };
 
-  class my_data_t : public nasdaq::user_data_t {
+  std::string time_print(const nasdaq::clock_t::time_point now = nasdaq::clock_t::now()) {
+    static const char* format[] = {"%H:%M:%S", "%Y%m%d %H:%M:%S"};
+    const auto frac = (std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()) % std::chrono::seconds(1)).count();
+    const auto _now = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
+    std::ostringstream oss;
+    std::tm time;
+    localtime_r(&_now, &time);
+    oss << std::put_time(&time, format[86400 < _now]) << '.'<< std::left <<
+      std::setw(6) << std::setfill('0') << frac;
+    return oss.str();
+  }
+
+
+  class my_data_t : public nasdaq::data_delegate_t {
   public:
+    my_data_t(const nasdaq::time_point_t& tp, const std::string& stream, const std::string& msg,
+         nasdaq::error_t& error, const bool show = false)
+        : m_error(error)
+        , m_show(show) {
+      if(m_show)
+        m_oss << time_print() << ", in " << time_print(tp) << ", stream: " << stream << ", message: " << msg;
+    }
+    void data(const std::string& field, const std::string& value) override {
+      if(m_show)
+        m_oss << ", " << field << ": [" << value << ']';
+    }
+    void data(const std::string& field, const unsigned char& value) override {
+      if(m_show)
+        m_oss << ", " << field << ": [" << value << ']';
+    }
+    void data(const std::string& field, const int& value) override {
+      if(m_show)
+        m_oss << ", " << field << ": [" << value << ']';
+    }
+    void data(const std::string& field, const long& value) override {
+      if(m_show) {
+        m_oss << ", " << field << ": ";
+        if("uniqueTimestamp" == field || "trackingID" == field) {
+          tracking_id_t val;
+          val._long = value;
+          m_oss << time_print(nasdaq::clock_t::time_point(nasdaq::clock_t::duration(val.data.ts)));
+        }
+        else
+          m_oss << value;
+      }
+    }
+    void data(const std::string& field, const float& value) override {
+      if(m_show)
+        m_oss << ", " << field << ": [" << value << ']';
+    }
+    void data(const std::string& field, const double& value) override {
+      if(m_show)
+        m_oss << ", " << field << ": [" << value << ']';
+    }
+    void data(const std::string& field, const bool& value) override  {
+      if(m_show)
+        m_oss << ", " << field << ": [" << value << ']';
+    }
+
+    ~my_data_t() {
+      if(m_show)
+        m_error.info(m_oss.str());
+    }
+  private:
+    nasdaq::error_t& m_error;
+    const bool m_show;
     std::ostringstream m_oss;
   };
 
-  class deletate_t : public nasdaq::acc::avro_decode_t::delegate_t, public nasdaq::error_t {
+  class deletate_t : public nasdaq::acc::table_manager_t, public nasdaq::error_t {
   public:
     deletate_t(const bool enable = true)
         : m_enable(enable)
@@ -61,12 +126,12 @@ namespace {
         , m_count(0) {
     }
   private:
-    using msg_fields_t = std::map<std::string, nasdaq::acc::avro_decode_t::delegate_t::fields_t>;
+    using msg_fields_t = std::map<std::string, nasdaq::acc::table_manager_t::fields_t>;
     using stream_msg_t = std::map<std::string, msg_fields_t>;
     using oss_thread_t = std::map<std::thread::id, std::ostringstream>;
-  private:
+  private: // table_manager_t
     void table(const std::string& stream, const std::string& msg,
-        const nasdaq::acc::avro_decode_t::delegate_t::fields_t& fields) override {
+        const nasdaq::acc::table_manager_t::fields_t& fields) override {
       std::ostringstream oss;
       oss << "stream: " << stream << ", msg: " << msg << " [";
       for(std::size_t i = 0; i < fields.size(); ++i)
@@ -83,12 +148,10 @@ namespace {
         std::cout << "unsuported message stream: " << stream << " message: " << msg << std::endl;
         return;
       }
-      my_data_t data;
+      my_data_t data(ts, stream, msg, *this, true);
       const std::size_t count = filelds.size();
-      begin_msg(ts, stream, msg, data);
       for(std::size_t i = 0; i < count; ++i)
         decoder.get_field(record, i, data);
-      end_msg(data);
       show_delay(ts);
     }
 
@@ -102,15 +165,21 @@ namespace {
       return read("./schema/" + stream + ".sch");
     }
 
-    void begin_msg(const nasdaq::time_point_t& tp, const std::string& stream, const std::string& msg, my_data_t& data) {
+#if 0    
+    void begin_msg(const nasdaq::time_point_t& tp, const std::string& stream, const std::string& msg,
+        nasdaq::record_t& data) {
+/*
       if(m_enable)
         data.m_oss << time_print() << ", in " << time_print(tp) << ", stream: " << stream << ", message: " << msg;
+*/
     }
-    void end_msg(my_data_t& data) {
+    void end_msg(nasdaq::record_t& data) {
+/*
       if(m_enable) {
         data.m_oss <<__FILE_STR__ << std::endl;
         info(data.m_oss.str());
       }
+*/
     }
     void data(const std::string& field, const std::string& value, nasdaq::user_data_t& data) override {
       if(m_enable)
@@ -149,9 +218,10 @@ namespace {
       if(m_enable)
         static_cast<my_data_t&>(data).m_oss << ", " << field << ": " << value;
     }
-    const nasdaq::acc::avro_decode_t::delegate_t::fields_t& get_fields(const std::string& stream,
+#endif
+    const nasdaq::acc::table_manager_t::fields_t& get_fields(const std::string& stream,
         const std::string& msg) const {
-      static const nasdaq::acc::avro_decode_t::delegate_t::fields_t empty;
+      static const nasdaq::acc::table_manager_t::fields_t empty;
       std::shared_lock _(m_lock_stream_msg);
       auto it1 = m_stream_msg.find(stream);
       if(it1 == m_stream_msg.end())
@@ -162,17 +232,6 @@ namespace {
       return it2->second;
     }
   private:
-    std::string time_print(const nasdaq::clock_t::time_point now = nasdaq::clock_t::now()) const {
-      static const char* format[] = {"%H:%M:%S", "%Y%m%d %H:%M:%S"};
-      const auto frac = (std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()) % std::chrono::seconds(1)).count();
-      const auto _now = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
-      std::ostringstream oss;
-      std::tm time;
-      localtime_r(&_now, &time);
-      oss << std::put_time(&time, format[86400 < _now]) << '.'<< std::left <<
-        std::setw(6) << std::setfill('0') << frac;
-      return oss.str();
-    }
     void show_delay(const nasdaq::time_point_t& ts) {
       m_accum += std::chrono::duration_cast<std::chrono::microseconds>(nasdaq::clock_t::now() - ts).count();
       if(0 == ++m_count % 1000 ) {
@@ -239,6 +298,7 @@ namespace {
 } /* namespace */
 
 int main(int ac, char* av[]) {
+  
   int res = 0;
   try {
     std::cout << "test" << std::endl;

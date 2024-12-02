@@ -8,8 +8,11 @@
       "name": "domtest",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/build_Debug/nasdaq/dom/test/domtest",
+      "program": "${workspaceFolder}/build_Debug/nasdaq/test/domtest",
+      "preLaunchTask": "CMake: build",
       "args": [
+      ],
+      "x-args": [
         "--log_level=all"
       ],
       "stopAtEntry": false,
@@ -35,6 +38,7 @@
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/build_Debug/kafkatest/kafkatest",
+      "preLaunchTask": "CMake: build",
       "args": [],
       "stopAtEntry": true,
       "cwd": "${workspaceFolder}",
