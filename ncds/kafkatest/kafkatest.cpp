@@ -76,19 +76,19 @@ namespace {
       if(m_show)
         m_error.info(m_oss.str());
     }
-    void data(const std::string& field, const std::string& value) override {
+    void data(const std::size_t& idx, const std::string& field, const std::string& value) override {
       if(m_show)
         m_oss << ", " << field << ": [" << value << ']';
     }
-    void data(const std::string& field, const unsigned char& value) override {
+    void data(const std::size_t& idx, const std::string& field, const unsigned char& value) override {
       if(m_show)
         m_oss << ", " << field << ": [" << value << ']';
     }
-    void data(const std::string& field, const int& value) override {
+    void data(const std::size_t& idx, const std::string& field, const int& value) override {
       if(m_show)
         m_oss << ", " << field << ": [" << value << ']';
     }
-    void data(const std::string& field, const long& value) override {
+    void data(const std::size_t& idx, const std::string& field, const long& value) override {
       if(m_show) {
         m_oss << ", " << field << ": ";
         if("uniqueTimestamp" == field || "trackingID" == field) {
@@ -100,15 +100,15 @@ namespace {
           m_oss << value;
       }
     }
-    void data(const std::string& field, const float& value) override {
+    void data(const std::size_t& idx, const std::string& field, const float& value) override {
       if(m_show)
         m_oss << ", " << field << ": [" << value << ']';
     }
-    void data(const std::string& field, const double& value) override {
+    void data(const std::size_t& idx, const std::string& field, const double& value) override {
       if(m_show)
         m_oss << ", " << field << ": [" << value << ']';
     }
-    void data(const std::string& field, const bool& value) override  {
+    void data(const std::size_t& idx, const std::string& field, const bool& value) override  {
       if(m_show)
         m_oss << ", " << field << ": [" << value << ']';
     }

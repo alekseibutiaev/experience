@@ -144,6 +144,7 @@ BOOST_AUTO_TEST_CASE(message_test) {
 
   const std::string njson = "{\"test\":{\"name_msg_type\":\"my_msgType\"}}";
   const std::string wjson = "{\"test\":{\"name_msg_tipe\":\"my_msgType\"}}";
+  const std::string wjson1 = "{\"test\":{\"name_msg_type\":\"mymsgType\"}}";
 
   const nasdaq::message_t::creator_map_t cm;
   const nasdaq::message_t::module_info_t info = {cm, "test", "msgType"};
@@ -163,52 +164,10 @@ BOOST_AUTO_TEST_CASE(message_test) {
   BOOST_TEST_REQUIRE(error.m_msg.empty());
   BOOST_REQUIRE_EQUAL(nasdaq::message_t::npos, nasdaq::message_t::get_type_idx(config_t(wjson), info, npos, error));
   BOOST_TEST_REQUIRE(!error.m_msg.empty());
-
-#if 0
-  nasdaq::dom::get_type_idx::m_idx = std::numeric_limits<std::size_t>::max();
-  BOOST_REQUIRE_EQUAL(1, nasdaq::dom::get_type_idx()(congif_t(njson), fields));
-  BOOST_REQUIRE_EQUAL(nasdaq::dom::get_type_idx::m_idx, 1);
-  nasdaq::dom::get_type_idx::m_idx = std::numeric_limits<std::size_t>::max();
-  BOOST_REQUIRE_EQUAL(2, nasdaq::dom::get_type_idx()(congif_t(njson), fields));
-  BOOST_REQUIRE_EQUAL(nasdaq::dom::get_type_idx::m_idx, 2);
-  nasdaq::dom::get_type_idx::m_idx = std::numeric_limits<std::size_t>::max();
-  BOOST_REQUIRE_EQUAL(0, nasdaq::dom::get_type_idx()(congif_t(wjson), fields));
-  BOOST_REQUIRE_EQUAL(nasdaq::dom::get_type_idx::m_idx, 0);
-  nasdaq::dom::get_type_idx::m_idx = std::numeric_limits<std::size_t>::max();
-#endif
-
-#if 0
-
-  struct error_t : public nasdaq::error_t {
-    void debug(const std::string& msg) const { m_msg = msg; }
-    void info(const std::string& msg) const { m_msg = msg; }
-    void warning(const std::string& msg) const { m_msg = msg; }
-    void error(const std::string& msg) const { m_msg = msg; }
-    mutable std::string m_msg;
-  };
-
-  BOOST_REQUIRE_NO_THROW({
-    error_t error;
-    nasdaq::record_t r([v = std::string("4")](const std::string&){return nasdaq::string_try_t(v);}, error);
-    BOOST_REQUIRE_EQUAL(nasdaq::record_t::m_idx_type, 4);
-    BOOST_TEST_REQUIRE(error.m_msg.empty());
-    nasdaq::record_t::m_idx_type = std::numeric_limits<std::size_t>::max();
-  });
-  BOOST_REQUIRE_NO_THROW({
-    error_t error;
-    nasdaq::record_t r([v = std::string("5 ")](const std::string&){return nasdaq::string_try_t(v);}, error);
-    BOOST_REQUIRE_EQUAL(nasdaq::record_t::m_idx_type, 5);
-    BOOST_TEST_REQUIRE(error.m_msg.empty());
-    nasdaq::record_t::m_idx_type = std::numeric_limits<std::size_t>::max();
-  });
-  BOOST_REQUIRE_NO_THROW({
-    error_t error;
-    nasdaq::record_t r([v = std::string("X ")](const std::string&){return nasdaq::string_try_t(v);}, error);
-    BOOST_REQUIRE_EQUAL(nasdaq::record_t::m_idx_type, 2);
-    BOOST_TEST_REQUIRE(!error.m_msg.empty());
-    nasdaq::record_t::m_idx_type = std::numeric_limits<std::size_t>::max();
-  });
-#endif
+  BOOST_TEST_REQUIRE(0 != error.m_msg.find("msgType"));
+  BOOST_REQUIRE_EQUAL(nasdaq::message_t::npos, nasdaq::message_t::get_type_idx(config_t(wjson1), info, npos, error));
+  BOOST_TEST_REQUIRE(!error.m_msg.empty());
+  BOOST_TEST_REQUIRE(0 != error.m_msg.find("mymsgType"));
 
 }
 

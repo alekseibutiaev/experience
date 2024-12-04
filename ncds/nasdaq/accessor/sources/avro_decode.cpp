@@ -70,7 +70,7 @@ namespace nasdaq {
           }
         }
         void get_field(const avro_record_t& record, const std::size_t& idx, data_delegate_t& data) const {
-          using signature_t = void(avro_decoder_t::*)(const avro::Type&, const std::string&,
+          using signature_t = void(avro_decoder_t::*)(const avro::Type&, const std::size_t&, const std::string&,
               const avro::GenericDatum&, data_delegate_t&) const;
           static const std::array<signature_t, avro::AVRO_SYMBOLIC> functions = {
             &avro_decoder_t::get_field<std::string>, &avro_decoder_t::get_field<unsigned char>,
@@ -82,14 +82,14 @@ namespace nasdaq {
             &avro_decoder_t::get_field_unsuported, &avro_decoder_t::get_field_unsuported };
           auto datum = record.first->fieldAt(idx);
           auto type = datum.type();
-          (this->*functions[type])(type, record.first->schema()->nameAt(idx), datum, data);
+          (this->*functions[type])(type, idx, record.first->schema()->nameAt(idx), datum, data);
         }
         template<typename type_t>
-        void get_field(const avro::Type&, const std::string& name, const avro::GenericDatum& datum,
+        void get_field(const avro::Type&, const std::size_t& idx, const std::string& name, const avro::GenericDatum& datum,
             data_delegate_t& data) const {
-          data.data(name, datum.value<type_t>());
+          data.data(idx, name, datum.value<type_t>());
         }
-        void get_field_unsuported(const avro::Type& type, const std::string&,
+        void get_field_unsuported(const avro::Type& type, const std::size_t& idx, const std::string&,
             const avro::GenericDatum&, data_delegate_t&) const {
           m_error.warning("unsuported type: " + avro::toString(type) + __FILE_STR__);
         }
