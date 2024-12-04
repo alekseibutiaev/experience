@@ -13,14 +13,14 @@
 #include <librdkafka/rdkafka.h>
 #include <librdkafka/rdkafkacpp.h>
 
-#include "config.h"
+#include "../config.h"
 #include "tools.h"
 #include "error.h"
 #include "event.h"
 #include "location.h"
 #include "oauthbearer.h"
 
-#include "consumer.h"
+#include "accessor/consumer.h"
 
 
 namespace {

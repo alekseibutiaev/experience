@@ -1,5 +1,5 @@
 
-#include "../location.h"
+#include <location.h>
 
 #include <error.h>
 

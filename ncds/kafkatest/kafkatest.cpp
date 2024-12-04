@@ -19,12 +19,14 @@
 
 #include <thread_pool.hpp>
 #include <accessor/config.h>
+#include <accessor/table_manager.h>
 #include <accessor/avro_decode.h>
 #include <accessor/consumer.h>
 #include <location.h>
-#include <record.h>
+#include <message.h>
 
 // https://github.com/confluentinc/librdkafka/issues/2758
+// f0592490d1c708e57805b71c04c451e69632c6b6
 
 namespace {
 
@@ -61,7 +63,6 @@ namespace {
     return oss.str();
   }
 
-
   class my_data_t : public nasdaq::data_delegate_t {
   public:
     my_data_t(const nasdaq::time_point_t& tp, const std::string& stream, const std::string& msg,
@@ -70,6 +71,10 @@ namespace {
         , m_show(show) {
       if(m_show)
         m_oss << time_print() << ", in " << time_print(tp) << ", stream: " << stream << ", message: " << msg;
+    }
+    ~my_data_t() {
+      if(m_show)
+        m_error.info(m_oss.str());
     }
     void data(const std::string& field, const std::string& value) override {
       if(m_show)
@@ -107,11 +112,6 @@ namespace {
       if(m_show)
         m_oss << ", " << field << ": [" << value << ']';
     }
-
-    ~my_data_t() {
-      if(m_show)
-        m_error.info(m_oss.str());
-    }
   private:
     nasdaq::error_t& m_error;
     const bool m_show;
@@ -120,26 +120,23 @@ namespace {
 
   class deletate_t : public nasdaq::acc::table_manager_t, public nasdaq::error_t {
   public:
-    deletate_t(const bool enable = true)
-        : m_enable(enable)
+    deletate_t(const nasdaq::get_property_t& get_property, const bool enable = true)
+        : m_get_property(get_property)
+        , m_enable(enable)
         , m_accum(0)
         , m_count(0) {
     }
   private:
-    using msg_fields_t = std::map<std::string, nasdaq::acc::table_manager_t::fields_t>;
-    using stream_msg_t = std::map<std::string, msg_fields_t>;
     using oss_thread_t = std::map<std::thread::id, std::ostringstream>;
-  private: // table_manager_t
-    void table(const std::string& stream, const std::string& msg,
-        const nasdaq::acc::table_manager_t::fields_t& fields) override {
+  private: // nasdaq::acc::table_manager_t
+    void table(const std::string& stream, const std::string& msg, const nasdaq::fields_t& fields) override {
+      nasdaq::acc::table_manager_t::table(stream, msg, fields);   
       std::ostringstream oss;
       oss << "stream: " << stream << ", msg: " << msg << " [";
       for(std::size_t i = 0; i < fields.size(); ++i)
         oss << (i == 0 ? "" : ", ") << fields[ i ];
       oss << ']' << __FILE_STR__ << std::endl;
       info(oss.str());
-      std::unique_lock _(m_lock_stream_msg);
-      m_stream_msg[stream][msg] = fields;
     }
     void record(const nasdaq::acc::avro_decode_t& decoder, const nasdaq::time_point_t& ts,
         const std::string& stream, const std::string& msg, const nasdaq::acc::avro_record_t record) override {
@@ -148,88 +145,22 @@ namespace {
         std::cout << "unsuported message stream: " << stream << " message: " << msg << std::endl;
         return;
       }
+
+      auto message = nasdaq::message_t::create(decoder, stream, msg, record, m_get_property, *this, *this);
+
       my_data_t data(ts, stream, msg, *this, true);
       const std::size_t count = filelds.size();
       for(std::size_t i = 0; i < count; ++i)
         decoder.get_field(record, i, data);
       show_delay(ts);
     }
-
-    bool save(const std::string& stream, const std::string& schema) {
+    bool save(const std::string& stream, const std::string& schema) override {
       std::cout << std::string("write file:") + "./schema/" + stream + ".sch" << std::endl;
-      return write("./schema/" + stream + ".sch", schema);
+      return nasdaq::acc::table_manager_t::save("./schema/" + stream + ".sch", schema);
     }
-
-    std::string load(const std::string& stream) {
+    std::string load(const std::string& stream) override {
       std::cout << std::string("read file: ") + "./schema/" + stream + ".sch" << std::endl;
-      return read("./schema/" + stream + ".sch");
-    }
-
-#if 0    
-    void begin_msg(const nasdaq::time_point_t& tp, const std::string& stream, const std::string& msg,
-        nasdaq::record_t& data) {
-/*
-      if(m_enable)
-        data.m_oss << time_print() << ", in " << time_print(tp) << ", stream: " << stream << ", message: " << msg;
-*/
-    }
-    void end_msg(nasdaq::record_t& data) {
-/*
-      if(m_enable) {
-        data.m_oss <<__FILE_STR__ << std::endl;
-        info(data.m_oss.str());
-      }
-*/
-    }
-    void data(const std::string& field, const std::string& value, nasdaq::user_data_t& data) override {
-      if(m_enable)
-        static_cast<my_data_t&>(data).m_oss << ", " << field << ": [" << value << ']';
-    }
-    void data(const std::string& field, const unsigned char& value, nasdaq::user_data_t& data) override  {
-      if(m_enable)
-        static_cast<my_data_t&>(data).m_oss << ", " << field << ": " << value;
-    }
-    void data(const std::string& field, const int& value, nasdaq::user_data_t& data) override  {
-      if(m_enable)
-        static_cast<my_data_t&>(data).m_oss << ", " << field << ": " << value;
-    }
-    void data(const std::string& field, const long& value, nasdaq::user_data_t& data) override {
-      if(m_enable) {
-        std::ostream& os = static_cast<my_data_t&>(data).m_oss;
-        os << ", " << field << ": ";
-        if("uniqueTimestamp" == field || "trackingID" == field) {
-          tracking_id_t val;
-          val._long = value;
-          os << time_print(nasdaq::clock_t::time_point(nasdaq::clock_t::duration(val.data.ts)));
-        }
-        else
-          os << value;
-      }
-    }
-    void data(const std::string& field, const float& value, nasdaq::user_data_t& data) override  {
-      if(m_enable)
-        static_cast<my_data_t&>(data).m_oss << ", " << field << ": " << value;
-    }
-    void data(const std::string& field, const double& value, nasdaq::user_data_t& data) override  {
-      if(m_enable)
-        static_cast<my_data_t&>(data).m_oss << ", " << field << ": " << value;
-    }
-    void data(const std::string& field, const bool& value, nasdaq::user_data_t& data) override {
-      if(m_enable)
-        static_cast<my_data_t&>(data).m_oss << ", " << field << ": " << value;
-    }
-#endif
-    const nasdaq::acc::table_manager_t::fields_t& get_fields(const std::string& stream,
-        const std::string& msg) const {
-      static const nasdaq::acc::table_manager_t::fields_t empty;
-      std::shared_lock _(m_lock_stream_msg);
-      auto it1 = m_stream_msg.find(stream);
-      if(it1 == m_stream_msg.end())
-        return empty;
-      auto it2 = it1->second.find(msg);
-      if(it2 == it1->second.end())
-        return empty;
-      return it2->second;
+      return nasdaq::acc::table_manager_t::load("./schema/" + stream + ".sch");
     }
   private:
     void show_delay(const nasdaq::time_point_t& ts) {
@@ -256,15 +187,11 @@ namespace {
       std::cout << time_print() << " ERROR: " << msg << std::endl;
     }
   private:
+    const nasdaq::get_property_t& m_get_property;
     const bool m_enable;
     std::size_t m_accum;
     std::size_t m_count;
     mutable std::mutex m_lock_cout;
-    mutable std::shared_mutex m_lock_stream_msg;
-    stream_msg_t m_stream_msg;
-    mutable std::shared_mutex m_lock_oss_thread;
-    oss_thread_t m_oss_thread;
-    bool m_tmp;
   };
 
   class rebalance_cb_t : public RdKafka::RebalanceCb {
@@ -307,12 +234,12 @@ int main(int ac, char* av[]) {
     std::cout << j << std::endl;
     std::vector<std::string> topics = {nasdaq::acc::avro_decode_t::control};
     topics.insert(topics.end(), j["topics"].begin(), j["topics"].end());
+    read_json_t rj(j);
 
     rebalance_cb_t rdb;
     offset_commit_cb_t occb(rdb);
-    deletate_t delegate(true);
+    deletate_t delegate(rj, true);
 
-    read_json_t rj(j);
     nasdaq::acc::config_t cnf(rj, delegate);
     cnf.read_config(rj, delegate);
     cnf.set(&rdb, delegate);

@@ -2,17 +2,18 @@
 
 #include "dom_types.h"
 
+#include "message.h"
+
 namespace nasdaq {
 
   namespace dom {
 
-    class message_t {
-    public:
-      virtual ~message_t() = default;
-      virtual value_t& operator[](const std::size_t idx) = 0;
-      virtual const value_t& operator[](const std::size_t idx) const = 0;
-      virtual std::size_t size() const = 0;
-    };
+    class add_order_t : public message_t {};
+    class order_cancel_t : public message_t {};
+    class order_delete_t : public message_t {};
+    class order_executed_t : public message_t {};
+    class order_executed_with_price_t : public message_t {};
+    class system_event_t : public message_t {};
 
   } /* namespace dom */
 

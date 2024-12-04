@@ -15,25 +15,26 @@
 #include <avro/ValidSchema.hh>
 #include <avro/GenericDatum.hh>
 
-#include "../location.h"
-#include "../data_delegate.h"
+#include "location.h"
+#include "data_delegate.h"
 
-#include "acc_types.h"
+#include "accessor/acc_types.h"
+#include "accessor/table_manager.h"
 #include "tools.h"
 
-#include "avro_decode.h"
+#include "accessor/avro_decode.h"
 
 namespace {
 
-  nasdaq::acc::table_manager_t::fields_t get_fields(const avro::NodePtr node) {
+  nasdaq::fields_t get_fields(const avro::NodePtr node) {
     try {
-      nasdaq::acc::table_manager_t::fields_t res;
+      nasdaq::fields_t res;
       for(std::size_t i = 0; i < node->names(); ++i)
         res.push_back(node->nameAt(i));
       return res;
     }
     catch(...) {
-      return nasdaq::acc::table_manager_t::fields_t();
+      return nasdaq::fields_t();
     }
   }
 
@@ -236,22 +237,6 @@ namespace nasdaq {
     void avro_decode_t::get_field(const avro_record_t& record, const std::size_t& idx,
         data_delegate_t& data) const {
       m_impl->get_field(record, idx, data);
-    }
-
-    std::string table_manager_t::read(const std::string& file) {
-      std::string res;
-      std::ifstream ifs(file);
-      while(ifs)
-        res += [](std::istream& is){std::string tmp; is >> tmp; return tmp;}(ifs);
-      return res;
-    }
-
-    bool table_manager_t::write(const std::string& file, const std::string& schema) {
-      std::ofstream ofs(file);
-      const bool res = static_cast<bool>(ofs);
-      if(res)
-        ofs << schema;
-      return res;
     }
 
   } /* namespace acc */

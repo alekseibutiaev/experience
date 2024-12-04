@@ -4,15 +4,10 @@
 #include <vector>
 #include <string>
 
-#include "types.h"
 #include "error.h"
 
-namespace avro {
+#include "acc_types.h"
 
-  class GenericRecord;
-  class Decoder;
-
-} /* namespace avro */
 
 namespace nasdaq {
 
@@ -28,7 +23,6 @@ namespace nasdaq {
 
     } /* namespace details */
 
-    using avro_record_t = std::pair<std::shared_ptr<avro::GenericRecord>, std::shared_ptr<avro::Decoder>>;
 
     class avro_decode_t {
     public:
@@ -42,21 +36,6 @@ namespace nasdaq {
     private:
       const error_t& m_err;
       avro_decode_ptr m_impl;
-    };
-
-    class table_manager_t {
-    public:
-      using fields_t = std::vector<std::string>;
-    public:
-      virtual ~table_manager_t() = default;
-      virtual void table(const std::string& stream, const std::string& msg, const fields_t& fields) = 0;
-      virtual void record(const avro_decode_t& decoder, const time_point_t& tp, const std::string& stream,
-          const std::string& msg, const avro_record_t record) = 0;
-      virtual bool save(const std::string& stream, const std::string& schema) = 0;
-      virtual std::string load(const std::string& stream) = 0;
-    protected:
-      std::string read(const std::string& file);
-      bool write(const std::string& file, const std::string& schema);
     };
 
   } /* namespace acc */

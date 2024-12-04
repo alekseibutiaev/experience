@@ -1,11 +1,10 @@
+#pragma once
 
 #include "types.h"
 
 namespace nasdaq {
 
   class data_delegate_t {
-  public:
-    using fields_t = std::vector<std::string>;
   public:
     virtual ~data_delegate_t() = default;
     virtual void data(const std::string& field, const std::string& value) = 0;

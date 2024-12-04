@@ -3,6 +3,8 @@
 #include <string>
 #include <iostream>
 
+#include <nlohmann/json.hpp>
+
 #define BOOST_TEST_MODULE dom_test
 #include <boost/test/unit_test.hpp>
 
@@ -10,12 +12,44 @@
 #define private public
 
 #include "dom/dom_types.h"
+#include "../types.h"
 #include "../error.h"
 #include "../location.h"
 
+namespace {
+
+  std::vector<std::string> get_array(const std::string& value, const char sep = ';') {
+    std::vector<std::string> res;
+    for(std::size_t from = 0, to = 0; to != std::string::npos && from < (to = value.find(sep, from)); from = to + 1)
+      res.push_back(value.substr(from, to - from));
+    return res;
+  }
+
+
+  class congif_t {
+  public:
+    congif_t(const std::string& config)
+      : m_json(nlohmann::json::parse(config)) {
+    }
+    nasdaq::string_try_t operator()(const std::string& path) const {
+      const auto& list = get_array(path, '/');
+      nlohmann::json tmp = m_json;
+      for(const auto& it : list)
+        if(tmp.contains(it))
+          tmp = tmp[it];
+        else
+          return nasdaq::string_try_t();
+      return nasdaq::string_try_t(tmp.template get<std::string>());      
+    }
+  private:
+    nlohmann::json m_json;
+  };
+
+} /* namespace */
+
 BOOST_AUTO_TEST_SUITE(static_test)
 
-BOOST_AUTO_TEST_CASE(value_t_test) {
+BOOST_AUTO_TEST_CASE(value_test) {
 
   const bool BOOL = false;
   const unsigned char BYTES = static_cast<unsigned char>('U');
@@ -96,7 +130,25 @@ BOOST_AUTO_TEST_CASE(value_t_test) {
 
 }
 
-BOOST_AUTO_TEST_CASE(record_t_test) {
+BOOST_AUTO_TEST_CASE(record_test) {
+
+  const std::string njson = "{\"dom\":{\"name_msg_type\":\"my_msgType\"}}";
+  const std::string wjson = "{\"dom\":{\"name_msg_tipe\":\"my_msgType\"}}";
+
+  BOOST_REQUIRE_EQUAL(nasdaq::dom::get_type_idx::m_idx, std::numeric_limits<std::size_t>::max());
+  BOOST_REQUIRE_EQUAL(0, nasdaq::dom::get_type_idx()(congif_t(njson), {"my_msgType", "field0", "field1", "msgType"}));
+  BOOST_REQUIRE_EQUAL(nasdaq::dom::get_type_idx::m_idx, 0);
+  nasdaq::dom::get_type_idx::m_idx = std::numeric_limits<std::size_t>::max();
+  BOOST_REQUIRE_EQUAL(1, nasdaq::dom::get_type_idx()(congif_t(njson), {"field0", "my_msgType", "field1", "msgType"}));
+  BOOST_REQUIRE_EQUAL(nasdaq::dom::get_type_idx::m_idx, 1);
+  nasdaq::dom::get_type_idx::m_idx = std::numeric_limits<std::size_t>::max();
+  BOOST_REQUIRE_EQUAL(2, nasdaq::dom::get_type_idx()(congif_t(njson), {"field0", "field1", "my_msgType", "msgType"}));
+  BOOST_REQUIRE_EQUAL(nasdaq::dom::get_type_idx::m_idx, 2);
+  nasdaq::dom::get_type_idx::m_idx = std::numeric_limits<std::size_t>::max();
+  BOOST_REQUIRE_EQUAL(0, nasdaq::dom::get_type_idx()(congif_t(wjson), {"msgType", "field0", "my_msgType", "field1"}));
+  BOOST_REQUIRE_EQUAL(nasdaq::dom::get_type_idx::m_idx, 0);
+  nasdaq::dom::get_type_idx::m_idx = std::numeric_limits<std::size_t>::max();
+
 
 #if 0
 

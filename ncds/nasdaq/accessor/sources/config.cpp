@@ -12,7 +12,7 @@
 
 #include "error.h"
 #include "location.h"
-#include "config.h"
+#include "accessor/config.h"
 
 namespace {
 

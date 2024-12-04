@@ -13,8 +13,8 @@ include_directories(
   ${RDKAFKACPP_INCLUDE_DIR}
   ${SPDLOG_INCLUDE_DIR}
   ${NLOHMANNJSON_ROOT}/include
-  ${CMAKE_CURRENT_SOURCE_DIR}/accessor
-  ${CMAKE_CURRENT_SOURCE_DIR}/dom
+##  ${CMAKE_CURRENT_SOURCE_DIR}/accessor
+##  ${CMAKE_CURRENT_SOURCE_DIR}/dom
   ./
 )
 

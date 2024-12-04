@@ -2,7 +2,7 @@
 
 #include <librdkafka/rdkafkacpp.h>
 
-#include "acc_types.h"
+#include "accessor/acc_types.h"
 
 namespace nasdaq {
 

@@ -7,8 +7,8 @@
 #include <iosfwd>
 #include <list>
 
-#include "acc_types.h"
-#include "avro_decode.h"
+#include "accessor/acc_types.h"
+#include "accessor/avro_decode.h"
 
 namespace tools {
 

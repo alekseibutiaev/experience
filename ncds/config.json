@@ -75,5 +75,8 @@
   "ssl.providers" : "default,legacy",
   "timeout" : 30,
   "x-fetch.message.max.bytes" : 2048,
-  "batch.num.messages" : 1
+  "batch.num.messages" : 1,
+  "dom" : {
+    "name_msg_type" : "rrrr"
+  }
 }

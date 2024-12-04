@@ -11,9 +11,12 @@
       "program": "${workspaceFolder}/build_Debug/nasdaq/test/domtest",
       "preLaunchTask": "CMake: build",
       "args": [
+        "--run_test=static_test/record_test",
       ],
       "x-args": [
-        "--log_level=all"
+        "--log_level=all",
+        "--run_test=static_test/record_test",
+        "--run_test=static_test/value_test"
       ],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",

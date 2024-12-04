@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include "../types.h"
 
 namespace RdKafka {
@@ -24,9 +26,24 @@ namespace RdKafka {
 
 } /* namespace RdKafka */
 
+namespace avro {
+
+  class GenericRecord;
+  class Decoder;
+
+} /* namespace avro */
+
 namespace nasdaq {
 
   namespace acc {
+
+    class avro_record_t : public record_t, public std::pair<std::shared_ptr<avro::GenericRecord>, std::shared_ptr<avro::Decoder>> {
+    public:
+      using base_type_t = std::pair<std::shared_ptr<avro::GenericRecord>, std::shared_ptr<avro::Decoder>>;
+    public:
+      using base_type_t::base_type_t;
+
+    };
 
   } /* namespace acc */
 
