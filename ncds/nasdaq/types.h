@@ -4,6 +4,7 @@
 #include <chrono>
 #include <iosfwd>
 #include <vector>
+#include <memory>
 #include <iomanip>
 #include <variant>
 #include <optional>
@@ -70,6 +71,7 @@ namespace nasdaq {
     virtual ~record_t() = default;
   };
 
+  using record_ptr = std::shared_ptr<record_t>;
   using clock_t = std::chrono::high_resolution_clock;
   using time_point_t = clock_t::time_point;
   using fields_t = std::vector<std::string>;

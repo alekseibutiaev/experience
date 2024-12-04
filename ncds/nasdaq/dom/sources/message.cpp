@@ -20,17 +20,7 @@ namespace nasdaq {
     };
 
     const message_t::module_info_t get_modile_info_t::operator()() const {
-      return message_t::module_info_t(m_creators, "dom");
-    }
-
-    std::size_t get_type_idx::m_idx = std::numeric_limits<std::size_t>::max();
-
-    std::size_t& get_type_idx::operator()(const get_property_t& getter, const fields_t& fields) const {
-      if(std::numeric_limits<std::size_t>::max() == m_idx) {
-        const auto tmp = getter("dom/name_msg_type").value_or("msgType");
-        m_idx = std::distance(fields.begin(), std::find(fields.begin(), fields.end(), tmp));
-      }
-      return m_idx;
+      return message_t::module_info_t(m_creators, "dom", "msgType");
     }
 
   } /* namespace dom */

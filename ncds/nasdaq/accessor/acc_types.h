@@ -42,8 +42,9 @@ namespace nasdaq {
       using base_type_t = std::pair<std::shared_ptr<avro::GenericRecord>, std::shared_ptr<avro::Decoder>>;
     public:
       using base_type_t::base_type_t;
-
     };
+
+    using avro_record_ptr = std::shared_ptr<avro_record_t>;
 
   } /* namespace acc */
 

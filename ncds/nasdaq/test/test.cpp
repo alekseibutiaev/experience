@@ -11,7 +11,7 @@
 #define protected public
 #define private public
 
-#include "dom/dom_types.h"
+#include "../message.h"
 #include "../types.h"
 #include "../error.h"
 #include "../location.h"
@@ -25,10 +25,9 @@ namespace {
     return res;
   }
 
-
-  class congif_t {
+  class config_t {
   public:
-    congif_t(const std::string& config)
+    config_t(const std::string& config)
       : m_json(nlohmann::json::parse(config)) {
     }
     nasdaq::string_try_t operator()(const std::string& path) const {
@@ -43,6 +42,15 @@ namespace {
     }
   private:
     nlohmann::json m_json;
+  };
+
+  class test_error_t : public nasdaq::error_t {
+  public:
+    void debug(const std::string& msg) const { m_msg = msg; }
+    void info(const std::string& msg) const  { m_msg = msg; }
+    void warning(const std::string& msg) const { m_msg = msg; }
+    void error(const std::string& msg) const { m_msg = msg; }
+    mutable std::string m_msg;
   };
 
 } /* namespace */
@@ -130,25 +138,44 @@ BOOST_AUTO_TEST_CASE(value_test) {
 
 }
 
-BOOST_AUTO_TEST_CASE(record_test) {
+BOOST_AUTO_TEST_CASE(message_test) {
 
-  const std::string njson = "{\"dom\":{\"name_msg_type\":\"my_msgType\"}}";
-  const std::string wjson = "{\"dom\":{\"name_msg_tipe\":\"my_msgType\"}}";
+  const test_error_t error;
 
-  BOOST_REQUIRE_EQUAL(nasdaq::dom::get_type_idx::m_idx, std::numeric_limits<std::size_t>::max());
-  BOOST_REQUIRE_EQUAL(0, nasdaq::dom::get_type_idx()(congif_t(njson), {"my_msgType", "field0", "field1", "msgType"}));
-  BOOST_REQUIRE_EQUAL(nasdaq::dom::get_type_idx::m_idx, 0);
+  const std::string njson = "{\"test\":{\"name_msg_type\":\"my_msgType\"}}";
+  const std::string wjson = "{\"test\":{\"name_msg_tipe\":\"my_msgType\"}}";
+
+  const nasdaq::message_t::creator_map_t cm;
+  const nasdaq::message_t::module_info_t info = {cm, "test", "msgType"};
+  const nasdaq::fields_t fields0 = {"my_msgType", "field0", "field1", "msgType"};
+  const nasdaq::fields_t fields1 = {"field0", "my_msgType", "field1", "msgType"};
+  const nasdaq::fields_t fields2 = {"field0", "field1", "my_msgType", "msgType"};
+  const nasdaq::fields_t fields3 = {"my_msgType", "field0", "field1", "msgType"};
+  const nasdaq::fields_t npos = {"my_msgType", "field0", "field1", "msg_type"};
+
+  BOOST_REQUIRE_EQUAL(0, nasdaq::message_t::get_type_idx(config_t(njson), info, fields0, error));
+  BOOST_TEST_REQUIRE(error.m_msg.empty());
+  BOOST_REQUIRE_EQUAL(1, nasdaq::message_t::get_type_idx(config_t(njson), info, fields1, error));
+  BOOST_TEST_REQUIRE(error.m_msg.empty());
+  BOOST_REQUIRE_EQUAL(2, nasdaq::message_t::get_type_idx(config_t(njson), info, fields2, error));
+  BOOST_TEST_REQUIRE(error.m_msg.empty());
+  BOOST_REQUIRE_EQUAL(3, nasdaq::message_t::get_type_idx(config_t(wjson), info, fields3, error));
+  BOOST_TEST_REQUIRE(error.m_msg.empty());
+  BOOST_REQUIRE_EQUAL(nasdaq::message_t::npos, nasdaq::message_t::get_type_idx(config_t(wjson), info, npos, error));
+  BOOST_TEST_REQUIRE(!error.m_msg.empty());
+
+#if 0
   nasdaq::dom::get_type_idx::m_idx = std::numeric_limits<std::size_t>::max();
-  BOOST_REQUIRE_EQUAL(1, nasdaq::dom::get_type_idx()(congif_t(njson), {"field0", "my_msgType", "field1", "msgType"}));
+  BOOST_REQUIRE_EQUAL(1, nasdaq::dom::get_type_idx()(congif_t(njson), fields));
   BOOST_REQUIRE_EQUAL(nasdaq::dom::get_type_idx::m_idx, 1);
   nasdaq::dom::get_type_idx::m_idx = std::numeric_limits<std::size_t>::max();
-  BOOST_REQUIRE_EQUAL(2, nasdaq::dom::get_type_idx()(congif_t(njson), {"field0", "field1", "my_msgType", "msgType"}));
+  BOOST_REQUIRE_EQUAL(2, nasdaq::dom::get_type_idx()(congif_t(njson), fields));
   BOOST_REQUIRE_EQUAL(nasdaq::dom::get_type_idx::m_idx, 2);
   nasdaq::dom::get_type_idx::m_idx = std::numeric_limits<std::size_t>::max();
-  BOOST_REQUIRE_EQUAL(0, nasdaq::dom::get_type_idx()(congif_t(wjson), {"msgType", "field0", "my_msgType", "field1"}));
+  BOOST_REQUIRE_EQUAL(0, nasdaq::dom::get_type_idx()(congif_t(wjson), fields));
   BOOST_REQUIRE_EQUAL(nasdaq::dom::get_type_idx::m_idx, 0);
   nasdaq::dom::get_type_idx::m_idx = std::numeric_limits<std::size_t>::max();
-
+#endif
 
 #if 0
 

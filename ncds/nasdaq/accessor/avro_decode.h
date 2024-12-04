@@ -5,6 +5,7 @@
 #include <string>
 
 #include "error.h"
+#include "decoder.h"
 
 #include "acc_types.h"
 
@@ -12,30 +13,29 @@
 namespace nasdaq {
 
   class data_delegate_t;
+  class table_manager_t;
 
   namespace acc {
 
-    class table_manager_t;
 
     namespace details {
 
-      class avro_decode_t;
+      class avro_decoder_t;
 
     } /* namespace details */
 
 
-    class avro_decode_t {
+    class avro_decoder_t : public decoder_t {
     public:
-      avro_decode_t(table_manager_t& table, const error_t& err, const std::string& ctrl_schema = std::string());
-      void operator()(const time_point_t& tp, const std::string& stream, const void* buf, const std::size_t size) const;
-      void get_field(const avro_record_t& record, const std::size_t& idx, data_delegate_t& data) const;
+      avro_decoder_t(const error_t& error, table_manager_t& table, const std::string& ctrl_schema = std::string());
+      void operator()(const time_point_t& tp, const std::string& stream, const void* buf, const std::size_t size) const override;
+      void get_field(const record_ptr record, const std::size_t& idx, data_delegate_t& data) const override;
     public:
       const static std::string control;
     private:
-      using avro_decode_ptr = std::shared_ptr<details::avro_decode_t>;
+      using avro_decoder_ptr = std::shared_ptr<details::avro_decoder_t>;
     private:
-      const error_t& m_err;
-      avro_decode_ptr m_impl;
+      avro_decoder_ptr m_impl;
     };
 
   } /* namespace acc */

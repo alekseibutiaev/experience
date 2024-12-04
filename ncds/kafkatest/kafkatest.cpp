@@ -18,8 +18,8 @@
 #include <librdkafka/rdkafkacpp.h>
 
 #include <thread_pool.hpp>
+#include <table_manager.h>
 #include <accessor/config.h>
-#include <accessor/table_manager.h>
 #include <accessor/avro_decode.h>
 #include <accessor/consumer.h>
 #include <location.h>
@@ -118,7 +118,7 @@ namespace {
     std::ostringstream m_oss;
   };
 
-  class deletate_t : public nasdaq::acc::table_manager_t, public nasdaq::error_t {
+  class deletate_t : public nasdaq::table_manager_t, public nasdaq::error_t {
   public:
     deletate_t(const nasdaq::get_property_t& get_property, const bool enable = true)
         : m_get_property(get_property)
@@ -130,7 +130,7 @@ namespace {
     using oss_thread_t = std::map<std::thread::id, std::ostringstream>;
   private: // nasdaq::acc::table_manager_t
     void table(const std::string& stream, const std::string& msg, const nasdaq::fields_t& fields) override {
-      nasdaq::acc::table_manager_t::table(stream, msg, fields);   
+      nasdaq::table_manager_t::table(stream, msg, fields);   
       std::ostringstream oss;
       oss << "stream: " << stream << ", msg: " << msg << " [";
       for(std::size_t i = 0; i < fields.size(); ++i)
@@ -138,8 +138,8 @@ namespace {
       oss << ']' << __FILE_STR__ << std::endl;
       info(oss.str());
     }
-    void record(const nasdaq::acc::avro_decode_t& decoder, const nasdaq::time_point_t& ts,
-        const std::string& stream, const std::string& msg, const nasdaq::acc::avro_record_t record) override {
+    void record(const nasdaq::decoder_t& decoder, const nasdaq::time_point_t& ts,
+        const std::string& stream, const std::string& msg, const nasdaq::record_ptr record) override {
       const auto& filelds = get_fields(stream, msg);
       if(filelds.empty()) {
         std::cout << "unsuported message stream: " << stream << " message: " << msg << std::endl;
@@ -156,11 +156,11 @@ namespace {
     }
     bool save(const std::string& stream, const std::string& schema) override {
       std::cout << std::string("write file:") + "./schema/" + stream + ".sch" << std::endl;
-      return nasdaq::acc::table_manager_t::save("./schema/" + stream + ".sch", schema);
+      return nasdaq::table_manager_t::save("./schema/" + stream + ".sch", schema);
     }
     std::string load(const std::string& stream) override {
       std::cout << std::string("read file: ") + "./schema/" + stream + ".sch" << std::endl;
-      return nasdaq::acc::table_manager_t::load("./schema/" + stream + ".sch");
+      return nasdaq::table_manager_t::load("./schema/" + stream + ".sch");
     }
   private:
     void show_delay(const nasdaq::time_point_t& ts) {
@@ -232,7 +232,7 @@ int main(int ac, char* av[]) {
     std::ifstream ifs("config.json");
     nlohmann::json j = nlohmann::json::parse(ifs);
     std::cout << j << std::endl;
-    std::vector<std::string> topics = {nasdaq::acc::avro_decode_t::control};
+    std::vector<std::string> topics = {nasdaq::acc::avro_decoder_t::control};
     topics.insert(topics.end(), j["topics"].begin(), j["topics"].end());
     read_json_t rj(j);
 
@@ -245,7 +245,7 @@ int main(int ac, char* av[]) {
     cnf.set(&rdb, delegate);
     cnf.set(&occb, delegate);
 
-    nasdaq::acc::avro_decode_t decode(delegate, delegate);
+    nasdaq::acc::avro_decoder_t decode(delegate, delegate);
     tools::thread_pool_t<128> tread_pool;
     nasdaq::acc::consumer_t::execute_t execute = [&tread_pool](std::function<void()> value) {
       tread_pool.execute(std::move(value));
