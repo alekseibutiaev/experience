@@ -9,13 +9,14 @@
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/build_Debug/nasdaq/test/domtest",
-      "preLaunchTask": "CMake: build",
+      "preLaunchTask": "CMake: build domtest",
       "args": [
-        "--run_test=static_test/message_test",
+        "--run_test=static_test/data_delegate_test",
       ],
       "x-args": [
         "--log_level=all",
         "--run_test=static_test/message_test",
+        "--run_test=static_test/data_delegate_test",
         "--run_test=static_test/value_test"
       ],
       "stopAtEntry": false,

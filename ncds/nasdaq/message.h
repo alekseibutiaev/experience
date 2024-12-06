@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <array>
 #include <tuple>
 #include <string>
 #include <memory>
@@ -16,14 +17,14 @@ namespace nasdaq {
   class decoder_t;
   class table_manager_t;
 
-
   using message_ptr = std::unique_ptr<class message_t>;
 
   class message_t : public data_delegate_t {
   public:
     using creator_f = std::function<message_ptr(const message_t&)>;
     using creator_map_t = std::map<std::string, creator_f>;
-    using module_info_t = std::tuple<const creator_map_t&, const std::string, const std::string>;
+    using creators_t = std::array<creator_f, static_cast<std::size_t>('Z' - 'A' + 1)>;
+    using module_info_t = std::tuple<const creators_t&, const std::string, const std::string>;
     struct module_info_pos_t {
       enum {e_creator_map, e_module_name, e_default_type};
     };
@@ -33,6 +34,7 @@ namespace nasdaq {
     static message_ptr create(const decoder_t& decoder, const std::string& stream,
         const std::string& msg, record_ptr record, const get_property_t& get_property,
         const table_manager_t& table_manager, const error_t& error);
+    static message_ptr empty(const message_t&) { return message_ptr(); }
   public:
     static const std::size_t npos;
   protected:
@@ -52,10 +54,11 @@ namespace nasdaq {
     void data(const std::size_t& idx, const std::string& field, const std::string& value) override;
     void data(const std::size_t& idx, const std::string& field, const unsigned char& value) override;
     void data(const std::size_t& idx, const std::string& field, const int& value) override;
-    void data(const std::size_t& idx, const std::string& field, const long& value) override;
+    void data(const std::size_t& idx, const std::string& field, const long_wrp_t& value) override;
     void data(const std::size_t& idx, const std::string& field, const float& value) override;
     void data(const std::size_t& idx, const std::string& field, const double& value) override;
     void data(const std::size_t& idx, const std::string& field, const bool& value) override;
+    void data(const std::size_t& idx, const std::string& field, const time_point_t& value) override;
   private:
     static const std::size_t& msg_type_idx(const get_property_t& get_property, const std::string& stream,
        const module_info_t& info, const fields_t& fields, const error_t& error);

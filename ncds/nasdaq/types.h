@@ -60,6 +60,7 @@ namespace nasdaq {
     e_bytes,
     e_int,
     e_long,
+    e_float,
     e_double,
     e_time_point,
     e_string,
@@ -77,7 +78,7 @@ namespace nasdaq {
   using fields_t = std::vector<std::string>;
   using string_try_t = std::optional<std::string>;
   using get_property_t = std::function<string_try_t(const std::string&)>;
-  using value_t = std::variant<bool, unsigned char, int, long, double, time_point_t, std::string>;
+  using value_t = std::variant<bool, unsigned char, int, long, float, double, time_point_t, std::string>;
   using values_t = std::vector<value_t>;
 
 } /* namespace nasdaq */

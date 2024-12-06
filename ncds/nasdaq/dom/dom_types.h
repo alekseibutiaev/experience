@@ -16,7 +16,7 @@ namespace nasdaq {
     public:
       const message_t::module_info_t operator()() const;
     private:
-      static const message_t::creator_map_t m_creators;
+      static const message_t::creators_t m_creators;
     };
 
   } /* namespace dom */

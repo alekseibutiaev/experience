@@ -20,6 +20,20 @@
       "group": "build",
       "problemMatcher": [],
       "detail": "CMake template build task"
+    },
+    {
+      "type": "cmake",
+      "label": "CMake: build domtest",
+      "command": "build",
+      "targets": [
+        "domtest"
+      ],
+      "dependsOn": [
+        "SaveAllFiles"
+      ],
+      "group": "build",
+      "problemMatcher": [],
+      "detail": "CMake template build task"
     }
   ]
 }

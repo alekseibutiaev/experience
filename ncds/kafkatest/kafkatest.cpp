@@ -88,17 +88,9 @@ namespace {
       if(m_show)
         m_oss << ", " << field << ": [" << value << ']';
     }
-    void data(const std::size_t& idx, const std::string& field, const long& value) override {
-      if(m_show) {
-        m_oss << ", " << field << ": ";
-        if("uniqueTimestamp" == field || "trackingID" == field) {
-          tracking_id_t val;
-          val._long = value;
-          m_oss << time_print(nasdaq::clock_t::time_point(nasdaq::clock_t::duration(val.data.ts)));
-        }
-        else
-          m_oss << value;
-      }
+    void data(const std::size_t& idx, const std::string& field, const nasdaq::long_wrp_t& value) override {
+      if(m_show)
+        m_oss << static_cast<long>(value);
     }
     void data(const std::size_t& idx, const std::string& field, const float& value) override {
       if(m_show)
@@ -111,6 +103,10 @@ namespace {
     void data(const std::size_t& idx, const std::string& field, const bool& value) override  {
       if(m_show)
         m_oss << ", " << field << ": [" << value << ']';
+    }
+    void data(const std::size_t& idx, const std::string& field, const nasdaq::time_point_t& value) override {
+      if(m_show)
+        m_oss << ", " << time_print(value);
     }
   private:
     nasdaq::error_t& m_error;
@@ -125,6 +121,7 @@ namespace {
         , m_enable(enable)
         , m_accum(0)
         , m_count(0) {
+      m_get_property("test");
     }
   private:
     using oss_thread_t = std::map<std::thread::id, std::ostringstream>;
@@ -187,7 +184,7 @@ namespace {
       std::cout << time_print() << " ERROR: " << msg << std::endl;
     }
   private:
-    const nasdaq::get_property_t& m_get_property;
+    const nasdaq::get_property_t m_get_property;
     const bool m_enable;
     std::size_t m_accum;
     std::size_t m_count;
@@ -235,22 +232,23 @@ int main(int ac, char* av[]) {
     std::vector<std::string> topics = {nasdaq::acc::avro_decoder_t::control};
     topics.insert(topics.end(), j["topics"].begin(), j["topics"].end());
     read_json_t rj(j);
+    nasdaq::get_property_t getter(rj);
 
     rebalance_cb_t rdb;
     offset_commit_cb_t occb(rdb);
-    deletate_t delegate(rj, true);
+    deletate_t delegate(getter, true);
 
-    nasdaq::acc::config_t cnf(rj, delegate);
-    cnf.read_config(rj, delegate);
+    nasdaq::acc::config_t cnf(getter, delegate);
+    cnf.read_config(getter, delegate);
     cnf.set(&rdb, delegate);
     cnf.set(&occb, delegate);
 
     nasdaq::acc::avro_decoder_t decode(delegate, delegate);
-    tools::thread_pool_t<128> tread_pool;
+    tools::thread_pool_t<1> tread_pool;
     nasdaq::acc::consumer_t::execute_t execute = [&tread_pool](std::function<void()> value) {
       tread_pool.execute(std::move(value));
     };
-    nasdaq::acc::consumer_t consumer(cnf, rj, execute, decode, delegate);
+    nasdaq::acc::consumer_t consumer(cnf, getter, execute, decode, delegate);
     tread_pool.start();
     consumer.start(topics);
     for(std::size_t i = 0; i < 60;

@@ -36,6 +36,7 @@ namespace nasdaq {
       , m_error(value.m_error)
       , m_values(value.m_values) {
   }
+
   message_t::message_t(const get_property_t& get_property, const std::size_t type_idx,
         const fields_t& fields, const error_t& error)
       : m_get_property(get_property)
@@ -57,7 +58,8 @@ namespace nasdaq {
       const auto& type_idx = msg_type_idx(get_property, stream, it->second, fields, error);
       message_t tmp(get_property, type_idx, fields, error);
       decoder.get_field(record, type_idx, tmp);
-
+      const std::string v = tmp.type();
+      error.info(v);
     }
     
 
@@ -74,15 +76,8 @@ namespace nasdaq {
   void message_t::data(const std::size_t& idx, const std::string& field, const int& value) {
     m_values[idx] = value;
   }
-  void message_t::data(const std::size_t& idx, const std::string& field, const long& value) {
-    auto& tmp = m_values[idx];
-    if("uniqueTimestamp" == field || "trackingID" == field) {
-      union { struct { long ts : 48; short ctr : 16; } data; long _long; } val;
-      val._long = value;
-      tmp = nasdaq::clock_t::time_point(nasdaq::clock_t::duration(val.data.ts));
-    }
-    else
-      tmp = value;
+  void message_t::data(const std::size_t& idx, const std::string& field, const long_wrp_t& value) {
+    m_values[idx] = static_cast<long>(value);
   }
   void message_t::data(const std::size_t& idx, const std::string& field, const float& value) {
     m_values[idx] = value;
@@ -93,14 +88,16 @@ namespace nasdaq {
   void message_t::data(const std::size_t& idx, const std::string& field, const bool& value) {
     m_values[idx] = value;
   };
+  void message_t::data(const std::size_t& idx, const std::string& field, const time_point_t& value) {
+    m_values[idx] = value;
+  }
 
   const std::size_t& message_t::msg_type_idx(const get_property_t& get_property,
       const std::string& stream, const module_info_t& info, const fields_t& fields,
       const error_t& error) {
     {
       std::shared_lock _(m_lock_stream_type_idx);
-      auto it = m_stream_type_idx.find(stream);
-      if(it != m_stream_type_idx.end())
+      for(auto it = m_stream_type_idx.find(stream); it != m_stream_type_idx.end();)
         return it->second;
     }
     const auto idx = get_type_idx(get_property, info, fields, error);
