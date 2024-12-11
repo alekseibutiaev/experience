@@ -30,35 +30,41 @@ namespace nasdaq {
   message_t::stream_type_idx_t message_t::m_stream_type_idx;
 
   message_t::message_t(const message_t& value)
-      : m_get_property(value.m_get_property)
-      , m_fields(value.m_fields)
-      , m_error(value.m_error)
+      : m_sn(value.m_sn)
       , m_type_idx(value.m_type_idx)
+      , m_error(value.m_error)
+      , m_get_property(value.m_get_property)
+      , m_fields(value.m_fields)
       , m_values(value.m_values) {
   }
 
-  message_t::message_t(const get_property_t& get_property, const fields_t& fields,
-        const error_t& error, const std::size_t type_idx)
-      : m_get_property(get_property)
-      , m_fields(fields)
-      , m_error(error)
+  message_t::message_t(const std::size_t& sn, const std::size_t type_idx, const error_t& error,
+      const get_property_t& get_property, const fields_t& fields)
+      : m_sn(sn)
       , m_type_idx(type_idx)
+      , m_error(error)
+      , m_get_property(get_property)
+      , m_fields(fields)
       , m_values(m_fields.size()) {
+  }
+
+  const std::size_t& message_t::sn() const {
+    return m_sn;
   }
 
   const std::string& message_t::type() const {
     return std::get<std::string>(m_values[m_type_idx]);
   }
 
-  message_uptr message_t::create(const decoder_t& decoder, const std::string& stream,
-        const std::string& msg, record_ptr record, const get_property_t& get_property,
-        const table_manager_t& table_manager, const error_t& error,
-        const creators_stream_map_t& creators) {
+  message_uptr message_t::create(const std::size_t sn, const std::string& stream,
+        const std::string& msg, record_ptr record, const decoder_t& decoder,
+        const get_property_t& get_property, const table_manager_t& table_manager,
+        const error_t& error, const creators_stream_map_t& creators) {
     for(auto it = creators.find(stream); it != creators.end();) {
       const auto& fields = table_manager.get_fields(stream, msg);
       if(!fields.empty()) {
         const auto& type_idx = msg_type_idx(get_property, stream, it->second, fields, error);
-        message_t tmp(get_property, fields, error, type_idx);
+        message_t tmp(sn, type_idx, error, get_property, fields);
         decoder.get_field(record, type_idx, tmp);
         const auto& type = tmp.type();
         if(auto msg = std::get<module_info_pos_t::e_creator_map>(it->second)[type[0] - 'A'](tmp)) {
@@ -78,27 +84,38 @@ namespace nasdaq {
     return message_uptr();
   }
 
+  message_uptr message_t::empty(const message_t&) {
+    return message_uptr();
+  }
+
   void message_t::data(const std::size_t& idx, const std::string& field, const std::string& value) {
     m_values[idx] = value;
   }
+
   void message_t::data(const std::size_t& idx, const std::string& field, const unsigned char& value) {
     m_values[idx] = value;
   }
+
   void message_t::data(const std::size_t& idx, const std::string& field, const int& value) {
     m_values[idx] = value;
   }
+
   void message_t::data(const std::size_t& idx, const std::string& field, const long_wrp_t& value) {
     m_values[idx] = static_cast<long>(value);
   }
+
   void message_t::data(const std::size_t& idx, const std::string& field, const float& value) {
     m_values[idx] = value;
   }
+
   void message_t::data(const std::size_t& idx, const std::string& field, const double& value) {
     m_values[idx] = value;
   }
+
   void message_t::data(const std::size_t& idx, const std::string& field, const bool& value) {
     m_values[idx] = value;
   };
+
   void message_t::data(const std::size_t& idx, const std::string& field, const time_point_t& value) {
     m_values[idx] = value;
   }

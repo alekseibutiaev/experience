@@ -119,6 +119,7 @@ namespace {
     deletate_t(const nasdaq::get_property_t& get_property, const bool enable = true)
         : m_get_property(get_property)
         , m_enable(enable)
+        , m_sn(0)
         , m_accum(0)
         , m_count(0) {
       m_get_property("test");
@@ -143,7 +144,18 @@ namespace {
         return;
       }
 
-      auto message = nasdaq::message_t::create(decoder, stream, msg, record, m_get_property, *this, *this);
+/*
+const std::size_t sn,
+const std::string& stream,
+const std::string& msg,
+record_ptr record,
+const decoder_t& decoder,
+const get_property_t& get_property,
+const table_manager_t& table_manager,
+const error_t& error
+*/
+
+      auto message = nasdaq::message_t::create(m_sn++, stream, msg, record, decoder, m_get_property, *this, *this);
 
       my_data_t data(ts, stream, msg, *this, true);
       const std::size_t count = filelds.size();
@@ -186,6 +198,7 @@ namespace {
   private:
     const nasdaq::get_property_t m_get_property;
     const bool m_enable;
+    std::size_t m_sn;
     std::size_t m_accum;
     std::size_t m_count;
     mutable std::mutex m_lock_cout;

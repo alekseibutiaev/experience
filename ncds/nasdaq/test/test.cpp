@@ -433,6 +433,7 @@ BOOST_AUTO_TEST_CASE(message_test) {
   const nasdaq::fields_t fields2 = {"field0", "field1", "my_msgType", "msgType"};
   const nasdaq::fields_t fields3 = {"my_msgType", "field0", "field1", "msgType"};
   const nasdaq::fields_t npos = {"my_msgType", "field0", "field1", "msg_type"};
+  std::size_t sn = 0;
 
   BOOST_REQUIRE_EQUAL(0, nasdaq::message_t::get_type_idx(config_t(njson0), info, fields0, error));
   BOOST_TEST_REQUIRE(error.m_msg.empty());
@@ -466,8 +467,8 @@ BOOST_AUTO_TEST_CASE(message_test) {
   auto rec = std::make_shared<test_environment_t::my_record_t>();
   tm.table(STREAM, MESSAGE, test_environment_t::FIELDS);
 
-  nasdaq::message_ptr mesage = nasdaq::message_t::create(tm, STREAM, MESSAGE, rec, config_t(njson1),
-    tm, error, creators_stream_map);
+  nasdaq::message_ptr mesage = nasdaq::message_t::create(sn++, STREAM, MESSAGE, rec, tm,
+    config_t(njson1), tm, error, creators_stream_map);
 
   BOOST_TEST_REQUIRE(std::dynamic_pointer_cast<msg_t<0>>(mesage));
   BOOST_REQUIRE_EQUAL(mesage->m_values.size(), 11);
@@ -484,95 +485,92 @@ BOOST_AUTO_TEST_CASE(message_test) {
   BOOST_REQUIRE_EQUAL(std::get<nasdaq::e_string>(rec->m_values[10]), std::get<nasdaq::e_string>(mesage->m_values[10]));
 
   rec->m_values[2] = std::string("B");
-  mesage = nasdaq::message_t::create(tm, STREAM, MESSAGE, rec, config_t(njson1), tm, error, creators_stream_map);
+  mesage = nasdaq::message_t::create(sn++, STREAM, MESSAGE, rec, tm, config_t(njson1), tm, error, creators_stream_map);
   BOOST_TEST_REQUIRE(std::dynamic_pointer_cast<msg_t<1>>(mesage));
   rec->m_values[2] = std::string("C");
-  mesage = nasdaq::message_t::create(tm, STREAM, MESSAGE, rec, config_t(njson1), tm, error, creators_stream_map);
+  mesage = nasdaq::message_t::create(sn++, STREAM, MESSAGE, rec, tm, config_t(njson1), tm, error, creators_stream_map);
   BOOST_TEST_REQUIRE(std::dynamic_pointer_cast<msg_t<2>>(mesage));
   rec->m_values[2] = std::string("D");
-  mesage = nasdaq::message_t::create(tm, STREAM, MESSAGE, rec, config_t(njson1), tm, error, creators_stream_map);
+  mesage = nasdaq::message_t::create(sn++, STREAM, MESSAGE, rec, tm, config_t(njson1), tm, error, creators_stream_map);
   BOOST_TEST_REQUIRE(std::dynamic_pointer_cast<msg_t<3>>(mesage));
   rec->m_values[2] = std::string("E");
-  mesage = nasdaq::message_t::create(tm, STREAM, MESSAGE, rec, config_t(njson1), tm, error, creators_stream_map);
+  mesage = nasdaq::message_t::create(sn++, STREAM, MESSAGE, rec, tm, config_t(njson1), tm, error, creators_stream_map);
   BOOST_TEST_REQUIRE(std::dynamic_pointer_cast<msg_t<4>>(mesage));
   rec->m_values[2] = std::string("F");
-  mesage = nasdaq::message_t::create(tm, STREAM, MESSAGE, rec, config_t(njson1), tm, error, creators_stream_map);
+  mesage = nasdaq::message_t::create(sn++, STREAM, MESSAGE, rec, tm, config_t(njson1), tm, error, creators_stream_map);
   BOOST_TEST_REQUIRE(std::dynamic_pointer_cast<msg_t<5>>(mesage));
   rec->m_values[2] = std::string("G");
-  mesage = nasdaq::message_t::create(tm, STREAM, MESSAGE, rec, config_t(njson1), tm, error, creators_stream_map);
+  mesage = nasdaq::message_t::create(sn++, STREAM, MESSAGE, rec, tm, config_t(njson1), tm, error, creators_stream_map);
   BOOST_TEST_REQUIRE(std::dynamic_pointer_cast<msg_t<6>>(mesage));
   rec->m_values[2] = std::string("H");
-  mesage = nasdaq::message_t::create(tm, STREAM, MESSAGE, rec, config_t(njson1), tm, error, creators_stream_map);
+  mesage = nasdaq::message_t::create(sn++, STREAM, MESSAGE, rec, tm, config_t(njson1), tm, error, creators_stream_map);
   BOOST_TEST_REQUIRE(std::dynamic_pointer_cast<msg_t<7>>(mesage));
   rec->m_values[2] = std::string("I");
-  mesage = nasdaq::message_t::create(tm, STREAM, MESSAGE, rec, config_t(njson1), tm, error, creators_stream_map);
+  mesage = nasdaq::message_t::create(sn++, STREAM, MESSAGE, rec, tm, config_t(njson1), tm, error, creators_stream_map);
   BOOST_TEST_REQUIRE(std::dynamic_pointer_cast<msg_t<8>>(mesage));
   rec->m_values[2] = std::string("J");
-  mesage = nasdaq::message_t::create(tm, STREAM, MESSAGE, rec, config_t(njson1), tm, error, creators_stream_map);
+  mesage = nasdaq::message_t::create(sn++, STREAM, MESSAGE, rec, tm, config_t(njson1), tm, error, creators_stream_map);
   BOOST_TEST_REQUIRE(std::dynamic_pointer_cast<msg_t<9>>(mesage));
   rec->m_values[2] = std::string("K");
-  mesage = nasdaq::message_t::create(tm, STREAM, MESSAGE, rec, config_t(njson1), tm, error, creators_stream_map);
+  mesage = nasdaq::message_t::create(sn++, STREAM, MESSAGE, rec, tm, config_t(njson1), tm, error, creators_stream_map);
   BOOST_TEST_REQUIRE(std::dynamic_pointer_cast<msg_t<10>>(mesage));
   rec->m_values[2] = std::string("L");
-  mesage = nasdaq::message_t::create(tm, STREAM, MESSAGE, rec, config_t(njson1), tm, error, creators_stream_map);
+  mesage = nasdaq::message_t::create(sn++, STREAM, MESSAGE, rec, tm, config_t(njson1), tm, error, creators_stream_map);
   BOOST_TEST_REQUIRE(std::dynamic_pointer_cast<msg_t<11>>(mesage));
   rec->m_values[2] = std::string("M");
-  mesage = nasdaq::message_t::create(tm, STREAM, MESSAGE, rec, config_t(njson1), tm, error, creators_stream_map);
+  mesage = nasdaq::message_t::create(sn++, STREAM, MESSAGE, rec, tm, config_t(njson1), tm, error, creators_stream_map);
   BOOST_TEST_REQUIRE(std::dynamic_pointer_cast<msg_t<12>>(mesage));
   rec->m_values[2] = std::string("N");
-  mesage = nasdaq::message_t::create(tm, STREAM, MESSAGE, rec, config_t(njson1), tm, error, creators_stream_map);
+  mesage = nasdaq::message_t::create(sn++, STREAM, MESSAGE, rec, tm, config_t(njson1), tm, error, creators_stream_map);
   BOOST_TEST_REQUIRE(std::dynamic_pointer_cast<msg_t<13>>(mesage));
   rec->m_values[2] = std::string("O");
-  mesage = nasdaq::message_t::create(tm, STREAM, MESSAGE, rec, config_t(njson1), tm, error, creators_stream_map);
+  mesage = nasdaq::message_t::create(sn++, STREAM, MESSAGE, rec, tm, config_t(njson1), tm, error, creators_stream_map);
   BOOST_TEST_REQUIRE(std::dynamic_pointer_cast<msg_t<14>>(mesage));
   rec->m_values[2] = std::string("P");
-  mesage = nasdaq::message_t::create(tm, STREAM, MESSAGE, rec, config_t(njson1), tm, error, creators_stream_map);
+  mesage = nasdaq::message_t::create(sn++, STREAM, MESSAGE, rec, tm, config_t(njson1), tm, error, creators_stream_map);
   BOOST_TEST_REQUIRE(std::dynamic_pointer_cast<msg_t<15>>(mesage));
   rec->m_values[2] = std::string("Q");
-  mesage = nasdaq::message_t::create(tm, STREAM, MESSAGE, rec, config_t(njson1), tm, error, creators_stream_map);
+  mesage = nasdaq::message_t::create(sn++, STREAM, MESSAGE, rec, tm, config_t(njson1), tm, error, creators_stream_map);
   BOOST_TEST_REQUIRE(std::dynamic_pointer_cast<msg_t<16>>(mesage));
   rec->m_values[2] = std::string("R");
-  mesage = nasdaq::message_t::create(tm, STREAM, MESSAGE, rec, config_t(njson1), tm, error, creators_stream_map);
+  mesage = nasdaq::message_t::create(sn++, STREAM, MESSAGE, rec, tm, config_t(njson1), tm, error, creators_stream_map);
   BOOST_TEST_REQUIRE(std::dynamic_pointer_cast<msg_t<17>>(mesage));
   rec->m_values[2] = std::string("S");
-  mesage = nasdaq::message_t::create(tm, STREAM, MESSAGE, rec, config_t(njson1), tm, error, creators_stream_map);
+  mesage = nasdaq::message_t::create(sn++, STREAM, MESSAGE, rec, tm, config_t(njson1), tm, error, creators_stream_map);
   BOOST_TEST_REQUIRE(std::dynamic_pointer_cast<msg_t<18>>(mesage));
   rec->m_values[2] = std::string("T");
-  mesage = nasdaq::message_t::create(tm, STREAM, MESSAGE, rec, config_t(njson1), tm, error, creators_stream_map);
+  mesage = nasdaq::message_t::create(sn++, STREAM, MESSAGE, rec, tm, config_t(njson1), tm, error, creators_stream_map);
   BOOST_TEST_REQUIRE(std::dynamic_pointer_cast<msg_t<19>>(mesage));
   rec->m_values[2] = std::string("U");
-  mesage = nasdaq::message_t::create(tm, STREAM, MESSAGE, rec, config_t(njson1), tm, error, creators_stream_map);
+  mesage = nasdaq::message_t::create(sn++, STREAM, MESSAGE, rec, tm, config_t(njson1), tm, error, creators_stream_map);
   BOOST_TEST_REQUIRE(std::dynamic_pointer_cast<msg_t<20>>(mesage));
   rec->m_values[2] = std::string("V");
-  mesage = nasdaq::message_t::create(tm, STREAM, MESSAGE, rec, config_t(njson1), tm, error, creators_stream_map);
+  mesage = nasdaq::message_t::create(sn++, STREAM, MESSAGE, rec, tm, config_t(njson1), tm, error, creators_stream_map);
   BOOST_TEST_REQUIRE(std::dynamic_pointer_cast<msg_t<21>>(mesage));
   rec->m_values[2] = std::string("W");
-  mesage = nasdaq::message_t::create(tm, STREAM, MESSAGE, rec, config_t(njson1), tm, error, creators_stream_map);
+  mesage = nasdaq::message_t::create(sn++, STREAM, MESSAGE, rec, tm, config_t(njson1), tm, error, creators_stream_map);
   BOOST_TEST_REQUIRE(std::dynamic_pointer_cast<msg_t<22>>(mesage));
   rec->m_values[2] = std::string("X");
-  mesage = nasdaq::message_t::create(tm, STREAM, MESSAGE, rec, config_t(njson1), tm, error, creators_stream_map);
+  mesage = nasdaq::message_t::create(sn++, STREAM, MESSAGE, rec, tm, config_t(njson1), tm, error, creators_stream_map);
   BOOST_TEST_REQUIRE(std::dynamic_pointer_cast<msg_t<23>>(mesage));
   rec->m_values[2] = std::string("Y");
-  mesage = nasdaq::message_t::create(tm, STREAM, MESSAGE, rec, config_t(njson1), tm, error, creators_stream_map);
+  mesage = nasdaq::message_t::create(sn++, STREAM, MESSAGE, rec, tm, config_t(njson1), tm, error, creators_stream_map);
   BOOST_TEST_REQUIRE(std::dynamic_pointer_cast<msg_t<24>>(mesage));
   rec->m_values[2] = std::string("Z");
-  mesage = nasdaq::message_t::create(tm, STREAM, MESSAGE, rec, config_t(njson1), tm, error, creators_stream_map);
+  mesage = nasdaq::message_t::create(sn++, STREAM, MESSAGE, rec, tm, config_t(njson1), tm, error, creators_stream_map);
   BOOST_TEST_REQUIRE(std::dynamic_pointer_cast<msg_t<25>>(mesage));
 
   for(char c = 'A'; c <= 'Z'; ++c){
     auto tmp = std::string(&c, 1);
     rec->m_values[2] = tmp;
-    BOOST_TEST_REQUIRE(!static_cast<bool>(nasdaq::message_t::create(tm, STREAM,
-      MESSAGE, rec, config_t(njson1), tm, error, empty_creators_stream_map)));
+    BOOST_TEST_REQUIRE(!static_cast<bool>(nasdaq::message_t::create(sn++, STREAM, MESSAGE, rec, tm, config_t(njson1), tm, error, empty_creators_stream_map)));
     BOOST_REQUIRE_NE(std::string::npos, error.m_msg.find(tmp));
   }
 
-  BOOST_TEST_REQUIRE(!static_cast<bool>(nasdaq::message_t::create(tm, STREAM,
-    WRONG_MESSAGE, rec, config_t(njson1), tm, error, creators_stream_map)));
+  BOOST_TEST_REQUIRE(!static_cast<bool>(nasdaq::message_t::create(sn++, STREAM, WRONG_MESSAGE, rec, tm, config_t(njson1), tm, error, creators_stream_map)));
   BOOST_REQUIRE_NE(std::string::npos, error.m_msg.find(WRONG_MESSAGE));
 
-  BOOST_TEST_REQUIRE(!static_cast<bool>(nasdaq::message_t::create(tm, WRONG_STREAM,
-    WRONG_MESSAGE, rec, config_t(njson1), tm, error, creators_stream_map)));
+  BOOST_TEST_REQUIRE(!static_cast<bool>(nasdaq::message_t::create(sn++, WRONG_STREAM, WRONG_MESSAGE, rec, tm, config_t(njson1), tm, error, creators_stream_map)));
   BOOST_REQUIRE_NE(std::string::npos, error.m_msg.find(WRONG_STREAM));
   BOOST_REQUIRE_EQUAL(std::string::npos, error.m_msg.find(WRONG_MESSAGE));
 

@@ -7,17 +7,17 @@ namespace nasdaq {
 
   namespace dom {
 
-    class add_order_t : public message_t {
+    class order_executed_with_price_t : public message_t {
     public:
-      enum { e_symbol_locale = 3, e_time_stamp, e_id, e_side, e_quantity, e_symbol, e_price };
+      enum { e_symbol_locale = 3, e_time_stamp, e_id, e_quantity, e_matchid, e_printable, e_price };
     public:
-      add_order_t(const message_t& value);
+      order_executed_with_price_t(const message_t& value);
       const int& symbol_locale() const;
       const time_point_t& time_stamp() const;
       const long& id() const;
-      const std::string& side() const;
       const int& quantity() const;
-      const std::string& symbol() const;
+      const long& matchid() const;
+      const std::string& printable() const;
       const int& price() const;
     };
 

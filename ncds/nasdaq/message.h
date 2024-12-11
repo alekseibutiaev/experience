@@ -31,24 +31,26 @@ namespace nasdaq {
     };
   public:
     virtual ~message_t() = default;
+    const std::size_t& sn() const;
+    const std::string& type() const;
   public:
-    static message_uptr create(const decoder_t& decoder, const std::string& stream,
-        const std::string& msg, record_ptr record, const get_property_t& get_property,
-        const table_manager_t& table_manager, const error_t& error,
-        const creators_stream_map_t& creators = message_t::m_creator_stream_map);
-    static message_uptr empty(const message_t&) { return message_uptr(); }
+    static message_uptr create(const std::size_t sn, const std::string& stream,
+        const std::string& msg, record_ptr record, const decoder_t& decoder,
+        const get_property_t& get_property, const table_manager_t& table_manager,
+        const error_t& error, const creators_stream_map_t& creators = message_t::m_creator_stream_map);
+    static message_uptr empty(const message_t&);
   public:
     static const std::size_t npos;
   protected:
     message_t(const message_t& value);
-    message_t(const get_property_t& get_property, const fields_t& fields, const error_t& error,
-      const std::size_t type_idx);
-    const std::string& type() const;
+    message_t(const std::size_t& sn, const std::size_t type_idx, const error_t& error,
+      const get_property_t& get_property, const fields_t& fields);
   protected:
+    const std::size_t m_sn;
+    const std::size_t m_type_idx;
+    const error_t& m_error;
     const get_property_t& m_get_property;
     const fields_t& m_fields;
-    const error_t& m_error;
-    const std::size_t m_type_idx;
     values_t m_values;
   private:
     using stream_type_idx_t = std::map<std::string, std::size_t>;

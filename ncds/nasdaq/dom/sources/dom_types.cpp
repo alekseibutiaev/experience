@@ -5,7 +5,7 @@
 
 #include "../dom_types.h"
 #include "../../message.h"
-#include "../messages.h"
+#include "../message.h"
 
 namespace nasdaq {
 
