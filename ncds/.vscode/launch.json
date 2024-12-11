@@ -11,7 +11,7 @@
       "program": "${workspaceFolder}/build_Debug/nasdaq/test/domtest",
       "preLaunchTask": "CMake: build domtest",
       "args": [
-        "--run_test=static_test/data_delegate_test",
+        "--run_test=static_test/message_test",
       ],
       "x-args": [
         "--log_level=all",

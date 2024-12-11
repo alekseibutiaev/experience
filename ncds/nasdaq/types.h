@@ -57,7 +57,7 @@ namespace nasdaq {
 
   enum value_types {
     e_boolean,
-    e_bytes,
+    e_byte,
     e_int,
     e_long,
     e_float,
