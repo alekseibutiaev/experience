@@ -227,7 +227,7 @@ namespace nasdaq {
 
     const std::string avro_decoder_t::control = "control"; 
 
-    avro_decoder_t::avro_decoder_t(const error_t& error, table_manager_t& table, const std::string& ctrl_schema)
+    avro_decoder_t::avro_decoder_t(table_manager_t& table, const error_t& error, const std::string& ctrl_schema)
         : m_impl(std::make_shared<details::avro_decoder_t>(*this, table, error, ctrl_schema)) {
     }
 

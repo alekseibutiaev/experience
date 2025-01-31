@@ -143,18 +143,6 @@ namespace {
         std::cout << "unsuported message stream: " << stream << " message: " << msg << std::endl;
         return;
       }
-
-/*
-const std::size_t sn,
-const std::string& stream,
-const std::string& msg,
-record_ptr record,
-const decoder_t& decoder,
-const get_property_t& get_property,
-const table_manager_t& table_manager,
-const error_t& error
-*/
-
       auto message = nasdaq::message_t::create(m_sn++, stream, msg, record, decoder, m_get_property, *this, *this);
 
       my_data_t data(ts, stream, msg, *this, true);
@@ -250,18 +238,20 @@ int main(int ac, char* av[]) {
     rebalance_cb_t rdb;
     offset_commit_cb_t occb(rdb);
     deletate_t delegate(getter, true);
+    const nasdaq::error_t& error = delegate;
+    nasdaq::table_manager_t& table_manager = delegate;
 
-    nasdaq::acc::config_t cnf(getter, delegate);
-    cnf.read_config(getter, delegate);
-    cnf.set(&rdb, delegate);
-    cnf.set(&occb, delegate);
+    nasdaq::acc::config_t cnf(getter, error);
+    cnf.read_config(getter, error);
+    cnf.set(&rdb, error);
+    cnf.set(&occb, error);
 
-    nasdaq::acc::avro_decoder_t decode(delegate, delegate);
-    tools::thread_pool_t<1> tread_pool;
+    nasdaq::acc::avro_decoder_t decode(table_manager, error);
+    tools::thread_pool_t<128> tread_pool;
     nasdaq::acc::consumer_t::execute_t execute = [&tread_pool](std::function<void()> value) {
       tread_pool.execute(std::move(value));
     };
-    nasdaq::acc::consumer_t consumer(cnf, getter, execute, decode, delegate);
+    nasdaq::acc::consumer_t consumer(cnf, getter, execute, decode, error);
     tread_pool.start();
     consumer.start(topics);
     for(std::size_t i = 0; i < 60;

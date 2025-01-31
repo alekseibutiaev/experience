@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.15)
 project("ncsdexample")
 #set (CMAKE_CXX_STANDARD 17)
 
@@ -29,6 +29,7 @@ set(NLOCHMANN_MODULE_PATH "/usr/share/cmake-${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR
 message("Modules: " ${NLOCHMANN_MODULE_PATH})
 message("VERSION: " "${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}")
 
+find_package(PkgConfig REQUIRED)
 find_package(Threads REQUIRED)
 find_package(CURL REQUIRED)
 find_package(OpenSSL REQUIRED)
@@ -40,13 +41,15 @@ if(OPENSSL_FOUND)
 endif()
 
 set(Boost_USE_STATIC_LIBS ON)
-find_package(Boost 1.65 REQUIRED COMPONENTS system program_options unit_test_framework)
+find_package(Boost 1.65 REQUIRED COMPONENTS filesystem iostreams program_options regex system unit_test_framework)
 
+find_package(ZLIB REQUIRED)
 find_package(AVROCPP QUIET)
-find_package(RDKAFKA QUIET)
-find_package(RDKAFKACPP QUIET)
 find_package(JSON-C REQUIRED)
 find_package(nlohmann_json REQUIRED CONFIG PATHS ${NLOCHMANN_MODULE_PATH})
+
+pkg_search_module(RDKAFKA QUIET rdkafka)
+pkg_search_module(RDKAFKACPP QUIET rdkafka++)
 
 set(JSON-C_INCLUDE_DIRSN ${JSON-C_INCLUDE_DIRS})
 set(JSON-C_LIBRARIESN ${JSON-C_LIBRARIES})
@@ -54,6 +57,10 @@ set(JSON-C_LIBRARIESN ${JSON-C_LIBRARIES})
 message("Boost_VERSION: " ${Boost_VERSION})
 message("Boost_INCLUDE_DIRS: " ${Boost_INCLUDE_DIRS})
 message("Boost_LIBRARY_DIRS: " ${Boost_LIBRARY_DIRS})
+
+message("ZLIB_FOUND: " ${ZLIB_FOUND})
+message("ZLIB_INCLUDE_DIR: " ${ZLIB_INCLUDE_DIR})
+message("ZLIB_LIBRARIES: " ${ZLIB_LIBRARIES})
 
 message("AVROCPP_FOUND: " ${AVROCPP_FOUND})
 message("AVROCPP_INCLUDE_DIR: " ${AVROCPP_INCLUDE_DIR})

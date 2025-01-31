@@ -1,4 +1,6 @@
-#include <fstream> 
+#include <mutex>
+#include <fstream>
+
 #include "table_manager.h"
 
 namespace nasdaq {

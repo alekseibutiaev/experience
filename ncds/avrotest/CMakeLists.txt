@@ -7,7 +7,6 @@ add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
 target_include_directories(${PROJECT_NAME} PRIVATE
   ${AVROCPP_INCLUDE_DIR}
-  ${NLOHMANNJSON_ROOT}/include
   ../include
   ./
 )
@@ -15,4 +14,12 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 target_link_libraries(${PROJECT_NAME} PRIVATE
   ${JSON-C_LIBRARY}
   ${AVROCPP_LIBRARIES}
+  nlohmann_json::nlohmann_json
+  Boost::boost
+  Boost::filesystem
+  Boost::iostreams
+  Boost::program_options
+  Boost::regex
+  Boost::system
+  ZLIB::ZLIB
 )

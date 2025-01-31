@@ -1,24 +1,28 @@
 {
   "buildType": {
-    "default": "Debug_ubuntu_18.04",
+    "default": "Debug ubuntu_24.04",
     "description": "Build Type Selection",
     "choices": {
-      "Debug_ubuntu_18.04": {
-        "short": "Debug ubuntu 18.04",
-        "long": "Build with no optimizations and debugging information for ubuntu 18.04",
+      "Debug_ubuntu_24.04": {
+        "short": "Debug ubuntu 24.04",
+        "long": "Build with no optimizations and debugging information for ubuntu 24.04",
         "buildType": "Debug",
         "settings": {
-          "AVROCPP_HOME" : "/opt/avro-cpp-1.11.2.17.d",
-          "RDKAFKA_HOME" : "/opt/librdkafka-2.6.0.dbg"
+          "CMAKE_VERBOSE_MAKEFILE" : "TRUE",
+          "AVROCPP_HOME" : "/opt/avro-cpp-1.11.3.debug",
+          "BOOST_ROOT" : "/opt/boost",
+          "Boost_NO_SYSTEM_PATHS" : "TRUE"
         }
       },
-      "Release_ubuntu_18.04": {
-        "short": "Release ubuntu 18.04",
-        "long": "Build with optimizations and without debuging information for ubuntu 18.04",
+      "Release_ubuntu_24.04": {
+        "short": "Release ubuntu 24.04",
+        "long": "Build with optimizations and without debuging information for ubuntu 24.04",
         "buildType": "Release",
         "settings": {
-          "AVROCPP_HOME" : "/opt/avro-cpp-1.11.2.17",
-          "RDKAFKA_HOME" : "/opt/librdkafka-2.6.0"
+          "CMAKE_VERBOSE_MAKEFILE" : "TRUE",
+          "AVROCPP_HOME" : "/opt/avro-cpp-1.11.3",
+          "BOOST_ROOT" : "/opt/boost",
+          "Boost_NO_SYSTEM_PATHS" : "TRUE"
         }
       }
     }

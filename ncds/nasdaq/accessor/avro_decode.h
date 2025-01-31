@@ -27,7 +27,7 @@ namespace nasdaq {
 
     class avro_decoder_t : public decoder_t {
     public:
-      avro_decoder_t(const error_t& error, table_manager_t& table, const std::string& ctrl_schema = std::string());
+      avro_decoder_t(table_manager_t& table, const error_t& error, const std::string& ctrl_schema = std::string());
       void operator()(const time_point_t& tp, const std::string& stream, const void* buf, const std::size_t size) const override;
       void get_field(const record_ptr record, const std::size_t& idx, data_delegate_t& data) const override;
     public:
