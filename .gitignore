@@ -9,3 +9,6 @@ x64
 *.db
 *.suo
 *~
+*.text
+*.sch
+*.msg
