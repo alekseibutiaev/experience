@@ -32,7 +32,7 @@ namespace nasdaq {
   message_t::stream_type_idx_t message_t::m_stream_type_idx;
 
   message_t::message_t(const message_t& value)
-      : m_first(value.m_first)
+      : m_sn(value.m_sn)
       , m_type_idx(value.m_type_idx)
       , m_error(value.m_error)
       , m_get_property(value.m_get_property)
@@ -40,9 +40,9 @@ namespace nasdaq {
       , m_values(value.m_values) {
   }
 
-  message_t::message_t(const bool& first, const std::size_t type_idx, const error_t& error,
+  message_t::message_t(const std::size_t& sn, const std::size_t type_idx, const error_t& error,
     const get_property_t& get_property, const fields_t& fields)
-      : m_first(first)
+      : m_sn(sn)
       , m_type_idx(type_idx)
       , m_error(error)
       , m_get_property(get_property)
@@ -50,8 +50,8 @@ namespace nasdaq {
       , m_values(m_fields.size()) {
   }
 
-  const bool& message_t::first() const {
-    return m_first;
+  const std::size_t& message_t::sn() const {
+    return m_sn;
   }
 
   const std::string& message_t::type() const {
@@ -61,7 +61,7 @@ namespace nasdaq {
   void message_t::visitor(message_visitor_t&) const {
   }
 
-  message_uptr message_t::create(const bool& first, const std::string& stream,
+  message_uptr message_t::create(const std::size_t& sn, const std::string& stream,
         const std::string& msg, record_ptr record, const decoder_t& decoder,
         const get_property_t& get_property, const table_manager_t& table_manager,
         const error_t& error, const creators_stream_map_t& creators) {
@@ -71,7 +71,7 @@ namespace nasdaq {
       const auto& fields = table_manager.get_fields(stream, msg);
       if(!fields.empty()) {
         const auto& type_idx = msg_type_idx(get_property, stream, it->second, fields, error);
-        message_t tmp(first, type_idx, error, get_property, fields);
+        message_t tmp(sn, type_idx, error, get_property, fields);
         decoder.get_field(record, type_idx, tmp);
         const auto& type = tmp.type();
         if(auto msg = std::get<module_info_pos_t::e_creator_map>(it->second)[type[0] - 'A'](tmp)) {

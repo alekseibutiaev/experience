@@ -32,11 +32,11 @@ namespace nasdaq {
     };
   public:
     virtual ~message_t() = default;
-    const bool& first() const;
+    const std::size_t& sn() const;
     const std::string& type() const;
     virtual void visitor(message_visitor_t& visitor) const;
   public:
-    static message_uptr create(const bool& first, const std::string& stream,
+    static message_uptr create(const std::size_t& m_sn, const std::string& stream,
         const std::string& msg, record_ptr record, const decoder_t& decoder,
         const get_property_t& get_property, const table_manager_t& table_manager,
         const error_t& error, const creators_stream_map_t& creators = message_t::m_creator_stream_map);
@@ -45,10 +45,10 @@ namespace nasdaq {
     static const std::size_t npos;
   protected:
     message_t(const message_t& value);
-    message_t(const bool& first, const std::size_t type_idx, const error_t& error,
+    message_t(const std::size_t& m_sn, const std::size_t type_idx, const error_t& error,
       const get_property_t& get_property, const fields_t& fields);
   protected:
-    const bool m_first;
+    const std::size_t& m_sn;
     const std::size_t m_type_idx;
     const error_t& m_error;
     const get_property_t& m_get_property;
