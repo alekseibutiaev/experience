@@ -1,3 +1,4 @@
+#include "../dom_visitor.h"
 #include "order_executed_with_price.h"
 
 namespace nasdaq {
@@ -5,6 +6,14 @@ namespace nasdaq {
   namespace dom {
 
     order_executed_with_price_t::order_executed_with_price_t(const message_t& value) : message_t(value) {
+    }
+
+    void order_executed_with_price_t::visitor(message_visitor_t& visitor) const {
+      try {
+        dynamic_cast<dom::dom_visitor_t&>(visitor).visit(*this);
+      }
+      catch(const std::bad_cast& e) {
+      }
     }
 
     const int& order_executed_with_price_t::symbol_locale() const {

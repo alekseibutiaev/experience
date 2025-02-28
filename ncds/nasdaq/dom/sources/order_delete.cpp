@@ -1,3 +1,4 @@
+#include "../dom_visitor.h"
 #include "order_delete.h"
 
 namespace nasdaq {
@@ -5,6 +6,14 @@ namespace nasdaq {
   namespace dom {
 
     order_delete_t::order_delete_t(const message_t& value) : message_t(value) {
+    }
+
+    void order_delete_t::visitor(message_visitor_t& visitor) const {
+      try {
+        dynamic_cast<dom::dom_visitor_t&>(visitor).visit(*this);
+      }
+      catch(const std::bad_cast& e) {
+      }
     }
 
     const int& order_delete_t::symbol_locale() const {

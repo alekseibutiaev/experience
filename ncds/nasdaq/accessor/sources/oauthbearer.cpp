@@ -32,7 +32,7 @@ namespace nasdaq {
       , m_get_property(get_property) {
     }
 
-    void oauthbearer_t::oauthbearer_token_refresh_cb(RdKafka::Handle* handle, const std::string& oauthbearer_config) {
+    void oauthbearer_t::oauthbearer_token_refresh_cb(RdKafka::Handle* handle, const std::string& /*oauthbearer_config*/) {
       try {
         const std::string data = "grant_type=client_credentials&client_id=" + m_glient_id + "&client_secret=" + m_secret + "&getAccounts=1";
         http_request_t http(m_uri);

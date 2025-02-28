@@ -91,6 +91,7 @@ namespace nasdaq {
         }
         void get_field_unsuported(const avro::Type& type, const std::size_t& idx, const std::string&,
             const avro::GenericDatum&, data_delegate_t&) const {
+          (void)idx;
           m_error.warning("unsuported type: " + avro::toString(type) + __FILE_STR__);
         }
       private:

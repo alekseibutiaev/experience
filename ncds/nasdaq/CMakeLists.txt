@@ -19,5 +19,6 @@ include_directories(
 )
 
 add_library(${PROJECT_NAME}_static STATIC ${SOURCE_FILES})
+target_compile_options(${PROJECT_NAME}_static PRIVATE -Wall -Werror)
 
 add_subdirectory(test)

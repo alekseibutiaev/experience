@@ -23,6 +23,10 @@ namespace tools {
 
   public:
 
+    thread_pool_t(std::size_t cash_deep = 0)
+      : m_queue(cash_deep) {
+    }
+
     virtual ~thread_pool_t() {
       stop();
     }
@@ -64,6 +68,12 @@ namespace tools {
         m_cv.notify_one();
       }
     }
+
+#if defined QUEUE_DEEP
+    std::size_t queue_deep() {
+      return m_queue.deep();
+    }
+#endif /* QUEUE_DEEP */
 
   public:
 

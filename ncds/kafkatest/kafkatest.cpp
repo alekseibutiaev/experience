@@ -143,12 +143,9 @@ namespace {
         std::cout << "unsuported message stream: " << stream << " message: " << msg << std::endl;
         return;
       }
-      auto message = nasdaq::message_t::create(m_sn++, stream, msg, record, decoder, m_get_property, *this, *this);
 
-      my_data_t data(ts, stream, msg, *this, true);
-      const std::size_t count = filelds.size();
-      for(std::size_t i = 0; i < count; ++i)
-        decoder.get_field(record, i, data);
+      auto message = nasdaq::message_t::create(m_sn++, stream, msg, record, decoder, m_get_property,
+        static_cast<nasdaq::table_manager_t&>(*this), static_cast<nasdaq::error_t&>(*this));
       show_delay(ts);
     }
     bool save(const std::string& stream, const std::string& schema) override {
@@ -248,14 +245,14 @@ int main(int ac, char* av[]) {
 
     nasdaq::acc::avro_decoder_t decode(table_manager, error);
     tools::thread_pool_t<128> tread_pool;
-    nasdaq::acc::consumer_t::execute_t execute = [&tread_pool](std::function<void()> value) {
+    nasdaq::execute_t execute = [&tread_pool](std::function<void()> value) {
       tread_pool.execute(std::move(value));
     };
     nasdaq::acc::consumer_t consumer(cnf, getter, execute, decode, error);
     tread_pool.start();
     consumer.start(topics);
     for(std::size_t i = 0; i < 60;
-#if 0
+#if 1
       ++i
 #endif
     )

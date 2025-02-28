@@ -16,6 +16,5 @@ namespace {
 
   #define __FILE_STR__ get_locaton(__FILE__, __LINE__)
 
-  const auto __ussage_file_str__ = __FILE_STR__;
 } /* namespace */
 

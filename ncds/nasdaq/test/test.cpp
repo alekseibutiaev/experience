@@ -12,11 +12,12 @@
 #define protected public
 #define private public
 
+#include "../types.h"
+#include "../error.h"
 #include "../message.h"
 #include "../decoder.h"
 #include "../table_manager.h"
-#include "../types.h"
-#include "../error.h"
+#include "../sequence_manager.h"
 #include "../location.h"
 
 namespace {
@@ -215,6 +216,13 @@ namespace {
 
   };
 
+  class seq_test_message_t : public nasdaq::message_t {
+  public:
+    seq_test_message_t(const std::size_t& sn, const nasdaq::error_t& error)
+      : message_t(sn, 0, error, nasdaq::get_property_t(), nasdaq::fields_t()) {
+    }
+  };
+
   const bool test_environment_t::BOOL = false;
   const unsigned char test_environment_t::BYTE = 0x55;
   const int test_environment_t::INT = 0x55AA55AA;
@@ -323,24 +331,31 @@ BOOST_AUTO_TEST_CASE(data_delegate_test) {
 
   struct my_data_t : public nasdaq::data_delegate_t {
     void data(const std::size_t& idx, const std::string& field, const std::string& value) override {
+      (void)field;
       m_value = value;
     }
     void data(const std::size_t& idx, const std::string& field, const unsigned char& value) override {
+      (void)field;
       m_value = value;
     }
     void data(const std::size_t& idx, const std::string& field, const int& value) override {
+      (void)field;
       m_value = value;
     }
     void data(const std::size_t& idx, const std::string& field, const nasdaq::long_wrp_t& value) override {
+      (void)field;
       m_value = static_cast<long>(value);
     }
     void data(const std::size_t& idx, const std::string& field, const float& value) override {
+      (void)field;
       m_value = value;
     }
     void data(const std::size_t& idx, const std::string& field, const double& value) override {
+      (void)field;
       m_value = value;
     }
     void data(const std::size_t& idx, const std::string& field, const bool& value) override {
+      (void)field;
       m_value = value;
     }
     void data(const std::size_t& idx, const std::string& field, const nasdaq::time_point_t& value) override {
@@ -573,6 +588,25 @@ BOOST_AUTO_TEST_CASE(message_test) {
   BOOST_TEST_REQUIRE(!static_cast<bool>(nasdaq::message_t::create(sn++, WRONG_STREAM, WRONG_MESSAGE, rec, tm, config_t(njson1), tm, error, creators_stream_map)));
   BOOST_REQUIRE_NE(std::string::npos, error.m_msg.find(WRONG_STREAM));
   BOOST_REQUIRE_EQUAL(std::string::npos, error.m_msg.find(WRONG_MESSAGE));
+
+}
+
+BOOST_AUTO_TEST_CASE(sequence_manager_test) {
+  std::function<void()> f;
+  nasdaq::sequence_manager_t::messages_t msges;
+  static const auto executer = [&f](std::function<void()> value) { f = value; };
+  static const auto consumer = [&msges](nasdaq::sequence_manager_t::messages_t& value) { msges = value; };
+
+  test_error_t err;
+  nasdaq::sequence_manager_t sm(executer, consumer);
+  nasdaq::message_uptr p;
+  sm.push(std::make_shared<seq_test_message_t>(2, err));
+  sm.push(std::make_unique<seq_test_message_t>(0, err));
+  sm.push(std::make_shared<seq_test_message_t>(1, err));
+  sm.push(std::make_unique<seq_test_message_t>(4, err));
+  f();
+
+
 
 }
 

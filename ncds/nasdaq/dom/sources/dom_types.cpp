@@ -12,7 +12,7 @@ namespace nasdaq {
   namespace dom {
 
     const message_t::creators_t get_modile_info_t::m_creators = {
-/* A */ [](const message_t& value){return std::make_unique<add_order_t>(value);},
+/* A */ [](const message_t& value){return std::make_unique<order_add_t>(value);},
 /* B */ &message_t::empty,
 /* C */ [](const message_t& value){return std::make_unique<order_executed_with_price_t>(value);},
 /* D */ [](const message_t& value){return std::make_unique<order_delete_t>(value);},

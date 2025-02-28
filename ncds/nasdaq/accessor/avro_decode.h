@@ -4,8 +4,8 @@
 #include <vector>
 #include <string>
 
-#include "error.h"
-#include "decoder.h"
+#include "../error.h"
+#include "../decoder.h"
 
 #include "acc_types.h"
 
@@ -16,7 +16,6 @@ namespace nasdaq {
   class table_manager_t;
 
   namespace acc {
-
 
     namespace details {
 

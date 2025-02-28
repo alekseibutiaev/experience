@@ -2,6 +2,7 @@
 #include <string>
 #include <mutex>
 #include <iterator>
+#include <atomic>
 #include <stdexcept>
 
 #include "dom/dom_types.h"
@@ -31,7 +32,7 @@ namespace nasdaq {
   message_t::stream_type_idx_t message_t::m_stream_type_idx;
 
   message_t::message_t(const message_t& value)
-      : m_sn(value.m_sn)
+      : m_first(value.m_first)
       , m_type_idx(value.m_type_idx)
       , m_error(value.m_error)
       , m_get_property(value.m_get_property)
@@ -39,9 +40,9 @@ namespace nasdaq {
       , m_values(value.m_values) {
   }
 
-  message_t::message_t(const std::size_t& sn, const std::size_t type_idx, const error_t& error,
-      const get_property_t& get_property, const fields_t& fields)
-      : m_sn(sn)
+  message_t::message_t(const bool& first, const std::size_t type_idx, const error_t& error,
+    const get_property_t& get_property, const fields_t& fields)
+      : m_first(first)
       , m_type_idx(type_idx)
       , m_error(error)
       , m_get_property(get_property)
@@ -49,23 +50,28 @@ namespace nasdaq {
       , m_values(m_fields.size()) {
   }
 
-  const std::size_t& message_t::sn() const {
-    return m_sn;
+  const bool& message_t::first() const {
+    return m_first;
   }
 
   const std::string& message_t::type() const {
     return std::get<std::string>(m_values[m_type_idx]);
   }
 
-  message_uptr message_t::create(const std::size_t sn, const std::string& stream,
+  void message_t::visitor(message_visitor_t&) const {
+  }
+
+  message_uptr message_t::create(const bool& first, const std::string& stream,
         const std::string& msg, record_ptr record, const decoder_t& decoder,
         const get_property_t& get_property, const table_manager_t& table_manager,
         const error_t& error, const creators_stream_map_t& creators) {
+    struct init_flag{ std::atomic_flag value = ATOMIC_FLAG_INIT; };
+    static std::vector<init_flag> ut('Z' - 'A' + 1);
     for(auto it = creators.find(stream); it != creators.end();) {
       const auto& fields = table_manager.get_fields(stream, msg);
       if(!fields.empty()) {
         const auto& type_idx = msg_type_idx(get_property, stream, it->second, fields, error);
-        message_t tmp(sn, type_idx, error, get_property, fields);
+        message_t tmp(first, type_idx, error, get_property, fields);
         decoder.get_field(record, type_idx, tmp);
         const auto& type = tmp.type();
         if(auto msg = std::get<module_info_pos_t::e_creator_map>(it->second)[type[0] - 'A'](tmp)) {
@@ -74,9 +80,9 @@ namespace nasdaq {
               decoder.get_field(record, idx, *msg);
           return msg;
         }
-        error.error("unsupported message type: [" + type + "]" + __FILE_STR__);
+        if(!ut[type[0] - 'A'].value.test_and_set())
+          error.error("unsupported message type: [" + type + "]" + __FILE_STR__);
         return message_uptr();
-
       }
       error.error("unsupported stream: [" + stream + "] message: [" + msg + "]" +__FILE_STR__);
       return message_uptr();
@@ -90,34 +96,42 @@ namespace nasdaq {
   }
 
   void message_t::data(const std::size_t& idx, const std::string& field, const std::string& value) {
+    (void)field;
     m_values[idx] = value;
   }
 
   void message_t::data(const std::size_t& idx, const std::string& field, const unsigned char& value) {
+    (void)field;
     m_values[idx] = value;
   }
 
   void message_t::data(const std::size_t& idx, const std::string& field, const int& value) {
+    (void)field;
     m_values[idx] = value;
   }
 
   void message_t::data(const std::size_t& idx, const std::string& field, const long_wrp_t& value) {
+    (void)field;
     m_values[idx] = static_cast<long>(value);
   }
 
   void message_t::data(const std::size_t& idx, const std::string& field, const float& value) {
+    (void)field;
     m_values[idx] = value;
   }
 
   void message_t::data(const std::size_t& idx, const std::string& field, const double& value) {
+    (void)field;
     m_values[idx] = value;
   }
 
   void message_t::data(const std::size_t& idx, const std::string& field, const bool& value) {
+    (void)field;
     m_values[idx] = value;
   };
 
   void message_t::data(const std::size_t& idx, const std::string& field, const time_point_t& value) {
+    (void)field;
     m_values[idx] = value;
   }
 

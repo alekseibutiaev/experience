@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <list>
 #include <array>
 #include <tuple>
 #include <string>
@@ -16,9 +17,9 @@ namespace nasdaq {
   class error_t;
   class decoder_t;
   class table_manager_t;
+  class message_visitor_t;
 
   using message_uptr = std::unique_ptr<class message_t>;
-  using message_ptr = std::shared_ptr<class message_t>;
 
   class message_t : public data_delegate_t {
   public:
@@ -31,10 +32,11 @@ namespace nasdaq {
     };
   public:
     virtual ~message_t() = default;
-    const std::size_t& sn() const;
+    const bool& first() const;
     const std::string& type() const;
+    virtual void visitor(message_visitor_t& visitor) const;
   public:
-    static message_uptr create(const std::size_t sn, const std::string& stream,
+    static message_uptr create(const bool& first, const std::string& stream,
         const std::string& msg, record_ptr record, const decoder_t& decoder,
         const get_property_t& get_property, const table_manager_t& table_manager,
         const error_t& error, const creators_stream_map_t& creators = message_t::m_creator_stream_map);
@@ -43,10 +45,10 @@ namespace nasdaq {
     static const std::size_t npos;
   protected:
     message_t(const message_t& value);
-    message_t(const std::size_t& sn, const std::size_t type_idx, const error_t& error,
+    message_t(const bool& first, const std::size_t type_idx, const error_t& error,
       const get_property_t& get_property, const fields_t& fields);
   protected:
-    const std::size_t m_sn;
+    const bool m_first;
     const std::size_t m_type_idx;
     const error_t& m_error;
     const get_property_t& m_get_property;
@@ -68,7 +70,6 @@ namespace nasdaq {
        const module_info_t& info, const fields_t& fields, const error_t& error);
     static std::size_t get_type_idx(const get_property_t& getter, const module_info_t& info,
         const fields_t& fields, const error_t& error);
-  private:
   private:
     static const creators_stream_map_t m_creator_stream_map;
     static std::shared_mutex m_lock_stream_type_idx;

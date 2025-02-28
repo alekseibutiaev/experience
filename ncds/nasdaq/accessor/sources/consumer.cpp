@@ -22,7 +22,6 @@
 
 #include "accessor/consumer.h"
 
-
 namespace {
 
   nasdaq::acc::config_t clone_config(const nasdaq::acc::config_t& config, const nasdaq::error_t& notify) {
@@ -103,7 +102,6 @@ namespace nasdaq {
 
         std::string offset;
         m_config->get("auto.offset.reset", offset, m_error);
-        std::cout << offset << std::endl;
 
         if (offset == "earliest" || offset == "smallest" || offset == "beginning")
           for(auto& it : m_topic_partitions)
