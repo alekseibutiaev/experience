@@ -1,7 +1,6 @@
 #pragma once
 
 #include <list>
-#include <atomic>
 #include <mutex>
 #include <functional>
 
@@ -19,10 +18,10 @@ namespace nasdaq {
   private:
     void process();
   private:
-    execute_t m_executer;
-    msg_consumer_t m_consumer;
+    const execute_t m_executer;
+    const msg_consumer_t m_consumer;
     std::size_t m_sn;
-    std::atomic<bool> m_flag = {0};
+    bool m_in_process;
     std::mutex m_lock;
     messages_t m_input_messages;
     messages_t m_messages;

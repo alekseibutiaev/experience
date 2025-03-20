@@ -592,22 +592,88 @@ BOOST_AUTO_TEST_CASE(message_test) {
 }
 
 BOOST_AUTO_TEST_CASE(sequence_manager_test) {
-  std::function<void()> f;
+  std::list<std::function<void()>> functions;
   nasdaq::sequence_manager_t::messages_t msges;
-  static const auto executer = [&f](std::function<void()> value) { f = value; };
-  static const auto consumer = [&msges](nasdaq::sequence_manager_t::messages_t& value) { msges = value; };
-
+  nasdaq::sequence_manager_t* smptr = 0;
+  std::size_t idx = 0;
   test_error_t err;
+  const auto executer = [&functions, &smptr, &err](std::function<void()> value) {
+    static std::size_t counter = 0;
+    if(1 == counter)
+      smptr->push(std::make_shared<seq_test_message_t>(7, err));
+    ++counter;
+    functions.push_back(value);
+  };
+  const auto consumer = [&msges](nasdaq::sequence_manager_t::messages_t& value) {msges = value;};
+  const auto run_first = [&functions](){if(!functions.empty()){functions.front()(); functions.pop_front();}};
+
   nasdaq::sequence_manager_t sm(executer, consumer);
-  nasdaq::message_uptr p;
+  smptr = &sm;
+  BOOST_TEST_REQUIRE(!sm.m_in_process);
+  BOOST_REQUIRE_EQUAL(sm.m_sn, 0);
+  BOOST_REQUIRE_EQUAL(sm.m_input_messages.size(), 0);
+  BOOST_REQUIRE_EQUAL(sm.m_messages.size(), 0);
+  BOOST_TEST_REQUIRE(static_cast<bool>(sm.m_executer));
+  BOOST_TEST_REQUIRE(static_cast<bool>(sm.m_consumer));
   sm.push(std::make_shared<seq_test_message_t>(2, err));
+  BOOST_TEST_REQUIRE(sm.m_in_process);
+  BOOST_REQUIRE_EQUAL(sm.m_input_messages.size(), 1);
+  BOOST_REQUIRE_EQUAL(sm.m_messages.size(), 0);
+  BOOST_REQUIRE_EQUAL(functions.size(), 1);
   sm.push(std::make_unique<seq_test_message_t>(0, err));
+  BOOST_TEST_REQUIRE(sm.m_in_process);
+  BOOST_REQUIRE_EQUAL(sm.m_input_messages.size(), 2);
+  BOOST_REQUIRE_EQUAL(sm.m_messages.size(), 0);
+  BOOST_REQUIRE_EQUAL(functions.size(), 1);
   sm.push(std::make_shared<seq_test_message_t>(1, err));
+  BOOST_TEST_REQUIRE(sm.m_in_process);
+  BOOST_REQUIRE_EQUAL(sm.m_input_messages.size(), 3);
+  BOOST_REQUIRE_EQUAL(sm.m_messages.size(), 0);
+  BOOST_REQUIRE_EQUAL(functions.size(), 1);
   sm.push(std::make_unique<seq_test_message_t>(4, err));
-  f();
-
-
-
+  BOOST_TEST_REQUIRE(sm.m_in_process);
+  BOOST_REQUIRE_EQUAL(sm.m_input_messages.size(), 4);
+  BOOST_REQUIRE_EQUAL(sm.m_messages.size(), 0);
+  BOOST_REQUIRE_EQUAL(functions.size(), 1);
+  run_first();
+  BOOST_REQUIRE_EQUAL(functions.size(), 2);
+  BOOST_TEST_REQUIRE(sm.m_in_process);
+  BOOST_REQUIRE_EQUAL(sm.m_input_messages.size(), 1);
+  BOOST_REQUIRE_EQUAL(sm.m_messages.size(), 1);
+  BOOST_REQUIRE_EQUAL(sm.m_sn, 3);
+  run_first();
+  BOOST_REQUIRE_EQUAL(msges.size(), 3);
+  while(!msges.empty()) {
+    BOOST_REQUIRE_EQUAL(msges.front()->sn(), idx++);  
+    msges.pop_front();
+  }
+  BOOST_REQUIRE_EQUAL(functions.size(), 1);
+  sm.push(std::make_unique<seq_test_message_t>(6, err));
+  BOOST_REQUIRE_EQUAL(functions.size(), 1);
+  BOOST_REQUIRE_EQUAL(sm.m_input_messages.size(), 2);
+  BOOST_REQUIRE_EQUAL(sm.m_messages.size(), 1);
+  BOOST_REQUIRE_EQUAL(sm.m_sn, 3);  
+  sm.push(std::make_unique<seq_test_message_t>(3, err));
+  BOOST_REQUIRE_EQUAL(functions.size(), 1);
+  BOOST_REQUIRE_EQUAL(sm.m_input_messages.size(), 3);
+  BOOST_REQUIRE_EQUAL(sm.m_messages.size(), 1);
+  BOOST_REQUIRE_EQUAL(sm.m_sn, 3);
+  sm.push(std::make_unique<seq_test_message_t>(5, err));
+  BOOST_REQUIRE_EQUAL(functions.size(), 1);
+  BOOST_REQUIRE_EQUAL(sm.m_input_messages.size(), 4);
+  BOOST_REQUIRE_EQUAL(sm.m_messages.size(), 1);
+  BOOST_REQUIRE_EQUAL(sm.m_sn, 3);
+  run_first();
+  BOOST_REQUIRE_EQUAL(sm.m_sn, 8);
+  BOOST_REQUIRE_EQUAL(functions.size(), 1);
+  BOOST_TEST_REQUIRE(sm.m_input_messages.empty());
+  BOOST_TEST_REQUIRE(sm.m_messages.empty());
+  run_first();
+  BOOST_REQUIRE_EQUAL(msges.size(), 5);
+  while(!msges.empty()) {
+    BOOST_REQUIRE_EQUAL(msges.front()->sn(), idx++);
+    msges.pop_front(); 
+  }
 }
 
 BOOST_AUTO_TEST_SUITE_END()  /* key_performance_test */

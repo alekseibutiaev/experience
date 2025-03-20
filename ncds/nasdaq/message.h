@@ -48,7 +48,7 @@ namespace nasdaq {
     message_t(const std::size_t& m_sn, const std::size_t type_idx, const error_t& error,
       const get_property_t& get_property, const fields_t& fields);
   protected:
-    const std::size_t& m_sn;
+    const std::size_t m_sn;
     const std::size_t m_type_idx;
     const error_t& m_error;
     const get_property_t& m_get_property;

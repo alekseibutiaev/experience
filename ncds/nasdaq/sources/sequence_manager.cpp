@@ -18,14 +18,16 @@ namespace nasdaq {
   sequence_manager_t::sequence_manager_t(const execute_t& executer, const msg_consumer_t& consumer)
     : m_executer(executer)
     , m_consumer(consumer)
-    , m_sn(0) {
+    , m_sn(0)
+    , m_in_process(false) {
   }
 
   void sequence_manager_t::push(message_ptr&& value) {
     std::lock_guard _(m_lock);
     m_input_messages.emplace_back(std::move(value));
-    if(!m_flag.exchange(true))
+    if(!m_in_process)
       m_executer(std::bind(&sequence_manager_t::process, this));
+    m_in_process = true;
   }
 
   void sequence_manager_t::process() {
@@ -42,17 +44,15 @@ namespace nasdaq {
         break;
       else
         ++m_sn;
-    tmp.splice(tmp.begin(), m_messages, m_messages.begin(), it);
-    m_consumer(tmp);
-#if 0
+    tmp.splice(tmp.end(), std::move(m_messages), m_messages.begin(), it);
+    m_executer([msgd = std::move(tmp), this]() mutable { m_consumer(msgd);});
     {
       std::lock_guard _(m_lock);
       if(!m_input_messages.empty())
         m_executer(std::bind(&sequence_manager_t::process, this));
       else
-        m_flag.store(false);
+        m_in_process = false;
     }
-#endif
   }
 
 } /* namespace nasdaq */
