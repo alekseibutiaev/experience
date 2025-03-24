@@ -22,8 +22,10 @@
 #include <accessor/config.h>
 #include <accessor/avro_decode.h>
 #include <accessor/consumer.h>
+#include <sequence_manager.h>
 #include <location.h>
 #include <message.h>
+
 
 // https://github.com/confluentinc/librdkafka/issues/2758
 // f0592490d1c708e57805b71c04c451e69632c6b6
@@ -116,8 +118,10 @@ namespace {
 
   class deletate_t : public nasdaq::table_manager_t, public nasdaq::error_t {
   public:
-    deletate_t(const nasdaq::get_property_t& get_property, const bool enable = true)
+    deletate_t(const nasdaq::get_property_t& get_property, const nasdaq::execute_t& executer,
+          const bool enable = true)
         : m_get_property(get_property)
+        , m_seq(executer, std::bind(&deletate_t::consumer, this,  std::placeholders::_1))
         , m_enable(enable)
         , m_sn(0)
         , m_accum(0)
@@ -144,8 +148,9 @@ namespace {
         return;
       }
 
-      auto message = nasdaq::message_t::create(m_sn++, stream, msg, record, decoder, m_get_property,
-        static_cast<nasdaq::table_manager_t&>(*this), static_cast<nasdaq::error_t&>(*this));
+      if(auto message = nasdaq::message_t::create(m_sn, stream, msg, record, decoder, m_get_property,
+          static_cast<nasdaq::table_manager_t&>(*this), static_cast<nasdaq::error_t&>(*this)))
+        m_seq.push(std::move(message));
       show_delay(ts);
     }
     bool save(const std::string& stream, const std::string& schema) override {
@@ -156,7 +161,10 @@ namespace {
       std::cout << std::string("read file: ") + "./schema/" + stream + ".sch" << std::endl;
       return nasdaq::table_manager_t::load("./schema/" + stream + ".sch");
     }
-  private:
+    void consumer(nasdaq::sequence_manager_t::messages_t& value) {
+      debug("received: " + std::to_string(value.size()) + " messages");
+    }
+    private:
     void show_delay(const nasdaq::time_point_t& ts) {
       m_accum += std::chrono::duration_cast<std::chrono::microseconds>(nasdaq::clock_t::now() - ts).count();
       if(0 == ++m_count % 1000 ) {
@@ -182,8 +190,9 @@ namespace {
     }
   private:
     const nasdaq::get_property_t m_get_property;
+    nasdaq::sequence_manager_t m_seq;
     const bool m_enable;
-    std::size_t m_sn;
+    std::atomic_size_t m_sn;
     std::size_t m_accum;
     std::size_t m_count;
     mutable std::mutex m_lock_cout;
@@ -234,25 +243,26 @@ int main(int ac, char* av[]) {
 
     rebalance_cb_t rdb;
     offset_commit_cb_t occb(rdb);
-    deletate_t delegate(getter, true);
+
+    tools::thread_pool_t<128> tread_pool;
+    nasdaq::execute_t execute = [&tread_pool](std::function<void()> value) {
+      tread_pool.execute(std::move(value));
+    };
+
+    deletate_t delegate(getter, execute, true);
     const nasdaq::error_t& error = delegate;
     nasdaq::table_manager_t& table_manager = delegate;
-
     nasdaq::acc::config_t cnf(getter, error);
     cnf.read_config(getter, error);
     cnf.set(&rdb, error);
     cnf.set(&occb, error);
 
     nasdaq::acc::avro_decoder_t decode(table_manager, error);
-    tools::thread_pool_t<128> tread_pool;
-    nasdaq::execute_t execute = [&tread_pool](std::function<void()> value) {
-      tread_pool.execute(std::move(value));
-    };
     nasdaq::acc::consumer_t consumer(cnf, getter, execute, decode, error);
     tread_pool.start();
     consumer.start(topics);
     for(std::size_t i = 0; i < 60;
-#if 1
+#if 0
       ++i
 #endif
     )
