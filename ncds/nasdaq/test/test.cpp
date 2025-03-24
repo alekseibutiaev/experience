@@ -12,12 +12,11 @@
 #define protected public
 #define private public
 
-#include "../types.h"
-#include "../error.h"
 #include "../message.h"
 #include "../decoder.h"
 #include "../table_manager.h"
-#include "../sequence_manager.h"
+#include "../types.h"
+#include "../error.h"
 #include "../location.h"
 
 namespace {
@@ -214,13 +213,6 @@ namespace {
       return std::string();
     }
 
-  };
-
-  class seq_test_message_t : public nasdaq::message_t {
-  public:
-    seq_test_message_t(const std::size_t& sn, const nasdaq::error_t& error)
-      : message_t(sn, 0, error, nasdaq::get_property_t(), nasdaq::fields_t()) {
-    }
   };
 
   const bool test_environment_t::BOOL = false;
@@ -589,91 +581,6 @@ BOOST_AUTO_TEST_CASE(message_test) {
   BOOST_REQUIRE_NE(std::string::npos, error.m_msg.find(WRONG_STREAM));
   BOOST_REQUIRE_EQUAL(std::string::npos, error.m_msg.find(WRONG_MESSAGE));
 
-}
-
-BOOST_AUTO_TEST_CASE(sequence_manager_test) {
-  std::list<std::function<void()>> functions;
-  nasdaq::sequence_manager_t::messages_t msges;
-  nasdaq::sequence_manager_t* smptr = 0;
-  std::size_t idx = 0;
-  test_error_t err;
-  const auto executer = [&functions, &smptr, &err](std::function<void()> value) {
-    static std::size_t counter = 0;
-    if(1 == counter)
-      smptr->push(std::make_shared<seq_test_message_t>(7, err));
-    ++counter;
-    functions.push_back(value);
-  };
-  const auto consumer = [&msges](nasdaq::sequence_manager_t::messages_t& value) {msges = value;};
-  const auto run_first = [&functions](){if(!functions.empty()){functions.front()(); functions.pop_front();}};
-
-  nasdaq::sequence_manager_t sm(executer, consumer);
-  smptr = &sm;
-  BOOST_TEST_REQUIRE(!sm.m_in_process);
-  BOOST_REQUIRE_EQUAL(sm.m_sn, 0);
-  BOOST_REQUIRE_EQUAL(sm.m_input_messages.size(), 0);
-  BOOST_REQUIRE_EQUAL(sm.m_messages.size(), 0);
-  BOOST_TEST_REQUIRE(static_cast<bool>(sm.m_executer));
-  BOOST_TEST_REQUIRE(static_cast<bool>(sm.m_consumer));
-  sm.push(std::make_shared<seq_test_message_t>(2, err));
-  BOOST_TEST_REQUIRE(sm.m_in_process);
-  BOOST_REQUIRE_EQUAL(sm.m_input_messages.size(), 1);
-  BOOST_REQUIRE_EQUAL(sm.m_messages.size(), 0);
-  BOOST_REQUIRE_EQUAL(functions.size(), 1);
-  sm.push(std::make_unique<seq_test_message_t>(0, err));
-  BOOST_TEST_REQUIRE(sm.m_in_process);
-  BOOST_REQUIRE_EQUAL(sm.m_input_messages.size(), 2);
-  BOOST_REQUIRE_EQUAL(sm.m_messages.size(), 0);
-  BOOST_REQUIRE_EQUAL(functions.size(), 1);
-  sm.push(std::make_shared<seq_test_message_t>(1, err));
-  BOOST_TEST_REQUIRE(sm.m_in_process);
-  BOOST_REQUIRE_EQUAL(sm.m_input_messages.size(), 3);
-  BOOST_REQUIRE_EQUAL(sm.m_messages.size(), 0);
-  BOOST_REQUIRE_EQUAL(functions.size(), 1);
-  sm.push(std::make_unique<seq_test_message_t>(4, err));
-  BOOST_TEST_REQUIRE(sm.m_in_process);
-  BOOST_REQUIRE_EQUAL(sm.m_input_messages.size(), 4);
-  BOOST_REQUIRE_EQUAL(sm.m_messages.size(), 0);
-  BOOST_REQUIRE_EQUAL(functions.size(), 1);
-  run_first();
-  BOOST_REQUIRE_EQUAL(functions.size(), 2);
-  BOOST_TEST_REQUIRE(sm.m_in_process);
-  BOOST_REQUIRE_EQUAL(sm.m_input_messages.size(), 1);
-  BOOST_REQUIRE_EQUAL(sm.m_messages.size(), 1);
-  BOOST_REQUIRE_EQUAL(sm.m_sn, 3);
-  run_first();
-  BOOST_REQUIRE_EQUAL(msges.size(), 3);
-  while(!msges.empty()) {
-    BOOST_REQUIRE_EQUAL(msges.front()->sn(), idx++);  
-    msges.pop_front();
-  }
-  BOOST_REQUIRE_EQUAL(functions.size(), 1);
-  sm.push(std::make_unique<seq_test_message_t>(6, err));
-  BOOST_REQUIRE_EQUAL(functions.size(), 1);
-  BOOST_REQUIRE_EQUAL(sm.m_input_messages.size(), 2);
-  BOOST_REQUIRE_EQUAL(sm.m_messages.size(), 1);
-  BOOST_REQUIRE_EQUAL(sm.m_sn, 3);  
-  sm.push(std::make_unique<seq_test_message_t>(3, err));
-  BOOST_REQUIRE_EQUAL(functions.size(), 1);
-  BOOST_REQUIRE_EQUAL(sm.m_input_messages.size(), 3);
-  BOOST_REQUIRE_EQUAL(sm.m_messages.size(), 1);
-  BOOST_REQUIRE_EQUAL(sm.m_sn, 3);
-  sm.push(std::make_unique<seq_test_message_t>(5, err));
-  BOOST_REQUIRE_EQUAL(functions.size(), 1);
-  BOOST_REQUIRE_EQUAL(sm.m_input_messages.size(), 4);
-  BOOST_REQUIRE_EQUAL(sm.m_messages.size(), 1);
-  BOOST_REQUIRE_EQUAL(sm.m_sn, 3);
-  run_first();
-  BOOST_REQUIRE_EQUAL(sm.m_sn, 8);
-  BOOST_REQUIRE_EQUAL(functions.size(), 1);
-  BOOST_TEST_REQUIRE(sm.m_input_messages.empty());
-  BOOST_TEST_REQUIRE(sm.m_messages.empty());
-  run_first();
-  BOOST_REQUIRE_EQUAL(msges.size(), 5);
-  while(!msges.empty()) {
-    BOOST_REQUIRE_EQUAL(msges.front()->sn(), idx++);
-    msges.pop_front(); 
-  }
 }
 
 BOOST_AUTO_TEST_SUITE_END()  /* key_performance_test */

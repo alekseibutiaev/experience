@@ -20,6 +20,7 @@ namespace nasdaq {
     class consumer_t {
     public:
       using strings_t = std::vector<std::string>;
+      using execute_t = std::function<void(std::function<void()>)>;
       using process_t = std::function<void(const time_point_t&, const std::string&, const void*, const std::size_t)>;
     public:
       consumer_t(const config_t& config, const get_property_t& get_property,

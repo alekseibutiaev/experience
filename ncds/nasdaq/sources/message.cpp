@@ -41,7 +41,7 @@ namespace nasdaq {
   }
 
   message_t::message_t(const std::size_t& sn, const std::size_t type_idx, const error_t& error,
-    const get_property_t& get_property, const fields_t& fields)
+      const get_property_t& get_property, const fields_t& fields)
       : m_sn(sn)
       , m_type_idx(type_idx)
       , m_error(error)
@@ -61,7 +61,7 @@ namespace nasdaq {
   void message_t::visitor(message_visitor_t&) const {
   }
 
-  message_uptr message_t::create(const std::size_t& sn, const std::string& stream,
+  message_uptr message_t::create(const std::size_t sn, const std::string& stream,
         const std::string& msg, record_ptr record, const decoder_t& decoder,
         const get_property_t& get_property, const table_manager_t& table_manager,
         const error_t& error, const creators_stream_map_t& creators) {
@@ -143,8 +143,7 @@ namespace nasdaq {
       for(auto it = m_stream_type_idx.find(stream); it != m_stream_type_idx.end();)
         return it->second;
     }
-    const auto idx = get_type_idx(get_property, info, fields, error);
-    if(message_t::npos != idx) {
+    for(const auto idx = get_type_idx(get_property, info, fields, error); message_t::npos != idx;) {
       std::unique_lock _(m_lock_stream_type_idx);
       return m_stream_type_idx[stream] = idx;
     }
@@ -155,8 +154,7 @@ namespace nasdaq {
         const fields_t& fields, const error_t& error) {
     const auto& name = get_property(std::get<module_info_pos_t::e_module_name>(info) +
       "/name_msg_type").value_or(std::get<module_info_pos_t::e_default_type>(info));
-    const auto it = std::find(fields.begin(), fields.end(), name);
-    if(it != fields.end())
+    for(const auto it = std::find(fields.begin(), fields.end(), name); it != fields.end();)
       return static_cast<std::size_t>(std::distance(fields.begin(), it));
     error.error("fields name: " + name + " unsupported." + __FILE_STR__);
     return message_t::npos;

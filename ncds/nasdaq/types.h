@@ -80,7 +80,5 @@ namespace nasdaq {
   using get_property_t = std::function<string_try_t(const std::string&)>;
   using value_t = std::variant<bool, unsigned char, int, long, float, double, time_point_t, std::string>;
   using values_t = std::vector<value_t>;
-  using execute_t = std::function<void(std::function<void()>)>;
-  using message_ptr = std::shared_ptr<class message_t>;
 
 } /* namespace nasdaq */
