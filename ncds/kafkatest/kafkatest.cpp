@@ -1,6 +1,7 @@
 #include <ctime>
 
 #include <mutex>
+#include <thread>
 #include <chrono>
 #include <thread>
 #include <string>
@@ -147,6 +148,10 @@ namespace {
         std::cout << "unsuported message stream: " << stream << " message: " << msg << std::endl;
         return;
       }
+      std::ostringstream oss;
+      oss << "record thread: " << std::this_thread::get_id();
+      debug(oss.str());
+      
 
       if(auto message = nasdaq::message_t::create(m_sn, stream, msg, record, decoder, m_get_property,
           static_cast<nasdaq::table_manager_t&>(*this), static_cast<nasdaq::error_t&>(*this)))
@@ -162,7 +167,9 @@ namespace {
       return nasdaq::table_manager_t::load("./schema/" + stream + ".sch");
     }
     void consumer(nasdaq::sequence_manager_t::messages_t& value) {
-      debug("received: " + std::to_string(value.size()) + " messages");
+      std::ostringstream oss;
+      oss << std::this_thread::get_id() << " received: " << value.size() << " messages";
+      debug(oss.str());
     }
     private:
     void show_delay(const nasdaq::time_point_t& ts) {

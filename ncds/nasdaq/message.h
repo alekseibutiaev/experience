@@ -49,7 +49,7 @@ namespace nasdaq {
       const fields_t& fields);
     void set_sn(const std::size_t& value);
   protected:
-    std::atomic_size_t m_sn;
+    std::size_t m_sn;
     const std::size_t m_type_idx;
     const error_t& m_error;
     const get_property_t& m_get_property;
