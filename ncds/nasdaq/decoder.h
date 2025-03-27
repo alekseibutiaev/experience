@@ -9,7 +9,7 @@ namespace nasdaq {
   class decoder_t {
   public:
     virtual ~decoder_t() = default;
-    virtual void operator()(const time_point_t& tp, const std::string& stream, const void* buf, const std::size_t size) const = 0;
+    virtual void operator()(const std::string& stream, const void* buf, const std::size_t size, const bool& first, const time_point_t& tp) const = 0;
     virtual void get_field(const record_ptr record, const std::size_t& idx, data_delegate_t& data) const = 0;
   };
 
