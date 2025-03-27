@@ -22,7 +22,7 @@ namespace nasdaq {
     public:
       using strings_t = std::vector<std::string>;
       using execute_t = std::function<void(std::function<void()>)>;
-      using process_t = std::function<void(const std::string&, const bool&, const void*, const std::size_t&, const time_point_t&)>;
+      using process_t = std::function<void(const std::string&, const void*, const std::size_t&, const bool&, const time_point_t&)>;
     public:
       consumer_t(const config_t& config, const get_property_t& get_property,
         const execute_t& executer, const process_t& process, const error_t& error);

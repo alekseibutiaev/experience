@@ -52,7 +52,7 @@ namespace nasdaq {
   }
 
   const long& message_t::sequence() const {
-    static const long res = std::numeric_limits<std::ptrdiff_t>;
+    static const long res = std::numeric_limits<std::ptrdiff_t>::min();
     return res;
   }
 
