@@ -167,11 +167,13 @@ namespace {
     static const std::string STRING;
     static const nasdaq::fields_t FIELDS;
   public: /* nasdaq::decoder_t */
-    void operator()(const nasdaq::time_point_t& tp, const std::string& stream, const void* buf, const std::size_t size) const {
+    void operator()(const std::string& stream, const void* buf, const std::size_t size,
+        const bool& first, const nasdaq::time_point_t& tp) const {
       (void)tp;
       (void)stream;
       (void)buf;
       (void)size;
+      (void)first;
     }
     void get_field(const nasdaq::record_ptr record, const std::size_t& idx, nasdaq::data_delegate_t& data) const {
       auto r = std::dynamic_pointer_cast<my_record_t>(record);
