@@ -144,9 +144,8 @@ namespace nasdaq {
             continue;
           if(flags.first)
             check_first_message_for_topics(flags, m_first_msg[0], m_first_msg[1], msg->topic_name());
-          auto ts = flags.second ? time_point_t() : clock_t::now();
-          m_execute([this, msg, ts]() {
-              m_process(ts, msg->topic_name(), msg->payload(), msg->len());});
+          m_execute([this, msg, flags, ts = clock_t::now()]() {
+              m_process(flags.second, msg->topic_name(), msg->payload(), msg->len(), ts);});
         }
       }
       catch(const std::exception& e) {
