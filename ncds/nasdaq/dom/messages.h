@@ -2,6 +2,7 @@
 
 #include "dom_types.h"
 
+#include "sources/base.h"
 #include "sources/order_add.h"
 #include "sources/order_cancel.h"
 #include "sources/order_delete.h"

@@ -5,7 +5,7 @@ namespace nasdaq {
 
   namespace dom {
 
-    order_executed_t::order_executed_t(const message_t& value) : message_t(value) {
+    order_executed_t::order_executed_t(const message_t& value) : base_t(value) {
     }
 
     void order_executed_t::visitor(message_visitor_t& visitor) const {

@@ -8,7 +8,7 @@ namespace nasdaq {
 //       enum { e_symbol_locale = 3, e_time_stamp, e_id, e_side, e_quantity, e_symbol, e_price };
 
 
-    order_add_t::order_add_t(const message_t& value) : message_t(value) {
+    order_add_t::order_add_t(const message_t& value) : base_t(value) {
     }
 
     void order_add_t::visitor(message_visitor_t& visitor) const {

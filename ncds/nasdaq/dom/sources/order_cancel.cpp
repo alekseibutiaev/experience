@@ -5,7 +5,7 @@ namespace nasdaq {
 
   namespace dom {
 
-    order_cancel_t::order_cancel_t(const message_t& value) : message_t(value) {
+    order_cancel_t::order_cancel_t(const message_t& value) : base_t(value) {
     }
 
     void order_cancel_t::visitor(message_visitor_t& visitor) const {

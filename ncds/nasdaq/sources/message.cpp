@@ -33,6 +33,7 @@ namespace nasdaq {
 
   message_t::message_t(const message_t& value)
       : m_sn(value.m_sn)
+      , m_first(value.m_first)
       , m_type_idx(value.m_type_idx)
       , m_error(value.m_error)
       , m_get_property(value.m_get_property)
@@ -40,13 +41,19 @@ namespace nasdaq {
       , m_values(value.m_values) {
   }
 
-  message_t::message_t(const std::size_t type_idx, const error_t& error,
+  message_t::message_t(const bool first, const std::size_t type_idx, const error_t& error,
       const get_property_t& get_property, const fields_t& fields)
-      : m_type_idx(type_idx)
+      : m_first(first)
+      , m_type_idx(type_idx)
       , m_error(error)
       , m_get_property(get_property)
       , m_fields(fields)
       , m_values(m_fields.size()) {
+  }
+
+  const long& message_t::sequence() const {
+    static const long res = std::numeric_limits<std::ptrdiff_t>;
+    return res;
   }
 
   void message_t::set_sn(const std::size_t& value) {
@@ -57,6 +64,10 @@ namespace nasdaq {
     return m_sn;
   }
 
+  const bool message_t::first() const {
+    return m_first;
+  }
+
   const std::string& message_t::type() const {
     return std::get<std::string>(m_values[m_type_idx]);
   }
@@ -64,24 +75,25 @@ namespace nasdaq {
   void message_t::visitor(message_visitor_t&) const {
   }
 
-  message_uptr message_t::create(std::atomic_size_t& sn, const std::string& stream,
+  message_uptr message_t::create(const time_point_t& tp, const std::string& stream,
         const std::string& msg, record_ptr record, const decoder_t& decoder,
         const get_property_t& get_property, const table_manager_t& table_manager,
         const error_t& error, const creators_stream_map_t& creators) {
     struct init_flag{ std::atomic_flag value = ATOMIC_FLAG_INIT; };
     static std::vector<init_flag> ut('Z' - 'A' + 1);
     for(auto it = creators.find(stream); it != creators.end();) {
+      if(time_point_t() == tp)
+        error.info("first meccage");
       const auto& fields = table_manager.get_fields(stream, msg);
       if(!fields.empty()) {
         const auto& type_idx = msg_type_idx(get_property, stream, it->second, fields, error);
-        message_t tmp(type_idx, error, get_property, fields);
+        message_t tmp(time_point_t() == tp, type_idx, error, get_property, fields);
         decoder.get_field(record, type_idx, tmp);
         const auto& type = tmp.type();
         if(auto msg = std::get<module_info_pos_t::e_creator_map>(it->second)[type[0] - 'A'](tmp)) {
           for(std::size_t idx = 0; idx < fields.size(); ++idx)
             if(idx != type_idx)
               decoder.get_field(record, idx, *msg);
-          msg->set_sn(sn++);
           return msg;
         }
         if(!ut[type[0] - 'A'].value.test_and_set())

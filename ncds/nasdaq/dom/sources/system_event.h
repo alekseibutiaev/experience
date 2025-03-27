@@ -1,13 +1,13 @@
 #pragma once
 
-#include "../../message.h"
 #include "../dom_types.h"
+#include "base.h"
 
 namespace nasdaq {
 
   namespace dom {
 
-    class system_event_t : public message_t {
+    class system_event_t : public base_t {
     public:
       enum { e_symbol_locale = 3, e_time_stamp, e_event };
     public:

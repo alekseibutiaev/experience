@@ -124,7 +124,6 @@ namespace {
         : m_get_property(get_property)
         , m_seq(executer, std::bind(&deletate_t::consumer, this,  std::placeholders::_1))
         , m_enable(enable)
-        , m_sn(0)
         , m_accum(0)
         , m_count(0) {
       m_get_property("test");
@@ -148,12 +147,12 @@ namespace {
         std::cout << "unsuported message stream: " << stream << " message: " << msg << std::endl;
         return;
       }
+#if 0
       std::ostringstream oss;
       oss << "record thread: " << std::this_thread::get_id();
       debug(oss.str());
-      
-
-      if(auto message = nasdaq::message_t::create(m_sn, stream, msg, record, decoder, m_get_property,
+#endif 
+      if(auto message = nasdaq::message_t::create(ts, stream, msg, record, decoder, m_get_property,
           static_cast<nasdaq::table_manager_t&>(*this), static_cast<nasdaq::error_t&>(*this)))
         m_seq.push(std::move(message));
       show_delay(ts);
@@ -199,7 +198,6 @@ namespace {
     const nasdaq::get_property_t m_get_property;
     nasdaq::sequence_manager_t m_seq;
     const bool m_enable;
-    std::atomic_size_t m_sn;
     std::size_t m_accum;
     std::size_t m_count;
     mutable std::mutex m_lock_cout;

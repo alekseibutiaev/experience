@@ -5,7 +5,7 @@ namespace nasdaq {
 
   namespace dom {
 
-    system_event_t::system_event_t(const message_t& value) : message_t(value) {
+    system_event_t::system_event_t(const message_t& value) : base_t(value) {
     }
 
     void system_event_t::visitor(message_visitor_t& visitor) const {

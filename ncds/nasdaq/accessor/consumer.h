@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <map>
 #include <string>
 #include <vector>
 #include <thread>
@@ -46,6 +47,7 @@ namespace nasdaq {
       auth_ptr m_auth;
       event_ptr m_event;
       bool m_start;
+      strings_t m_first_msg[2];
       std::vector<topic_partition_ptr> m_topic_partitions;
       consumer_ptr m_consumer;
       std::thread m_consumer_tread;

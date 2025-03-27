@@ -4,7 +4,6 @@
 #include <array>
 #include <tuple>
 #include <string>
-#include <atomic>
 #include <memory>
 #include <shared_mutex>
 
@@ -33,11 +32,13 @@ namespace nasdaq {
     };
   public:
     virtual ~message_t() = default;
+    virtual const long& sequence() const;
     const std::size_t& sn() const;
+    const bool first() const;
     const std::string& type() const;
     virtual void visitor(message_visitor_t& visitor) const;
   public:
-    static message_uptr create(std::atomic_size_t& sn, const std::string& stream, const std::string& msg, record_ptr record,
+    static message_uptr create(const time_point_t& tp, const std::string& stream, const std::string& msg, record_ptr record,
         const decoder_t& decoder, const get_property_t& get_property, const table_manager_t& table_manager,
         const error_t& error, const creators_stream_map_t& creators = message_t::m_creator_stream_map);
     static message_uptr empty(const message_t&);
@@ -45,11 +46,12 @@ namespace nasdaq {
     static const std::size_t npos;
   protected:
     message_t(const message_t& value);
-    message_t(const std::size_t type_idx, const error_t& error, const get_property_t& get_property,
+    message_t(const bool first, const std::size_t type_idx, const error_t& error, const get_property_t& get_property,
       const fields_t& fields);
     void set_sn(const std::size_t& value);
   protected:
     std::size_t m_sn;
+    const bool m_first;
     const std::size_t m_type_idx;
     const error_t& m_error;
     const get_property_t& m_get_property;

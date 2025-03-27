@@ -5,7 +5,7 @@
 
 #include "../dom_types.h"
 #include "../../message.h"
-#include "../message.h"
+#include "../messages.h"
 
 namespace nasdaq {
 
@@ -13,31 +13,31 @@ namespace nasdaq {
 
     const message_t::creators_t get_modile_info_t::m_creators = {
 /* A */ [](const message_t& value){return std::make_unique<order_add_t>(value);},
-/* B */ &message_t::empty,
+/* B */ [](const message_t& value){return std::make_unique<base_t>(value);},
 /* C */ [](const message_t& value){return std::make_unique<order_executed_with_price_t>(value);},
 /* D */ [](const message_t& value){return std::make_unique<order_delete_t>(value);},
 /* E */ [](const message_t& value){return std::make_unique<order_executed_t>(value);},
-/* F */ &message_t::empty,
-/* G */ &message_t::empty,
-/* H */ &message_t::empty,
-/* I */ &message_t::empty,
-/* J */ &message_t::empty,
-/* K */ &message_t::empty,
-/* L */ &message_t::empty,
-/* M */ &message_t::empty,
-/* N */ &message_t::empty,
-/* O */ &message_t::empty,
-/* P */ &message_t::empty,
-/* Q */ &message_t::empty,
-/* R */ &message_t::empty,
+/* F */ [](const message_t& value){return std::make_unique<base_t>(value);},
+/* G */ [](const message_t& value){return std::make_unique<base_t>(value);},
+/* H */ [](const message_t& value){return std::make_unique<base_t>(value);},
+/* I */ [](const message_t& value){return std::make_unique<base_t>(value);},
+/* J */ [](const message_t& value){return std::make_unique<base_t>(value);},
+/* K */ [](const message_t& value){return std::make_unique<base_t>(value);},
+/* L */ [](const message_t& value){return std::make_unique<base_t>(value);},
+/* M */ [](const message_t& value){return std::make_unique<base_t>(value);},
+/* N */ [](const message_t& value){return std::make_unique<base_t>(value);},
+/* O */ [](const message_t& value){return std::make_unique<base_t>(value);},
+/* P */ [](const message_t& value){return std::make_unique<base_t>(value);},
+/* Q */ [](const message_t& value){return std::make_unique<base_t>(value);},
+/* R */ [](const message_t& value){return std::make_unique<base_t>(value);},
 /* S */ [](const message_t& value){return std::make_unique<system_event_t>(value);},
-/* T */ &message_t::empty,
-/* U */ &message_t::empty,
-/* V */ &message_t::empty,
-/* W */ &message_t::empty,
+/* T */ [](const message_t& value){return std::make_unique<base_t>(value);},
+/* U */ [](const message_t& value){return std::make_unique<base_t>(value);},
+/* V */ [](const message_t& value){return std::make_unique<base_t>(value);},
+/* W */ [](const message_t& value){return std::make_unique<base_t>(value);},
 /* X */ [](const message_t& value){return std::make_unique<order_cancel_t>(value);},
-/* Y */ &message_t::empty,
-/* Z */ &message_t::empty
+/* Y */ [](const message_t& value){return std::make_unique<base_t>(value);},
+/* Z */ [](const message_t& value){return std::make_unique<base_t>(value);}
     };
 
     const message_t::module_info_t get_modile_info_t::operator()() const {
