@@ -20,7 +20,7 @@ namespace nasdaq {
   private:
     const execute_t m_executer;
     const msg_consumer_t m_consumer;
-    std::size_t m_sn;
+    long m_sequence;
     bool m_in_process;
     std::mutex m_lock;
     messages_t m_input_messages;

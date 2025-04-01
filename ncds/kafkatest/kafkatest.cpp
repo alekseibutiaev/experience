@@ -152,11 +152,9 @@ namespace {
       oss << "record thread: " << std::this_thread::get_id();
       debug(oss.str());
 #endif
-#if 1
       if(auto message = nasdaq::message_t::create(stream, msg, first, record, decoder, m_get_property,
           static_cast<nasdaq::table_manager_t&>(*this), static_cast<nasdaq::error_t&>(*this) , tp))
-        ;//m_seq.push(std::move(message));
-#endif
+        m_seq.push(std::move(message));
       show_delay(tp);
     }
     bool save(const std::string& stream, const std::string& schema) override {
