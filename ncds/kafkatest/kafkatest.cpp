@@ -140,8 +140,8 @@ namespace {
       oss << ']' << __FILE_STR__ << std::endl;
       info(oss.str());
     }
-    void record(const nasdaq::decoder_t& decoder, const nasdaq::time_point_t& ts,
-        const std::string& stream, const std::string& msg, const nasdaq::record_ptr record) override {
+    void record(const std::string& stream, const std::string& msg, const bool& first,
+      const nasdaq::decoder_t& decoder, const nasdaq::record_ptr record, const nasdaq::time_point_t& tp) override {
       const auto& filelds = get_fields(stream, msg);
       if(filelds.empty()) {
         std::cout << "unsuported message stream: " << stream << " message: " << msg << std::endl;
@@ -151,11 +151,13 @@ namespace {
       std::ostringstream oss;
       oss << "record thread: " << std::this_thread::get_id();
       debug(oss.str());
-#endif 
-      if(auto message = nasdaq::message_t::create(ts, stream, msg, record, decoder, m_get_property,
-          static_cast<nasdaq::table_manager_t&>(*this), static_cast<nasdaq::error_t&>(*this)))
-        m_seq.push(std::move(message));
-      show_delay(ts);
+#endif
+#if 1
+      if(auto message = nasdaq::message_t::create(stream, msg, first, record, decoder, m_get_property,
+          static_cast<nasdaq::table_manager_t&>(*this), static_cast<nasdaq::error_t&>(*this) , tp))
+        ;//m_seq.push(std::move(message));
+#endif
+      show_delay(tp);
     }
     bool save(const std::string& stream, const std::string& schema) override {
       std::cout << std::string("write file:") + "./schema/" + stream + ".sch" << std::endl;

@@ -75,19 +75,17 @@ namespace nasdaq {
   void message_t::visitor(message_visitor_t&) const {
   }
 
-  message_uptr message_t::create(const time_point_t& tp, const std::string& stream,
-        const std::string& msg, record_ptr record, const decoder_t& decoder,
-        const get_property_t& get_property, const table_manager_t& table_manager,
-        const error_t& error, const creators_stream_map_t& creators) {
+  message_uptr message_t::create(const std::string& stream, const std::string& msg, const bool& first,
+        record_ptr record, const decoder_t& decoder, const get_property_t& get_property,
+        const table_manager_t& table_manager, const error_t& error, const time_point_t& tp,
+        const creators_stream_map_t& creators) {
     struct init_flag{ std::atomic_flag value = ATOMIC_FLAG_INIT; };
     static std::vector<init_flag> ut('Z' - 'A' + 1);
     for(auto it = creators.find(stream); it != creators.end();) {
-      if(time_point_t() == tp)
-        error.info("first meccage");
       const auto& fields = table_manager.get_fields(stream, msg);
       if(!fields.empty()) {
         const auto& type_idx = msg_type_idx(get_property, stream, it->second, fields, error);
-        message_t tmp(time_point_t() == tp, type_idx, error, get_property, fields);
+        message_t tmp(first, type_idx, error, get_property, fields);
         decoder.get_field(record, type_idx, tmp);
         const auto& type = tmp.type();
         if(auto msg = std::get<module_info_pos_t::e_creator_map>(it->second)[type[0] - 'A'](tmp)) {

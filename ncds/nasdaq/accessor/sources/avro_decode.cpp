@@ -63,7 +63,7 @@ namespace nasdaq {
             if(nasdaq::acc::avro_decoder_t::control == stream)
               read_control(buf, size);
             else
-              decode_message(stream/*, get_datum(stream)*/, buf, size, first, tp);
+              decode_message(stream, buf, size, first, tp);
           }
           catch(const std::exception& e) {
             m_error.error(e.what());
@@ -103,8 +103,8 @@ namespace nasdaq {
               const bool& first, const time_point_t& tp) const {
           try {
             auto record = get_record(get_datum(stream), buf, size);
-            m_table.record(m_owner, tp, stream, record->first->schema()->name().simpleName(),
-              std::static_pointer_cast<record_t>(record));
+            m_table.record(stream, record->first->schema()->name().simpleName(),
+              first, m_owner, std::static_pointer_cast<record_t>(record), tp);
           }
           catch(const std::exception& e) {
             m_error.error(e.what() + __FILE_STR__);

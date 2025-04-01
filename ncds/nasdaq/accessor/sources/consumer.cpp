@@ -67,6 +67,7 @@ namespace {
     for(auto it = std::find(current.begin(), current.end(), topic); (flags.second = it == current.end());) {
       current.push_back(topic);
       flags.first = request.size() != current.size();
+      return;
     }
   }
 
@@ -144,8 +145,23 @@ namespace nasdaq {
             continue;
           if(flags.first)
             check_first_message_for_topics(flags, m_first_msg[0], m_first_msg[1], msg->topic_name());
-          m_execute([this, msg, flags, ts = clock_t::now()](){
-              m_process(msg->topic_name(), msg->payload(), msg->len(), flags.second, ts);});
+#if 0
+  if(flags.second)
+    m_error.info("first");
+  else
+    m_error.info("second");
+#endif
+
+          m_execute([this, msg, flag = flags.second, ts = clock_t::now()](){
+#if 0
+  if(flag)
+    m_error.info("first");
+  else
+    m_error.info("second");
+#endif
+
+            m_process(msg->topic_name(), msg->payload(), msg->len(), flag, ts);
+          });
         }
       }
       catch(const std::exception& e) {
