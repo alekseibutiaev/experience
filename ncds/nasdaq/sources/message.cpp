@@ -32,8 +32,7 @@ namespace nasdaq {
   message_t::stream_type_idx_t message_t::m_stream_type_idx;
 
   message_t::message_t(const message_t& value)
-      : m_sn(value.m_sn)
-      , m_first(value.m_first)
+      : m_first(value.m_first)
       , m_type_idx(value.m_type_idx)
       , m_error(value.m_error)
       , m_get_property(value.m_get_property)
@@ -54,14 +53,6 @@ namespace nasdaq {
   const long& message_t::sequence() const {
     static const long res = std::numeric_limits<std::ptrdiff_t>::min();
     return res;
-  }
-
-  void message_t::set_sn(const std::size_t& value) {
-    m_sn = value;
-  }
-
-  const std::size_t& message_t::sn() const {
-    return m_sn;
   }
 
   const bool message_t::first() const {

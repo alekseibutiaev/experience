@@ -33,7 +33,6 @@ namespace nasdaq {
   public:
     virtual ~message_t() = default;
     virtual const long& sequence() const;
-    const std::size_t& sn() const;
     const bool first() const;
     const std::string& type() const;
     virtual void visitor(message_visitor_t& visitor) const;
@@ -50,9 +49,7 @@ namespace nasdaq {
     message_t(const message_t& value);
     message_t(const bool first, const std::size_t type_idx, const error_t& error, const get_property_t& get_property,
       const fields_t& fields);
-    void set_sn(const std::size_t& value);
   protected:
-    std::size_t m_sn;
     const bool m_first;
     const std::size_t m_type_idx;
     const error_t& m_error;
