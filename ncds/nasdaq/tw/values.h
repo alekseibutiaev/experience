@@ -7,7 +7,7 @@
 
 namespace nasdaq {
 
-  namespace dom {
+  namespace tw {
 
     template<std::size_t values_count>
     class values_t {
@@ -25,6 +25,6 @@ namespace nasdaq {
 
     };
 
-  } /* namespace dom */
+  } /* namespace tw */
 
 } /* namespace nasdaq */

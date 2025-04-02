@@ -1,11 +1,11 @@
 #pragma once
 
-#include "../dom_types.h"
+#include "../tw_types.h"
 #include "base.h"
 
 namespace nasdaq {
 
-  namespace dom {
+  namespace tw {
 
     class order_add_t : public base_t {
     public:
@@ -22,6 +22,6 @@ namespace nasdaq {
       const int& price() const;
     };
 
-  } /* namespace dom */
+  } /* namespace tw */
 
 } /* namespace nasdaq */

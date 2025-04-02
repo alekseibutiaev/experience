@@ -1,11 +1,11 @@
 #pragma once
 
 #include "../../message.h"
-#include "../dom_types.h"
+#include "../tw_types.h"
 
 namespace nasdaq {
 
-  namespace dom {
+  namespace tw {
 
     class base_t : public message_t {
     public:
@@ -15,6 +15,6 @@ namespace nasdaq {
       const long& sequence() const;
     };
 
-  } /* namespace dom */
+  } /* namespace tw */
 
 } /* namespace nasdaq */

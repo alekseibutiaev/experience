@@ -1,16 +1,16 @@
-#include "../dom_visitor.h"
+#include "../tw_visitor.h"
 #include "system_event.h"
 
 namespace nasdaq {
 
-  namespace dom {
+  namespace tw {
 
     system_event_t::system_event_t(const message_t& value) : base_t(value) {
     }
 
     void system_event_t::visitor(message_visitor_t& visitor) const {
       try {
-        dynamic_cast<dom::dom_visitor_t&>(visitor).visit(*this);
+        dynamic_cast<tw_visitor_t&>(visitor).visit(*this);
       }
       catch(const std::bad_cast& e) {
       }
@@ -28,6 +28,6 @@ namespace nasdaq {
       return std::get<std::string>(m_values[e_event]);
     }
 
-  } /* namespace dom */
+  } /* namespace tw */
 
 } /* namespace nasdaq */

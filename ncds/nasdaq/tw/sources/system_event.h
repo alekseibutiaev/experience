@@ -1,11 +1,11 @@
 #pragma once
 
-#include "../dom_types.h"
+#include "../tw_types.h"
 #include "base.h"
 
 namespace nasdaq {
 
-  namespace dom {
+  namespace tw {
 
     class system_event_t : public base_t {
     public:
@@ -18,6 +18,6 @@ namespace nasdaq {
       const std::string& event() const;
     };
 
-  } /* namespace dom */
+  } /* namespace tw */
 
 } /* namespace nasdaq */

@@ -4,7 +4,7 @@
 
 namespace nasdaq {
 
-  namespace dom {
+  namespace tw {
 
     class order_add_t;
     class order_cancel_t;
@@ -13,9 +13,9 @@ namespace nasdaq {
     class order_executed_with_price_t;
     class system_event_t;
 
-    class dom_visitor_t : public message_visitor_t {
+    class tw_visitor_t : public message_visitor_t {
     public:
-      virtual ~dom_visitor_t() = default;
+      virtual ~tw_visitor_t() = default;
       virtual void visit(const order_add_t& value) = 0;
       virtual void visit(const order_cancel_t& value) = 0;
       virtual void visit(const order_delete_t& value) = 0;
@@ -26,6 +26,6 @@ namespace nasdaq {
 
   } /* namespace nasdaq */
 
-} /* namespace dom */
+} /* namespace tw */
 
 

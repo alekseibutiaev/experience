@@ -10,7 +10,7 @@
 
 namespace nasdaq {
 
-  namespace dom {
+  namespace tw {
 
     class get_modile_info_t {
     public:
@@ -19,6 +19,6 @@ namespace nasdaq {
       static const message_t::creators_t m_creators;
     };
 
-  } /* namespace dom */
+  } /* namespace tw */
 
 } /* namespace nasdaq */

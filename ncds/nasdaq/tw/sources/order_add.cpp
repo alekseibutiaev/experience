@@ -1,9 +1,9 @@
-#include "../dom_visitor.h"
+#include "../tw_visitor.h"
 #include "order_add.h"
 
 namespace nasdaq {
 
-  namespace dom {
+  namespace tw {
 
 //       enum { e_symbol_locale = 3, e_time_stamp, e_id, e_side, e_quantity, e_symbol, e_price };
 
@@ -13,7 +13,7 @@ namespace nasdaq {
 
     void order_add_t::visitor(message_visitor_t& visitor) const {
       try {
-        dynamic_cast<dom::dom_visitor_t&>(visitor).visit(*this);
+        dynamic_cast<tw_visitor_t&>(visitor).visit(*this);
       }
       catch(const std::bad_cast& e) {
       }
@@ -48,6 +48,6 @@ namespace nasdaq {
     }
 
 
-  } /* namespace dom */
+  } /* namespace tw */
 
 } /* namespace nasdaq */

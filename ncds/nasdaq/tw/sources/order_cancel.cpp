@@ -1,16 +1,16 @@
-#include "../dom_visitor.h"
+#include "../tw_visitor.h"
 #include "order_cancel.h"
 
 namespace nasdaq {
 
-  namespace dom {
+  namespace tw {
 
     order_cancel_t::order_cancel_t(const message_t& value) : base_t(value) {
     }
 
     void order_cancel_t::visitor(message_visitor_t& visitor) const {
       try {
-        dynamic_cast<dom::dom_visitor_t&>(visitor).visit(*this);
+        dynamic_cast<tw_visitor_t&>(visitor).visit(*this);
       }
       catch(const std::bad_cast& e) {
       }
@@ -32,6 +32,6 @@ namespace nasdaq {
       return std::get<int>(m_values[e_quantity]);
     }
 
-  } /* namespace dom */
+  } /* namespace tw */
 
 } /* namespace nasdaq */

@@ -1,5 +1,5 @@
-file(GLOB HEADER_FILES "*.h" "*.hpp" "dom/*.h" "dom/*.hpp" "accessor/*.h" "accessor/*.hpp")
-file(GLOB SOURCE_FILES "sources/*.cpp" "dom/sources/*.cpp" "accessor/sources/*.cpp")
+file(GLOB HEADER_FILES "*.h" "*.hpp" "tw/*.h" "tw/*.hpp" "accessor/*.h" "accessor/*.hpp")
+file(GLOB SOURCE_FILES "sources/*.cpp" "tw/sources/*.cpp" "accessor/sources/*.cpp")
 
 message("HEADER_FILES: " ${HEADER_FILES})
 message("SOURCE_FILES: " ${SOURCE_FILES})

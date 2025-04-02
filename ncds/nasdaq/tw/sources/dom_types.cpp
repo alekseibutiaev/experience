@@ -3,13 +3,13 @@
 #include <iterator>
 #include <algorithm>
 
-#include "../dom_types.h"
+#include "../tw_types.h"
 #include "../../message.h"
 #include "../messages.h"
 
 namespace nasdaq {
 
-  namespace dom {
+  namespace tw {
 
     const message_t::creators_t get_modile_info_t::m_creators = {
 /* A */ [](const message_t& value){return std::make_unique<order_add_t>(value);},
@@ -44,6 +44,6 @@ namespace nasdaq {
       return message_t::module_info_t(m_creators, "dom", "msgType");
     }
 
-  } /* namespace dom */
+  } /* namespace tw */
 
 } /* namespace nasdaq */

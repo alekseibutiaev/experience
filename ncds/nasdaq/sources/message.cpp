@@ -5,7 +5,7 @@
 #include <atomic>
 #include <stdexcept>
 
-#include "dom/dom_types.h"
+#include "tw/tw_types.h"
 
 #include "location.h"
 #include "error.h"
@@ -24,7 +24,7 @@ namespace nasdaq {
   const std::size_t message_t::npos = std::numeric_limits<std::size_t>::max();
 
   const message_t::creators_stream_map_t message_t::m_creator_stream_map = {
-    message_t::creators_stream_map_t::value_type("TOTALVIEW", dom::get_modile_info_t()())
+    message_t::creators_stream_map_t::value_type("TOTALVIEW", tw::get_modile_info_t()())
   };
 
   std::shared_mutex message_t::m_lock_stream_type_idx;
