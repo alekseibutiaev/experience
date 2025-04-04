@@ -32,7 +32,6 @@ namespace {
   class msg_t : public nasdaq::message_t {
   public:
     msg_t(const nasdaq::message_t& value) : nasdaq::message_t(value) {
-      return;
     }
   };
 
@@ -66,32 +65,32 @@ namespace {
   };
 
   const nasdaq::message_t::creators_t empty_creators = {
-    &nasdaq::message_t::empty,
-    &nasdaq::message_t::empty,
-    &nasdaq::message_t::empty,
-    &nasdaq::message_t::empty,
-    &nasdaq::message_t::empty,
-    &nasdaq::message_t::empty,
-    &nasdaq::message_t::empty,
-    &nasdaq::message_t::empty,
-    &nasdaq::message_t::empty,
-    &nasdaq::message_t::empty,
-    &nasdaq::message_t::empty,
-    &nasdaq::message_t::empty,
-    &nasdaq::message_t::empty,
-    &nasdaq::message_t::empty,
-    &nasdaq::message_t::empty,
-    &nasdaq::message_t::empty,
-    &nasdaq::message_t::empty,
-    &nasdaq::message_t::empty,
-    &nasdaq::message_t::empty,
-    &nasdaq::message_t::empty,
-    &nasdaq::message_t::empty,
-    &nasdaq::message_t::empty,
-    &nasdaq::message_t::empty,
-    &nasdaq::message_t::empty,
-    &nasdaq::message_t::empty,
-    &nasdaq::message_t::empty,
+    [](const nasdaq::message_t& value){return nasdaq::message_uptr();},
+    [](const nasdaq::message_t& value){return nasdaq::message_uptr();},
+    [](const nasdaq::message_t& value){return nasdaq::message_uptr();},
+    [](const nasdaq::message_t& value){return nasdaq::message_uptr();},
+    [](const nasdaq::message_t& value){return nasdaq::message_uptr();},
+    [](const nasdaq::message_t& value){return nasdaq::message_uptr();},
+    [](const nasdaq::message_t& value){return nasdaq::message_uptr();},
+    [](const nasdaq::message_t& value){return nasdaq::message_uptr();},
+    [](const nasdaq::message_t& value){return nasdaq::message_uptr();},
+    [](const nasdaq::message_t& value){return nasdaq::message_uptr();},
+    [](const nasdaq::message_t& value){return nasdaq::message_uptr();},
+    [](const nasdaq::message_t& value){return nasdaq::message_uptr();},
+    [](const nasdaq::message_t& value){return nasdaq::message_uptr();},
+    [](const nasdaq::message_t& value){return nasdaq::message_uptr();},
+    [](const nasdaq::message_t& value){return nasdaq::message_uptr();},
+    [](const nasdaq::message_t& value){return nasdaq::message_uptr();},
+    [](const nasdaq::message_t& value){return nasdaq::message_uptr();},
+    [](const nasdaq::message_t& value){return nasdaq::message_uptr();},
+    [](const nasdaq::message_t& value){return nasdaq::message_uptr();},
+    [](const nasdaq::message_t& value){return nasdaq::message_uptr();},
+    [](const nasdaq::message_t& value){return nasdaq::message_uptr();},
+    [](const nasdaq::message_t& value){return nasdaq::message_uptr();},
+    [](const nasdaq::message_t& value){return nasdaq::message_uptr();},
+    [](const nasdaq::message_t& value){return nasdaq::message_uptr();},
+    [](const nasdaq::message_t& value){return nasdaq::message_uptr();},
+    [](const nasdaq::message_t& value){return nasdaq::message_uptr();}
   };
 
   const std::string STREAM = "normal_module";
