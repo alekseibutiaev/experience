@@ -9,6 +9,11 @@ namespace nasdaq {
     base_t::base_t(const message_t& value) : message_t(value) {
     }
 
+    const std::string& base_t::topic() const {
+      static const std::string res = "TOTALVIEW";
+      return res;
+    }
+
     const long& base_t::sequence() const {
       return std::get<long>(m_values[e_sequence]);
     }

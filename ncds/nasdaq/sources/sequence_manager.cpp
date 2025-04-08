@@ -1,11 +1,10 @@
 #include <limits>
 #include "message.h"
+#include "error.h"
 
 #include "sequence_manager.h"
 
 namespace {
-
-  const auto unsupported_sequence = std::numeric_limits<long>::min();
 
   struct msg_cmp_t {
     bool operator()(const nasdaq::sequence_manager_t::messages_t::value_type& lv,
@@ -18,9 +17,11 @@ namespace {
 
 namespace nasdaq {
 
-  sequence_manager_t::sequence_manager_t(const execute_t& executer, const msg_consumer_t& consumer)
+  sequence_manager_t::sequence_manager_t(const execute_t& executer,
+      const msg_consumer_t& consumer, error_t& error)
     : m_executer(executer)
     , m_consumer(consumer)
+    , m_error(error)
     , m_sequence(std::numeric_limits<long>::min())
     , m_in_process(false) {
   }
@@ -47,13 +48,17 @@ namespace nasdaq {
     tmp.sort(msg_cmp_t());
     m_messages.merge(std::move(tmp), msg_cmp_t());
     auto it = m_messages.begin();
-    for(; it != m_messages.end(); ++it)
-      if((*it)->sequence() > m_sequence)
+    for(; it != m_messages.end(); ++it) {
+      auto i = (*it)->sequence();
+      if(i/*(*it)->sequence()*/ > m_sequence)
         break;
       else
         ++m_sequence;
+    }
     tmp.splice(tmp.end(), std::move(m_messages), m_messages.begin(), it);
-    m_executer([msgd = std::move(tmp), this]() mutable { m_consumer(msgd);});
+    m_executer([msgd = std::move(tmp), this]() mutable {
+      m_consumer(msgd);}
+    );
     {
       std::lock_guard _(m_lock);
       if(!m_input_messages.empty())

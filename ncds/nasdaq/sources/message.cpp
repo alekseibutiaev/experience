@@ -55,6 +55,11 @@ namespace nasdaq {
     return res;
   }
 
+  const std::string& message_t::topic() const {
+    static const std::string res = "UNKNOWN";
+    return res;
+  }
+
   const bool message_t::first() const {
     return m_first;
   }
@@ -93,10 +98,6 @@ namespace nasdaq {
       return message_uptr();
     }
     error.error("unsupported stream: [" + stream + "]" + __FILE_STR__);
-    return message_uptr();
-  }
-
-  message_uptr message_t::empty(const message_t&) {
     return message_uptr();
   }
 

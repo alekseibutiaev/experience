@@ -5,6 +5,7 @@
 #include <chrono>
 #include <thread>
 #include <string>
+#include <memory>
 #include <cstring>
 #include <fstream>
 #include <sstream>
@@ -119,10 +120,13 @@ namespace {
 
   class deletate_t : public nasdaq::table_manager_t, public nasdaq::error_t {
   public:
+    using sequence_manager_ptr = std::shared_ptr<nasdaq::sequence_manager_t>;
+    using sequences_map_t = std::map<const std::string*, sequence_manager_ptr>;
+  public:
     deletate_t(const nasdaq::get_property_t& get_property, const nasdaq::execute_t& executer,
           const bool enable = true)
         : m_get_property(get_property)
-        , m_seq(executer, std::bind(&deletate_t::consumer, this,  std::placeholders::_1))
+        , m_executer(executer)
         , m_enable(enable)
         , m_accum(0)
         , m_count(0) {
@@ -153,8 +157,27 @@ namespace {
       debug(oss.str());
 #endif
       if(auto message = nasdaq::message_t::create(stream, msg, first, record, decoder, m_get_property,
-          static_cast<nasdaq::table_manager_t&>(*this), static_cast<nasdaq::error_t&>(*this) , tp))
-        m_seq.push(std::move(message));
+          static_cast<nasdaq::table_manager_t&>(*this), static_cast<nasdaq::error_t&>(*this) , tp)) {
+  std::ostringstream oss;
+  oss << "type: " << message->type() << " sec__: " << message->sequence() << " first: " << (message->first() ? "1" : "0");
+  debug(oss.str());
+        const auto* topic_ptr = &message->topic();
+        auto it = m_sequences_map.find(topic_ptr);
+        if(it == m_sequences_map.end())
+          it = m_sequences_map.emplace(std::make_pair(topic_ptr,
+            std::make_shared<sequence_manager_ptr::element_type>(m_executer, std::bind(&deletate_t::consumer, this,  std::placeholders::_1), *this))).first;
+        it->second->push(std::move(message));
+        
+      }
+      else {
+        auto m = nasdaq::message_t::create(stream, msg, first, record, decoder, m_get_property,
+          static_cast<nasdaq::table_manager_t&>(*this), static_cast<nasdaq::error_t&>(*this) , tp);
+        std::ostringstream oss1;
+        oss1 << "type: " << m->type() << " sec__: " << m->sequence() << " first: " << (m->first() ? "1" : "0");
+        debug(oss1.str());
+        return;
+      }
+        
       show_delay(tp);
     }
     bool save(const std::string& stream, const std::string& schema) override {
@@ -170,7 +193,7 @@ namespace {
       oss << std::this_thread::get_id() << " received: " << value.size() << " messages";
       debug(oss.str());
     }
-    private:
+  private:
     void show_delay(const nasdaq::time_point_t& ts) {
       m_accum += std::chrono::duration_cast<std::chrono::microseconds>(nasdaq::clock_t::now() - ts).count();
       if(0 == ++m_count % 1000 ) {
@@ -196,7 +219,8 @@ namespace {
     }
   private:
     const nasdaq::get_property_t m_get_property;
-    nasdaq::sequence_manager_t m_seq;
+    const nasdaq::execute_t& m_executer;
+    sequences_map_t m_sequences_map;
     const bool m_enable;
     std::size_t m_accum;
     std::size_t m_count;

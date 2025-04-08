@@ -33,6 +33,7 @@ namespace nasdaq {
   public:
     virtual ~message_t() = default;
     virtual const long& sequence() const;
+    virtual const std::string& topic() const;
     const bool first() const;
     const std::string& type() const;
     virtual void visitor(message_visitor_t& visitor) const;
@@ -42,7 +43,6 @@ namespace nasdaq {
         const get_property_t& get_property, const table_manager_t& table_manager,
         const error_t& error, const time_point_t& tp,
         const creators_stream_map_t& creators = message_t::m_creator_stream_map);
-    static message_uptr empty(const message_t&);
   public:
     static const std::size_t npos;
   protected:
