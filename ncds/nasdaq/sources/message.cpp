@@ -27,12 +27,14 @@ namespace nasdaq {
     message_t::creators_stream_map_t::value_type("TOTALVIEW", tw::get_modile_info_t()())
   };
 
+  message_t::topics_msg_t message_t::m_topics_msg;
+
   std::shared_mutex message_t::m_lock_stream_type_idx;
 
   message_t::stream_type_idx_t message_t::m_stream_type_idx;
 
   message_t::message_t(const message_t& value)
-      : m_first(value.m_first)
+      : m_sn(value.m_sn)
       , m_type_idx(value.m_type_idx)
       , m_error(value.m_error)
       , m_get_property(value.m_get_property)
@@ -40,9 +42,9 @@ namespace nasdaq {
       , m_values(value.m_values) {
   }
 
-  message_t::message_t(const bool first, const std::size_t type_idx, const error_t& error,
-      const get_property_t& get_property, const fields_t& fields)
-      : m_first(first)
+  message_t::message_t(const std::size_t sn, const std::size_t type_idx, const error_t& error,
+        const get_property_t& get_property, const fields_t& fields)
+      : m_sn(sn)
       , m_type_idx(type_idx)
       , m_error(error)
       , m_get_property(get_property)
@@ -60,8 +62,13 @@ namespace nasdaq {
     return res;
   }
 
-  const bool message_t::first() const {
-    return m_first;
+  message_t::messages_sequence_t& message_t::sequence_list() const {
+    static messages_sequence_t tmp;
+    return tmp;
+  }
+
+  const std::size_t& message_t::sn() const {
+    return m_sn;
   }
 
   const std::string& message_t::type() const {
@@ -71,7 +78,7 @@ namespace nasdaq {
   void message_t::visitor(message_visitor_t&) const {
   }
 
-  message_uptr message_t::create(const std::string& stream, const std::string& msg, const bool& first,
+  message_uptr message_t::create(const std::string& stream, const std::string& msg, const std::size_t& sn,
         record_ptr record, const decoder_t& decoder, const get_property_t& get_property,
         const table_manager_t& table_manager, const error_t& error, const time_point_t& tp,
         const creators_stream_map_t& creators) {
@@ -81,7 +88,7 @@ namespace nasdaq {
       const auto& fields = table_manager.get_fields(stream, msg);
       if(!fields.empty()) {
         const auto& type_idx = msg_type_idx(get_property, stream, it->second, fields, error);
-        message_t tmp(first, type_idx, error, get_property, fields);
+        message_t tmp(sn, type_idx, error, get_property, fields);
         decoder.get_field(record, type_idx, tmp);
         const auto& type = tmp.type();
         if(auto msg = std::get<module_info_pos_t::e_creator_map>(it->second)[type[0] - 'A'](tmp)) {
@@ -99,6 +106,11 @@ namespace nasdaq {
     }
     error.error("unsupported stream: [" + stream + "]" + __FILE_STR__);
     return message_uptr();
+  }
+
+  void message_t::reset() {
+    for(auto& it : m_topics_msg)
+      *it = messages_sequence_t();
   }
 
   void message_t::data(const std::size_t& idx, const std::string& field, const std::string& value) {

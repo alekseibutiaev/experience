@@ -1,3 +1,4 @@
+#include <set>
 #include <limits>
 #include "message.h"
 #include "error.h"
@@ -9,7 +10,7 @@ namespace {
   struct msg_cmp_t {
     bool operator()(const nasdaq::sequence_manager_t::messages_t::value_type& lv,
         const nasdaq::sequence_manager_t::messages_t::value_type& rv) {
-      return lv->sequence() < rv->sequence();
+      return lv->sn() < rv->sn();
     }
   };
 
@@ -29,11 +30,6 @@ namespace nasdaq {
   void sequence_manager_t::push(message_ptr&& value) {
     std::lock_guard _(m_lock);
     m_input_messages.emplace_back(std::move(value));
-    if(m_sequence == std::numeric_limits<long>::min()) {
-      if(m_input_messages.back()->first())
-        m_sequence = m_input_messages.back()->sequence();
-      return;
-    }
     if(!m_in_process)
       m_executer(std::bind(&sequence_manager_t::process, this));
     m_in_process = true;
@@ -45,6 +41,27 @@ namespace nasdaq {
       std::lock_guard _(m_lock);
       tmp = std::move(m_input_messages);
     }
+    std::set<message_t::messages_sequence_t*> mss;
+    while(!tmp.empty()) {
+      auto& ms = tmp.front()->sequence_list();
+      mss.insert(&ms);
+      messages_t tmp1;
+      tmp1.splice(tmp1.begin(), tmp, tmp.begin());
+      ms.first.merge(tmp1, msg_cmp_t());
+    }
+    for(auto i : mss) {
+      std::size_t& sn = i->second;
+      message_t::messages_t& mess = i->first;
+      auto it = mess.begin();
+      for(; it != mess.end(); ++it) {
+        if((*it)->sn() > sn)
+          break;
+        else
+          ++sn;
+      }
+      
+    }
+#if 0
     tmp.sort(msg_cmp_t());
     m_messages.merge(std::move(tmp), msg_cmp_t());
     auto it = m_messages.begin();
@@ -59,12 +76,13 @@ namespace nasdaq {
     m_executer([msgd = std::move(tmp), this]() mutable {
       m_consumer(msgd);}
     );
+#endif
+    tmp.clear();
     {
       std::lock_guard _(m_lock);
-      if(!m_input_messages.empty())
+      m_in_process  = !m_input_messages.empty();
+      if(m_in_process)
         m_executer(std::bind(&sequence_manager_t::process, this));
-      else
-        m_in_process = false;
     }
   }
 

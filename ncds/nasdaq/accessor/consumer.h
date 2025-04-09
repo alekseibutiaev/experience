@@ -21,8 +21,10 @@ namespace nasdaq {
     class consumer_t {
     public:
       using strings_t = std::vector<std::string>;
+      using topic_sq_t = std::map<std::string, std::size_t>;
       using execute_t = std::function<void(std::function<void()>)>;
-      using process_t = std::function<void(const std::string&, const void*, const std::size_t&, const bool&, const time_point_t&)>;
+      using process_t = std::function<void(const std::string&, const void*, const std::size_t&,
+        const std::size_t&, const time_point_t&)>;
     public:
       consumer_t(const config_t& config, const get_property_t& get_property,
         const execute_t& executer, const process_t& process, const error_t& error);
@@ -47,7 +49,7 @@ namespace nasdaq {
       auth_ptr m_auth;
       event_ptr m_event;
       bool m_start;
-      strings_t m_first_msg[2];
+      topic_sq_t m_topic_sq;
       std::vector<topic_partition_ptr> m_topic_partitions;
       consumer_ptr m_consumer;
       std::thread m_consumer_tread;

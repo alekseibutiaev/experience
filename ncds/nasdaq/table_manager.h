@@ -13,7 +13,7 @@ namespace nasdaq {
   public:
     virtual ~table_manager_t() = default;
     virtual void table(const std::string& stream, const std::string& msg, const fields_t& fields) = 0;
-    virtual void record(const std::string& stream, const std::string& msg, const bool& first,
+    virtual void record(const std::string& stream, const std::string& msg, const std::size_t& sn,
       const decoder_t& decoder, const record_ptr record, const time_point_t& tp) = 0;
     virtual bool save(const std::string& stream, const std::string& schema) = 0;
     virtual std::string load(const std::string& stream) = 0;

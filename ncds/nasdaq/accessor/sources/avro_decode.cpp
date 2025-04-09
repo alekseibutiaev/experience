@@ -56,14 +56,14 @@ namespace nasdaq {
             , m_schema_datum(std::make_shared<datum_ptr::element_type>(*m_schema_control)) {
           read_tables(nasdaq::acc::avro_decoder_t::control, m_schema_control->root());
         }
-        void operator()(std::string stream, const void* buf, const std::size_t& size, const bool& first,
+        void operator()(std::string stream, const void* buf, const std::size_t& size, const std::size_t& sn,
             const time_point_t& tp) const {
           try {
             stream = stream.substr(0, stream.find(".stream"));
             if(nasdaq::acc::avro_decoder_t::control == stream)
               read_control(buf, size);
             else
-              decode_message(stream, buf, size, first, tp);
+              decode_message(stream, buf, size, sn, tp);
           }
           catch(const std::exception& e) {
             m_error.error(e.what());
@@ -100,11 +100,11 @@ namespace nasdaq {
         using datum_ptr = std::shared_ptr<avro::GenericDatum>;
       private:
         void decode_message(const std::string& stream, const void* buf, const std::size_t size,
-              const bool& first, const time_point_t& tp) const {
+              const std::size_t& sn, const time_point_t& tp) const {
           try {
             auto record = get_record(get_datum(stream), buf, size);
             m_table.record(stream, record->first->schema()->name().simpleName(),
-              first, m_owner, std::static_pointer_cast<record_t>(record), tp);
+              sn, m_owner, std::static_pointer_cast<record_t>(record), tp);
           }
           catch(const std::exception& e) {
             m_error.error(e.what() + __FILE_STR__);
@@ -232,9 +232,9 @@ namespace nasdaq {
         : m_impl(std::make_shared<details::avro_decoder_t>(*this, table, error, ctrl_schema)) {
     }
 
-    void avro_decoder_t::operator()(const std::string& stream, const void* buf, const std::size_t size,
-        const bool& flag, const time_point_t& tp) const {
-      (*m_impl)(stream, buf, size, flag, tp);
+    void avro_decoder_t::operator()(const std::string& stream, const void* buf, const std::size_t& size,
+        const std::size_t& sn, const time_point_t& tp) const {
+      (*m_impl)(stream, buf, size, sn, tp);
     }
 
     void avro_decoder_t::get_field(const record_ptr record, const std::size_t& idx,

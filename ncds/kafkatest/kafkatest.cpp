@@ -144,7 +144,7 @@ namespace {
       oss << ']' << __FILE_STR__ << std::endl;
       info(oss.str());
     }
-    void record(const std::string& stream, const std::string& msg, const bool& first,
+    void record(const std::string& stream, const std::string& msg, const std::size_t& sn,
       const nasdaq::decoder_t& decoder, const nasdaq::record_ptr record, const nasdaq::time_point_t& tp) override {
       const auto& filelds = get_fields(stream, msg);
       if(filelds.empty()) {
@@ -152,29 +152,32 @@ namespace {
         return;
       }
 #if 0
-      std::ostringstream oss;
-      oss << "record thread: " << std::this_thread::get_id();
-      debug(oss.str());
+std::ostringstream oss;
+oss << "record thread: " << std::this_thread::get_id();
+debug(oss.str());
 #endif
-      if(auto message = nasdaq::message_t::create(stream, msg, first, record, decoder, m_get_property,
+      if(auto message = nasdaq::message_t::create(stream, msg, sn, record, decoder, m_get_property,
           static_cast<nasdaq::table_manager_t&>(*this), static_cast<nasdaq::error_t&>(*this) , tp)) {
-  std::ostringstream oss;
-  oss << "type: " << message->type() << " sec__: " << message->sequence() << " first: " << (message->first() ? "1" : "0");
-  debug(oss.str());
+#if 0
+std::ostringstream oss;
+oss << "type: " << message->type() << " sec__: " << message->sequence() << " first: " << (message->first() ? "1" : "0");
+debug(oss.str());
+#endif
         const auto* topic_ptr = &message->topic();
         auto it = m_sequences_map.find(topic_ptr);
         if(it == m_sequences_map.end())
           it = m_sequences_map.emplace(std::make_pair(topic_ptr,
             std::make_shared<sequence_manager_ptr::element_type>(m_executer, std::bind(&deletate_t::consumer, this,  std::placeholders::_1), *this))).first;
         it->second->push(std::move(message));
-        
       }
       else {
-        auto m = nasdaq::message_t::create(stream, msg, first, record, decoder, m_get_property,
+        auto m = nasdaq::message_t::create(stream, msg, sn, record, decoder, m_get_property,
           static_cast<nasdaq::table_manager_t&>(*this), static_cast<nasdaq::error_t&>(*this) , tp);
-        std::ostringstream oss1;
-        oss1 << "type: " << m->type() << " sec__: " << m->sequence() << " first: " << (m->first() ? "1" : "0");
-        debug(oss1.str());
+#if 0
+std::ostringstream oss1;
+oss1 << "type: " << m->type() << " sec__: " << m->sequence() << " first: " << (m->first() ? "1" : "0");
+debug(oss1.str());
+#endif
         return;
       }
         

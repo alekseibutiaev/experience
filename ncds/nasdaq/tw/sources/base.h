@@ -10,11 +10,14 @@ namespace nasdaq {
 
     class base_t : public message_t {
     public:
-      enum {e_sequence = 1 };
+      enum { e_sequence = 1 };
     public:
-      const std::string& topic() const;
       base_t(const message_t& value);
-      const long& sequence() const;
+      const long& sequence() const override;
+      const std::string& topic() const override;
+      messages_sequence_t& sequence_list() const override;
+    private:
+      static messages_sequence_ptr m_messages;
     };
 
   } /* namespace tw */

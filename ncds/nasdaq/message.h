@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <list>
 #include <array>
 #include <tuple>
 #include <string>
@@ -27,30 +28,39 @@ namespace nasdaq {
     using creators_t = std::array<creator_f, static_cast<std::size_t>('Z' - 'A' + 1)>;
     using module_info_t = std::tuple<const creators_t&, const std::string, const std::string>;
     using creators_stream_map_t = std::map<std::string, module_info_t>;
+    using messages_t = std::list<message_ptr>;
+    using messages_sequence_t = std::pair<messages_t, std::size_t>;
+    using messages_sequence_ptr = std::shared_ptr<messages_sequence_t>;
     struct module_info_pos_t {
-      enum {e_creator_map, e_module_name, e_default_type};
+      enum { e_creator_map, e_module_name, e_default_type };
     };
   public:
     virtual ~message_t() = default;
+    const std::size_t& sn() const;
     virtual const long& sequence() const;
     virtual const std::string& topic() const;
-    const bool first() const;
+    virtual messages_sequence_t& sequence_list() const;
     const std::string& type() const;
     virtual void visitor(message_visitor_t& visitor) const;
   public:
     static message_uptr create(const std::string& stream, const std::string& msg,
-      const bool& first, const record_ptr record, const decoder_t& decoder,
+        const std::size_t& sn, const record_ptr record, const decoder_t& decoder,
         const get_property_t& get_property, const table_manager_t& table_manager,
         const error_t& error, const time_point_t& tp,
         const creators_stream_map_t& creators = message_t::m_creator_stream_map);
+    static void reset();
   public:
     static const std::size_t npos;
   protected:
-    message_t(const message_t& value);
-    message_t(const bool first, const std::size_t type_idx, const error_t& error, const get_property_t& get_property,
-      const fields_t& fields);
+    using topics_msg_t = std::list<messages_sequence_ptr>;
   protected:
-    const bool m_first;
+    message_t(const message_t& value);
+    message_t(const std::size_t first, const std::size_t type_idx, const error_t& error,
+      const get_property_t& get_property, const fields_t& fields);
+  protected:
+    static topics_msg_t m_topics_msg;
+  protected:
+    const std::size_t m_sn;
     const std::size_t m_type_idx;
     const error_t& m_error;
     const get_property_t& m_get_property;

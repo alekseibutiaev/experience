@@ -62,15 +62,6 @@ namespace {
     config.set(event, error);
   }
 
-  void check_first_message_for_topics(first_msg_t& flags, const nasdaq::acc::consumer_t::strings_t& request,
-      nasdaq::acc::consumer_t::strings_t& current, const std::string& topic) {
-    for(auto it = std::find(current.begin(), current.end(), topic); (flags.second = it == current.end());) {
-      current.push_back(topic);
-      flags.first = request.size() != current.size();
-      return;
-    }
-  }
-
 } /* namespace */
 
 namespace nasdaq {
@@ -104,7 +95,6 @@ namespace nasdaq {
     void consumer_t::start(const strings_t& topics) {
       if(m_consumer_tread.joinable())
         return;
-      m_first_msg[0] = topics;
       std::string err;
       if(m_consumer = consumer_ptr(RdKafka::KafkaConsumer::create(m_config->get_config(), err))) {
         std::vector<RdKafka::TopicPartition*> partitions;
@@ -138,30 +128,16 @@ namespace nasdaq {
 
     void consumer_t::consumer_process() {
       try {
-        first_msg_t flags = {true, true};
         for(;m_start;) {
           msg_ptr msg(m_consumer->consume(1000));
           if(!msg->payload())
             continue;
-          if(flags.first)
-            check_first_message_for_topics(flags, m_first_msg[0], m_first_msg[1], msg->topic_name());
-#if 0
-  if(flags.second)
-    m_error.info("first");
-  else
-    m_error.info("second");
-#endif
-
-          m_execute([this, msg, flag = flags.second, ts = clock_t::now()](){
-#if 0
-  if(flag)
-    m_error.info("first");
-  else
-    m_error.info("second");
-#endif
-
-            m_process(msg->topic_name(), msg->payload(), msg->len(), flag, ts);
-          });
+          const auto& str = msg->topic_name();
+          auto sn = m_topic_sq[str]++;
+          auto f = [this, msg, sn, ts = clock_t::now()](){
+            m_process(msg->topic_name(), msg->payload(), msg->len(), sn, ts);
+          };
+          m_execute(f);
         }
       }
       catch(const std::exception& e) {
