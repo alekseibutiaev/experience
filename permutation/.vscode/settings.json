@@ -1,0 +1,15 @@
+{
+  "cmake.buildDirectory" : "${workspaceRoot}/build_${buildType}",
+  "cmake.configureArgs": [
+    "-DUSE_WERROR=ON"
+  ],
+  "cmake.buildToolArgs": [
+    "VERBOSE=1",
+    "-j4"
+  ],
+  "editor.wordWrapColumn": 80,
+  "cmake.saveBeforeBuild": true,
+  "files.associations": {
+    "iostream": "cpp"
+  },
+}

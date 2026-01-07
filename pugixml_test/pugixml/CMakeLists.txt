@@ -1,0 +1,41 @@
+set(PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+message("template SOURCES_DIR: " ${PROJECT_DIR})
+
+# 11 14 17
+#set(CMAKE_CXX_STANDARD 11)
+
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+set(CMAKE_CXX_FLAGS_DEBUG "")
+set(CMAKE_CXX_FLAGS_RELEASE "")
+
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0 -g3 -pthread -std=c++11 -Wall")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -g0 -pthread -std=c++11 -Wall")
+
+if(DEFINED USE_WERROR)
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Werror")
+  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Werror")
+endif()
+
+message("CXX_FLAGS_DEBUG: " ${CMAKE_CXX_FLAGS_DEBUG})
+message("CXX_FLAGS_RELEASE: " ${CMAKE_CXX_FLAGS_RELEASE})
+
+set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+set(THREADS_PREFER_PTHREAD_FLAG TRUE)
+find_package(Threads REQUIRED)
+
+find_package(PugiXML REQUIRED)
+set(Boost_USE_STATIC_LIBS        ON)
+find_package(Boost 1.55 REQUIRED COMPONENTS system unit_test_framework)
+#unit_test_framework
+
+message("Boost_FOUND " ${Boost_FOUND})
+message("Boost_INCLUDE_DIRS " ${Boost_INCLUDE_DIRS})
+message("Boost_LIBRARY_DIRS " ${Boost_LIBRARY_DIRS})
+message("Boost_LIBRARIES " ${Boost_LIBRARIES})
+
+message("PUGIXML_FOUND: " ${PUGIXML_FOUND})
+message("PUGIXML_INCLUDE_DIR: " ${PUGIXML_INCLUDE_DIR})
+message("PUGIXML_LIBRARIES: " ${PUGIXML_LIBRARIES})
+
+add_subdirectory(test1)

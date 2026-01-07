@@ -1,0 +1,25 @@
+<?xml version='1.0' ?>
+<TSQuoteServer cfg="cfg1">
+  <cfg1 Port="11800">
+    <module type="MON" id="MON" Disabled="1" MailServer="smtp://openrelay3.fmcnt.nettrader.ru:25" MailFrom="fix-server.proddemo" MailTo="eventts@adm.tradernet.ru" >
+      <filter exclude_rx="Connection closed by server"/>
+    </module>
+    <module type="QSRV" id="PROD-QSRV" Disabled="0" SignalsHost="v-tstgate01.proddemo:11120" ResetRevs="0" >
+      <obj id="Markets" write_log="1"/>
+      <obj id="TRADE_ORDERS" write_log="0"/>
+      <obj id="TRADE_DEALS" write_log="0"/>
+      <x-obj id="Instrument" write_log="1"/>
+      <x-cnn id="mst" cnn="srv=sql04.prodnt;db=mst;user=tsquote;pwd=mFe4nYKUgSEyO79mRVwgNsCzqSfRIXBqBWK;timeout=600"/>
+      <x-cnn id="mst_prod" cnn="srv=sql04.prodnt;db=mst;user=tsquote;pwd=mFe4nYKUgSEyO79mRVwgNsCzqSfRIXBqBWK"/>
+      <cnn id="mst_demo" cnn="srv=demosql01.proddemo;db=mst;user=sa;pwd=ZFDNrmXbDaUbP5yLdENO"/>
+      <cnn id="mais_demo" cnn="srv=demosql01.proddemo;db=mais;user=imais;pwd=123;timeout=600"/>
+      <x-signal qsrv_type="f" qsrv_obj="TRADE_ORDERS" type="pass" name="trade_order" id="iitr_notify_fix_order" key="*" id_field="OrderID" cnn="mst_demo" />
+      <x-signal qsrv_type="f" qsrv_obj="TRADE_DEALS" type="pass" name="trade" id="iitr_notify_fix_trade" key="*" id_field="OrderID" cnn="mst_demo" />
+      <x-signal qsrv_type="f" qsrv_obj="Instrument" type="pass" name="qsrv_instrument" id="iitr_qsrv_instrument" key="*" cnn="mst"/>
+    </module>
+    <module type="SUBS" id="PROD-SUBS" Disabled="0" QuoteServer="PROD-QSRV" Port="11820">
+      <qry id="*" type="Table" />
+    </module>
+  </cfg1>
+</TSQuoteServer>
+

@@ -1,0 +1,39 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+    {
+      "label": "SaveAllFiles",
+      "command": "${command:workbench.action.files.saveAll}",
+      "type": "shell",
+      "problemMatcher": []
+    },
+    {
+      "type": "cmake",
+      "label": "CMake: build",
+      "command": "build",
+      "targets": [
+        "all"
+      ],
+      "dependsOn": [
+        "SaveAllFiles"
+      ],
+      "group": "build",
+      "problemMatcher": [],
+      "detail": "CMake template build task"
+    },
+    {
+      "type": "cmake",
+      "label": "CMake: build domtest",
+      "command": "build",
+      "targets": [
+        "domtest"
+      ],
+      "dependsOn": [
+        "SaveAllFiles"
+      ],
+      "group": "build",
+      "problemMatcher": [],
+      "detail": "CMake template build task"
+    }
+  ]
+}

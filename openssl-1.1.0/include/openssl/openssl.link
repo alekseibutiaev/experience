@@ -1,0 +1,95 @@
+#pragma once
+
+#if !defined(STATIC_OPENSSL)
+
+#if defined(_WIN64) && defined(_DEBUG)
+  #pragma message( "link with libcrypto-dll-64d.lib and libssl-dll-64d.lib" )
+  #pragma comment( lib, "libcrypto-dll-64d.lib" )
+  #pragma comment( lib, "libssl-dll-64d.lib" )
+#endif
+
+#if defined(_WIN64) && !defined(_DEBUG)
+  #pragma message( "link with libcrypto-dll-64.lib and libssl-dll-64.lib" )
+  #pragma comment( lib, "libcrypto-dll-64.lib" )
+  #pragma comment( lib, "libssl-dll-64.lib" )
+#endif
+
+#if !defined(_WIN64) && defined(_DEBUG)
+  #pragma message( "link with libcrypto-dll-32d.lib and libssl-dll-32d.lib" )
+  #pragma comment( lib, "libcrypto-dll-32d.lib" )
+  #pragma comment( lib, "libssl-dll-32d.lib" )
+#endif
+
+#if !defined(_WIN64) && !defined(_DEBUG)
+  #pragma message( "link with libcrypto-dll-32.lib and libssl-dll-32.lib" )
+  #pragma comment( lib, "libcrypto-dll-32.lib" )
+  #pragma comment( lib, "libssl-dll-32.lib" )
+#endif
+
+#else
+
+#if defined(_WIN64) && defined(_DLL) && defined(_DEBUG)
+  #pragma message( "link with libcrypto-mt-64d.lib and libssl-mt-64d.lib, Ws2_32.lib, crypt32.lib" )
+  #pragma comment( lib, "libcrypto-mt-64d.lib" )
+  #pragma comment( lib, "libssl-mt-64d.lib" )
+  #pragma comment( lib, "Ws2_32.lib" )
+  #pragma comment( lib, "crypt32.lib" )
+#endif
+
+#if defined(_WIN64) && !defined(_DLL) && defined(_DEBUG)
+  #pragma message( "link with libcrypto-mt-s-64d.lib and libssl-mt-s-64d.lib, Ws2_32.lib, crypt32.lib" )
+  #pragma comment( lib, "libcrypto-mt-s-64d.lib" )
+  #pragma comment( lib, "libssl-mt-s-64d.lib" )
+  #pragma comment( lib, "Ws2_32.lib" )
+  #pragma comment( lib, "crypt32.lib" )
+#endif
+
+#if defined(_WIN64) && defined(_DLL) && !defined(_DEBUG)
+  #pragma message( "link with libcrypto-mt-64.lib and libssl-mt-64.lib, Ws2_32.lib, crypt32.lib" )
+  #pragma comment( lib, "libcrypto-mt-64.lib" )
+  #pragma comment( lib, "libssl-mt-64.lib" )
+  #pragma comment( lib, "Ws2_32.lib" )
+  #pragma comment( lib, "crypt32.lib" )
+#endif
+
+#if defined(_WIN64) && !defined(_DLL) && !defined(_DEBUG)
+  #pragma message( "link with libcrypto-mt-s-64.lib and libssl-mt-s-64.lib, Ws2_32.lib, crypt32.lib" )
+  #pragma comment( lib, "libcrypto-mt-s-64.lib" )
+  #pragma comment( lib, "libssl-mt-s-64.lib" )
+  #pragma comment( lib, "Ws2_32.lib" )
+  #pragma comment( lib, "crypt32.lib" )
+#endif
+
+#if !defined(_WIN64) && defined(_DLL) && defined(_DEBUG)
+  #pragma message( "link with libcrypto-mt-32d.lib, libssl-mt-32d.lib, Ws2_32.lib, crypt32.lib" )
+  #pragma comment( lib, "libcrypto-mt-32d.lib" )
+  #pragma comment( lib, "libssl-mt-32d.lib" )
+  #pragma comment( lib, "Ws2_32.lib" )
+  #pragma comment( lib, "crypt32.lib" )
+#endif
+
+#if !defined(_WIN64) && !defined(_DLL) && defined(_DEBUG)
+  #pragma message( "link with libcrypto-mt-s-32d.lib, libssl-mt-s-32d.lib, Ws2_32.lib, crypt32.lib" )
+  #pragma comment( lib, "libcrypto-mt-s-32d.lib" )
+  #pragma comment( lib, "libssl-mt-s-32d.lib" )
+  #pragma comment( lib, "Ws2_32.lib" )
+  #pragma comment( lib, "crypt32.lib" )
+#endif
+
+#if !defined(_WIN64) && defined(_DLL) && !defined(_DEBUG)
+  #pragma message( "link with libcrypto-mt-32.lib, libssl-mt-32.lib, Ws2_32.lib, crypt32.lib")
+  #pragma comment( lib, "libcrypto-mt-32.lib" )
+  #pragma comment( lib, "libssl-mt-32.lib" )
+  #pragma comment( lib, "Ws2_32.lib" )
+  #pragma comment( lib, "crypt32.lib" )
+#endif
+
+#if !defined(_WIN64) && !defined(_DLL) && !defined(_DEBUG)
+  #pragma message( "link with libcrypto-mt-s-32.lib, libssl-mt-s-32.lib, Ws2_32.lib, crypt32.lib")
+  #pragma comment( lib, "libcrypto-mt-s-32.lib" )
+  #pragma comment( lib, "libssl-mt-s-32.lib" )
+  #pragma comment( lib, "Ws2_32.lib" )
+  #pragma comment( lib, "crypt32.lib" )
+#endif
+
+#endif

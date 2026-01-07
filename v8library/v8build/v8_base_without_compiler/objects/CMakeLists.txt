@@ -1,0 +1,389 @@
+project(objects)
+
+set(CXX_FLAGS_COMMON "${CXX_FLAGS_COMMON} -fno-exceptions -fno-rtti -Wno-return-type\
+    -Wno-comment -Wno-unused-function -Wno-strict-aliasing  -Wno-maybe-uninitialized")
+
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${CXX_FLAGS_COMMON}")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${CXX_FLAGS_COMMON}")
+
+include_directories(
+  ${v8source}
+  ${v8source}/include/
+  ${v8source}/src
+  ${CMAKE_BINARY_DIR}/v8build
+  ${CMAKE_BINARY_DIR}/v8build/gen
+  ${ICU_INCLUDE_DIRS}
+)
+
+set(${PROJECT_NAME}_headers
+  ${v8source}/src/objects/objects.h
+  ${v8source}/src/objects/objects-inl.h
+  ${v8source}/src/objects/allocation-site-inl.h
+  ${v8source}/src/objects/allocation-site.h
+  ${v8source}/src/objects/cell-inl.h
+  ${v8source}/src/objects/cell.h
+  ${v8source}/src/objects/code-inl.h
+  ${v8source}/src/objects/code.h
+  ${v8source}/src/objects/data-handler.h
+  ${v8source}/src/objects/data-handler-inl.h
+  ${v8source}/src/objects/feedback-cell.h
+  ${v8source}/src/objects/feedback-cell-inl.h
+  ${v8source}/src/objects/fixed-array-inl.h
+  ${v8source}/src/objects/fixed-array.h
+  ${v8source}/src/objects/heap-number-inl.h
+  ${v8source}/src/objects/heap-number.h
+  ${v8source}/src/objects/heap-object-inl.h
+  ${v8source}/src/objects/heap-object.h
+  ${v8source}/src/objects/instance-type.h
+  ${v8source}/src/objects/js-array-inl.h
+  ${v8source}/src/objects/js-array.h
+  ${v8source}/src/objects/js-array-buffer-inl.h
+  ${v8source}/src/objects/js-array-buffer.h
+  ${v8source}/src/objects/js-objects-inl.h
+  ${v8source}/src/objects/js-objects.h
+  ${v8source}/src/objects/js-promise-inl.h
+  ${v8source}/src/objects/js-promise.h
+  ${v8source}/src/objects/js-regexp-inl.h
+  ${v8source}/src/objects/js-regexp.h
+  ${v8source}/src/objects/js-regexp-string-iterator-inl.h
+  ${v8source}/src/objects/js-regexp-string-iterator.h
+  ${v8source}/src/objects/map.h
+  ${v8source}/src/objects/map-inl.h
+  ${v8source}/src/objects/name.h
+  ${v8source}/src/objects/name-inl.h
+  ${v8source}/src/objects/oddball-inl.h
+  ${v8source}/src/objects/oddball.h
+  ${v8source}/src/objects/scope-info.h
+  ${v8source}/src/objects/script.h
+  ${v8source}/src/objects/script-inl.h
+  ${v8source}/src/objects/shared-function-info.h
+  ${v8source}/src/objects/shared-function-info-inl.h
+  ${v8source}/src/objects/string.h
+  ${v8source}/src/objects/string-comparator.h
+  ${v8source}/src/objects/string-inl.h
+  ${v8source}/src/objects/struct.h
+  ${v8source}/src/objects/struct-inl.h
+  ${v8source}/src/objects/allocation-site-inl.h
+  ${v8source}/src/objects/allocation-site-scopes-inl.h
+  ${v8source}/src/objects/allocation-site-scopes.h
+  ${v8source}/src/objects/allocation-site.h
+  ${v8source}/src/objects/api-callbacks-inl.h
+  ${v8source}/src/objects/api-callbacks.h
+  ${v8source}/src/objects/arguments-inl.h
+  ${v8source}/src/objects/arguments.h
+  ${v8source}/src/objects/backing-store.h
+  ${v8source}/src/objects/bigint.h
+  ${v8source}/src/objects/cell-inl.h
+  ${v8source}/src/objects/cell.h
+  ${v8source}/src/objects/code-inl.h
+  ${v8source}/src/objects/code.h
+  ${v8source}/src/objects/compilation-cache-inl.h
+  ${v8source}/src/objects/compilation-cache.h
+  ${v8source}/src/objects/compressed-slots-inl.h
+  ${v8source}/src/objects/compressed-slots.h
+  ${v8source}/src/objects/contexts-inl.h
+  ${v8source}/src/objects/contexts.h
+  ${v8source}/src/objects/data-handler.h
+  ${v8source}/src/objects/debug-objects-inl.h
+  ${v8source}/src/objects/debug-objects.h
+  ${v8source}/src/objects/descriptor-array-inl.h
+  ${v8source}/src/objects/descriptor-array.h
+  ${v8source}/src/objects/dictionary-inl.h
+  ${v8source}/src/objects/dictionary.h
+  ${v8source}/src/objects/elements-inl.h
+  ${v8source}/src/objects/elements-kind.h
+  ${v8source}/src/objects/elements.h
+  ${v8source}/src/objects/embedder-data-array-inl.h
+  ${v8source}/src/objects/embedder-data-array.h
+  ${v8source}/src/objects/embedder-data-slot-inl.h
+  ${v8source}/src/objects/embedder-data-slot.h
+  ${v8source}/src/objects/feedback-cell-inl.h
+  ${v8source}/src/objects/feedback-cell.h
+  ${v8source}/src/objects/feedback-vector-inl.h
+  ${v8source}/src/objects/feedback-vector.h
+  ${v8source}/src/objects/field-index-inl.h
+  ${v8source}/src/objects/field-index.h
+  ${v8source}/src/objects/field-type.h
+  ${v8source}/src/objects/fixed-array-inl.h
+  ${v8source}/src/objects/fixed-array.h
+  ${v8source}/src/objects/frame-array-inl.h
+  ${v8source}/src/objects/frame-array.h
+  ${v8source}/src/objects/function-kind.h
+  ${v8source}/src/objects/hash-table-inl.h
+  ${v8source}/src/objects/hash-table.h
+  ${v8source}/src/objects/heap-number-inl.h
+  ${v8source}/src/objects/heap-number.h
+  ${v8source}/src/objects/heap-object-inl.h
+  ${v8source}/src/objects/heap-object.h
+  ${v8source}/src/objects/instance-type-inl.h
+  ${v8source}/src/objects/instance-type.h
+  ${v8source}/src/objects/intl-objects.h
+  ${v8source}/src/objects/js-array-buffer-inl.h
+  ${v8source}/src/objects/js-array-buffer.h
+  ${v8source}/src/objects/js-array-inl.h
+  ${v8source}/src/objects/js-array.h
+  ${v8source}/src/objects/js-break-iterator-inl.h
+  ${v8source}/src/objects/js-break-iterator.h
+  ${v8source}/src/objects/js-collator-inl.h
+  ${v8source}/src/objects/js-collator.h
+  ${v8source}/src/objects/js-collection-inl.h
+  ${v8source}/src/objects/js-collection-iterator.h
+  ${v8source}/src/objects/js-collection.h
+  ${v8source}/src/objects/js-date-time-format-inl.h
+  ${v8source}/src/objects/js-date-time-format.h
+  ${v8source}/src/objects/js-generator-inl.h
+  ${v8source}/src/objects/js-generator.h
+  ${v8source}/src/objects/js-list-format-inl.h
+  ${v8source}/src/objects/js-list-format.h
+  ${v8source}/src/objects/js-locale-inl.h
+  ${v8source}/src/objects/js-locale.h
+  ${v8source}/src/objects/js-number-format-inl.h
+  ${v8source}/src/objects/js-number-format.h
+  ${v8source}/src/objects/js-objects-inl.h
+  ${v8source}/src/objects/js-objects.h
+  ${v8source}/src/objects/js-plural-rules-inl.h
+  ${v8source}/src/objects/js-plural-rules.h
+  ${v8source}/src/objects/js-promise-inl.h
+  ${v8source}/src/objects/js-promise.h
+  ${v8source}/src/objects/js-proxy-inl.h
+  ${v8source}/src/objects/js-proxy.h
+  ${v8source}/src/objects/js-regexp-inl.h
+  ${v8source}/src/objects/js-regexp-string-iterator-inl.h
+  ${v8source}/src/objects/js-regexp-string-iterator.h
+  ${v8source}/src/objects/js-regexp.h
+  ${v8source}/src/objects/js-relative-time-format-inl.h
+  ${v8source}/src/objects/js-relative-time-format.h
+  ${v8source}/src/objects/js-segment-iterator-inl.h
+  ${v8source}/src/objects/js-segment-iterator.h
+  ${v8source}/src/objects/js-segmenter-inl.h
+  ${v8source}/src/objects/js-segmenter.h
+  ${v8source}/src/objects/js-weak-refs-inl.h
+  ${v8source}/src/objects/js-weak-refs.h
+  ${v8source}/src/objects/keys.h
+  ${v8source}/src/objects/layout-descriptor-inl.h
+  ${v8source}/src/objects/layout-descriptor.h
+  ${v8source}/src/objects/literal-objects-inl.h
+  ${v8source}/src/objects/literal-objects.h
+  ${v8source}/src/objects/lookup-cache-inl.h
+  ${v8source}/src/objects/lookup-cache.h
+  ${v8source}/src/objects/lookup-inl.h
+  ${v8source}/src/objects/lookup.h
+  ${v8source}/src/objects/managed.h
+  ${v8source}/src/objects/map-inl.h
+  ${v8source}/src/objects/map-updater.h
+  ${v8source}/src/objects/map.h
+  ${v8source}/src/objects/maybe-object-inl.h
+  ${v8source}/src/objects/maybe-object.h
+  ${v8source}/src/objects/microtask-inl.h
+  ${v8source}/src/objects/microtask.h
+  ${v8source}/src/objects/module-inl.h
+  ${v8source}/src/objects/module.h
+  ${v8source}/src/objects/name-inl.h
+  ${v8source}/src/objects/name.h
+  ${v8source}/src/objects/object-list-macros.h
+  ${v8source}/src/objects/object-macros-undef.h
+  ${v8source}/src/objects/object-macros.h
+  ${v8source}/src/objects/objects-body-descriptors-inl.h
+  ${v8source}/src/objects/objects-body-descriptors.h
+  ${v8source}/src/objects/objects-inl.h
+  ${v8source}/src/objects/objects.h
+  ${v8source}/src/objects/oddball-inl.h
+  ${v8source}/src/objects/oddball.h
+  ${v8source}/src/objects/ordered-hash-table-inl.h
+  ${v8source}/src/objects/ordered-hash-table.h
+  ${v8source}/src/objects/osr-optimized-code-cache-inl.h
+  ${v8source}/src/objects/osr-optimized-code-cache.h
+  ${v8source}/src/objects/promise-inl.h
+  ${v8source}/src/objects/promise.h
+  ${v8source}/src/objects/property-array-inl.h
+  ${v8source}/src/objects/property-array.h
+  ${v8source}/src/objects/property-cell-inl.h
+  ${v8source}/src/objects/property-cell.h
+  ${v8source}/src/objects/property-descriptor-object-inl.h
+  ${v8source}/src/objects/property-descriptor-object.h
+  ${v8source}/src/objects/property-descriptor.h
+  ${v8source}/src/objects/property-details.h
+  ${v8source}/src/objects/property.h
+  ${v8source}/src/objects/prototype-info-inl.h
+  ${v8source}/src/objects/prototype-info.h
+  ${v8source}/src/objects/prototype.h
+  ${v8source}/src/objects/regexp-match-info.h
+  ${v8source}/src/objects/scope-info.h
+  ${v8source}/src/objects/script-inl.h
+  ${v8source}/src/objects/script.h
+  ${v8source}/src/objects/shared-function-info-inl.h
+  ${v8source}/src/objects/shared-function-info.h
+  ${v8source}/src/objects/slots-atomic-inl.h
+  ${v8source}/src/objects/slots-inl.h
+  ${v8source}/src/objects/slots.h
+  ${v8source}/src/objects/source-text-module.h
+  ${v8source}/src/objects/stack-frame-info-inl.h
+  ${v8source}/src/objects/stack-frame-info.h
+  ${v8source}/src/objects/string-comparator.h
+  ${v8source}/src/objects/string-inl.h
+  ${v8source}/src/objects/string-table-inl.h
+  ${v8source}/src/objects/string-table.h
+  ${v8source}/src/objects/string.h
+  ${v8source}/src/objects/struct-inl.h
+  ${v8source}/src/objects/struct.h
+  ${v8source}/src/objects/synthetic-module.h
+  ${v8source}/src/objects/tagged-field-inl.h
+  ${v8source}/src/objects/tagged-field.h
+  ${v8source}/src/objects/tagged-impl-inl.h
+  ${v8source}/src/objects/tagged-impl.h
+  ${v8source}/src/objects/tagged-value-inl.h
+  ${v8source}/src/objects/tagged-value.h
+  ${v8source}/src/objects/template-objects-inl.h
+  ${v8source}/src/objects/template-objects.h
+  ${v8source}/src/objects/templates-inl.h
+  ${v8source}/src/objects/templates.h
+  ${v8source}/src/objects/transitions-inl.h
+  ${v8source}/src/objects/transitions.h
+  ${v8source}/src/objects/type-hints.h
+  ${v8source}/src/objects/value-serializer.h
+  ${v8source}/src/objects/visitors.h
+  ${v8source}/src/objects/intl-objects.h
+  ${v8source}/src/objects/js-break-iterator-inl.h
+  ${v8source}/src/objects/js-break-iterator.h
+  ${v8source}/src/objects/js-collator-inl.h
+  ${v8source}/src/objects/js-collator.h
+  ${v8source}/src/objects/js-date-time-format-inl.h
+  ${v8source}/src/objects/js-date-time-format.h
+  ${v8source}/src/objects/js-list-format-inl.h
+  ${v8source}/src/objects/js-list-format.h
+  ${v8source}/src/objects/js-locale-inl.h
+  ${v8source}/src/objects/js-locale.h
+  ${v8source}/src/objects/js-number-format-inl.h
+  ${v8source}/src/objects/js-number-format.h
+  ${v8source}/src/objects/js-plural-rules-inl.h
+  ${v8source}/src/objects/js-plural-rules.h
+  ${v8source}/src/objects/js-relative-time-format-inl.h
+  ${v8source}/src/objects/js-relative-time-format.h
+  ${v8source}/src/objects/js-segment-iterator-inl.h
+  ${v8source}/src/objects/js-segment-iterator.h
+  ${v8source}/src/objects/js-segmenter-inl.h
+  ${v8source}/src/objects/js-segmenter.h
+
+)
+set(${PROJECT_NAME}_sources
+  ${v8source}/src/objects/js-regexp.cc
+  ${v8source}/src/objects/map.cc
+  ${v8source}/src/objects/js-objects.cc
+  ${v8source}/src/objects/string.cc
+  ${v8source}/src/objects/string-comparator.cc
+  ${v8source}/src/objects/backing-store.cc
+  ${v8source}/src/objects/bigint.cc
+  ${v8source}/src/objects/code.cc
+  ${v8source}/src/objects/contexts.cc
+  ${v8source}/src/objects/debug-objects.cc
+  ${v8source}/src/objects/elements-kind.cc
+  ${v8source}/src/objects/elements.cc
+  ${v8source}/src/objects/embedder-data-array.cc
+  ${v8source}/src/objects/feedback-vector.cc
+  ${v8source}/src/objects/field-type.cc
+  ${v8source}/src/objects/intl-objects.cc
+  ${v8source}/src/objects/js-array-buffer.cc
+  ${v8source}/src/objects/js-break-iterator.cc
+  ${v8source}/src/objects/js-collator.cc
+  ${v8source}/src/objects/js-date-time-format.cc
+  ${v8source}/src/objects/js-list-format.cc
+  ${v8source}/src/objects/js-locale.cc
+  ${v8source}/src/objects/js-number-format.cc
+  ${v8source}/src/objects/js-objects.cc
+  ${v8source}/src/objects/js-plural-rules.cc
+  ${v8source}/src/objects/js-regexp.cc
+  ${v8source}/src/objects/js-relative-time-format.cc
+  ${v8source}/src/objects/js-segment-iterator.cc
+  ${v8source}/src/objects/js-segmenter.cc
+  ${v8source}/src/objects/keys.cc
+  ${v8source}/src/objects/layout-descriptor.cc
+  ${v8source}/src/objects/literal-objects.cc
+  ${v8source}/src/objects/lookup-cache.cc
+  ${v8source}/src/objects/lookup.cc
+  ${v8source}/src/objects/managed.cc
+  ${v8source}/src/objects/map-updater.cc
+  ${v8source}/src/objects/map.cc
+  ${v8source}/src/objects/module.cc
+  ${v8source}/src/objects/objects.cc
+  ${v8source}/src/objects/ordered-hash-table.cc
+  ${v8source}/src/objects/osr-optimized-code-cache.cc
+  ${v8source}/src/objects/property-descriptor.cc
+  ${v8source}/src/objects/property.cc
+  ${v8source}/src/objects/scope-info.cc
+  ${v8source}/src/objects/source-text-module.cc
+  ${v8source}/src/objects/stack-frame-info.cc
+  ${v8source}/src/objects/string-comparator.cc
+  ${v8source}/src/objects/string.cc
+  ${v8source}/src/objects/synthetic-module.cc
+  ${v8source}/src/objects/tagged-impl.cc
+  ${v8source}/src/objects/template-objects.cc
+  ${v8source}/src/objects/transitions.cc
+  ${v8source}/src/objects/type-hints.cc
+  ${v8source}/src/objects/value-serializer.cc
+  ${v8source}/src/objects/visitors.cc
+  ${v8source}/src/objects/elements.cc
+  ${v8source}/src/objects/objects.cc
+  ${v8source}/src/objects/intl-objects.cc
+  ${v8source}/src/objects/js-break-iterator.cc
+  ${v8source}/src/objects/js-collator.cc
+  ${v8source}/src/objects/js-date-time-format.cc
+  ${v8source}/src/objects/js-list-format.cc
+  ${v8source}/src/objects/js-locale.cc
+  ${v8source}/src/objects/js-number-format.cc
+  ${v8source}/src/objects/js-plural-rules.cc
+  ${v8source}/src/objects/js-relative-time-format.cc
+  ${v8source}/src/objects/js-segment-iterator.cc
+  ${v8source}/src/objects/js-segmenter.cc
+)
+
+add_definitions(-DV8_USE_EXTERNAL_STARTUP_DATA)
+add_definitions(-DV8_ENABLE_REGEXP_INTERPRETER_THREADED_DISPATCH)
+add_definitions(-D__STDC_CONSTANT_MACROS)
+add_definitions(-DV8_DEPRECATION_WARNINGS)
+add_definitions(-DV8_SHARED_RO_HEAP)
+add_definitions(-DUSING_V8_BASE_SHARED)
+add_definitions(-DDISABLE_UNTRUSTED_CODE_MITIGATIONS)
+add_definitions(-DV8_USE_SNAPSHOT)
+add_definitions(-DENABLE_HANDLE_ZAPPING)
+add_definitions(-DV8_31BIT_SMIS_ON_64BIT_ARCH)
+add_definitions(-DOBJECT_PRINT)
+add_definitions(-DENABLE_MINOR_MC)
+add_definitions(-DVERIFY_HEAP)
+add_definitions(-DV8_IMMINENT_DEPRECATION_WARNINGS)
+add_definitions(-DNVALGRIND)
+add_definitions(-DV8_TYPED_ARRAY_MAX_SIZE_IN_HEAP=64)
+add_definitions(-D__STDC_FORMAT_MACROS)
+add_definitions(-DV8_CONCURRENT_MARKING)
+add_definitions(-DBUILDING_V8_SHARED)
+add_definitions(-DV8_TARGET_OS_LINUX)
+add_definitions(-DV8_ENABLE_LAZY_SOURCE_POSITIONS)
+add_definitions(-DV8_INTL_SUPPORT)
+add_definitions(-DV8_WIN64_UNWINDING_INFO)
+add_definitions(-DV8_HAVE_TARGET_OS)
+add_definitions(-D_GNU_SOURCE)
+add_definitions(-DENABLE_DISASSEMBLER)
+
+if(${ARCHITECTURE} STREQUAL "x86_64")
+  add_definitions(-DV8_TARGET_ARCH_X64)
+elseif(${ARCHITECTURE} STREQUAL "i386" OR ${ARCHITECTURE} STREQUAL "i486" OR ${ARCHITECTURE} STREQUAL "i586"  OR ${ARCHITECTURE} STREQUAL "i686")
+  add_definitions(V8_TARGET_ARCH_IA32)
+endif()
+
+add_library(${PROJECT_NAME}_obj OBJECT ${${PROJECT_NAME}_sources} ${${PROJECT_NAME}_headers})
+
+add_library(${PROJECT_NAME}_obj_pic OBJECT ${${PROJECT_NAME}_sources} ${${PROJECT_NAME}_headers})
+set_property(TARGET ${PROJECT_NAME}_obj_pic PROPERTY POSITION_INDEPENDENT_CODE 1)
+
+add_dependencies(${PROJECT_NAME}_obj
+  rename_debug
+  bytecodes-builtins-list
+  run_torque
+)
+
+add_dependencies(${PROJECT_NAME}_obj_pic
+  rename_debug
+  bytecodes-builtins-list
+  run_torque
+)
+
+

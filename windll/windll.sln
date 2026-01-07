@@ -1,0 +1,29 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "windll", "windll\windll.vcproj", "{747DF342-D755-4CDE-AAD9-C6FF1F2B0C6D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "exe", "exe\exe.vcproj", "{AA947DDD-9D9A-43F1-AD1A-D4818B0DC50C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{747DF342-D755-4CDE-AAD9-C6FF1F2B0C6D} = {747DF342-D755-4CDE-AAD9-C6FF1F2B0C6D}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{747DF342-D755-4CDE-AAD9-C6FF1F2B0C6D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{747DF342-D755-4CDE-AAD9-C6FF1F2B0C6D}.Debug|Win32.Build.0 = Debug|Win32
+		{747DF342-D755-4CDE-AAD9-C6FF1F2B0C6D}.Release|Win32.ActiveCfg = Release|Win32
+		{747DF342-D755-4CDE-AAD9-C6FF1F2B0C6D}.Release|Win32.Build.0 = Release|Win32
+		{AA947DDD-9D9A-43F1-AD1A-D4818B0DC50C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{AA947DDD-9D9A-43F1-AD1A-D4818B0DC50C}.Debug|Win32.Build.0 = Debug|Win32
+		{AA947DDD-9D9A-43F1-AD1A-D4818B0DC50C}.Release|Win32.ActiveCfg = Release|Win32
+		{AA947DDD-9D9A-43F1-AD1A-D4818B0DC50C}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

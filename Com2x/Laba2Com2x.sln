@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Laba2Com2x", "Laba2Com2x\Laba2Com2x.vcxproj", "{8B6E5E0C-5DAD-4508-B314-8B5F2585B200}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Client", "Client\Client.vcxproj", "{72F05EEE-14D3-4186-9FE6-FDB651A2FBD7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8B6E5E0C-5DAD-4508-B314-8B5F2585B200}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8B6E5E0C-5DAD-4508-B314-8B5F2585B200}.Debug|Win32.Build.0 = Debug|Win32
+		{8B6E5E0C-5DAD-4508-B314-8B5F2585B200}.Release|Win32.ActiveCfg = Release|Win32
+		{8B6E5E0C-5DAD-4508-B314-8B5F2585B200}.Release|Win32.Build.0 = Release|Win32
+		{72F05EEE-14D3-4186-9FE6-FDB651A2FBD7}.Debug|Win32.ActiveCfg = Debug|Win32
+		{72F05EEE-14D3-4186-9FE6-FDB651A2FBD7}.Debug|Win32.Build.0 = Debug|Win32
+		{72F05EEE-14D3-4186-9FE6-FDB651A2FBD7}.Release|Win32.ActiveCfg = Release|Win32
+		{72F05EEE-14D3-4186-9FE6-FDB651A2FBD7}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

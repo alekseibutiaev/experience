@@ -1,0 +1,16 @@
+{
+  "cmake.configureArgs": [
+    "-DUSE_WERROR=OFF"
+  ],
+  "cmake.buildToolArgs": [
+    "VERBOSE=1",
+    "-j4"
+  ],
+  "editor.wordWrapColumn": 80,
+  "cmake.saveBeforeBuild": true,
+  "cmake.buildDirectory": "${workspaceRoot}/build_${buildType}",
+  "files.associations": {
+    "functional": "cpp",
+    "*.ipp": "cpp"
+  }
+}

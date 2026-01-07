@@ -1,0 +1,55 @@
+Example of using together autotools and Kbuilb -kernel build system-
+With autotools you can build your user space program and with Kbuild system you can build you kernel module.
+
+0.- LETS START
+
+Just tar -xzvf helloWorldAutotoolsKbuild.tgz
+
+cd helloWorldAutotoolsKbuild
+autoreconf --install
+./configure
+make
+
+¡your are done!
+
+now try
+
+cd cProgram
+./cProgram
+
+or
+
+cd sourceModule
+insmod linuxKernelModule
+
+
+
+Of course , your kernel must be configured to be able to compile the module and you must have autotools ... and a C compiler ,-)
+
+enjoy and i hope it helps.
+
+1.- INTRO
+
+This little Hello World shows how to use together autotools and Kbuild system, this is something that some people find when develop user space -daemons, ...-  and kernel modules at the same time in the same proyect and need to glue it easilly.
+
+2.- HOW DOES IT WORKS?
+
+Well you must have at least some idea of what make, autotools and kbuild is to understand how it works.
+But it just do the autotools stuff for the user space program and just link to the Kbuild system to build the kernel module.
+
+2.1.- configure.ac
+
+Must have and entry for the user space c code but it doesn't for the kernel module, because the Kbuild system do the work.
+
+2.2.- Makefile.am -top level-
+
+Must include the reference to the user space and kernel module.
+
+2.3.- Kbuild
+
+It's a simple Kbuild file with the simple , by hand, Makefile. Both are really easy thanks to Linus and folks.
+
+2.4.- Makefile.am -user space program level-.
+
+It's a simple Makefile.am with the reference to the main.c source.
+

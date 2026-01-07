@@ -1,0 +1,139 @@
+Scanning dependencies of target use_system_googletest
+[  0%] Generating system_googletest
+[  0%] Built target use_system_googletest
+Scanning dependencies of target v8_libbase_obj
+[  0%] Building CXX object v8build/v8_libbase/CMakeFiles/v8_libbase_obj.dir/__/__/v8/src/base/bits.cc.o
+[  0%] Building CXX object v8build/v8_libbase/CMakeFiles/v8_libbase_obj.dir/__/__/v8/src/base/bounded-page-allocator.cc.o
+[  0%] Building CXX object v8build/v8_libbase/CMakeFiles/v8_libbase_obj.dir/__/__/v8/src/base/cpu.cc.o
+[  0%] Building CXX object v8build/v8_libbase/CMakeFiles/v8_libbase_obj.dir/__/__/v8/src/base/debug/stack_trace.cc.o
+[  0%] Building CXX object v8build/v8_libbase/CMakeFiles/v8_libbase_obj.dir/__/__/v8/src/base/division-by-constant.cc.o
+[  0%] Building CXX object v8build/v8_libbase/CMakeFiles/v8_libbase_obj.dir/__/__/v8/src/base/file-utils.cc.o
+[  0%] Building CXX object v8build/v8_libbase/CMakeFiles/v8_libbase_obj.dir/__/__/v8/src/base/functional.cc.o
+[  0%] Building CXX object v8build/v8_libbase/CMakeFiles/v8_libbase_obj.dir/__/__/v8/src/base/ieee754.cc.o
+[  2%] Building CXX object v8build/v8_libbase/CMakeFiles/v8_libbase_obj.dir/__/__/v8/src/base/logging.cc.o
+[  2%] Building CXX object v8build/v8_libbase/CMakeFiles/v8_libbase_obj.dir/__/__/v8/src/base/once.cc.o
+[  2%] Building CXX object v8build/v8_libbase/CMakeFiles/v8_libbase_obj.dir/__/__/v8/src/base/page-allocator.cc.o
+[  2%] Building CXX object v8build/v8_libbase/CMakeFiles/v8_libbase_obj.dir/__/__/v8/src/base/platform/condition-variable.cc.o
+[  2%] Building CXX object v8build/v8_libbase/CMakeFiles/v8_libbase_obj.dir/__/__/v8/src/base/platform/mutex.cc.o
+[  2%] Building CXX object v8build/v8_libbase/CMakeFiles/v8_libbase_obj.dir/__/__/v8/src/base/platform/semaphore.cc.o
+[  2%] Building CXX object v8build/v8_libbase/CMakeFiles/v8_libbase_obj.dir/__/__/v8/src/base/platform/time.cc.o
+[  2%] Building CXX object v8build/v8_libbase/CMakeFiles/v8_libbase_obj.dir/__/__/v8/src/base/region-allocator.cc.o
+[  2%] Building CXX object v8build/v8_libbase/CMakeFiles/v8_libbase_obj.dir/__/__/v8/src/base/sys-info.cc.o
+[  2%] Building CXX object v8build/v8_libbase/CMakeFiles/v8_libbase_obj.dir/__/__/v8/src/base/utils/random-number-generator.cc.o
+[  2%] Building CXX object v8build/v8_libbase/CMakeFiles/v8_libbase_obj.dir/__/__/v8/src/base/vlq-base64.cc.o
+[  2%] Building CXX object v8build/v8_libbase/CMakeFiles/v8_libbase_obj.dir/__/__/v8/src/base/platform/platform-posix.cc.o
+[  2%] Building CXX object v8build/v8_libbase/CMakeFiles/v8_libbase_obj.dir/__/__/v8/src/base/platform/platform-posix-time.cc.o
+[  4%] Building CXX object v8build/v8_libbase/CMakeFiles/v8_libbase_obj.dir/__/__/v8/src/base/debug/stack_trace_posix.cc.o
+[  4%] Building CXX object v8build/v8_libbase/CMakeFiles/v8_libbase_obj.dir/__/__/v8/src/base/platform/platform-linux.cc.o
+[  4%] Built target v8_libbase_obj
+Scanning dependencies of target v8_libbase_static
+[  4%] Linking CXX static library libv8_libbase.a
+[  4%] Built target v8_libbase_static
+Scanning dependencies of target torque
+[  4%] Building CXX object v8build/torque/CMakeFiles/torque.dir/__/__/v8/src/torque/cfg.cc.o
+[  4%] Building CXX object v8build/torque/CMakeFiles/torque.dir/__/__/v8/src/torque/class-debug-reader-generator.cc.o
+[  4%] Building CXX object v8build/torque/CMakeFiles/torque.dir/__/__/v8/src/torque/csa-generator.cc.o
+[  4%] Building CXX object v8build/torque/CMakeFiles/torque.dir/__/__/v8/src/torque/declarable.cc.o
+[  4%] Building CXX object v8build/torque/CMakeFiles/torque.dir/__/__/v8/src/torque/declarations.cc.o
+[  4%] Building CXX object v8build/torque/CMakeFiles/torque.dir/__/__/v8/src/torque/declaration-visitor.cc.o
+[  4%] Building CXX object v8build/torque/CMakeFiles/torque.dir/__/__/v8/src/torque/earley-parser.cc.o
+[  4%] Building CXX object v8build/torque/CMakeFiles/torque.dir/__/__/v8/src/torque/global-context.cc.o
+[  4%] Building CXX object v8build/torque/CMakeFiles/torque.dir/__/__/v8/src/torque/implementation-visitor.cc.o
+[  4%] Building CXX object v8build/torque/CMakeFiles/torque.dir/__/__/v8/src/torque/instructions.cc.o
+[  7%] Building CXX object v8build/torque/CMakeFiles/torque.dir/__/__/v8/src/torque/server-data.cc.o
+[  7%] Building CXX object v8build/torque/CMakeFiles/torque.dir/__/__/v8/src/torque/source-positions.cc.o
+[  7%] Building CXX object v8build/torque/CMakeFiles/torque.dir/__/__/v8/src/torque/torque.cc.o
+[  7%] Building CXX object v8build/torque/CMakeFiles/torque.dir/__/__/v8/src/torque/torque-compiler.cc.o
+[  7%] Building CXX object v8build/torque/CMakeFiles/torque.dir/__/__/v8/src/torque/torque-parser.cc.o
+[  7%] Building CXX object v8build/torque/CMakeFiles/torque.dir/__/__/v8/src/torque/type-inference.cc.o
+[  7%] Building CXX object v8build/torque/CMakeFiles/torque.dir/__/__/v8/src/torque/type-oracle.cc.o
+[  7%] Building CXX object v8build/torque/CMakeFiles/torque.dir/__/__/v8/src/torque/types.cc.o
+[  7%] Building CXX object v8build/torque/CMakeFiles/torque.dir/__/__/v8/src/torque/type-visitor.cc.o
+[  7%] Building CXX object v8build/torque/CMakeFiles/torque.dir/__/__/v8/src/torque/utils.cc.o
+[  7%] Linking CXX executable torque
+[  7%] Built target torque
+Scanning dependencies of target tq_files
+[  7%] Generating tq_build
+[  7%] Built target tq_files
+Scanning dependencies of target bytecode_builtins_list_generator
+[  7%] Building CXX object v8build/bytecode_builtins_list_generator/CMakeFiles/bytecode_builtins_list_generator.dir/__/__/v8/src/builtins/generate-bytecodes-builtins-list.cc.o
+[  7%] Building CXX object v8build/bytecode_builtins_list_generator/CMakeFiles/bytecode_builtins_list_generator.dir/__/__/v8/src/interpreter/bytecode-operands.cc.o
+[  7%] Building CXX object v8build/bytecode_builtins_list_generator/CMakeFiles/bytecode_builtins_list_generator.dir/__/__/v8/src/interpreter/bytecodes.cc.o
+[  7%] Linking CXX executable bytecode_builtins_list_generator
+[  7%] Built target bytecode_builtins_list_generator
+Scanning dependencies of target bytecodes-builtins-list
+[  7%] Generating bytecodes-builtins-list_h
+[  7%] Built target bytecodes-builtins-list
+Scanning dependencies of target torque-generated_definitions_obj
+[  7%] Building CXX object v8build/torque-generated_definitions/CMakeFiles/torque-generated_definitions_obj.dir/__/gen/torque-generated/class-definitions-tq.cc.o
+[  7%] Building CXX object v8build/torque-generated_definitions/CMakeFiles/torque-generated_definitions_obj.dir/__/gen/torque-generated/class-verifiers-tq.cc.o
+[  9%] Building CXX object v8build/torque-generated_definitions/CMakeFiles/torque-generated_definitions_obj.dir/__/gen/torque-generated/objects-printer-tq.cc.o
+[  9%] Built target torque-generated_definitions_obj
+Scanning dependencies of target inspector_generated
+[  9%] Generating inspector_generated_file
+[  9%] Built target inspector_generated
+Scanning dependencies of target rename_debug
+[  9%] Generating debug_Debug
+/mnt/build/butiaev/v8_library/v8/src /mnt/build/butiaev/v8_library/build/v8build/prebuild
+/mnt/build/butiaev/v8_library/build/v8build/prebuild
+[  9%] Built target rename_debug
+Scanning dependencies of target inspector_obj
+[  9%] Building CXX object v8build/inspector/CMakeFiles/inspector_obj.dir/__/__/v8/src/inspector/custom-preview.cc.o
+[  9%] Building CXX object v8build/inspector/CMakeFiles/inspector_obj.dir/__/__/v8/src/inspector/injected-script.cc.o
+[  9%] Building CXX object v8build/inspector/CMakeFiles/inspector_obj.dir/__/__/v8/src/inspector/inspected-context.cc.o
+[  9%] Building CXX object v8build/inspector/CMakeFiles/inspector_obj.dir/__/__/v8/src/inspector/remote-object-id.cc.o
+[  9%] Building CXX object v8build/inspector/CMakeFiles/inspector_obj.dir/__/__/v8/src/inspector/search-util.cc.o
+[  9%] Building CXX object v8build/inspector/CMakeFiles/inspector_obj.dir/__/__/v8/src/inspector/string-16.cc.o
+[  9%] Building CXX object v8build/inspector/CMakeFiles/inspector_obj.dir/__/__/v8/src/inspector/string-util.cc.o
+[ 11%] Building CXX object v8build/inspector/CMakeFiles/inspector_obj.dir/__/__/v8/src/inspector/test-interface.cc.o
+[ 11%] Building CXX object v8build/inspector/CMakeFiles/inspector_obj.dir/__/__/v8/src/inspector/v8-console-agent-impl.cc.o
+[ 11%] Building CXX object v8build/inspector/CMakeFiles/inspector_obj.dir/__/__/v8/src/inspector/v8-console.cc.o
+[ 11%] Building CXX object v8build/inspector/CMakeFiles/inspector_obj.dir/__/__/v8/src/inspector/v8-console-message.cc.o
+[ 11%] Building CXX object v8build/inspector/CMakeFiles/inspector_obj.dir/__/__/v8/src/inspector/v8-debugger-agent-impl.cc.o
+[ 11%] Building CXX object v8build/inspector/CMakeFiles/inspector_obj.dir/__/__/v8/src/inspector/v8-debugger.cc.o
+[ 11%] Building CXX object v8build/inspector/CMakeFiles/inspector_obj.dir/__/__/v8/src/inspector/v8-debugger-script.cc.o
+[ 11%] Building CXX object v8build/inspector/CMakeFiles/inspector_obj.dir/__/__/v8/src/inspector/v8-heap-profiler-agent-impl.cc.o
+[ 11%] Building CXX object v8build/inspector/CMakeFiles/inspector_obj.dir/__/__/v8/src/inspector/v8-inspector-impl.cc.o
+[ 11%] Building CXX object v8build/inspector/CMakeFiles/inspector_obj.dir/__/__/v8/src/inspector/v8-inspector-protocol-encoding.cc.o
+[ 11%] Building CXX object v8build/inspector/CMakeFiles/inspector_obj.dir/__/__/v8/src/inspector/v8-inspector-session-impl.cc.o
+[ 11%] Building CXX object v8build/inspector/CMakeFiles/inspector_obj.dir/__/__/v8/src/inspector/v8-profiler-agent-impl.cc.o
+[ 11%] Building CXX object v8build/inspector/CMakeFiles/inspector_obj.dir/__/__/v8/src/inspector/v8-regex.cc.o
+[ 14%] Building CXX object v8build/inspector/CMakeFiles/inspector_obj.dir/__/__/v8/src/inspector/v8-runtime-agent-impl.cc.o
+[ 14%] Building CXX object v8build/inspector/CMakeFiles/inspector_obj.dir/__/__/v8/src/inspector/v8-schema-agent-impl.cc.o
+[ 14%] Building CXX object v8build/inspector/CMakeFiles/inspector_obj.dir/__/__/v8/src/inspector/v8-stack-trace-impl.cc.o
+[ 14%] Building CXX object v8build/inspector/CMakeFiles/inspector_obj.dir/__/__/v8/src/inspector/v8-value-utils.cc.o
+[ 14%] Building CXX object v8build/inspector/CMakeFiles/inspector_obj.dir/__/__/v8/src/inspector/value-mirror.cc.o
+[ 14%] Building CXX object v8build/inspector/CMakeFiles/inspector_obj.dir/__/__/v8/src/inspector/wasm-translation.cc.o
+[ 14%] Building CXX object v8build/inspector/CMakeFiles/inspector_obj.dir/__/__/v8/src/inspector/protocol/Console.cpp.o
+[ 14%] Building CXX object v8build/inspector/CMakeFiles/inspector_obj.dir/__/__/v8/src/inspector/protocol/Debugger.cpp.o
+[ 14%] Building CXX object v8build/inspector/CMakeFiles/inspector_obj.dir/__/__/v8/src/inspector/protocol/HeapProfiler.cpp.o
+[ 14%] Building CXX object v8build/inspector/CMakeFiles/inspector_obj.dir/__/__/v8/src/inspector/protocol/Profiler.cpp.o
+[ 14%] Building CXX object v8build/inspector/CMakeFiles/inspector_obj.dir/__/__/v8/src/inspector/protocol/Protocol.cpp.o
+[ 14%] Building CXX object v8build/inspector/CMakeFiles/inspector_obj.dir/__/__/v8/src/inspector/protocol/Runtime.cpp.o
+[ 14%] Building CXX object v8build/inspector/CMakeFiles/inspector_obj.dir/__/__/v8/src/inspector/protocol/Schema.cpp.o
+[ 14%] Built target inspector_obj
+Scanning dependencies of target v8_libplatform_obj
+[ 16%] Building CXX object v8build/v8_libplatform/CMakeFiles/v8_libplatform_obj.dir/__/__/v8/src/libplatform/default-foreground-task-runner.cc.o
+[ 16%] Building CXX object v8build/v8_libplatform/CMakeFiles/v8_libplatform_obj.dir/__/__/v8/src/libplatform/default-platform.cc.o
+[ 16%] Building CXX object v8build/v8_libplatform/CMakeFiles/v8_libplatform_obj.dir/__/__/v8/src/libplatform/default-worker-threads-task-runner.cc.o
+[ 16%] Building CXX object v8build/v8_libplatform/CMakeFiles/v8_libplatform_obj.dir/__/__/v8/src/libplatform/delayed-task-queue.cc.o
+[ 16%] Building CXX object v8build/v8_libplatform/CMakeFiles/v8_libplatform_obj.dir/__/__/v8/src/libplatform/task-queue.cc.o
+[ 16%] Building CXX object v8build/v8_libplatform/CMakeFiles/v8_libplatform_obj.dir/__/__/v8/src/libplatform/tracing/trace-buffer.cc.o
+[ 16%] Building CXX object v8build/v8_libplatform/CMakeFiles/v8_libplatform_obj.dir/__/__/v8/src/libplatform/tracing/trace-config.cc.o
+[ 16%] Building CXX object v8build/v8_libplatform/CMakeFiles/v8_libplatform_obj.dir/__/__/v8/src/libplatform/tracing/trace-object.cc.o
+[ 16%] Building CXX object v8build/v8_libplatform/CMakeFiles/v8_libplatform_obj.dir/__/__/v8/src/libplatform/tracing/trace-writer.cc.o
+[ 16%] Building CXX object v8build/v8_libplatform/CMakeFiles/v8_libplatform_obj.dir/__/__/v8/src/libplatform/tracing/tracing-controller.cc.o
+[ 16%] Building CXX object v8build/v8_libplatform/CMakeFiles/v8_libplatform_obj.dir/__/__/v8/src/libplatform/worker-thread.cc.o
+[ 16%] Built target v8_libplatform_obj
+Scanning dependencies of target v8_initializers_obj
+[ 16%] Building CXX object v8build/v8_initializers/CMakeFiles/v8_initializers_obj.dir/__/__/v8/src/builtins/builtins-arguments-gen.cc.o
+[ 19%] Building CXX object v8build/v8_initializers/CMakeFiles/v8_initializers_obj.dir/__/__/v8/src/builtins/builtins-array-gen.cc.o
+make[3]: *** Deleting file 'v8build/v8_initializers/CMakeFiles/v8_initializers_obj.dir/__/__/v8/src/builtins/builtins-array-gen.cc.o'
+v8build/v8_initializers/CMakeFiles/v8_initializers_obj.dir/build.make:86: recipe for target 'v8build/v8_initializers/CMakeFiles/v8_initializers_obj.dir/__/__/v8/src/builtins/builtins-array-gen.cc.o' failed
+make[3]: *** [v8build/v8_initializers/CMakeFiles/v8_initializers_obj.dir/__/__/v8/src/builtins/builtins-array-gen.cc.o] Interrupt
+CMakeFiles/Makefile2:1016: recipe for target 'v8build/v8_initializers/CMakeFiles/v8_initializers_obj.dir/all' failed
+make[2]: *** [v8build/v8_initializers/CMakeFiles/v8_initializers_obj.dir/all] Interrupt
+CMakeFiles/Makefile2:1496: recipe for target 'v8build/mksnapshot/CMakeFiles/mksnapshot.dir/rule' failed
+make[1]: *** [v8build/mksnapshot/CMakeFiles/mksnapshot.dir/rule] Interrupt
+Makefile:521: recipe for target 'mksnapshot' failed
+make: *** [mksnapshot] Interrupt

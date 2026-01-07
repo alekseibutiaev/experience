@@ -1,0 +1,59 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "d8",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/v8build/d8/d8",
+      "args": [
+        "--shell"
+      ],
+      "stopAtEntry": true,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "setupCommands": [
+          {
+              "description": "Enable pretty-printing for gdb",
+              "text": "-enable-pretty-printing",
+              "ignoreFailures": true
+          }
+      ]
+    },
+    {
+      "name": "executable",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/v8build/mksnapshot/mksnapshot",
+      "args": [
+        "--target_os=linux",
+        "--target_arch=x64",
+        "--embedded_src",
+        "embedded.S",
+        "--embedded_variant",
+        "Default",
+        "--random-seed",
+        "314159265",
+        "--startup_blob",
+        "snapshot_blob.bin"
+      ],
+      "stopAtEntry": true,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ]
+    }
+  ]
+}

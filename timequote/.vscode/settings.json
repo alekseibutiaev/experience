@@ -1,0 +1,15 @@
+{
+  "cmake.configureArgs": [
+    "-DUSE_WERROR=ON"
+  ],
+  "cmake.buildToolArgs": [
+    "VERBOSE=1",
+    "-j4"
+  ],
+  "cmake.saveBeforeBuild": true,
+  "cmake.buildDirectory" : "${workspaceRoot}/build_${buildType}",
+  "editor.wordWrapColumn": 80,
+  "files.associations": {
+    "chrono": "cpp"
+  },
+}

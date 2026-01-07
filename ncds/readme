@@ -1,0 +1,12 @@
+https://github.com/Nasdaq/NasdaqCloudDataService-SDK-Java/blob/master/README.md
+
+oauth.token.endpoint.uri = "https://auth.us-east-2.clouddataservice.nasdaq.om/auth/realms/pro-realm/protocol/openid-connect/token"
+oauth.client.id = "ffineu-tyapkin"
+oauth.client.secret = "50efe6c1-4f6c-48ef-8c9d-2925bbda5bbf"
+
+old-bootstrap.servers = "kafka-bootstrap.clouddataservice.nasdaq.com:9094"
+old-oauth.token.endpoint.uri = "https://clouddataservice.auth.nasdaq.com/auth/realms/pro-realm/protocol/openid-connect/token"
+
+new-bootstrap.servers = "kafka-bootstrap.us-east-2.clouddataservice.nasdaq.com:9094"
+new-oauth.token.endpoint.uri = "https://auth.us-east-2.clouddataservice.nasdaq.com/auth/realms/pro-realm/protocol/openid-connect/token"
+

@@ -1,0 +1,31 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  //"${workspaceFolder}/testfile/test1.xml"
+ 
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "test1",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/pugixml/test1/test1",
+      "args": [
+        "${workspaceFolder}/testfile/test1.xml"
+      ],
+      "stopAtEntry": true,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ]
+    }
+  ]
+}

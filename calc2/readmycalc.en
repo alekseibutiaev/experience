@@ -1,0 +1,44 @@
+The description of the program executed under the test task which was received in firm CQG for check of professional suitability on competition of a post of the programmer.
+
+Theme of the task  the Converter of blocks (calculator) .
+
+The brief description of the task. The program accepts the user data in a format:
+<value> _ <block_name_from> _ = _ <value1> _ <block_name1_to>. The field block_name means a name of the block and is submitted as a symbolical line. The field value represents numerical fractional value with a floating point. And also inquiry <value> _ <block_name> _ = _? _ <block_name1>. The program should calculate factor which should be on a place of a mark?
+
+Realization: For the decision of this problem I am used type of pair for stores the result dividend block_to on block_from and flag about using this pair(elements). I am creating workspace from two containers of map type, first container inserted in second container. The keys of maps the been names of blocks. The cells of structures kept elements. 
+For the decision of a problem we find in first queue the column by name of begun block and take first elements from found column, we compare a name of a current element to a name of a final element, and make current element. If not equvale 
+
+
+
+devisor dlock     special type from two stl::pair, first pair inserting to second pair, this sturuct decription of element for workspace, for search path from begining of bloc name to ending of bloc name. Workspace  
+
+
+
+
+
+
+below resulted structure of equivalents has been created
+struct Equ
+{
+char* _From;
+char* _To;
+// �fficent. _From * _Cof = _To  
+float _Cof;
+// Flag
+bool _Pass;
+// Constructor
+Equ ();
+// Destructor
+~Equ ();
+};
+The field _From means from which block (divided)
+The field _To means in what block (divider)
+Field _Cof a ratio _To / _From (dividend/divisor)
+Field _Pass a flag (value and use of a flag will be explained under the text.)
+The primary goal of the program to find from what or from what equivalents it is possible to calculate the next inquiry, that is of a set of equivalents to construct a circuit of factors for calculation of inquiry or to give out a mistake, if to construct a circuit it was not possible.
+For the decision of a problem we shall construct a two-dimensional array where in cells with indexes I, I there will be equivalents with factor 1.0, accordingly the field _From will be equal to a field _To. And in cross, formed straight lines taking place through these equivalents, will be equivalents with factor of transition from the block _From in the block _To with the corresponding task of fields _From, _To, _Cof. By search of the decision we shall find the nearest Equivalent with which it is possible to connect current a rule _To = _From, the found field we shall mark a flag _Pass. It is necessary to not go on a circle. As soon as to appear required value, the problem{task} is considered decided{solved}. If we have got on the Equivalent which has flag it means that the decision is not present. The given algorithm refers to  Dijkstra as Algorithm (Deikstr) . More detailed explanation of algorithm can be found in Internet. For more simple decision and simplicity of programming, the size of a matrix in the program is final. And in this case it is taken 20�0 positions. The given algorithm is realized in class EquArray having 2 user functions:
+int AddEqu (char* f_From, float f_FromIndex, char* f_To, float f_ToIndex); - To add in a file the next equivalent. If one of them is present, is added missing.
+The entrance data: names of blocks and their values, directly entered from the console or from a file.
+Returns value of more zero if it was possible to add equivalents, otherwise 0.  
+int FindPath (char* f_Begin, float f_BeginIndex, char* f_End, float* f_result); - Function actually finds a way of the decision if it was possible to find counts result. In a field f_Begin accepts values a name of an equivalent from which to begin search and its value in a field f_BeginIndex, in a field f_End value for which is necessary to receive the decision. If function has returned value of more zero it means, that the way is found. To the address f_result the decision will be written down. If the result of function 0 the way is not found also contents of a variable f_result has no what value.
+

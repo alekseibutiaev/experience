@@ -1,0 +1,30 @@
+{
+  "buildType": {
+    "default": "Debug ubuntu_24.04",
+    "description": "Build Type Selection",
+    "choices": {
+      "Debug_ubuntu_24.04": {
+        "short": "Debug ubuntu 24.04",
+        "long": "Build with no optimizations and debugging information for ubuntu 24.04",
+        "buildType": "Debug",
+        "settings": {
+          "CMAKE_VERBOSE_MAKEFILE" : "TRUE",
+          "AVROCPP_HOME" : "/opt/avro-cpp-1.11.3.debug",
+          "BOOST_ROOT" : "/opt/boost",
+          "Boost_NO_SYSTEM_PATHS" : "TRUE"
+        }
+      },
+      "Release_ubuntu_24.04": {
+        "short": "Release ubuntu 24.04",
+        "long": "Build with optimizations and without debuging information for ubuntu 24.04",
+        "buildType": "Release",
+        "settings": {
+          "CMAKE_VERBOSE_MAKEFILE" : "TRUE",
+          "AVROCPP_HOME" : "/opt/avro-cpp-1.11.3",
+          "BOOST_ROOT" : "/opt/boost",
+          "Boost_NO_SYSTEM_PATHS" : "TRUE"
+        }
+      }
+    }
+  }
+}
